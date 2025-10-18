@@ -1,6 +1,0 @@
-The idea is to have a dynamic configuration file, like a config.yaml, that lists the websites and parameters you want to scrape. Then, the scraper will read from that file and handle multiple sites dynamically instead of having hard-coded URLs.
-
-
-1. create a planning.md file that includes vision, architecture, technology stack and required tools list for this project also 
-2. create a tasks.md file with bullet point tasks divided into milestones for the new feature.
-3. Then Update the claude.md file can guide future claude sessions on this project

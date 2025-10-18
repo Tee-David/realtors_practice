@@ -1,3 +1,0 @@
-Create an idempotent service that watches the scraper exports/ folders, ingests new CSV and XLSX exports (which may contain jumbled or semi-structured data), intelligently interprets and cleans each file, and writes normalized, queryable output into a single large workbook exports/cleaned/MASTER_CLEANED_WORKBOOK.xlsx where each sheet is a site. For new sites, create a new sheet. For existing site sheets, append only newly discovered records from new/changed export files; if an export contains no new rows, do not modify that sheet. Produce accompanying canonical CSV/Parquet per site, metadata, logs and error reports.
-
-Create and Add the tasks (with bullet point tasks divided into milestones) to achieve this goal in the tasks.md file
