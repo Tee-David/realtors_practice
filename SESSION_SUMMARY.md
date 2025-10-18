@@ -491,6 +491,154 @@ Scraper → Uploads to PostgreSQL → Client queries via SQL
 
 ---
 
+## 🔮 Future Frontend Integration Plans
+
+### Dynamic Config Generation
+
+**Objective**: Enable frontend UI to manage site configurations without manual code edits
+
+**Planned Workflow**:
+
+1. **User selects sites to scrape from frontend UI**:
+   - Frontend displays list of 50+ available sites
+   - User checks/unchecks sites they want to scrape
+   - User configures scraping options (max pages, geocoding, etc.)
+
+2. **Frontend dynamically generates/updates `config.yaml`**:
+   - Uses API endpoint: `POST /api/sites` to add new sites
+   - Uses API endpoint: `PUT /api/sites/{key}` to update existing sites
+   - Uses API endpoint: `PATCH /api/sites/{key}/toggle` to enable/disable sites
+   - Changes are written to `config.yaml` automatically
+
+3. **Frontend triggers scraping run**:
+   - With dynamically selected sites
+   - Using GitHub Actions `repository_dispatch` event
+   - Monitors progress in real-time
+
+### Implementation Details
+
+**API Endpoints Available** (Already Implemented):
+
+```typescript
+// Add new site dynamically
+POST /api/sites
+{
+  "key": "newsite",
+  "name": "New Real Estate Site",
+  "url": "https://newsite.com",
+  "enabled": true,
+  "parser": "specials",
+  "selectors": { /* CSS selectors */ }
+}
+
+// Update existing site
+PUT /api/sites/npc
+{
+  "enabled": false,
+  "overrides": {
+    "max_pages": 50
+  }
+}
+
+// Toggle site enable/disable
+PATCH /api/sites/npc/toggle
+
+// Get all sites with current status
+GET /api/sites
+```
+
+**Frontend User Flow**:
+
+1. **Site Management Page**:
+   - Lists all 50+ sites with enable/disable toggles
+   - Shows site status (last scrape, total listings)
+   - Allows editing selectors for each site
+   - "Add New Site" button for adding custom sites
+
+2. **Scraping Configuration Page**:
+   - Multi-select dropdown or checkboxes for sites
+   - Sliders for max_pages, geocoding options
+   - "Scrape Now" button triggers:
+     - First: Updates `config.yaml` via API
+     - Then: Triggers GitHub Actions workflow
+     - Finally: Shows real-time progress
+
+3. **Data Viewer Page**:
+   - Search across all scraped data
+   - Filter by site, property type, location, price
+   - Download filtered results as Excel/CSV
+
+### Why This Matters
+
+**Before (Current)**:
+- Manual editing of `config.yaml` required
+- Code knowledge needed to add new sites
+- Technical barrier for non-developers
+
+**After (With Frontend)**:
+- ✅ Non-technical users can manage sites
+- ✅ No code editing required
+- ✅ Click-based site configuration
+- ✅ Instant feedback on changes
+- ✅ Dynamic scraping based on user selections
+
+### Technical Architecture
+
+**Local API Server** (Already Built):
+```
+Frontend (Next.js) → API Server (Flask) → config.yaml
+                                       ↓
+                                  GitHub Actions
+```
+
+**GitHub Actions** (For Serverless):
+```
+Frontend (Next.js) → GitHub API → Trigger Workflow
+                                       ↓
+                                  Reads config.yaml
+                                       ↓
+                                  Scrapes selected sites
+```
+
+**Hybrid Approach** (Recommended):
+```
+Frontend → API Server → Update config.yaml
+              ↓
+              Commit to GitHub
+              ↓
+         Trigger GitHub Actions workflow
+              ↓
+         Workflow uses updated config.yaml
+```
+
+### Postman Collection for Frontend Developer
+
+**Complete API testing suite provided**:
+- ✅ `docs/POSTMAN_COLLECTION.json` - Full Postman collection with all 23 endpoints
+- ✅ `docs/POSTMAN_GUIDE.md` - Comprehensive testing guide (5000+ lines)
+- ✅ All endpoints tested and verified
+- ✅ Example requests/responses included
+- ✅ Integration examples for Next.js/React
+
+**Frontend developer can**:
+1. Import Postman collection
+2. Test all API endpoints locally
+3. Understand request/response format
+4. Build frontend with confidence
+
+### Next Session Scope
+
+**When Frontend Integration Begins**:
+1. Review API endpoints with frontend developer
+2. Help integrate site management UI
+3. Implement dynamic config generation logic
+4. Test end-to-end workflow (UI → API → config.yaml → GitHub Actions)
+5. Deploy integrated frontend
+
+**Note**: All backend infrastructure is ready. API server is production-ready. Only frontend UI development remains.
+
+---
+
 ## 📞 Support Resources
 
 ### For You
