@@ -1,0 +1,479 @@
+# ============================================================================
+# Realtors Practice - Configuration File
+# ============================================================================
+# This is the example configuration file for the Nigerian Real Estate Scraper.
+# Copy this file to config.yaml and customize for your setup.
+#
+# Configuration Precedence:
+#   Environment Variables > config.yaml > Built-in Defaults
+#
+# Required fields are marked with [REQUIRED]
+# Optional fields show their default values
+# ============================================================================
+
+# ============================================================================
+# GLOBAL SETTINGS
+# ============================================================================
+
+# Scraping behavior fallback chain (requests is fastest, playwright handles JS sites)
+# Options: requests, playwright, scraperapi
+fallback_order:
+  - requests
+  - playwright
+
+# Geocoding configuration
+geocoding:
+  enabled: true                    # Enable/disable geocoding
+  max_per_run: 120                 # Maximum geocoding API calls per run
+  user_agent: "RealtorsPractice/1.0 (+contact: you@example.com)"  # Nominatim requires descriptive UA
+  cache_path: "logs/geocache.json" # Persistent cache location
+
+# Pagination settings (applies to all sites unless overridden per-site)
+pagination:
+  max_pages: 30                    # Maximum pages to scrape per site
+  scroll_steps: 12                 # Number of scroll actions for lazy-load content
+  page_timeout_ms: 45000           # Timeout for page loads (milliseconds)
+
+# Retry and timeout settings
+retry:
+  network_retry_seconds: 180       # Total retry duration for network errors
+  retry_on_zero_results: false     # Retry even when scrape returns 0 items
+
+# Playwright browser settings
+browser:
+  headless: true                   # Run browser in headless mode
+  block_images: false              # Block image loading (faster but may miss content)
+  user_data_dir: null              # Optional: browser profile directory for cookies
+
+# Export settings
+export:
+  formats:
+    - csv                          # Export as CSV
+    - xlsx                         # Export as XLSX
+  output_dir: "exports"            # Base directory for exports
+  timestamp_format: "%Y-%m-%d_%H-%M-%S"  # Filename timestamp format
+
+# Logging
+logging:
+  level: INFO                      # DEBUG, INFO, WARNING, ERROR
+  file: "logs/scraper.log"         # Log file path
+  console: true                    # Also log to console
+
+# ============================================================================
+# SITE CONFIGURATIONS
+# ============================================================================
+# Each site requires at minimum: name, url, enabled
+# Optional fields provide fine-grained control per site
+
+sites:
+  # --------------------------------------------------------------------------
+  # Example: Fully configured site with all options
+  # --------------------------------------------------------------------------
+  npc:
+    name: "Nigeria Property Centre"  # [REQUIRED] Display name
+    url: "https://nigeriapropertycentre.com/"  # [REQUIRED] Base URL
+    enabled: true                    # [REQUIRED] Enable/disable this site
+    parser: specials                 # Parser type: specials, generic, custom
+
+    # Site metadata (optional)
+    category: aggregator             # Site type: aggregator, agency, developer
+    priority: 1                      # Scraping priority (1=highest, useful for parallel scraping)
+    notes: "Main aggregator site, high quality listings"  # Admin notes
+
+    # CSS Selectors (optional, uses generic heuristics if omitted)
+    selectors:
+      card: "li.property-list, .property-list, .property, article"
+      title: "h2, .prop-title, a[title]"
+      price: ".price, .prop-price, .price-text"
+      location: ".location, .prop-location"
+      image: "img"
+      description: ".description, .prop-description"
+
+    # Pagination selectors (optional)
+    pagination:
+      next_selectors:
+        - "a[rel='next']"
+        - "li.next a"
+        - "a[aria-label*='Next']"
+      page_param: "page"             # URL parameter for page number (?page=2)
+
+    # Lagos-specific paths (optional, improves relevance)
+    lagos_paths:
+      - "/property-for-sale/in/lagos"
+      - "/property-for-rent/in/lagos"
+
+    # Fallback list paths if lagos_paths not available
+    list_paths:
+      - "/for-sale"
+      - "/for-rent"
+
+    # Search configuration (optional)
+    search_param: null               # Query param for search (e.g., "q" for ?q=Lagos)
+
+    # Site-specific overrides (optional)
+    overrides:
+      max_pages: 40                  # Override global pagination.max_pages
+      scroll_steps: 15               # Override global pagination.scroll_steps
+      retry_seconds: 240             # Override global retry.network_retry_seconds
+      geocode: true                  # Override global geocoding.enabled
+      export_formats: ["csv", "xlsx"]  # Override global export.formats
+
+    # Metadata (optional, for tracking/reporting)
+    metadata:
+      category: "aggregator"         # aggregator, agency, developer, portal
+      priority: 1                    # Lower = higher priority (for parallel scraping)
+      notes: "Major property aggregator in Nigeria"
+      last_successful_scrape: null   # Auto-updated by scraper
+
+  # --------------------------------------------------------------------------
+  # Example: Minimal configuration (uses all defaults)
+  # --------------------------------------------------------------------------
+  propertypro:
+    name: "PropertyPro Nigeria"
+    url: "https://propertypro.ng/"
+    enabled: true
+    parser: specials
+    selectors:
+      card: "div.single-room-text, article.property, li.property"
+      title: "a h2, .single-room-text h2, h2 > a, .title a"
+      price: "span.propery-price, .price, .listings-price"
+      location: ".location, .listings-location, .single-room-location"
+    pagination:
+      next_selectors: ["a[rel='next']", "li.next a"]
+      page_param: "page"
+    lagos_paths: ["/property-for-sale/lagos", "/property-for-rent/lagos"]
+    search_param: "q"
+
+  # --------------------------------------------------------------------------
+  # Example: Disabled site (will be skipped)
+  # --------------------------------------------------------------------------
+  privateproperty:
+    name: "Private Property Nigeria"
+    url: "https://www.privateproperty.com.ng/"
+    enabled: false                   # Site will be skipped
+    parser: specials
+
+  # --------------------------------------------------------------------------
+  # Example: Generic parser with no custom selectors
+  # --------------------------------------------------------------------------
+  property24:
+    name: "Property24 Nigeria"
+    url: "https://www.property24.com.ng/"
+    enabled: true
+    parser: generic                  # Uses heuristic extraction only
+
+  # --------------------------------------------------------------------------
+  # Additional Sites (add more as needed)
+  # --------------------------------------------------------------------------
+  hutbay:
+    name: "Hutbay"
+    url: "https://www.hutbay.com/"
+    enabled: true
+    parser: specials
+
+  lamudi:
+    name: "Lamudi Nigeria"
+    url: "https://www.lamudi.com.ng/"
+    enabled: true
+    parser: specials
+
+  jiji:
+    name: "Jiji Real Estate Section"
+    url: "https://jiji.ng/real-estate"
+    enabled: true
+    parser: specials
+
+  vconnect:
+    name: "VConnect"
+    url: "https://www.vconnect.com/"
+    enabled: true
+    parser: specials
+
+  nigerianpropertymarket:
+    name: "Nigerian Property Market"
+    url: "https://nigerianpropertymarket.com/"
+    enabled: true
+    parser: specials
+
+  propertylisthub:
+    name: "Property List Hub"
+    url: "https://propertylisthub.com/"
+    enabled: true
+    parser: specials
+
+  quicktellerhomes:
+    name: "Quickteller Homes"
+    url: "https://homes.quickteller.com/"
+    enabled: true
+    parser: specials
+
+  naijahouses:
+    name: "NaijaHouses"
+    url: "https://www.naijahouses.com/"
+    enabled: true
+    parser: specials
+
+  oparahrealty:
+    name: "Oparah Realty"
+    url: "https://oparahrealty.com/"
+    enabled: true
+    parser: specials
+
+  lodges:
+    name: "Lodges.ng"
+    url: "https://www.lodges.ng/"
+    enabled: true
+    parser: specials
+
+  olist:
+    name: "OList Real Estate"
+    url: "https://www.olist.ng/real-estate"
+    enabled: true
+    parser: specials
+
+  realtorng:
+    name: "Realtor.ng"
+    url: "https://www.realtor.ng/"
+    enabled: true
+    parser: specials
+
+  myproperty:
+    name: "MyProperty.ng"
+    url: "https://www.myproperty.ng"
+    enabled: true
+    parser: specials
+
+  houseafrica:
+    name: "HouseAfrica"
+    url: "https://www.houseafrica.com.ng"
+    enabled: true
+    parser: specials
+
+  propertyguru:
+    name: "Property Guru"
+    url: "https://propertyguru.com.ng/"
+    enabled: true
+    parser: specials
+
+  buyletlive:
+    name: "BuyLetLive"
+    url: "https://buyletlive.com/"
+    enabled: true
+    parser: specials
+
+  cwlagos:
+    name: "CW Real Estate"
+    url: "https://cwlagos.com/"
+    enabled: true
+    parser: specials
+
+  landng:
+    name: "Land.ng"
+    url: "https://land.ng/"
+    enabled: true
+    parser: specials
+
+  lagosproperty:
+    name: "Lagos Property"
+    url: "https://lagosproperty.net/"
+    enabled: true
+    parser: specials
+
+  ramos:
+    name: "Ramos Real Estate"
+    url: "https://ramosrealestateng.com/"
+    enabled: true
+    parser: specials
+
+  edenoasis:
+    name: "Eden Oasis"
+    url: "https://www.edenoasisrealty.com/"
+    enabled: true
+    parser: specials
+
+  adronhomes:
+    name: "Adron Homes"
+    url: "https://adronhomesproperties.com/"
+    enabled: true
+    parser: specials
+
+  naijalandlord:
+    name: "NaijaLandlord"
+    url: "https://www.naijalandlord.com/"
+    enabled: true
+    parser: specials
+
+  trovit:
+    name: "Trovit Homes"
+    url: "https://homes.trovit.ng/"
+    enabled: true
+    parser: specials
+
+  nazaprimehive:
+    name: "Nazaprime Hive"
+    url: "https://hive.nazaprime.com.ng"
+    enabled: true
+    parser: specials
+
+  nigeriapropertyzone:
+    name: "Nigeria Property Zone"
+    url: "https://nigeriapropertyzone.com.ng/"
+    enabled: true
+    parser: specials
+
+  castles:
+    name: "Castles"
+    url: "http://castles.com.ng/"
+    enabled: true
+    parser: specials
+
+  thinkmint:
+    name: "Thinkmint Nigeria"
+    url: "http://buyrealestate.thinkmint.ng/"
+    enabled: true
+    parser: specials
+
+  realestatenigeria:
+    name: "Real Estate Nigeria"
+    url: "https://www.realestatenigeria.com"
+    enabled: true
+    parser: specials
+
+  tradebanq:
+    name: "TradeBanq"
+    url: "https://www.tradebanq.com"
+    enabled: true
+    parser: specials
+
+  landmall:
+    name: "Landmall.ng"
+    url: "https://www.landmall.ng/"
+    enabled: true
+    parser: specials
+
+  giddaa:
+    name: "Giddaa"
+    url: "https://giddaa.com/"
+    enabled: true
+    parser: specials
+
+  realtorintl:
+    name: "Realtor.com International Nigeria"
+    url: "https://www.realtor.com/international/ng/"
+    enabled: true
+    parser: specials
+
+  facibus:
+    name: "Facibus Housing"
+    url: "https://facibushousing.com"
+    enabled: true
+    parser: specials
+
+  ownahome:
+    name: "Ownahome"
+    url: "https://ownahome.ng/"
+    enabled: true
+    parser: specials
+
+  estateintel:
+    name: "Estate Intel"
+    url: "https://estateintel.com/"
+    enabled: true
+    parser: specials
+
+  spleet:
+    name: "Spleet"
+    url: "https://spleet.africa/"
+    enabled: true
+    parser: specials
+
+  rentsmallsmall:
+    name: "RentSmallSmall"
+    url: "https://rentsmallsmall.ng/"
+    enabled: true
+    parser: specials
+
+  cuddlerealty:
+    name: "Cuddle Realty"
+    url: "https://cuddlerealty.com/"
+    enabled: true
+    parser: specials
+
+  takooka_props:
+    name: "Takooka Properties"
+    url: "https://properties.takooka.com/"
+    enabled: true
+    parser: specials
+
+  jaat_properties:
+    name: "JAAT Properties & Investment Ltd"
+    url: "https://takooka.com/jaat-properties.php"
+    enabled: true
+    parser: specials
+
+  gtexthomes:
+    name: "Gtext And Associates"
+    url: "https://gtexthomes.com/"
+    enabled: true
+    parser: specials
+
+  ashproperties:
+    name: "Ash Properties & Constructions"
+    url: "https://ashpropertiesng.com/"
+    enabled: true
+    parser: specials
+
+  propertieslinkng:
+    name: "Propertylink Real Estate Investment Limited"
+    url: "https://propertieslinkng.com/"
+    enabled: true
+    parser: specials
+
+  ubosieleh:
+    name: "Ubosi Eleh + Co."
+    url: "https://ubosieleh.com/"
+    enabled: true
+    parser: specials
+
+  brokerfield:
+    name: "Brokerfield Real Estate Services"
+    url: "https://brokerfieldrealestate.com/"
+    enabled: true
+    parser: specials
+
+# ============================================================================
+# ADVANCED CONFIGURATION (Optional)
+# ============================================================================
+
+# Location filters (filter listings by location keywords)
+location_filters:
+  enabled: true
+  include_keywords:
+    - "lagos"
+    - "lekki"
+    - "ikeja"
+    - "ajah"
+    - "ikoyi"
+    - "victoria island"
+    - "vi"
+  # exclude_keywords: []            # Optional: exclude certain areas
+
+# Deduplication settings
+deduplication:
+  enabled: true
+  fields: ["title", "price", "location"]  # Fields used for hash generation
+  cross_site: false                # Deduplicate across different sites (not just within)
+
+# Rate limiting (global across all sites)
+rate_limiting:
+  enabled: false
+  requests_per_minute: 60
+  delay_between_sites_seconds: 2
+
+# Notifications (future feature)
+notifications:
+  enabled: false
+  email: null
+  slack_webhook: null
+  on_failure: true                 # Notify on scraping failures
+  on_success: false                # Notify on successful completion
