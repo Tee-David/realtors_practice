@@ -1,6 +1,12 @@
 name: Nigerian Real Estate Scraper
 
 on:
+  # Trigger on push to make workflow visible (temporary)
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/scrape.yml'
+
   # Trigger via frontend (repository_dispatch)
   repository_dispatch:
     types: [trigger-scrape]
