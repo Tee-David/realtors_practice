@@ -1,5 +1,6 @@
 name: Nigerian Real Estate Scraper
 
+# Workflow for scraping Nigerian real estate websites
 on:
   # Trigger via frontend (repository_dispatch)
   repository_dispatch:
