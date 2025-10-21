@@ -202,7 +202,9 @@ def run_site(site_key: str, site_config: Dict) -> Tuple[int, str]:
             n = normalize_listing(r, site=site_key)
         except Exception:
             continue
-        if is_lagos_like(f"{n.get('location','')} {n.get('title','')}"):
+        # Check location, title, AND listing URL for Lagos indicators
+        check_text = f"{n.get('location','')} {n.get('title','')} {n.get('listing_url','')}"
+        if is_lagos_like(check_text):
             cleaned.append(n)
 
     if not cleaned:
@@ -248,32 +250,53 @@ def main() -> None:
     # Load metadata
     metadata = load_metadata()
 
-    summary: Dict[str, Tuple[int, str]] = {}
-
-    # Iterate over enabled sites from config
+    # Prepare sites for scraping
+    valid_sites = []
     skipped_sites = []
-    for site_key, site_config in ENABLED_SITES.items():
-        try:
-            # Validate site config has minimum required fields
-            if not site_config.get("url"):
-                logging.warning(f"{site_key}: No URL configured, skipping")
-                skipped_sites.append(site_key)
-                summary[site_key] = (0, "")
-                continue
 
-            count, url = run_site(site_key, site_config)
+    for site_key, site_config in ENABLED_SITES.items():
+        if not site_config.get("url"):
+            logging.warning(f"{site_key}: No URL configured, skipping")
+            skipped_sites.append(site_key)
+        else:
+            valid_sites.append((site_key, site_config))
+
+    # PARALLEL SCRAPING (NEW!)
+    from core.parallel_scraper import scrape_sites_parallel, get_max_workers_from_env
+
+    # Get max workers from environment (or auto-detect)
+    max_workers = get_max_workers_from_env()
+
+    # Wrapper function for parallel scraping with error handling
+    def scrape_with_error_handling(site_key: str, site_config: Dict) -> Tuple[int, str]:
+        """Wrapper that catches all exceptions for parallel scraping."""
+        try:
+            return run_site(site_key, site_config)
         except ConfigValidationError as e:
             logging.error(f"{site_key}: Configuration error - {e}")
-            logging.error(f"{site_key}: Skipping due to invalid configuration")
-            skipped_sites.append(site_key)
-            count, url = 0, site_config.get("url", "")
+            return 0, site_config.get("url", "")
         except Exception as e:
-            logging.error(f"{site_key}: FAILED with {e}")
-            count, url = 0, site_config.get("url", "")
+            logging.error(f"{site_key}: FAILED with {e}", exc_info=True)
+            return 0, site_config.get("url", "")
 
-        # Update metadata
+    # Run parallel scraping
+    if valid_sites:
+        summary = scrape_sites_parallel(
+            sites=valid_sites,
+            scrape_function=scrape_with_error_handling,
+            max_workers=max_workers,
+            progress_bar=True  # Enable tqdm progress bar
+        )
+    else:
+        summary = {}
+
+    # Add skipped sites to summary
+    for site_key in skipped_sites:
+        summary[site_key] = (0, "")
+
+    # Update metadata for all sites
+    for site_key, (count, url) in summary.items():
         update_site_metadata(metadata, site_key, count)
-        summary[site_key] = (count, url)
 
     # Save metadata
     save_metadata(metadata)
@@ -297,6 +320,27 @@ def main() -> None:
         logging.info(f"Zero-listing sites: {', '.join(zero_sites)}")
     if skipped_sites:
         logging.warning(f"Skipped sites due to config errors: {', '.join(skipped_sites)}")
+
+    # AUTO-WATCHER (PHASE 5 - NEW!)
+    # Automatically trigger watcher to process exports
+    if os.getenv("RP_NO_AUTO_WATCHER", "0") != "1" and success_sites > 0:
+        logging.info("\n=== AUTO-WATCHER ===")
+        logging.info("Processing exports into master workbook...")
+
+        try:
+            from watcher import run_once, WatcherState, STATE_FILE
+
+            watcher_state = WatcherState(STATE_FILE)
+            run_once(watcher_state, dry_run=False, verbose=False)
+
+            logging.info("Auto-watcher processing complete!")
+        except Exception as e:
+            logging.error(f"Auto-watcher failed: {e}")
+            logging.info("You can manually run: python watcher.py --once")
+    elif success_sites == 0:
+        logging.info("Skipping watcher (no successful scrapes)")
+    else:
+        logging.info("Auto-watcher disabled (RP_NO_AUTO_WATCHER=1)")
 
 if __name__ == "__main__":
     main()

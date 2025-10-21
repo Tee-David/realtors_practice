@@ -1,21 +1,11 @@
 name: Nigerian Real Estate Scraper
 
 on:
-  # Trigger on push to make workflow visible (temporary)
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/scrape.yml'
-
   # Trigger via frontend (repository_dispatch)
   repository_dispatch:
     types: [trigger-scrape]
 
-  # Scheduled runs - Daily at 3 AM UTC
-  schedule:
-    - cron: '0 3 * * *'
-
-  # Manual trigger from GitHub Actions UI
+  # Manual trigger from GitHub Actions UI (you control when to run)
   workflow_dispatch:
     inputs:
       page_cap:

@@ -4,12 +4,20 @@
 # - Optional site search query support (adds ?q= or similar)
 # - Pagination via explicit "Next" link or fallback ?page=N
 # - Merges embedded JSON-LD + visible cards
+# - Two-level scraping: list pages + property detail pages
+# - Location discovery: auto-navigate location directories
+# - Intelligent scraper: heuristic relevance detection + auto-adapt selectors
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlsplit, urlunsplit, parse_qsl, urlencode
-import re, os, json
+import re, os, json, logging
 from core.scraper_engine import fetch_adaptive
+from core.detail_scraper import enrich_listings_with_details
+from core.url_validator import filter_listings_by_url
+from core.location_filter import get_location_filter
 
+logger = logging.getLogger(__name__)
 RP_DEBUG = os.getenv("RP_DEBUG") == "1"
+RP_INTELLIGENT_MODE = os.getenv("RP_INTELLIGENT_MODE", "0") == "1"  # Enable intelligent scraper features
 
 # NOTE: All site configurations are now in config.yaml
 # No hard-coded site configs here - 100% config-driven architecture
@@ -31,6 +39,88 @@ def _first(el, selector_csv):
 
 def _text(el):
     return el.get_text(" ", strip=True) if el else ""
+
+def _is_property_url(url_str):
+    """
+    Intelligent filtering to identify actual property listing URLs vs category/navigation links.
+
+    Returns True if URL looks like a property listing, False for category/location pages.
+    """
+    if RP_DEBUG:
+        logger.debug(f"Checking URL: {url_str}")
+    if not url_str:
+        return False
+
+    url_lower = url_str.lower()
+
+    # Skip obvious category/navigation pages
+    category_patterns = [
+        # Just location names (e.g., /lagos, /lekki, /victoria-island)
+        r'^https?://[^/]+/(?:lagos|lekki|ikoyi|vi|victoria-island|ikeja|ajah|yaba|surulere|abuja|port-harcourt)/?$',
+        # Location subdirectories without property info (e.g., /lagos/lekki, /for-sale/lagos)
+        r'^https?://[^/]+/(?:for-sale|for-rent|to-let|buy|rent)/(?:lagos|lekki|ikoyi|vi|ikeja|ajah)?/?$',
+        r'^https?://[^/]+/(?:lagos|lekki|ikoyi)/(?:lagos|lekki|ikoyi|vi|ikeja|ajah)?/?$',
+        # Category pages ending in /showtype, /in/, or location-only
+        r'.*/showtype/?$',
+        r'.*/(?:for-sale|for-rent)/[^/]+/(?:lagos|abuja|port-harcourt)/?$',
+        # Property type + location without specific listing (e.g., /houses/lagos)
+        r'.*/(?:flats-apartments|houses|land|commercial)/(?:lagos|lekki|ajah|ikoyi)/?$',
+    ]
+
+    import re
+    for pattern in category_patterns:
+        if re.match(pattern, url_str):
+            if RP_DEBUG:
+                logger.debug(f"URL rejected: Category match - {pattern}")
+            return False
+
+    # Positive indicators of property listings
+    property_indicators = [
+        'bedroom',
+        'bathroom',
+        'property',
+        'flat',
+        'house',
+        'duplex',
+        'apartment',
+        'bungalow',
+        'terrace',
+        'detached',
+        'semi-detached',
+        'plot',
+        'land',
+        'office',
+        'shop',
+        'warehouse',
+        'hotel',
+        'estate',
+    ]
+
+    # If URL contains property-related keywords, likely a listing
+    for indicator in property_indicators:
+        if indicator in url_lower:
+            if RP_DEBUG:
+                logger.debug(f"URL accepted: Indicator match - {indicator}")
+            return True
+
+    # URLs with numeric IDs are often property pages (e.g., /property/12345, /listing-123456)
+    if re.search(r'/\d{4,}', url_str) or re.search(r'[-_]\d{4,}', url_str):
+        if RP_DEBUG:
+            logger.debug(f"URL accepted: Numeric ID found")
+        return True
+
+    # If URL has 4+ path segments, likely a detailed property page
+    # e.g., /for-sale/flats-apartments/3-bedroom-flat-lekki-lagos
+    path_segments = url_str.split('/')[3:]  # Skip protocol and domain
+    if len([s for s in path_segments if s]) >= 3:
+        if RP_DEBUG:
+            logger.debug(f"URL accepted: Deep path (3+ segments)")
+        return True
+
+    # Default: reject if we're not confident it's a property
+    if RP_DEBUG:
+        logger.debug(f"URL rejected: No property indicators")
+    return False
 
 def _next_page_by_link(soup, current_url, next_selectors):
     for sel in next_selectors or []:
@@ -60,6 +150,11 @@ def _apply_search_param(url, search_param, query):
 def _harvest_from_embedded_json(embedded_json_list):
     items = []
     def push(obj):
+        # Filter out category/navigation URLs from embedded JSON
+        url = obj.get("url")
+        if url and not _is_property_url(url):
+            return  # Skip category links
+
         addr = obj.get("address")
         if isinstance(addr, dict):
             loc = addr.get("addressLocality") or addr.get("streetAddress") or addr.get("addressRegion")
@@ -83,7 +178,7 @@ def _harvest_from_embedded_json(embedded_json_list):
             "agent_name": (obj.get("seller") or {}).get("name") if isinstance(obj.get("seller"), dict) else None,
             "contact_info": None,
             "images": images,
-            "listing_url": obj.get("url"),
+            "listing_url": url,
             "coordinates": None,
             "source": None,
             "scrape_timestamp": None,
@@ -118,17 +213,83 @@ def _scrape_list_page(url, cfg, fallback_order, site_key, page_idx):
         items.extend(json_items)
 
     # Visible cards
-    cards = soup.select(card_sel) or soup.select(GENERIC_CARD)
+    cards = soup.select(card_sel)
+    used_fallback = False
+    if not cards:  # Only use generic fallback if specific selector finds nothing
+        cards = soup.select(GENERIC_CARD)
+        used_fallback = True
+
+    # INTELLIGENT SCRAPER: Auto-discover best selector if both specific and generic fail
+    if RP_INTELLIGENT_MODE and not cards:
+        try:
+            from helpers.relevance import find_best_selector
+
+            # Try common selector patterns
+            candidates = [
+                'div[class*=listing]', 'div[class*=property]', 'div[class*=card]',
+                'li[class*=listing]', 'li[class*=property]', 'li[class*=item]',
+                'article', 'div.item', 'div.result', 'div.product'
+            ]
+
+            best_selector, results = find_best_selector(html, candidates, min_score=25)
+
+            if best_selector:
+                logger.info(f"{site_key}: Auto-discovered selector: {best_selector}")
+                cards = soup.select(best_selector)
+                used_fallback = True
+            else:
+                logger.warning(f"{site_key}: No suitable selector found via auto-discovery")
+
+        except Exception as e:
+            logger.warning(f"{site_key}: Auto-discovery failed: {e}")
+
     for box in cards:
+        # INTELLIGENT SCRAPER: Optional relevance filtering
+        if RP_INTELLIGENT_MODE and used_fallback:
+            try:
+                from helpers.relevance import is_relevant_listing
+
+                # Extract href first for relevance check
+                a = _first(box, "a[href]")
+                href = urljoin(url, a.get("href")) if a and a.get("href") else None
+
+                # Apply heuristic relevance filter
+                threshold = int(os.getenv("RP_RELEVANCE_THRESHOLD", "25"))
+                if not is_relevant_listing(box, url=href, threshold=threshold):
+                    if RP_DEBUG:
+                        logger.debug(f"Skipping irrelevant element (failed heuristic check)")
+                    continue
+
+            except Exception as e:
+                if RP_DEBUG:
+                    logger.warning(f"Relevance check failed: {e}")
+                # Continue processing if relevance check fails
+                pass
+
         title = _text(_first(box, cfg.get("title", GENERIC_TITLE)))
         price = _text(_first(box, cfg.get("price", GENERIC_PRICE)))
         location = _text(_first(box, cfg.get("location", GENERIC_LOCATION)))
         img_el = _first(box, cfg.get("image", GENERIC_IMAGE))
         img = img_el.get("src") if img_el and img_el.get("src") else None
+
+        # Extract href - look for property-specific links
         a = _first(box, "a[href]")
         href = urljoin(url, a.get("href")) if a and a.get("href") else None
+
+        # CRITICAL FIX: Filter out category/navigation links
+        if href and not _is_property_url(href):
+            if RP_DEBUG:
+                logger.debug(f"Skipping category link: {href}")
+            continue
+
+        # BUG FIX: If href is None, skip this card entirely!
+        # Don't use page URL as fallback for listing_url
+        if not href:
+            continue
+
         if not (title or price or location or href):
             continue
+
         items.append({
             "title": title,
             "price": price,
@@ -209,6 +370,38 @@ def scrape(fallback_order, filters, start_url=None, site=None, site_key=None, si
     if filters and isinstance(filters, dict):
         search_query = filters.get("search_query")
 
+    # NEW: Location Discovery Layer (Layer 0.5)
+    # If enabled, discover location pages first, then scrape each location
+    location_discovery_enabled = site_config.get("location_discovery", {}).get("enabled", False)
+
+    if location_discovery_enabled:
+        from core.location_discovery import discover_locations
+
+        # Get all starting URLs (from list_paths or lagos_paths)
+        starting_urls = [urljoin(base + "/", path.lstrip("/")) for path in list_paths]
+
+        # Discover locations from each starting URL
+        all_location_urls = []
+        for start_url in starting_urls:
+            location_urls = discover_locations(
+                start_url=start_url,
+                site_config=site_config,
+                fallback_order=fallback_order,
+                site_key=key or "site"
+            )
+            all_location_urls.extend(location_urls)
+
+        # Update list_paths to scrape discovered locations
+        # Convert back to relative paths for compatibility
+        list_paths = []
+        for loc_url in all_location_urls:
+            # Extract path from URL
+            if base in loc_url:
+                relative_path = loc_url.replace(base, "").lstrip("/")
+                list_paths.append("/" + relative_path if relative_path else "")
+            else:
+                list_paths.append(loc_url)  # Use absolute if needed
+
     all_items, seen = [], set()
     for path in list_paths:
         url = urljoin(base + "/", path.lstrip("/"))
@@ -235,4 +428,38 @@ def scrape(fallback_order, filters, start_url=None, site=None, site_key=None, si
             if empty_streak >= 2:  # stop after 2 consecutive empty pages
                 break
             url = next_url
+
+    # URL Validation: Filter out invalid URLs (WhatsApp, mailto, etc.)
+    original_count = len(all_items)
+    all_items, filtered_count = filter_listings_by_url(all_items, url_key='listing_url')
+
+    if filtered_count > 0:
+        logger.info(f"{key}: Filtered {filtered_count} invalid URLs (e.g., WhatsApp, mailto). Remaining: {len(all_items)}/{original_count}")
+
+    # Location Filtering: Filter out non-Lagos properties (if enabled)
+    if os.getenv("RP_LOCATION_FILTER", "0") == "1":
+        location_filter = get_location_filter()
+        before_location_filter = len(all_items)
+        all_items, location_filtered = location_filter.filter_listings_by_location(all_items, location_key='location')
+
+        if location_filtered > 0:
+            logger.info(f"{key}: Location filter removed {location_filtered} non-Lagos properties. Remaining: {len(all_items)}/{before_location_filter}")
+
+    # Level 2 Scraping: Enrich with detail page data
+    # This clicks into each property URL and extracts complete information
+    detail_cap_env = os.getenv("RP_DETAIL_CAP", "0")
+    detail_cap = int(detail_cap_env) if detail_cap_env else 0
+    max_properties = detail_cap if detail_cap > 0 else None  # 0 or empty = unlimited
+
+    if RP_DEBUG:
+        logger.debug(f"{key}: RP_DETAIL_CAP='{detail_cap_env}' -> max_properties={max_properties} (will process {'all' if max_properties is None else max_properties} of {len(all_items)} listings)")
+
+    all_items = enrich_listings_with_details(
+        listings=all_items,
+        site_key=key or "site",
+        site_config=site_config,
+        fallback_order=fallback_order,
+        max_properties=max_properties
+    )
+
     return all_items

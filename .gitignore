@@ -44,6 +44,7 @@ logs/
 exports/
 config.yaml
 *.backup
+debug_screenshots/  # Intelligent scraper screenshots
 
 # Playwright
 .playwright/
@@ -71,3 +72,6 @@ LAYMAN.md
 
 # Claude AI
 .claude/
+
+# Safepoint backups (local only)
+safepoint_backups/

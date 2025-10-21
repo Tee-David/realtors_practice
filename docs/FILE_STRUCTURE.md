@@ -256,7 +256,7 @@ venv/
 Git version control repository. Standard git structure.
 
 ### `.claude/`
-Claude Code IDE configuration (if using Claude Code).
+AI assistant configuration file.
 
 ---
 

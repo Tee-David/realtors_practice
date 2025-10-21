@@ -3,11 +3,17 @@ import os
 import time
 import contextlib
 import json
+import logging
 from typing import List, Tuple, Optional, Dict
 from urllib.parse import urljoin
 
 from bs4 import BeautifulSoup
 import requests
+
+# Rate limiting and robots.txt compliance
+from core.rate_limiter import get_rate_limiter
+
+logger = logging.getLogger(__name__)
 
 __all__ = [
     "render_and_collect_pages",
@@ -341,6 +347,14 @@ def fetch_adaptive(url: str, wait_selector: str, fallback_order: List[str], site
     import json
     embedded_json = []
 
+    # RATE LIMITING: Check robots.txt and wait if needed
+    rate_limiter = get_rate_limiter()
+    if not rate_limiter.check_and_wait(url):
+        # URL blocked by robots.txt
+        if DEBUG:
+            logger.debug(f"{site_key}: URL blocked by robots.txt: {url}")
+        return None, None, []
+
     # Try each method in fallback order
     for method in fallback_order:
         try:
@@ -361,6 +375,9 @@ def fetch_adaptive(url: str, wait_selector: str, fallback_order: List[str], site
                         except:
                             pass
 
+                    # Record successful request for rate limiting
+                    rate_limiter.record_request(rate_limiter.get_domain(url))
+
                     return html, "requests", embedded_json
 
             elif method == "playwright":
@@ -373,28 +390,53 @@ def fetch_adaptive(url: str, wait_selector: str, fallback_order: List[str], site
                     page_obj = context.new_page()
                     _block_images(page_obj)
 
-                    page_obj.goto(url, wait_until="domcontentloaded", timeout=45000)
-                    _accept_cookies(page_obj)
+                    try:
+                        page_obj.goto(url, wait_until="domcontentloaded", timeout=45000)
+                        _accept_cookies(page_obj)
 
-                    # Wait for content to load
-                    with contextlib.suppress(Exception):
-                        page_obj.wait_for_selector(wait_selector, timeout=10000, state="visible")
+                        # Wait for content to load
+                        with contextlib.suppress(Exception):
+                            page_obj.wait_for_selector(wait_selector, timeout=10000, state="visible")
 
-                    html = page_obj.content()
+                        # INTELLIGENT SCRAPER: Take screenshot if enabled
+                        if os.getenv("RP_SCREENSHOT") == "1":
+                            try:
+                                from helpers.screenshot import take_screenshot
+                                take_screenshot(page_obj, site_key or "unknown", "list", f"page_{page_idx}")
+                            except:
+                                pass  # Don't fail if screenshot fails
 
-                    # Extract JSON-LD
-                    soup = BeautifulSoup(html, "lxml")
-                    for script in soup.find_all("script", type="application/ld+json"):
-                        try:
-                            data = json.loads(script.string)
-                            embedded_json.append(data)
-                        except:
-                            pass
+                        html = page_obj.content()
 
-                    context.close()
-                    browser.close()
+                        # Extract JSON-LD
+                        soup = BeautifulSoup(html, "lxml")
+                        for script in soup.find_all("script", type="application/ld+json"):
+                            try:
+                                data = json.loads(script.string)
+                                embedded_json.append(data)
+                            except:
+                                pass
 
-                    return html, "playwright", embedded_json
+                        context.close()
+                        browser.close()
+
+                        # Record successful request for rate limiting
+                        rate_limiter.record_request(rate_limiter.get_domain(url))
+
+                        return html, "playwright", embedded_json
+
+                    except Exception as e:
+                        # INTELLIGENT SCRAPER: Take error screenshot
+                        if os.getenv("RP_SCREENSHOT") == "1":
+                            try:
+                                from helpers.screenshot import take_error_screenshot
+                                take_error_screenshot(page_obj, site_key or "unknown", "fetch_error", str(e))
+                            except:
+                                pass
+
+                        context.close()
+                        browser.close()
+                        raise  # Re-raise to try next method
 
             elif method == "scraperapi":
                 # ScraperAPI integration (if API key available)

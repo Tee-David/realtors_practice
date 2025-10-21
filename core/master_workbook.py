@@ -288,10 +288,16 @@ class MasterWorkbookManager:
         # Append records
         new_count = self._append_records_to_sheet(site_key, records)
 
-        # Update metadata
+        # Update metadata and summary sheets
         if new_count > 0:
             self._update_metadata_sheet()
             self._update_site_metadata(site_key, new_count)
+
+            # Regenerate summary sheets with new data
+            try:
+                self._regenerate_summary_sheets()
+            except Exception as e:
+                logging.error(f"Failed to regenerate summary sheets: {e}")
 
         return new_count
 
@@ -308,6 +314,353 @@ class MasterWorkbookManager:
         self.metadata[site_key]['last_updated'] = datetime.now().isoformat()
 
         self._save_metadata()
+
+    def _load_all_data(self) -> pd.DataFrame:
+        """
+        Load all site data into a single DataFrame.
+
+        Returns consolidated data from all non-summary sheets.
+        """
+        wb = load_workbook(self.workbook_path, read_only=True)
+        all_data = []
+
+        for sheet_name in wb.sheetnames:
+            # Skip metadata and summary sheets
+            if sheet_name.startswith('_'):
+                continue
+
+            ws = wb[sheet_name]
+            data = list(ws.values)
+
+            if len(data) < 2:  # No data rows
+                continue
+
+            # Convert to dataframe
+            cols = data[0]
+            rows = data[1:]
+            df = pd.DataFrame(rows, columns=cols)
+
+            # Add source site
+            df['_site'] = sheet_name
+
+            all_data.append(df)
+
+        wb.close()
+
+        if not all_data:
+            return pd.DataFrame()
+
+        # Combine all data
+        combined = pd.concat(all_data, ignore_index=True)
+
+        # Convert numeric columns
+        numeric_cols = ['price', 'price_per_sqm', 'price_per_bedroom', 'bedrooms',
+                       'bathrooms', 'toilets', 'bq', 'land_size']
+        for col in numeric_cols:
+            if col in combined.columns:
+                combined[col] = pd.to_numeric(combined[col], errors='coerce')
+
+        # Parse timestamps
+        if 'scrape_timestamp' in combined.columns:
+            combined['scrape_timestamp'] = pd.to_datetime(combined['scrape_timestamp'], errors='coerce')
+
+        return combined
+
+    def _regenerate_summary_sheets(self):
+        """Regenerate all summary sheets with latest data."""
+        logging.info("Regenerating summary sheets...")
+
+        # Load all data
+        df = self._load_all_data()
+
+        if df.empty:
+            logging.warning("No data to generate summary sheets")
+            return
+
+        # Open workbook for writing
+        wb = load_workbook(self.workbook_path)
+
+        # Delete old summary sheets
+        summary_sheets = ['_Dashboard', '_Top_100_Cheapest', '_Newest_Listings',
+                         '_For_Sale', '_For_Rent', '_Land_Only', '_4BR_Plus']
+        for sheet_name in summary_sheets:
+            if sheet_name in wb.sheetnames:
+                del wb[sheet_name]
+
+        # Generate each summary sheet
+        self._create_dashboard_sheet(wb, df)
+        self._create_top_cheapest_sheet(wb, df)
+        self._create_newest_listings_sheet(wb, df)
+        self._create_for_sale_sheet(wb, df)
+        self._create_for_rent_sheet(wb, df)
+        self._create_land_only_sheet(wb, df)
+        self._create_4br_plus_sheet(wb, df)
+
+        # Save workbook
+        wb.save(self.workbook_path)
+        logging.info("Summary sheets regenerated successfully")
+
+    def _create_dashboard_sheet(self, wb: Workbook, df: pd.DataFrame):
+        """Create dashboard summary sheet."""
+        ws = wb.create_sheet('_Dashboard', 0)  # Insert as first sheet
+
+        # Title
+        ws['A1'] = 'LAGOS PROPERTY SCRAPER - DASHBOARD'
+        ws['A1'].font = Font(size=16, bold=True, color='FFFFFF')
+        ws['A1'].fill = PatternFill(start_color="1F4E78", end_color="1F4E78", fill_type="solid")
+        ws.merge_cells('A1:D1')
+        ws['A1'].alignment = Alignment(horizontal='center', vertical='center')
+        ws.row_dimensions[1].height = 30
+
+        row = 3
+
+        # Overall statistics
+        ws[f'A{row}'] = 'OVERALL STATISTICS'
+        ws[f'A{row}'].font = Font(bold=True, size=12)
+        row += 1
+
+        total_listings = len(df)
+        total_sites = df['_site'].nunique() if '_site' in df.columns else 0
+        avg_price = df['price'].mean() if 'price' in df.columns else 0
+
+        ws[f'A{row}'] = 'Total Listings:'
+        ws[f'B{row}'] = total_listings
+        row += 1
+
+        ws[f'A{row}'] = 'Total Sites:'
+        ws[f'B{row}'] = total_sites
+        row += 1
+
+        ws[f'A{row}'] = 'Average Price:'
+        ws[f'B{row}'] = f"₦{avg_price:,.0f}" if avg_price > 0 else "N/A"
+        row += 2
+
+        # Property type breakdown
+        ws[f'A{row}'] = 'PROPERTY TYPE BREAKDOWN'
+        ws[f'A{row}'].font = Font(bold=True, size=12)
+        row += 1
+
+        if 'property_type' in df.columns:
+            type_counts = df['property_type'].value_counts().head(10)
+            for ptype, count in type_counts.items():
+                ws[f'A{row}'] = str(ptype) if ptype else 'Unknown'
+                ws[f'B{row}'] = int(count)
+                row += 1
+
+        row += 1
+
+        # Top sites by listing count
+        ws[f'A{row}'] = 'TOP SITES BY LISTING COUNT'
+        ws[f'A{row}'].font = Font(bold=True, size=12)
+        row += 1
+
+        if '_site' in df.columns:
+            site_counts = df['_site'].value_counts().head(10)
+            for site, count in site_counts.items():
+                ws[f'A{row}'] = str(site)
+                ws[f'B{row}'] = int(count)
+                row += 1
+
+        # Format columns
+        ws.column_dimensions['A'].width = 35
+        ws.column_dimensions['B'].width = 20
+        ws.column_dimensions['C'].width = 20
+        ws.column_dimensions['D'].width = 20
+
+    def _create_top_cheapest_sheet(self, wb: Workbook, df: pd.DataFrame):
+        """Create top 100 cheapest properties sheet."""
+        ws = wb.create_sheet('_Top_100_Cheapest')
+
+        # Filter valid prices and sort
+        df_filtered = df[df['price'] > 0].copy() if 'price' in df.columns else df.copy()
+        df_sorted = df_filtered.nsmallest(100, 'price') if 'price' in df_filtered.columns else df_filtered.head(100)
+
+        # Select columns
+        display_cols = ['title', 'price', 'bedrooms', 'location', 'property_type',
+                       '_site', 'listing_url', 'scrape_timestamp']
+        df_export = df_sorted[[c for c in display_cols if c in df_sorted.columns]]
+
+        # Write to sheet
+        self._write_dataframe_to_sheet(ws, df_export, 'Top 100 Cheapest Properties')
+
+    def _create_newest_listings_sheet(self, wb: Workbook, df: pd.DataFrame):
+        """Create newest listings sheet."""
+        ws = wb.create_sheet('_Newest_Listings')
+
+        # Sort by timestamp
+        if 'scrape_timestamp' in df.columns:
+            df_sorted = df.sort_values('scrape_timestamp', ascending=False).head(100)
+        else:
+            df_sorted = df.head(100)
+
+        # Select columns
+        display_cols = ['title', 'price', 'bedrooms', 'location', 'property_type',
+                       '_site', 'listing_url', 'scrape_timestamp']
+        df_export = df_sorted[[c for c in display_cols if c in df_sorted.columns]]
+
+        self._write_dataframe_to_sheet(ws, df_export, 'Newest 100 Listings')
+
+    def _create_for_sale_sheet(self, wb: Workbook, df: pd.DataFrame):
+        """Create for-sale properties sheet."""
+        ws = wb.create_sheet('_For_Sale')
+
+        # Filter for sale properties
+        mask = pd.Series(False, index=df.index)
+
+        if 'title' in df.columns:
+            mask |= df['title'].str.contains('for sale|sale', case=False, na=False)
+
+        if 'price' in df.columns:
+            mask |= (df['price'] > 10000000)  # Likely sale if > 10M
+
+        df_filtered = df[mask].copy()
+
+        # Sort by price
+        if 'price' in df_filtered.columns and not df_filtered.empty:
+            df_sorted = df_filtered.sort_values('price')
+        else:
+            df_sorted = df_filtered
+
+        # Select columns
+        display_cols = ['title', 'price', 'bedrooms', 'location', 'property_type',
+                       '_site', 'listing_url']
+        df_export = df_sorted[[c for c in display_cols if c in df_sorted.columns]]
+
+        self._write_dataframe_to_sheet(ws, df_export, 'Properties For Sale')
+
+    def _create_for_rent_sheet(self, wb: Workbook, df: pd.DataFrame):
+        """Create for-rent properties sheet."""
+        ws = wb.create_sheet('_For_Rent')
+
+        # Filter for rent properties
+        mask = pd.Series(False, index=df.index)
+
+        if 'title' in df.columns:
+            mask |= df['title'].str.contains('rent|shortlet|lease', case=False, na=False)
+
+        if 'price' in df.columns:
+            mask |= (df['price'] > 0) & (df['price'] < 1000000)  # Likely rent if < 1M
+
+        df_filtered = df[mask].copy()
+
+        # Sort by price
+        if 'price' in df_filtered.columns and not df_filtered.empty:
+            df_sorted = df_filtered.sort_values('price')
+        else:
+            df_sorted = df_filtered
+
+        # Select columns
+        display_cols = ['title', 'price', 'bedrooms', 'location', 'property_type',
+                       '_site', 'listing_url']
+        df_export = df_sorted[[c for c in display_cols if c in df_sorted.columns]]
+
+        self._write_dataframe_to_sheet(ws, df_export, 'Properties For Rent')
+
+    def _create_land_only_sheet(self, wb: Workbook, df: pd.DataFrame):
+        """Create land-only properties sheet."""
+        ws = wb.create_sheet('_Land_Only')
+
+        # Filter for land
+        mask = pd.Series(False, index=df.index)
+
+        if 'property_type' in df.columns:
+            mask |= df['property_type'].str.contains('land', case=False, na=False)
+
+        if 'title' in df.columns:
+            mask |= df['title'].str.contains('land|plot|acre|hectare', case=False, na=False)
+
+        df_filtered = df[mask].copy()
+
+        # Sort by price
+        if 'price' in df_filtered.columns and not df_filtered.empty:
+            df_sorted = df_filtered.sort_values('price')
+        else:
+            df_sorted = df_filtered
+
+        # Select columns
+        display_cols = ['title', 'price', 'land_size', 'location', 'title_tag',
+                       '_site', 'listing_url']
+        df_export = df_sorted[[c for c in display_cols if c in df_sorted.columns]]
+
+        self._write_dataframe_to_sheet(ws, df_export, 'Land Only')
+
+    def _create_4br_plus_sheet(self, wb: Workbook, df: pd.DataFrame):
+        """Create 4+ bedroom properties sheet."""
+        ws = wb.create_sheet('_4BR_Plus')
+
+        # Filter for 4+ bedrooms
+        if 'bedrooms' in df.columns:
+            df_filtered = df[df['bedrooms'] >= 4].copy()
+        else:
+            df_filtered = df.head(0)  # Empty
+
+        # Sort by price
+        if 'price' in df_filtered.columns and not df_filtered.empty:
+            df_sorted = df_filtered.sort_values('price')
+        else:
+            df_sorted = df_filtered
+
+        # Select columns
+        display_cols = ['title', 'price', 'bedrooms', 'bathrooms', 'location',
+                       'property_type', '_site', 'listing_url']
+        df_export = df_sorted[[c for c in display_cols if c in df_sorted.columns]]
+
+        self._write_dataframe_to_sheet(ws, df_export, '4+ Bedroom Properties')
+
+    def _write_dataframe_to_sheet(self, ws, df: pd.DataFrame, title: str):
+        """Helper to write dataframe to worksheet with formatting."""
+        # Title row
+        ws['A1'] = title
+        ws['A1'].font = Font(size=14, bold=True, color='FFFFFF')
+        ws['A1'].fill = PatternFill(start_color="366092", end_color="366092", fill_type="solid")
+        ws.merge_cells(f'A1:{chr(65 + len(df.columns) - 1)}1')
+        ws['A1'].alignment = Alignment(horizontal='center', vertical='center')
+        ws.row_dimensions[1].height = 25
+
+        # Write headers (row 2)
+        for col_idx, col_name in enumerate(df.columns, 1):
+            cell = ws.cell(row=2, column=col_idx, value=str(col_name))
+            cell.font = Font(bold=True, color='FFFFFF')
+            cell.fill = PatternFill(start_color="4472C4", end_color="4472C4", fill_type="solid")
+            cell.alignment = Alignment(horizontal='center', vertical='center')
+
+        # Write data (starting row 3)
+        for row_idx, row_data in enumerate(df.itertuples(index=False), 3):
+            for col_idx, value in enumerate(row_data, 1):
+                # Format value
+                if pd.isna(value):
+                    formatted_value = ''
+                elif isinstance(value, (int, float)):
+                    formatted_value = value
+                elif isinstance(value, datetime):
+                    formatted_value = value.strftime('%Y-%m-%d %H:%M:%S')
+                else:
+                    formatted_value = str(value)
+
+                ws.cell(row=row_idx, column=col_idx, value=formatted_value)
+
+        # Auto-adjust column widths
+        for col_idx, col_name in enumerate(df.columns, 1):
+            col_letter = chr(64 + col_idx) if col_idx <= 26 else f"{chr(64 + (col_idx - 1) // 26)}{chr(65 + (col_idx - 1) % 26)}"
+
+            # Set reasonable widths based on column name
+            if 'title' in str(col_name).lower() or 'description' in str(col_name).lower():
+                ws.column_dimensions[col_letter].width = 50
+            elif 'url' in str(col_name).lower():
+                ws.column_dimensions[col_letter].width = 60
+            elif 'location' in str(col_name).lower() or 'estate' in str(col_name).lower():
+                ws.column_dimensions[col_letter].width = 30
+            elif 'price' in str(col_name).lower():
+                ws.column_dimensions[col_letter].width = 15
+            else:
+                ws.column_dimensions[col_letter].width = 20
+
+        # Freeze header rows
+        ws.freeze_panes = 'A3'
+
+        # Add auto-filter
+        last_col = chr(64 + len(df.columns)) if len(df.columns) <= 26 else f"{chr(64 + (len(df.columns) - 1) // 26)}{chr(65 + (len(df.columns) - 1) % 26)}"
+        ws.auto_filter.ref = f"A2:{last_col}2"
 
     def export_site_to_csv(self, site_key: str, output_dir: Path):
         """

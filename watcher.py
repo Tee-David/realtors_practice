@@ -261,7 +261,7 @@ def process_file(file_path: Path, state: WatcherState, dry_run: bool = False, er
 
 
 def run_once(state: WatcherState, dry_run: bool = False, verbose: bool = False):
-    """Process all pending files once and exit."""
+    """Process all pending files once and exit (with optional parallel processing)."""
     if verbose:
         logging.getLogger().setLevel(logging.DEBUG)
 
@@ -274,18 +274,87 @@ def run_once(state: WatcherState, dry_run: bool = False, verbose: bool = False):
 
     logging.info(f"Found {len(new_files)} files to process")
 
-    total_records = 0
-    processed_count = 0
-    error_log = []
+    # PARALLEL PROCESSING (NEW!)
+    # Use parallel processing if we have multiple files and it's enabled
+    use_parallel = len(new_files) > 1 and os.getenv("RP_WATCHER_PARALLEL", "1") == "1"
 
-    for file_path in new_files:
-        if shutdown_requested:
-            logging.info("Shutdown requested, stopping processing")
-            break
+    if use_parallel:
+        # Parallel processing with ThreadPoolExecutor
+        from concurrent.futures import ThreadPoolExecutor, as_completed
 
-        record_count = process_file(file_path, state, dry_run, error_log)
-        total_records += record_count
-        processed_count += 1
+        # Get max workers (default: 3, safe for GitHub Actions)
+        max_workers = int(os.getenv("RP_WATCHER_WORKERS", "3"))
+        max_workers = min(max_workers, len(new_files), 4)  # Cap at 4 for safety
+
+        logging.info(f"Using parallel processing: {max_workers} workers")
+
+        total_records = 0
+        processed_count = 0
+        error_log = []
+
+        # Optional progress bar
+        try:
+            from tqdm import tqdm
+            use_tqdm = True
+        except ImportError:
+            use_tqdm = False
+
+        with ThreadPoolExecutor(max_workers=max_workers, thread_name_prefix="watcher") as executor:
+            # Submit all file processing tasks
+            future_to_file = {
+                executor.submit(process_file, file_path, state, dry_run, error_log): file_path
+                for file_path in new_files
+            }
+
+            # Process results as they complete
+            if use_tqdm:
+                with tqdm(total=len(new_files), desc="Processing files", unit="file") as pbar:
+                    for future in as_completed(future_to_file):
+                        if shutdown_requested:
+                            logging.info("Shutdown requested, stopping processing")
+                            break
+
+                        file_path = future_to_file[future]
+                        try:
+                            record_count = future.result()
+                            total_records += record_count
+                            processed_count += 1
+                            pbar.set_postfix({"records": total_records}, refresh=True)
+                        except Exception as e:
+                            logging.error(f"Failed to process {file_path}: {e}")
+                        finally:
+                            pbar.update(1)
+            else:
+                # No progress bar
+                for future in as_completed(future_to_file):
+                    if shutdown_requested:
+                        logging.info("Shutdown requested, stopping processing")
+                        break
+
+                    file_path = future_to_file[future]
+                    try:
+                        record_count = future.result()
+                        total_records += record_count
+                        processed_count += 1
+                    except Exception as e:
+                        logging.error(f"Failed to process {file_path}: {e}")
+    else:
+        # Sequential processing (original behavior)
+        if not use_parallel:
+            logging.info("Using sequential processing (RP_WATCHER_PARALLEL=0 or single file)")
+
+        total_records = 0
+        processed_count = 0
+        error_log = []
+
+        for file_path in new_files:
+            if shutdown_requested:
+                logging.info("Shutdown requested, stopping processing")
+                break
+
+            record_count = process_file(file_path, state, dry_run, error_log)
+            total_records += record_count
+            processed_count += 1
 
     logging.info(f"Processing complete: {processed_count} files, {total_records} total records")
 

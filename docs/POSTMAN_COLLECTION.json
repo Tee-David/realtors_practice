@@ -1,15 +1,23 @@
 {
   "info": {
-    "name": "Real Estate Scraper API",
-    "description": "Complete API collection for Nigerian Real Estate Scraper Backend\n\n**Author**: Tee-David\n**Version**: 1.0.0\n**Base URL**: http://localhost:5000/api\n\n## Features\n- 23 endpoints across 6 categories\n- Health monitoring\n- Scraping management  \n- Site configuration (CRUD)\n- Log viewing\n- Data querying\n- Statistics generation\n\n## Setup\n1. Start API server: `python api_server.py`\n2. Import this collection into Postman\n3. Update environment variables if needed\n4. Test endpoints sequentially\n\n## Categories\n1. **Health** - API status check\n2. **Scraping** - Start, stop, monitor scraping runs\n3. **Sites** - Manage site configurations\n4. **Logs** - View logs and errors\n5. **Data** - Query scraped data\n6. **Stats** - View statistics and trends",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    "name": "Nigerian Real Estate Scraper API",
+    "description": "Complete API collection for the Nigerian Real Estate Scraper with 46 endpoints across 12 categories. Supports 82+ data sources with unlimited scalability.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "2.0.0"
   },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000/api",
+      "type": "string"
+    }
+  ],
   "item": [
     {
-      "name": "1. Health",
+      "name": "1. Health Check",
       "item": [
         {
-          "name": "Health Check",
+          "name": "API Health Check",
           "request": {
             "method": "GET",
             "header": [],
@@ -18,12 +26,10 @@
               "host": ["{{base_url}}"],
               "path": ["health"]
             },
-            "description": "Check if API server is running and healthy.\n\n**Response**:\n```json\n{\n  \"status\": \"healthy\",\n  \"timestamp\": \"2025-10-18T16:00:00.000000\",\n  \"version\": \"1.0.0\"\n}\n```"
-          },
-          "response": []
+            "description": "Check if API server is running"
+          }
         }
-      ],
-      "description": "Health check endpoints for monitoring API status"
+      ]
     },
     {
       "name": "2. Scraping Management",
@@ -32,24 +38,18 @@
           "name": "Start Scraping",
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "header": [{"key": "Content-Type", "value": "application/json"}],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"sites\": [\"npc\", \"propertypro\"],\n  \"max_pages\": 20,\n  \"geocoding\": true\n}"
+              "raw": "{\n  \"sites\": [\"npc\", \"propertypro\"],\n  \"max_pages\": 10,\n  \"geocoding\": true\n}"
             },
             "url": {
               "raw": "{{base_url}}/scrape/start",
               "host": ["{{base_url}}"],
               "path": ["scrape", "start"]
             },
-            "description": "Start a new scraping run.\n\n**Body Parameters**:\n- `sites` (array, optional): List of site keys to scrape. If empty, scrapes all enabled sites.\n- `max_pages` (int, optional): Override max pages per site (default: 30)\n- `geocoding` (bool, optional): Enable/disable geocoding (default: true)\n\n**Example Request**:\n```json\n{\n  \"sites\": [\"npc\", \"propertypro\"],\n  \"max_pages\": 20,\n  \"geocoding\": true\n}\n```\n\n**Success Response**:\n```json\n{\n  \"success\": true,\n  \"message\": \"Scraping started\",\n  \"pid\": 12345,\n  \"sites\": [\"npc\", \"propertypro\"],\n  \"started_at\": \"2025-10-18T16:00:00\"\n}\n```"
-          },
-          "response": []
+            "description": "Start scraping for selected sites"
+          }
         },
         {
           "name": "Get Scraping Status",
@@ -61,9 +61,8 @@
               "host": ["{{base_url}}"],
               "path": ["scrape", "status"]
             },
-            "description": "Get current scraping status.\n\n**Response (Running)**:\n```json\n{\n  \"running\": true,\n  \"pid\": 12345,\n  \"started_at\": \"2025-10-18T16:00:00\",\n  \"elapsed_seconds\": 120,\n  \"sites\": [\"npc\", \"propertypro\"],\n  \"current_site\": \"npc\"\n}\n```\n\n**Response (Not Running)**:\n```json\n{\n  \"running\": false,\n  \"last_run\": \"2025-10-18T15:00:00\",\n  \"last_duration_seconds\": 600\n}\n```"
-          },
-          "response": []
+            "description": "Get current scraping status and progress"
+          }
         },
         {
           "name": "Stop Scraping",
@@ -75,9 +74,8 @@
               "host": ["{{base_url}}"],
               "path": ["scrape", "stop"]
             },
-            "description": "Stop the currently running scraping process.\n\n**Success Response**:\n```json\n{\n  \"success\": true,\n  \"message\": \"Scraping stopped\",\n  \"pid\": 12345\n}\n```\n\n**Error Response (Not Running)**:\n```json\n{\n  \"success\": false,\n  \"message\": \"No scraping process is running\"\n}\n```"
-          },
-          "response": []
+            "description": "Stop current scraping process"
+          }
         },
         {
           "name": "Get Scraping History",
@@ -88,19 +86,12 @@
               "raw": "{{base_url}}/scrape/history?limit=10",
               "host": ["{{base_url}}"],
               "path": ["scrape", "history"],
-              "query": [
-                {
-                  "key": "limit",
-                  "value": "10"
-                }
-              ]
+              "query": [{"key": "limit", "value": "10"}]
             },
-            "description": "Get history of past scraping runs.\n\n**Query Parameters**:\n- `limit` (int, optional): Number of recent runs to return (default: 10)\n\n**Response**:\n```json\n{\n  \"total_runs\": 25,\n  \"history\": [\n    {\n      \"run_id\": 1,\n      \"started_at\": \"2025-10-18T15:00:00\",\n      \"completed_at\": \"2025-10-18T15:10:00\",\n      \"duration_seconds\": 600,\n      \"sites_scraped\": [\"npc\", \"propertypro\"],\n      \"total_listings\": 1500,\n      \"success\": true\n    }\n  ]\n}\n```"
-          },
-          "response": []
+            "description": "Get scraping history"
+          }
         }
-      ],
-      "description": "Endpoints for managing scraping operations"
+      ]
     },
     {
       "name": "3. Site Configuration",
@@ -115,12 +106,11 @@
               "host": ["{{base_url}}"],
               "path": ["sites"]
             },
-            "description": "Get list of all configured sites.\n\n**Response**:\n```json\n{\n  \"total_sites\": 50,\n  \"enabled_sites\": 5,\n  \"sites\": [\n    {\n      \"key\": \"npc\",\n      \"name\": \"Nigeria Property Centre\",\n      \"url\": \"https://nigeriapropertycentre.com/\",\n      \"enabled\": true,\n      \"parser\": \"specials\"\n    }\n  ]\n}\n```"
-          },
-          "response": []
+            "description": "Get all configured sites (82+)"
+          }
         },
         {
-          "name": "Get Site Details",
+          "name": "Get Specific Site",
           "request": {
             "method": "GET",
             "header": [],
@@ -129,55 +119,42 @@
               "host": ["{{base_url}}"],
               "path": ["sites", "npc"]
             },
-            "description": "Get detailed configuration for a specific site.\n\n**Path Parameters**:\n- `site_key`: Site identifier (e.g., \"npc\", \"propertypro\")\n\n**Response**:\n```json\n{\n  \"key\": \"npc\",\n  \"name\": \"Nigeria Property Centre\",\n  \"url\": \"https://nigeriapropertycentre.com/\",\n  \"enabled\": true,\n  \"parser\": \"specials\",\n  \"selectors\": {\n    \"card\": \"li.property-list\",\n    \"title\": \"h2\",\n    \"price\": \".price\"\n  },\n  \"overrides\": {\n    \"max_pages\": 40\n  }\n}\n```"
-          },
-          "response": []
+            "description": "Get configuration for specific site"
+          }
         },
         {
           "name": "Add New Site",
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "header": [{"key": "Content-Type", "value": "application/json"}],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"key\": \"newsite\",\n  \"name\": \"New Real Estate Site\",\n  \"url\": \"https://newsite.com\",\n  \"enabled\": true,\n  \"parser\": \"specials\",\n  \"selectors\": {\n    \"card\": \".property-card\",\n    \"title\": \"h3.title\",\n    \"price\": \".price\",\n    \"location\": \".location\"\n  }\n}"
+              "raw": "{\n  \"key\": \"newsite\",\n  \"name\": \"New Property Site\",\n  \"url\": \"https://newsite.com\",\n  \"enabled\": true,\n  \"parser\": \"specials\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/sites",
               "host": ["{{base_url}}"],
               "path": ["sites"]
             },
-            "description": "Add a new site to the configuration dynamically.\n\n**Body Parameters** (All Required):\n- `key` (string): Unique site identifier\n- `name` (string): Display name\n- `url` (string): Base URL\n- `enabled` (bool): Whether site is enabled\n- `parser` (string): Parser to use (\"specials\", \"generic\", \"custom\")\n- `selectors` (object, optional): CSS selectors for parsing\n\n**Success Response**:\n```json\n{\n  \"success\": true,\n  \"message\": \"Site 'newsite' added successfully\",\n  \"site\": { /* site config */ }\n}\n```\n\n**Note**: This automatically updates config.yaml file."
-          },
-          "response": []
+            "description": "Add new site to config.yaml"
+          }
         },
         {
           "name": "Update Site",
           "request": {
             "method": "PUT",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "header": [{"key": "Content-Type", "value": "application/json"}],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"enabled\": false,\n  \"overrides\": {\n    \"max_pages\": 50\n  }\n}"
+              "raw": "{\n  \"enabled\": false,\n  \"max_pages\": 50\n}"
             },
             "url": {
               "raw": "{{base_url}}/sites/npc",
               "host": ["{{base_url}}"],
               "path": ["sites", "npc"]
             },
-            "description": "Update an existing site's configuration.\n\n**Path Parameters**:\n- `site_key`: Site to update\n\n**Body Parameters** (All Optional):\n- `name` (string): Update display name\n- `url` (string): Update base URL\n- `enabled` (bool): Enable/disable site\n- `selectors` (object): Update CSS selectors\n- `overrides` (object): Update per-site overrides\n\n**Success Response**:\n```json\n{\n  \"success\": true,\n  \"message\": \"Site 'npc' updated successfully\",\n  \"site\": { /* updated config */ }\n}\n```"
-          },
-          "response": []
+            "description": "Update site configuration"
+          }
         },
         {
           "name": "Delete Site",
@@ -189,29 +166,425 @@
               "host": ["{{base_url}}"],
               "path": ["sites", "oldsite"]
             },
-            "description": "Delete a site from the configuration.\n\n**Path Parameters**:\n- `site_key`: Site to delete\n\n**Success Response**:\n```json\n{\n  \"success\": true,\n  \"message\": \"Site 'oldsite' deleted successfully\"\n}\n```\n\n**Warning**: This permanently removes the site from config.yaml."
-          },
-          "response": []
+            "description": "Remove site from configuration"
+          }
         },
         {
           "name": "Toggle Site Enable/Disable",
           "request": {
             "method": "PATCH",
-            "header": [],
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"enabled\": true\n}"
+            },
             "url": {
               "raw": "{{base_url}}/sites/npc/toggle",
               "host": ["{{base_url}}"],
               "path": ["sites", "npc", "toggle"]
             },
-            "description": "Toggle a site's enabled status.\n\n**Path Parameters**:\n- `site_key`: Site to toggle\n\n**Response**:\n```json\n{\n  \"success\": true,\n  \"message\": \"Site 'npc' is now disabled\",\n  \"enabled\": false\n}\n```"
-          },
-          "response": []
+            "description": "Enable or disable a site"
+          }
         }
-      ],
-      "description": "CRUD operations for site configuration management"
+      ]
     },
     {
-      "name": "4. Logs & Errors",
+      "name": "4. Data Query",
+      "item": [
+        {
+          "name": "List Data Files",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/data/sites",
+              "host": ["{{base_url}}"],
+              "path": ["data", "sites"]
+            },
+            "description": "List all available site data files"
+          }
+        },
+        {
+          "name": "Get Site Data",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/data/sites/npc?limit=50&offset=0",
+              "host": ["{{base_url}}"],
+              "path": ["data", "sites", "npc"],
+              "query": [
+                {"key": "limit", "value": "50"},
+                {"key": "offset", "value": "0"}
+              ]
+            },
+            "description": "Get data for specific site with pagination"
+          }
+        },
+        {
+          "name": "Get Master Workbook",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/data/master?limit=100&offset=0",
+              "host": ["{{base_url}}"],
+              "path": ["data", "master"],
+              "query": [
+                {"key": "limit", "value": "100"},
+                {"key": "offset", "value": "0"}
+              ]
+            },
+            "description": "Get all properties from master workbook"
+          }
+        },
+        {
+          "name": "Search Data",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/data/search?q=Lekki&limit=50",
+              "host": ["{{base_url}}"],
+              "path": ["data", "search"],
+              "query": [
+                {"key": "q", "value": "Lekki"},
+                {"key": "limit", "value": "50"}
+              ]
+            },
+            "description": "Full-text search across all data"
+          }
+        },
+        {
+          "name": "Advanced Query",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"filters\": {\n    \"bedrooms\": {\"gte\": 3},\n    \"price\": {\"lte\": 30000000},\n    \"location\": {\"contains\": \"Lekki\"},\n    \"property_type\": {\"contains\": \"Flat\"}\n  },\n  \"sort\": {\"field\": \"price\", \"order\": \"asc\"},\n  \"limit\": 50,\n  \"offset\": 0\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/query",
+              "host": ["{{base_url}}"],
+              "path": ["query"]
+            },
+            "description": "Advanced filtering with complex queries"
+          }
+        },
+        {
+          "name": "Query Summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/query/summary",
+              "host": ["{{base_url}}"],
+              "path": ["query", "summary"]
+            },
+            "description": "Get summary statistics for queries"
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Natural Language Search",
+      "item": [
+        {
+          "name": "Natural Language Search",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"3 bedroom flat in Lekki under 30 million\",\n  \"limit\": 50\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/search/natural",
+              "host": ["{{base_url}}"],
+              "path": ["search", "natural"]
+            },
+            "description": "Search using plain English queries"
+          }
+        },
+        {
+          "name": "Get Search Suggestions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/search/suggestions?q=3 bed",
+              "host": ["{{base_url}}"],
+              "path": ["search", "suggestions"],
+              "query": [{"key": "q", "value": "3 bed"}]
+            },
+            "description": "Get auto-complete suggestions for searches"
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Price History",
+      "item": [
+        {
+          "name": "Get Price History",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/price-history/hash_abc123",
+              "host": ["{{base_url}}"],
+              "path": ["price-history", "hash_abc123"]
+            },
+            "description": "Get price history for specific property"
+          }
+        },
+        {
+          "name": "Get Price Drops",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/price-drops?min_drop_pct=10&days=30",
+              "host": ["{{base_url}}"],
+              "path": ["price-drops"],
+              "query": [
+                {"key": "min_drop_pct", "value": "10"},
+                {"key": "days", "value": "30"}
+              ]
+            },
+            "description": "Get properties with recent price reductions"
+          }
+        },
+        {
+          "name": "Get Stale Listings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/stale-listings?min_days=90",
+              "host": ["{{base_url}}"],
+              "path": ["stale-listings"],
+              "query": [{"key": "min_days", "value": "90"}]
+            },
+            "description": "Get listings that haven't sold in X days"
+          }
+        },
+        {
+          "name": "Get Market Trends",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/market-trends?days=30&location=Lekki",
+              "host": ["{{base_url}}"],
+              "path": ["market-trends"],
+              "query": [
+                {"key": "days", "value": "30"},
+                {"key": "location", "value": "Lekki"}
+              ]
+            },
+            "description": "Get market trend analysis"
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Saved Searches",
+      "item": [
+        {
+          "name": "List Saved Searches",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/searches?user_id=user123",
+              "host": ["{{base_url}}"],
+              "path": ["searches"],
+              "query": [{"key": "user_id", "value": "user123"}]
+            },
+            "description": "Get all saved searches for a user"
+          }
+        },
+        {
+          "name": "Create Saved Search",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": \"user123\",\n  \"name\": \"Lekki Flats\",\n  \"criteria\": {\n    \"bedrooms\": {\"gte\": 3},\n    \"location\": {\"contains\": \"Lekki\"},\n    \"price\": {\"lte\": 30000000}\n  },\n  \"alert_frequency\": \"daily\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/searches",
+              "host": ["{{base_url}}"],
+              "path": ["searches"]
+            },
+            "description": "Save a new search with alert settings"
+          }
+        },
+        {
+          "name": "Get Saved Search",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/searches/search_id_123",
+              "host": ["{{base_url}}"],
+              "path": ["searches", "search_id_123"]
+            },
+            "description": "Get specific saved search details"
+          }
+        },
+        {
+          "name": "Update Saved Search",
+          "request": {
+            "method": "PUT",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Lekki Flats\",\n  \"alert_frequency\": \"weekly\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/searches/search_id_123",
+              "host": ["{{base_url}}"],
+              "path": ["searches", "search_id_123"]
+            },
+            "description": "Update saved search settings"
+          }
+        },
+        {
+          "name": "Delete Saved Search",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/searches/search_id_123",
+              "host": ["{{base_url}}"],
+              "path": ["searches", "search_id_123"]
+            },
+            "description": "Delete a saved search"
+          }
+        },
+        {
+          "name": "Get Search Stats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/searches/search_id_123/stats",
+              "host": ["{{base_url}}"],
+              "path": ["searches", "search_id_123", "stats"]
+            },
+            "description": "Get statistics for a saved search"
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. Health Monitoring",
+      "item": [
+        {
+          "name": "Overall Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health/overall?days=7",
+              "host": ["{{base_url}}"],
+              "path": ["health", "overall"],
+              "query": [{"key": "days", "value": "7"}]
+            },
+            "description": "Get overall system health status"
+          }
+        },
+        {
+          "name": "Site Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health/sites/npc?days=7",
+              "host": ["{{base_url}}"],
+              "path": ["health", "sites", "npc"],
+              "query": [{"key": "days", "value": "7"}]
+            },
+            "description": "Get health status for specific site"
+          }
+        },
+        {
+          "name": "Get Active Alerts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health/alerts",
+              "host": ["{{base_url}}"],
+              "path": ["health", "alerts"]
+            },
+            "description": "Get active health alerts"
+          }
+        },
+        {
+          "name": "Top Performers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health/top-performers?days=7&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["health", "top-performers"],
+              "query": [
+                {"key": "days", "value": "7"},
+                {"key": "limit", "value": "10"}
+              ]
+            },
+            "description": "Get top performing sites"
+          }
+        }
+      ]
+    },
+    {
+      "name": "9. Quality & Duplicates",
+      "item": [
+        {
+          "name": "Detect Duplicates",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"listings\": [\n    {\"title\": \"3 Bedroom Flat\", \"location\": \"Lekki\", \"price\": 25000000},\n    {\"title\": \"3BR Apartment\", \"location\": \"Lekki Ph1\", \"price\": 25000000}\n  ],\n  \"threshold\": 0.85\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/duplicates/detect",
+              "host": ["{{base_url}}"],
+              "path": ["duplicates", "detect"]
+            },
+            "description": "Detect duplicate listings using AI fuzzy matching"
+          }
+        },
+        {
+          "name": "Score Data Quality",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"listings\": [\n    {\n      \"title\": \"3 Bedroom Flat\",\n      \"price\": 25000000,\n      \"location\": \"Lekki\",\n      \"listing_url\": \"https://example.com/1\",\n      \"bedrooms\": 3,\n      \"images\": [\"img1.jpg\"]\n    }\n  ],\n  \"min_score\": 80\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/quality/score",
+              "host": ["{{base_url}}"],
+              "path": ["quality", "score"]
+            },
+            "description": "Score listings quality (1-100%)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "10. Logs & Statistics",
       "item": [
         {
           "name": "Get Logs",
@@ -223,22 +596,15 @@
               "host": ["{{base_url}}"],
               "path": ["logs"],
               "query": [
-                {
-                  "key": "limit",
-                  "value": "100"
-                },
-                {
-                  "key": "level",
-                  "value": "INFO"
-                }
+                {"key": "limit", "value": "100"},
+                {"key": "level", "value": "INFO"}
               ]
             },
-            "description": "Get recent log entries.\n\n**Query Parameters**:\n- `limit` (int, optional): Number of log lines to return (default: 100)\n- `level` (string, optional): Filter by log level (INFO, WARNING, ERROR, DEBUG)\n\n**Response**:\n```json\n{\n  \"total_lines\": 500,\n  \"returned_lines\": 100,\n  \"logs\": [\n    {\n      \"timestamp\": \"2025-10-18 16:00:00\",\n      \"level\": \"INFO\",\n      \"message\": \"Scraping npc started\"\n    }\n  ]\n}\n```"
-          },
-          "response": []
+            "description": "Get application logs"
+          }
         },
         {
-          "name": "Get Error Logs Only",
+          "name": "Get Error Logs",
           "request": {
             "method": "GET",
             "header": [],
@@ -246,19 +612,13 @@
               "raw": "{{base_url}}/logs/errors?limit=50",
               "host": ["{{base_url}}"],
               "path": ["logs", "errors"],
-              "query": [
-                {
-                  "key": "limit",
-                  "value": "50"
-                }
-              ]
+              "query": [{"key": "limit", "value": "50"}]
             },
-            "description": "Get only ERROR level log entries.\n\n**Query Parameters**:\n- `limit` (int, optional): Number of errors to return (default: 50)\n\n**Response**:\n```json\n{\n  \"total_errors\": 12,\n  \"errors\": [\n    {\n      \"timestamp\": \"2025-10-18 15:00:00\",\n      \"level\": \"ERROR\",\n      \"message\": \"Failed to scrape lamudi: Connection timeout\"\n    }\n  ]\n}\n```"
-          },
-          "response": []
+            "description": "Get error logs only"
+          }
         },
         {
-          "name": "Get Site-Specific Logs",
+          "name": "Get Site Logs",
           "request": {
             "method": "GET",
             "header": [],
@@ -266,135 +626,13 @@
               "raw": "{{base_url}}/logs/site/npc?limit=50",
               "host": ["{{base_url}}"],
               "path": ["logs", "site", "npc"],
-              "query": [
-                {
-                  "key": "limit",
-                  "value": "50"
-                }
-              ]
+              "query": [{"key": "limit", "value": "50"}]
             },
-            "description": "Get logs related to a specific site.\n\n**Path Parameters**:\n- `site_key`: Site to get logs for\n\n**Query Parameters**:\n- `limit` (int, optional): Number of log lines (default: 50)\n\n**Response**:\n```json\n{\n  \"site\": \"npc\",\n  \"total_lines\": 80,\n  \"logs\": [\n    {\n      \"timestamp\": \"2025-10-18 16:00:00\",\n      \"level\": \"INFO\",\n      \"message\": \"Scraping npc completed: 750 listings\"\n    }\n  ]\n}\n```"
-          },
-          "response": []
-        }
-      ],
-      "description": "View logs and error messages"
-    },
-    {
-      "name": "5. Data Query",
-      "item": [
-        {
-          "name": "List Available Data Files",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{base_url}}/data/sites",
-              "host": ["{{base_url}}"],
-              "path": ["data", "sites"]
-            },
-            "description": "Get list of sites with available data exports.\n\n**Response**:\n```json\n{\n  \"total_sites\": 25,\n  \"sites\": [\n    {\n      \"site_key\": \"npc\",\n      \"site_name\": \"Nigeria Property Centre\",\n      \"files\": [\n        {\n          \"filename\": \"2025-10-18_15-30-00_npc.csv\",\n          \"size_bytes\": 250000,\n          \"created_at\": \"2025-10-18T15:30:00\",\n          \"record_count\": 750\n        }\n      ]\n    }\n  ]\n}\n```"
-          },
-          "response": []
+            "description": "Get logs for specific site"
+          }
         },
         {
-          "name": "Get Site Data",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{base_url}}/data/sites/npc?limit=50&offset=0&format=json",
-              "host": ["{{base_url}}"],
-              "path": ["data", "sites", "npc"],
-              "query": [
-                {
-                  "key": "limit",
-                  "value": "50"
-                },
-                {
-                  "key": "offset",
-                  "value": "0"
-                },
-                {
-                  "key": "format",
-                  "value": "json"
-                }
-              ]
-            },
-            "description": "Get scraped data for a specific site.\n\n**Path Parameters**:\n- `site_key`: Site to get data for\n\n**Query Parameters**:\n- `limit` (int, optional): Number of records (default: 100)\n- `offset` (int, optional): Pagination offset (default: 0)\n- `format` (string, optional): \"json\" or \"csv\" (default: json)\n\n**Response**:\n```json\n{\n  \"site\": \"npc\",\n  \"total_records\": 750,\n  \"returned_records\": 50,\n  \"offset\": 0,\n  \"data\": [\n    {\n      \"title\": \"3 Bedroom Flat in Lekki\",\n      \"price\": \"50000000\",\n      \"location\": \"Lekki Phase 1\",\n      \"property_type\": \"Flat\",\n      \"bedrooms\": 3,\n      \"listing_url\": \"https://...\"\n    }\n  ]\n}\n```"
-          },
-          "response": []
-        },
-        {
-          "name": "Get Master Workbook",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{base_url}}/data/master?site=npc&limit=100",
-              "host": ["{{base_url}}"],
-              "path": ["data", "master"],
-              "query": [
-                {
-                  "key": "site",
-                  "value": "npc",
-                  "description": "Optional: Filter by site"
-                },
-                {
-                  "key": "limit",
-                  "value": "100"
-                }
-              ]
-            },
-            "description": "Get data from the consolidated master workbook.\n\n**Query Parameters**:\n- `site` (string, optional): Filter by specific site sheet\n- `limit` (int, optional): Number of records (default: 100)\n- `offset` (int, optional): Pagination offset (default: 0)\n\n**Response**:\n```json\n{\n  \"source\": \"MASTER_CLEANED_WORKBOOK.xlsx\",\n  \"sheet\": \"npc\",\n  \"total_sheets\": 25,\n  \"total_records\": 431,\n  \"returned_records\": 100,\n  \"data\": [ /* property listings */ ]\n}\n```"
-          },
-          "response": []
-        },
-        {
-          "name": "Search All Data",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{base_url}}/data/search?query=lekki&property_type=flat&min_price=30000000&max_price=60000000&limit=50",
-              "host": ["{{base_url}}"],
-              "path": ["data", "search"],
-              "query": [
-                {
-                  "key": "query",
-                  "value": "lekki",
-                  "description": "Search in title and location"
-                },
-                {
-                  "key": "property_type",
-                  "value": "flat"
-                },
-                {
-                  "key": "min_price",
-                  "value": "30000000"
-                },
-                {
-                  "key": "max_price",
-                  "value": "60000000"
-                },
-                {
-                  "key": "limit",
-                  "value": "50"
-                }
-              ]
-            },
-            "description": "Search across all scraped data with filters.\n\n**Query Parameters**:\n- `query` (string, optional): Full-text search in title and location\n- `property_type` (string, optional): Filter by property type\n- `location` (string, optional): Filter by location\n- `min_price` (int, optional): Minimum price\n- `max_price` (int, optional): Maximum price\n- `bedrooms` (int, optional): Number of bedrooms\n- `site` (string, optional): Filter by source site\n- `limit` (int, optional): Number of results (default: 50)\n- `offset` (int, optional): Pagination offset (default: 0)\n\n**Response**:\n```json\n{\n  \"query\": \"lekki\",\n  \"filters_applied\": {\n    \"property_type\": \"flat\",\n    \"min_price\": 30000000,\n    \"max_price\": 60000000\n  },\n  \"total_matches\": 125,\n  \"returned_records\": 50,\n  \"results\": [ /* matching properties */ ]\n}\n```"
-          },
-          "response": []
-        }
-      ],
-      "description": "Query and search scraped property data"
-    },
-    {
-      "name": "6. Statistics",
-      "item": [
-        {
-          "name": "Get Overview Stats",
+          "name": "Overview Statistics",
           "request": {
             "method": "GET",
             "header": [],
@@ -403,12 +641,11 @@
               "host": ["{{base_url}}"],
               "path": ["stats", "overview"]
             },
-            "description": "Get overall statistics summary.\n\n**Response**:\n```json\n{\n  \"total_sites\": 50,\n  \"enabled_sites\": 5,\n  \"total_listings\": 12450,\n  \"total_files\": 75,\n  \"last_scrape\": \"2025-10-18T15:00:00\",\n  \"total_scrapes\": 25,\n  \"average_listings_per_site\": 248.6,\n  \"storage_used_mb\": 42.5\n}\n```"
-          },
-          "response": []
+            "description": "Get overview statistics"
+          }
         },
         {
-          "name": "Get Site Stats",
+          "name": "Per-Site Statistics",
           "request": {
             "method": "GET",
             "header": [],
@@ -417,12 +654,11 @@
               "host": ["{{base_url}}"],
               "path": ["stats", "sites"]
             },
-            "description": "Get per-site statistics and performance.\n\n**Response**:\n```json\n{\n  \"sites\": [\n    {\n      \"site_key\": \"npc\",\n      \"site_name\": \"Nigeria Property Centre\",\n      \"enabled\": true,\n      \"total_scrapes\": 10,\n      \"last_scrape\": \"2025-10-18T15:00:00\",\n      \"last_count\": 750,\n      \"average_count\": 720,\n      \"total_listings\": 7200,\n      \"health_status\": \"healthy\",\n      \"avg_scrape_duration_seconds\": 900\n    }\n  ]\n}\n```"
-          },
-          "response": []
+            "description": "Get statistics for each site"
+          }
         },
         {
-          "name": "Get Trends",
+          "name": "Trend Analysis",
           "request": {
             "method": "GET",
             "header": [],
@@ -430,26 +666,111 @@
               "raw": "{{base_url}}/stats/trends?days=7",
               "host": ["{{base_url}}"],
               "path": ["stats", "trends"],
-              "query": [
-                {
-                  "key": "days",
-                  "value": "7"
-                }
-              ]
+              "query": [{"key": "days", "value": "7"}]
             },
-            "description": "Get historical trends over time.\n\n**Query Parameters**:\n- `days` (int, optional): Number of days to analyze (default: 7)\n\n**Response**:\n```json\n{\n  \"period_days\": 7,\n  \"start_date\": \"2025-10-11\",\n  \"end_date\": \"2025-10-18\",\n  \"trends\": [\n    {\n      \"date\": \"2025-10-18\",\n      \"total_listings\": 1500,\n      \"sites_scraped\": 5,\n      \"scrapes_count\": 3\n    }\n  ],\n  \"growth_rate\": 12.5,\n  \"most_active_site\": \"npc\"\n}\n```"
-          },
-          "response": []
+            "description": "Get trend analysis over time"
+          }
         }
-      ],
-      "description": "View statistics, trends, and analytics"
-    }
-  ],
-  "variable": [
+      ]
+    },
     {
-      "key": "base_url",
-      "value": "http://localhost:5000/api",
-      "type": "string"
+      "name": "11. Utilities",
+      "item": [
+        {
+          "name": "Validate Single URL",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"url\": \"https://nigeriapropertycentre.com/for-sale/flats-apartments/lagos/lekki\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/validate/url",
+              "host": ["{{base_url}}"],
+              "path": ["validate", "url"]
+            },
+            "description": "Validate single URL"
+          }
+        },
+        {
+          "name": "Validate Multiple URLs",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"urls\": [\n    \"https://nigeriapropertycentre.com/for-sale/flats\",\n    \"https://propertypro.ng/property-for-sale\"\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/validate/urls",
+              "host": ["{{base_url}}"],
+              "path": ["validate", "urls"]
+            },
+            "description": "Validate multiple URLs"
+          }
+        },
+        {
+          "name": "Filter by Location",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"listings\": [\n    {\"location\": \"Lekki, Lagos\"},\n    {\"location\": \"Abuja\"},\n    {\"location\": \"Ikeja, Lagos\"}\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/filter/location",
+              "host": ["{{base_url}}"],
+              "path": ["filter", "location"]
+            },
+            "description": "Filter listings by Lagos location"
+          }
+        },
+        {
+          "name": "Location Filter Stats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/filter/stats",
+              "host": ["{{base_url}}"],
+              "path": ["filter", "stats"]
+            },
+            "description": "Get location filter statistics"
+          }
+        },
+        {
+          "name": "Check Rate Limit",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"site_key\": \"npc\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/rate-limit/check",
+              "host": ["{{base_url}}"],
+              "path": ["rate-limit", "check"]
+            },
+            "description": "Check if can make request to site"
+          }
+        },
+        {
+          "name": "Rate Limit Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/rate-limit/status",
+              "host": ["{{base_url}}"],
+              "path": ["rate-limit", "status"]
+            },
+            "description": "Get rate limit status for all sites"
+          }
+        }
+      ]
     }
   ]
 }
