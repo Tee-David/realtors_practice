@@ -1,5 +1,7 @@
 # Nigerian Real Estate Scraper
 
+> **⚠️ DO NOT DELETE: README.md, HOW_TO_GET_API_KEY.md, .env.example, docs/ folder**
+
 > Enterprise-grade property aggregation platform with unlimited scalability (currently 82+ data sources configured), intelligent search, price tracking, and complete REST API. Automatically scrapes, cleans, deduplicates, and monitors 1000+ Lagos property listings daily. Add unlimited new sites via config.yaml - no code changes needed.
 
 ## 🚀 Quick Start

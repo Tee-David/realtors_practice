@@ -1,6 +1,19 @@
 # How to Get API Key (Super Simple!)
 
+> **⚠️ IMPORTANT: DO NOT DELETE THIS FILE!**
+> This is the main guide for generating API keys for frontend developers.
+> Keep this file - it's essential for onboarding and API access management.
+
 **3 steps to give your frontend developer an API key**
+
+---
+
+## ℹ️ About API Keys
+
+- **Do API keys expire?** No! API keys are permanent until you manually disable them
+- **How long do they last?** Forever (until you delete them)
+- **Can I have multiple keys?** Yes! Generate different keys for dev/staging/prod
+- **Are they secure?** Yes, as long as you don't commit them to git (they're in .gitignore)
 
 ---
 
@@ -100,4 +113,40 @@ python scripts/manage_api_keys.py env
 
 ---
 
+## FAQ
+
+### Do I need to regenerate keys regularly?
+
+**No!** API keys don't expire. However, it's good practice to rotate them every 90 days for security.
+
+### What if I want to disable a key?
+
+Use the management script:
+```bash
+python scripts/manage_api_keys.py disable key-name
+```
+
+### What's the difference between API Keys and JWT?
+
+- **API Keys:** Never expire, simpler, good for apps/services
+- **JWT Tokens:** Expire after 24 hours, better for user accounts
+
+For most frontend apps, **use API Keys** (simpler!).
+
+### Can I see all my keys?
+
+```bash
+python scripts/manage_api_keys.py list
+```
+
+### Where are keys stored?
+
+In `api_keys.json` (auto-created, never committed to git).
+
+---
+
 **Note:** The `manage_api_keys.py` script is just a fancy way to organize multiple keys. You don't need it if you just want one quick key.
+
+---
+
+> **⚠️ REMINDER: DO NOT DELETE THIS FILE - IT'S ESSENTIAL!**
