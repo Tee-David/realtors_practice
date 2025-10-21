@@ -25,8 +25,8 @@ Each listing is scored based on field completeness:
 ### Quality Tiers
 
 - **High Quality** (≥70%): Has required + most recommended fields
-- **Medium Quality** (40-69%): Has required + some recommended fields
-- **Low Quality** (<40%): Missing critical fields (REJECTED)
+- **Medium Quality** (30-69%): Has required + some recommended fields
+- **Low Quality** (<30%): Missing critical fields (REJECTED)
 
 ## Configuration
 
@@ -35,7 +35,7 @@ Each listing is scored based on field completeness:
 ```yaml
 quality:
   enabled: true
-  min_quality_score: 40  # Reject listings below 40%
+  min_quality_score: 30  # Reject listings below 30%
   export_quality_report: true
 ```
 
@@ -149,8 +149,8 @@ sites:
 ### In Logs
 
 ```
-INFO - npc: Quality filter rejected 3/3 listings (below 40% threshold). Avg quality: 17.5%
-INFO - cwlagos: All 44 listings passed quality filter (>= 40%). Avg quality: 76.9%
+INFO - npc: Quality filter rejected 3/3 listings (below 30% threshold). Avg quality: 17.5%
+INFO - cwlagos: All 44 listings passed quality filter (>= 30%). Avg quality: 76.9%
 INFO - Exported 43 listings for cwlagos (avg quality: 77.2%)
 ```
 
@@ -165,7 +165,7 @@ High Quality Sites (>70% avg):
   - cwlagos: 76.9%
   - propertypro: 65.0%
 
-Sites Needing Attention (<40% avg):
+Sites Needing Attention (<30% avg):
   - npc: 17.5% ⚠️ (0 exports)
   - buyletlive: 0% ⚠️ (0 exports)
 ```
@@ -182,7 +182,7 @@ Sites Needing Attention (<40% avg):
 - No new dependencies required
 
 **Backward Compatibility**:
-- ✅ Default threshold: 40% (keeps most good listings)
+- ✅ Default threshold: 30% (keeps most good listings)
 - ✅ Can be disabled by setting `min_quality_score: 0`
 - ✅ Returns stats for reporting
 
@@ -196,19 +196,19 @@ Sites Needing Attention (<40% avg):
 
 ### For Existing Sites
 1. Review current quality scores
-2. Top priority: Sites with <40% avg quality
+2. Top priority: Sites with <30% avg quality
 3. Add custom `detail_selectors` to config
 4. Re-test and verify improvement
 
 ### Quality Targets
-- **Minimum Acceptable**: 40% (required fields)
+- **Minimum Acceptable**: 30% (required fields)
 - **Good**: 70% (required + recommended)
 - **Excellent**: 85%+ (nearly complete data)
 
 ## Next Steps
 
 1. ✅ **Implemented**: Quality filtering active
-2. ✅ **Configured**: 40% global threshold set
+2. ✅ **Configured**: 30% global threshold set
 3. 🔄 **In Progress**: Fix NPC detail selectors
 4. ⏳ **Planned**: Auto-generate weekly quality reports
 5. ⏳ **Planned**: Alert system for failing sites

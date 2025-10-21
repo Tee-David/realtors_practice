@@ -49,7 +49,7 @@ pagination:
   scroll_steps: 12
 quality:
   enabled: true
-  min_quality_score: 40
+  min_quality_score: 30
   export_quality_report: true
 rate_limiting:
   delay_between_sites_seconds: 2
@@ -75,7 +75,7 @@ sites:
     parser: specials
     url: https://brokerfieldrealestate.com/
   buyletlive:
-    enabled: true
+    enabled: false
     name: BuyLetLive
     parser: specials
     url: https://buyletlive.com/
@@ -161,7 +161,7 @@ sites:
       property_type:
       - .property-type
       - .details dt:contains('Type') + dd
-    enabled: true
+    enabled: false
     name: Jiji Real Estate Section
     parser: specials
     url: https://jiji.ng/real-estate
@@ -285,7 +285,7 @@ sites:
       toilets:
       - .toilets .value
       - '[class*=''toilet'' i]'
-    enabled: true
+    enabled: false
     list_paths:
     - ''
     location_discovery:
@@ -425,7 +425,7 @@ sites:
       - .type
       toilets:
       - '[class*=''toilet'' i]'
-    enabled: true
+    enabled: false
     lagos_paths:
     - /property-for-sale/lagos
     - /property-for-rent/lagos

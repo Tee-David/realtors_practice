@@ -24,7 +24,7 @@ on:
 jobs:
   scrape:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 180  # Increased from 60 to 180 minutes (3 hours)
 
     steps:
       - name: Checkout code
@@ -76,6 +76,26 @@ jobs:
           echo "Processing scraped data..."
           python watcher.py --once
 
+      - name: Upload to Firestore
+        env:
+          FIREBASE_CREDENTIALS: ${{ secrets.FIREBASE_CREDENTIALS }}
+        run: |
+          echo "Uploading data to Firestore..."
+
+          # Create temporary credentials file from GitHub secret
+          echo "$FIREBASE_CREDENTIALS" > firebase-temp-credentials.json
+
+          # Set environment variable for the script
+          export FIREBASE_SERVICE_ACCOUNT=firebase-temp-credentials.json
+
+          # Run Firestore upload
+          python scripts/upload_to_firestore.py
+
+          # Clean up credentials file
+          rm firebase-temp-credentials.json
+
+          echo "Firestore upload complete!"
+
       - name: Generate summary
         if: always()
         run: |
@@ -102,9 +122,24 @@ jobs:
             if [ -f "exports/cleaned/MASTER_CLEANED_WORKBOOK.xlsx" ]; then
               SIZE=$(du -h exports/cleaned/MASTER_CLEANED_WORKBOOK.xlsx | cut -f1)
               echo "- Master workbook: Created ($SIZE)" >> $GITHUB_STEP_SUMMARY
+
+              # Count records in master workbook
+              RECORD_COUNT=$(python -c "import pandas as pd; print(len(pd.read_excel('exports/cleaned/MASTER_CLEANED_WORKBOOK.xlsx')))" 2>/dev/null || echo "Unknown")
+              echo "- Total records: $RECORD_COUNT" >> $GITHUB_STEP_SUMMARY
             fi
             echo "" >> $GITHUB_STEP_SUMMARY
           fi
+
+          # Firestore upload status
+          echo "### Firestore Upload" >> $GITHUB_STEP_SUMMARY
+          if [ -f "exports/cleaned/MASTER_CLEANED_WORKBOOK.xlsx" ]; then
+            echo "✅ Data uploaded to Firestore" >> $GITHUB_STEP_SUMMARY
+            echo "- Collection: \`properties\`" >> $GITHUB_STEP_SUMMARY
+            echo "- Queryable via: \`POST /api/firestore/query\`" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ No data to upload (master workbook not found)" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
 
           # Show recent log entries
           if [ -f "logs/scraper.log" ]; then

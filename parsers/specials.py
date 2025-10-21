@@ -65,6 +65,8 @@ def _is_property_url(url_str):
         r'.*/(?:for-sale|for-rent)/[^/]+/(?:lagos|abuja|port-harcourt)/?$',
         # Property type + location without specific listing (e.g., /houses/lagos)
         r'.*/(?:flats-apartments|houses|land|commercial)/(?:lagos|lekki|ajah|ikoyi)/?$',
+        # Property type category pages (e.g., /property-type/detached/, /property-type/maisonette/)
+        r'.*/property-type/[^/]+/?$',
     ]
 
     import re
