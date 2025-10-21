@@ -95,3 +95,6 @@ realtor-s-practice-firebase-adminsdk-fbsvc-c8563eb2f2.json
 firebase-credentials.json
 firebase-temp-credentials.json
 serviceAccountKey.json
+
+# API Keys (NEVER commit these!)
+api_keys.json
