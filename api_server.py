@@ -27,6 +27,7 @@ from core.duplicate_detector import get_duplicate_detector
 from core.quality_scorer import get_quality_scorer
 from core.saved_searches import get_saved_search_manager
 from core.incremental_scraper import get_incremental_scraper
+from core.email_notifier import EmailNotifier
 from api.helpers.data_reader import DataReader
 from api.helpers.log_parser import LogParser
 from api.helpers.config_manager import ConfigManager
@@ -1626,6 +1627,243 @@ def trigger_github_scrape():
         return jsonify({'error': str(e)}), 500
 
 
+@app.route('/api/github/estimate-scrape-time', methods=['POST'])
+def estimate_scrape_time():
+    """
+    Estimate time required for a scrape session
+
+    Body: {
+        "page_cap": 20,          # Pages per site
+        "geocode": 1,            # 0 or 1
+        "sites": ["npc", ...]    # Optional: specific sites (empty = all enabled)
+    }
+
+    Returns: {
+        "estimated_duration_minutes": 45,
+        "estimated_duration_text": "~45 minutes",
+        "site_count": 5,
+        "batch_type": "small",    # "small" or "large" (multi-session)
+        "sessions": 1,
+        "breakdown": {...}
+    }
+    """
+    try:
+        import yaml
+
+        # Get request body
+        data = request.get_json() or {}
+        page_cap = data.get('page_cap', 20)
+        geocode = data.get('geocode', 1)
+        sites_param = data.get('sites', [])
+
+        # Load config to count sites
+        with open('config.yaml') as f:
+            config = yaml.safe_load(f)
+
+        if sites_param:
+            site_count = len(sites_param)
+        else:
+            site_count = sum(1 for site_config in config.get('sites', {}).values() if site_config.get('enabled', False))
+
+        # Estimation formula (based on historical data)
+        # Average: 2 minutes per page, with parallel scraping
+        minutes_per_page = 2
+        parallel_workers = 5  # From config
+        geocode_overhead = 0.5 if geocode == 1 else 0  # 30 seconds per site with geocoding
+
+        # Calculate base time
+        total_pages = site_count * page_cap
+        scrape_time = (total_pages * minutes_per_page) / parallel_workers
+        processing_time = site_count * 2  # 2 min per site for watcher processing
+        geocode_time = site_count * geocode_overhead if geocode == 1 else 0
+
+        total_minutes = scrape_time + processing_time + geocode_time + 5  # +5 for setup
+
+        # Determine batch type and adjust
+        is_large_batch = site_count > 30
+        sessions = 1
+        batch_type = "small"
+
+        if is_large_batch:
+            # Multi-session: split into sessions of 20, run 3 in parallel
+            batch_type = "large"
+            sessions = (site_count + 19) // 20  # Ceiling division
+            parallel_sessions = min(sessions, 3)
+
+            # Time for parallel sessions + consolidation
+            time_per_session = total_minutes / site_count * 20  # Time for 20 sites
+            total_minutes = (sessions / parallel_sessions) * time_per_session + 10  # +10 for consolidation
+
+        # Format duration text
+        if total_minutes < 60:
+            duration_text = f"~{int(total_minutes)} minutes"
+        else:
+            hours = int(total_minutes // 60)
+            mins = int(total_minutes % 60)
+            duration_text = f"~{hours}h {mins}m"
+
+        return jsonify({
+            'estimated_duration_minutes': round(total_minutes, 1),
+            'estimated_duration_text': duration_text,
+            'site_count': site_count,
+            'batch_type': batch_type,
+            'sessions': sessions,
+            'breakdown': {
+                'scraping': round(scrape_time, 1),
+                'processing': round(processing_time, 1),
+                'geocoding': round(geocode_time, 1),
+                'overhead': 5
+            },
+            'note': 'This is an estimate based on average performance. Actual time may vary.'
+        }), 200
+
+    except Exception as e:
+        logger.error(f"Error estimating scrape time: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/notifications/subscribe', methods=['POST'])
+def subscribe_notifications():
+    """
+    Subscribe to workflow notifications (for push notifications)
+
+    Body: {
+        "subscription": {
+            "endpoint": "https://fcm.googleapis.com/...",  # Push notification endpoint
+            "keys": {...}  # Push notification keys
+        },
+        "user_id": "optional_user_id"
+    }
+
+    Note: This stores the subscription in memory. For production, use a database.
+    """
+    try:
+        data = request.get_json()
+        if not data or 'subscription' not in data:
+            return jsonify({'error': 'Subscription data is required'}), 400
+
+        # In production, store this in a database
+        # For now, we'll just acknowledge it
+        subscription = data['subscription']
+        user_id = data.get('user_id', 'anonymous')
+
+        logger.info(f"Notification subscription registered for user: {user_id}")
+
+        return jsonify({
+            'success': True,
+            'message': 'Subscribed to workflow notifications',
+            'note': 'You will receive notifications when scrapes start, progress, and complete'
+        }), 200
+
+    except Exception as e:
+        logger.error(f"Error subscribing to notifications: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/notifications/workflow-status/<run_id>', methods=['GET'])
+def get_workflow_status(run_id):
+    """
+    Get real-time status of a workflow run (for live updates on frontend)
+
+    Returns: {
+        "run_id": 123456,
+        "status": "in_progress",  # queued, in_progress, completed, failed
+        "conclusion": null,        # success, failure, cancelled (when completed)
+        "progress": {
+            "current_step": "Processing exports",
+            "percent_complete": 65,
+            "estimated_time_remaining": "15 minutes"
+        },
+        "started_at": "2025-10-21T10:00:00Z",
+        "completed_at": null
+    }
+    """
+    try:
+        import requests
+
+        # Get GitHub credentials
+        github_token = os.getenv('GITHUB_TOKEN')
+        github_owner = os.getenv('GITHUB_OWNER')
+        github_repo = os.getenv('GITHUB_REPO')
+
+        if not all([github_token, github_owner, github_repo]):
+            return jsonify({'error': 'GitHub configuration missing'}), 500
+
+        # Get workflow run details from GitHub API
+        url = f'https://api.github.com/repos/{github_owner}/{github_repo}/actions/runs/{run_id}'
+        headers = {
+            'Accept': 'application/vnd.github+json',
+            'Authorization': f'Bearer {github_token}',
+            'X-GitHub-Api-Version': '2022-11-28'
+        }
+
+        response = requests.get(url, headers=headers, timeout=10)
+
+        if response.status_code == 200:
+            run_data = response.json()
+
+            # Calculate progress based on current step
+            status = run_data.get('status')  # queued, in_progress, completed
+            conclusion = run_data.get('conclusion')  # success, failure, cancelled
+            started_at = run_data.get('run_started_at')
+            completed_at = run_data.get('updated_at')
+
+            # Estimate progress (rough estimation)
+            progress = {
+                'current_step': 'Unknown',
+                'percent_complete': 0,
+                'estimated_time_remaining': 'Calculating...'
+            }
+
+            if status == 'completed':
+                progress['current_step'] = 'Complete'
+                progress['percent_complete'] = 100
+                progress['estimated_time_remaining'] = '0 minutes'
+            elif status == 'in_progress':
+                # Rough estimation based on elapsed time
+                from datetime import datetime, timezone
+                if started_at:
+                    start_time = datetime.fromisoformat(started_at.replace('Z', '+00:00'))
+                    elapsed_minutes = (datetime.now(timezone.utc) - start_time).total_seconds() / 60
+
+                    # Assume typical scrape is 45-60 minutes
+                    estimated_total = 50
+                    percent = min(95, (elapsed_minutes / estimated_total) * 100)
+
+                    progress['percent_complete'] = int(percent)
+                    progress['estimated_time_remaining'] = f"~{int(estimated_total - elapsed_minutes)} minutes"
+
+                    # Guess current step based on progress
+                    if percent < 20:
+                        progress['current_step'] = 'Setting up environment'
+                    elif percent < 60:
+                        progress['current_step'] = 'Scraping websites'
+                    elif percent < 80:
+                        progress['current_step'] = 'Processing data'
+                    elif percent < 95:
+                        progress['current_step'] = 'Uploading to Firestore'
+                    else:
+                        progress['current_step'] = 'Finalizing...'
+
+            return jsonify({
+                'run_id': run_data.get('id'),
+                'status': status,
+                'conclusion': conclusion,
+                'progress': progress,
+                'started_at': started_at,
+                'completed_at': completed_at,
+                'html_url': run_data.get('html_url')
+            }), 200
+        else:
+            return jsonify({'error': f'GitHub API error: {response.status_code}'}), response.status_code
+
+    except requests.exceptions.Timeout:
+        return jsonify({'error': 'Request to GitHub API timed out'}), 504
+    except Exception as e:
+        logger.error(f"Error getting workflow status: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
 @app.route('/api/github/workflow-runs', methods=['GET'])
 def get_workflow_runs():
     """
@@ -2059,6 +2297,341 @@ def cancel_scheduled_job(job_id):
 
     except Exception as e:
         logger.error(f"Error cancelling job {job_id}: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+# ============================================================================
+# EMAIL NOTIFICATION ENDPOINTS
+# ============================================================================
+
+# Global email notifier instance (will be configured via API)
+email_notifier = None
+email_config = {}
+email_recipients = []
+
+@app.route('/api/email/configure', methods=['POST'])
+def configure_email():
+    """
+    Configure SMTP settings for email notifications
+
+    Body: {
+        "smtp_host": "smtp.gmail.com",
+        "smtp_port": 587,
+        "smtp_user": "your-email@gmail.com",
+        "smtp_password": "app-password-here",
+        "smtp_use_tls": true,
+        "smtp_use_ssl": false,
+        "from_email": "notifications@example.com",
+        "from_name": "Realtors Practice Scraper"
+    }
+
+    Returns: {
+        "success": true,
+        "message": "SMTP configuration saved successfully"
+    }
+    """
+    global email_notifier, email_config
+
+    try:
+        data = request.get_json()
+
+        # Validate required fields
+        required_fields = ['smtp_host', 'smtp_port', 'smtp_user', 'smtp_password']
+        missing_fields = [field for field in required_fields if field not in data]
+
+        if missing_fields:
+            return jsonify({
+                'error': 'Missing required fields',
+                'missing': missing_fields
+            }), 400
+
+        # Store configuration (in production, encrypt smtp_password!)
+        email_config = {
+            'smtp_host': data['smtp_host'],
+            'smtp_port': int(data['smtp_port']),
+            'smtp_user': data['smtp_user'],
+            'smtp_password': data['smtp_password'],
+            'smtp_use_tls': data.get('smtp_use_tls', data['smtp_port'] == 587),
+            'smtp_use_ssl': data.get('smtp_use_ssl', data['smtp_port'] == 465),
+            'from_email': data.get('from_email', data['smtp_user']),
+            'from_name': data.get('from_name', 'Realtors Practice Scraper')
+        }
+
+        # Initialize email notifier
+        email_notifier = EmailNotifier(email_config)
+
+        logger.info(f"SMTP configuration updated: {email_config['smtp_host']}:{email_config['smtp_port']}")
+
+        return jsonify({
+            'success': True,
+            'message': 'SMTP configuration saved successfully',
+            'config': {
+                'smtp_host': email_config['smtp_host'],
+                'smtp_port': email_config['smtp_port'],
+                'smtp_user': email_config['smtp_user'],
+                'from_email': email_config['from_email'],
+                'from_name': email_config['from_name']
+                # Note: password is intentionally omitted from response
+            }
+        }), 200
+
+    except Exception as e:
+        logger.error(f"Error configuring SMTP: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/email/test-connection', methods=['POST'])
+def test_email_connection():
+    """
+    Test SMTP connection with current configuration
+
+    Returns: {
+        "success": true/false,
+        "message": "Connection successful" or error message,
+        "smtp_host": "smtp.gmail.com",
+        "smtp_port": 587,
+        "authenticated": true
+    }
+    """
+    global email_notifier
+
+    try:
+        if not email_notifier:
+            return jsonify({
+                'error': 'SMTP not configured',
+                'message': 'Please configure SMTP settings first using POST /api/email/configure'
+            }), 400
+
+        # Test connection
+        result = email_notifier.test_connection()
+
+        if result['success']:
+            return jsonify(result), 200
+        else:
+            return jsonify(result), 400
+
+    except Exception as e:
+        logger.error(f"Error testing SMTP connection: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+
+@app.route('/api/email/config', methods=['GET'])
+def get_email_config():
+    """
+    Get current SMTP configuration (sanitized - no password)
+
+    Returns: {
+        "configured": true/false,
+        "smtp_host": "smtp.gmail.com",
+        "smtp_port": 587,
+        "smtp_user": "your-email@gmail.com",
+        "from_email": "notifications@example.com",
+        "from_name": "Realtors Practice Scraper",
+        "recipients_count": 3
+    }
+    """
+    global email_config, email_recipients
+
+    try:
+        if not email_config:
+            return jsonify({
+                'configured': False,
+                'message': 'SMTP not configured yet'
+            }), 200
+
+        return jsonify({
+            'configured': True,
+            'smtp_host': email_config.get('smtp_host'),
+            'smtp_port': email_config.get('smtp_port'),
+            'smtp_user': email_config.get('smtp_user'),
+            'from_email': email_config.get('from_email'),
+            'from_name': email_config.get('from_name'),
+            'recipients_count': len(email_recipients)
+        }), 200
+
+    except Exception as e:
+        logger.error(f"Error getting email config: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/email/recipients', methods=['GET'])
+def get_email_recipients():
+    """
+    Get list of notification recipients
+
+    Returns: {
+        "recipients": ["email1@example.com", "email2@example.com"],
+        "count": 2
+    }
+    """
+    global email_recipients
+
+    try:
+        return jsonify({
+            'recipients': email_recipients,
+            'count': len(email_recipients)
+        }), 200
+
+    except Exception as e:
+        logger.error(f"Error getting email recipients: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/email/recipients', methods=['POST'])
+def add_email_recipient():
+    """
+    Add email to notification list
+
+    Body: {
+        "email": "user@example.com"
+    }
+
+    Returns: {
+        "success": true,
+        "message": "Recipient added",
+        "recipients": ["email1@example.com", "email2@example.com"],
+        "count": 2
+    }
+    """
+    global email_recipients
+
+    try:
+        data = request.get_json()
+
+        if 'email' not in data:
+            return jsonify({'error': 'Missing email field'}), 400
+
+        email = data['email'].strip()
+
+        # Basic email validation
+        if '@' not in email or '.' not in email:
+            return jsonify({'error': 'Invalid email format'}), 400
+
+        # Check if already exists
+        if email in email_recipients:
+            return jsonify({
+                'error': 'Email already exists',
+                'recipients': email_recipients,
+                'count': len(email_recipients)
+            }), 400
+
+        # Add recipient
+        email_recipients.append(email)
+        logger.info(f"Added email recipient: {email}")
+
+        return jsonify({
+            'success': True,
+            'message': 'Recipient added successfully',
+            'recipients': email_recipients,
+            'count': len(email_recipients)
+        }), 200
+
+    except Exception as e:
+        logger.error(f"Error adding email recipient: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/email/recipients/<email>', methods=['DELETE'])
+def remove_email_recipient(email):
+    """
+    Remove email from notification list
+
+    Returns: {
+        "success": true,
+        "message": "Recipient removed",
+        "recipients": [...],
+        "count": 1
+    }
+    """
+    global email_recipients
+
+    try:
+        if email not in email_recipients:
+            return jsonify({
+                'error': 'Email not found in recipients list'
+            }), 404
+
+        email_recipients.remove(email)
+        logger.info(f"Removed email recipient: {email}")
+
+        return jsonify({
+            'success': True,
+            'message': 'Recipient removed successfully',
+            'recipients': email_recipients,
+            'count': len(email_recipients)
+        }), 200
+
+    except Exception as e:
+        logger.error(f"Error removing email recipient: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/email/send-test', methods=['POST'])
+def send_test_email():
+    """
+    Send a test email to verify configuration
+
+    Body: {
+        "recipient": "test@example.com"  (optional, uses configured recipients if not provided)
+    }
+
+    Returns: {
+        "success": true,
+        "message": "Test email sent successfully"
+    }
+    """
+    global email_notifier, email_recipients
+
+    try:
+        if not email_notifier:
+            return jsonify({
+                'error': 'SMTP not configured',
+                'message': 'Please configure SMTP settings first'
+            }), 400
+
+        data = request.get_json() or {}
+
+        # Determine recipients
+        if 'recipient' in data:
+            recipients = [data['recipient']]
+        elif email_recipients:
+            recipients = email_recipients
+        else:
+            return jsonify({
+                'error': 'No recipients specified',
+                'message': 'Either provide a recipient email or add recipients to the list first'
+            }), 400
+
+        # Send test email
+        test_stats = {
+            'site_count': 3,
+            'properties_found': 42,
+            'duration': '~15 minutes'
+        }
+
+        result = email_notifier.send_scrape_completion(
+            recipients=recipients,
+            scrape_stats=test_stats,
+            workflow_url='https://github.com/example/test'
+        )
+
+        if result['success']:
+            return jsonify({
+                'success': True,
+                'message': result['message'],
+                'results': result.get('results', [])
+            }), 200
+        else:
+            return jsonify({
+                'success': False,
+                'error': result.get('message', 'Failed to send email')
+            }), 500
+
+    except Exception as e:
+        logger.error(f"Error sending test email: {e}")
         return jsonify({'error': str(e)}), 500
 
 

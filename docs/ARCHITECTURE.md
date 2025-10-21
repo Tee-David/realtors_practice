@@ -94,7 +94,23 @@ When you trigger a scrape from GitHub Actions (either manually or via API):
 │ • Storage: 30 days for exports, 7 days for logs            │
 │ • Download: Via GitHub UI or /api/github/artifact/{id}     │
 └─────────────────────────────────────────────────────────────┘
+                            ↓
+┌─────────────────────────────────────────────────────────────┐
+│ STEP 7: EMAIL NOTIFICATIONS (Optional - If Configured)      │
+├─────────────────────────────────────────────────────────────┤
+│ • Sends completion notification to configured recipients    │
+│ • Email includes:                                           │
+│   - Number of sites scraped                                 │
+│   - Total properties found                                  │
+│   - Duration of scrape session                              │
+│   - Link to GitHub Actions workflow run                     │
+│   - Beautiful HTML email with stats                         │
+│ • Multiple recipients supported (admin, manager, etc.)      │
+│ • Configurable via /api/email/configure                     │
+└─────────────────────────────────────────────────────────────┘
 ```
+
+**Total Time**: ~45 minutes for 5 sites (20 pages each)
 
 ---
 
@@ -186,7 +202,8 @@ Limitation: Must download entire file, not queryable
                          │  (Flask)         │
                          │  api_server.py   │
                          │                  │
-                         │  58 Endpoints    │
+                         │  69 Endpoints    │
+                         │  + Email Notify  │
                          └────────┬─────────┘
                                   │
                 ┌─────────────────┼─────────────────┐

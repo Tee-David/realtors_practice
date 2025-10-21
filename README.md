@@ -53,7 +53,8 @@ realtors_practice/
 │   ├── exporter.py         # Export to CSV/XLSX
 │   ├── utils.py            # Utility functions
 │   ├── data_cleaner.py     # Advanced data cleaning
-│   └── master_workbook.py  # Master workbook management
+│   ├── master_workbook.py  # Master workbook management
+│   └── email_notifier.py   # SMTP email notifications
 │
 ├── parsers/                  # Site-specific parsers
 │   ├── specials.py         # Config-driven parser (50+ sites)
@@ -152,13 +153,16 @@ realtors_practice/
 - **Scraping history** - Complete audit trail of all scraping runs
 - **Error logging** - Comprehensive error tracking and reporting
 
-### 🔌 REST API (58 Endpoints)
+### 🔌 REST API (69 Endpoints)
 - **Scraping management** - Start, stop, monitor scraping via API
 - **Site configuration** - Add, update, delete, toggle sites programmatically
 - **Data query** - Search, filter, paginate property data
+- **Firebase Firestore** - Cloud database storage with advanced querying
+- **GitHub Actions** - Serverless scraping with time estimation & progress tracking
 - **Price history** - Get price changes, drops, trends
 - **Natural language search** - Search API for plain English queries
 - **Saved searches** - Full CRUD operations for user searches
+- **Email notifications** - SMTP configuration, test connection, manage recipients
 - **Health monitoring** - System health, site health, alerts
 - **Duplicates & quality** - Detect duplicates, score quality via API
 - **Logs & statistics** - Access logs, errors, site stats
@@ -557,14 +561,16 @@ This scraper is an **enterprise-grade property aggregation platform** that:
 7. **Automates** - Scheduled scraping, saved searches, instant alerts
 8. **Monitors** - Site health tracking, error logging, performance metrics
 9. **Exports** - CSV, Excel, Parquet formats with master workbook
-10. **API** - Complete REST API with 58 endpoints for frontend integration
+10. **API** - Complete REST API with 69 endpoints for frontend integration
+11. **Firestore** - Cloud database storage with automatic uploads after scraping
+12. **Email Notifications** - SMTP configuration for automatic completion alerts
 
-**For End Users**: Search with plain English, save searches, get price alerts, find deals
-**For Developers**: Complete REST API, TypeScript types, React hooks, comprehensive docs
-**For Administrators**: Health monitoring, error tracking, automated scheduling, site management
+**For End Users**: Search with plain English, save searches, get price alerts, find deals, receive email notifications
+**For Developers**: Complete REST API, TypeScript types, React hooks, comprehensive docs, Firestore integration
+**For Administrators**: Health monitoring, error tracking, automated scheduling, site management, email notifications
 
 See [USER_GUIDE.md](USER_GUIDE.md) for detailed explanation in simple terms.
 
 ---
 
-**Status**: ✅ Production Ready | **Version**: 2.0 | **Last Updated**: 2025-10-20 | **Tests**: 100/100 Passing
+**Status**: ✅ Production Ready | **Version**: 2.2 | **Last Updated**: 2025-10-21 | **Tests**: 100/100 Passing

@@ -1,8 +1,8 @@
 # Frontend Integration Guide
 
 **Date**: October 21, 2025
-**API Version**: 2.1
-**Total Endpoints**: 59 (55 Flask + 4 GitHub Actions)
+**API Version**: 2.2
+**Total Endpoints**: 69 (62 Core + 7 Email Notifications)
 
 ---
 
@@ -1573,6 +1573,464 @@ export default function GitHubScraperControl() {
 
 ---
 
+## Email Notifications (SMTP Configuration) ⭐⭐⭐⭐
+
+Configure email notifications to alert users when scrape sessions complete.
+
+### 1. Configure SMTP Settings
+
+**Endpoint**: `POST /api/email/configure`
+
+**Purpose**: Set up SMTP server configuration for sending emails
+
+**Request**:
+```javascript
+const configureSMTP = async (config) => {
+  const response = await api.post('/email/configure', {
+    smtp_host: 'smtp.gmail.com',
+    smtp_port: 587,
+    smtp_user: 'your-email@gmail.com',
+    smtp_password: 'your-app-password',
+    smtp_use_tls: true,
+    smtp_use_ssl: false,
+    from_email: 'notifications@example.com',
+    from_name: 'Real Estate Scraper'
+  });
+  return response.data;
+};
+```
+
+**Response**:
+```json
+{
+  "success": true,
+  "message": "SMTP configuration saved successfully",
+  "config": {
+    "smtp_host": "smtp.gmail.com",
+    "smtp_port": 587,
+    "smtp_user": "your-email@gmail.com",
+    "from_email": "notifications@example.com",
+    "from_name": "Real Estate Scraper"
+  }
+}
+```
+
+**UI Recommendation**:
+- SMTP configuration form in settings page
+- Fields for host, port, username, password
+- TLS/SSL toggle switches
+- "Save Configuration" button
+
+---
+
+### 2. Test SMTP Connection
+
+**Endpoint**: `POST /api/email/test-connection`
+
+**Purpose**: Verify SMTP configuration works correctly
+
+**Request**:
+```javascript
+const testSMTPConnection = async () => {
+  const response = await api.post('/email/test-connection');
+  return response.data;
+};
+```
+
+**Response**:
+```json
+{
+  "success": true,
+  "message": "Successfully connected to smtp.gmail.com:587",
+  "smtp_host": "smtp.gmail.com",
+  "smtp_port": 587,
+  "authenticated": true
+}
+```
+
+**UI Recommendation**:
+- "Test Connection" button next to configuration form
+- Show success/error message
+- Green checkmark if successful, red X if failed
+
+---
+
+### 3. Get SMTP Configuration
+
+**Endpoint**: `GET /api/email/config`
+
+**Purpose**: Retrieve current SMTP configuration (password hidden)
+
+**Request**:
+```javascript
+const getSMTPConfig = async () => {
+  const response = await api.get('/email/config');
+  return response.data;
+};
+```
+
+**Response**:
+```json
+{
+  "configured": true,
+  "smtp_host": "smtp.gmail.com",
+  "smtp_port": 587,
+  "smtp_user": "your-email@gmail.com",
+  "from_email": "notifications@example.com",
+  "from_name": "Real Estate Scraper",
+  "recipients_count": 3
+}
+```
+
+---
+
+### 4. Manage Email Recipients
+
+**Endpoint**: `GET /api/email/recipients`
+
+**Purpose**: Get list of email addresses that will receive notifications
+
+**Request**:
+```javascript
+const getRecipients = async () => {
+  const response = await api.get('/email/recipients');
+  return response.data;
+};
+```
+
+**Response**:
+```json
+{
+  "recipients": [
+    "admin@example.com",
+    "manager@example.com",
+    "developer@example.com"
+  ],
+  "count": 3
+}
+```
+
+---
+
+### 5. Add Email Recipient
+
+**Endpoint**: `POST /api/email/recipients`
+
+**Purpose**: Add a new email address to notification list
+
+**Request**:
+```javascript
+const addRecipient = async (email) => {
+  const response = await api.post('/email/recipients', {
+    email: email
+  });
+  return response.data;
+};
+
+// Usage
+await addRecipient('newuser@example.com');
+```
+
+**Response**:
+```json
+{
+  "success": true,
+  "message": "Recipient added successfully",
+  "recipients": ["admin@example.com", "newuser@example.com"],
+  "count": 2
+}
+```
+
+**UI Recommendation**:
+- Email input field with validation
+- "Add" button
+- List of current recipients below
+- Each recipient should have a "Remove" button
+
+---
+
+### 6. Remove Email Recipient
+
+**Endpoint**: `DELETE /api/email/recipients/<email>`
+
+**Purpose**: Remove an email address from notification list
+
+**Request**:
+```javascript
+const removeRecipient = async (email) => {
+  const response = await api.delete(`/email/recipients/${encodeURIComponent(email)}`);
+  return response.data;
+};
+
+// Usage
+await removeRecipient('olduser@example.com');
+```
+
+**Response**:
+```json
+{
+  "success": true,
+  "message": "Recipient removed successfully",
+  "recipients": ["admin@example.com"],
+  "count": 1
+}
+```
+
+---
+
+### 7. Send Test Email
+
+**Endpoint**: `POST /api/email/send-test`
+
+**Purpose**: Send a test notification email to verify everything works
+
+**Request**:
+```javascript
+const sendTestEmail = async (recipient = null) => {
+  const body = recipient ? { recipient: recipient } : {};
+  const response = await api.post('/email/send-test', body);
+  return response.data;
+};
+
+// Send to specific address
+await sendTestEmail('test@example.com');
+
+// Send to all configured recipients
+await sendTestEmail();
+```
+
+**Response**:
+```json
+{
+  "success": true,
+  "message": "Sent to 2/2 recipients",
+  "results": [
+    {"email": "admin@example.com", "success": true},
+    {"email": "manager@example.com", "success": true}
+  ]
+}
+```
+
+**UI Recommendation**:
+- "Send Test Email" button in settings
+- Optional field to specify test recipient
+- Show delivery status for each recipient
+
+---
+
+### Complete Email Notification Component Example
+
+```typescript
+// components/EmailNotificationSettings.tsx
+import React, { useState, useEffect } from 'react';
+import api from '../lib/api';
+
+export default function EmailNotificationSettings() {
+  const [config, setConfig] = useState(null);
+  const [recipients, setRecipients] = useState([]);
+  const [newRecipient, setNewRecipient] = useState('');
+  const [smtpConfig, setSMTPConfig] = useState({
+    smtp_host: '',
+    smtp_port: 587,
+    smtp_user: '',
+    smtp_password: '',
+    smtp_use_tls: true,
+    smtp_use_ssl: false,
+    from_email: '',
+    from_name: 'Real Estate Scraper'
+  });
+  const [testStatus, setTestStatus] = useState(null);
+
+  // Load current configuration
+  useEffect(() => {
+    loadConfig();
+    loadRecipients();
+  }, []);
+
+  const loadConfig = async () => {
+    const data = await api.get('/email/config').then(res => res.data);
+    setConfig(data);
+  };
+
+  const loadRecipients = async () => {
+    const data = await api.get('/email/recipients').then(res => res.data);
+    setRecipients(data.recipients);
+  };
+
+  const saveSMTPConfig = async () => {
+    try {
+      await api.post('/email/configure', smtpConfig);
+      alert('SMTP configuration saved!');
+      loadConfig();
+    } catch (error) {
+      alert('Error saving configuration: ' + error.response?.data?.error);
+    }
+  };
+
+  const testConnection = async () => {
+    try {
+      const result = await api.post('/email/test-connection').then(res => res.data);
+      setTestStatus(result.success ? 'success' : 'error');
+      alert(result.message);
+    } catch (error) {
+      setTestStatus('error');
+      alert('Connection failed: ' + error.response?.data?.error);
+    }
+  };
+
+  const addRecipient = async () => {
+    try {
+      const data = await api.post('/email/recipients', { email: newRecipient }).then(res => res.data);
+      setRecipients(data.recipients);
+      setNewRecipient('');
+    } catch (error) {
+      alert('Error adding recipient: ' + error.response?.data?.error);
+    }
+  };
+
+  const removeRecipient = async (email) => {
+    try {
+      const data = await api.delete(`/email/recipients/${encodeURIComponent(email)}`).then(res => res.data);
+      setRecipients(data.recipients);
+    } catch (error) {
+      alert('Error removing recipient: ' + error.response?.data?.error);
+    }
+  };
+
+  const sendTestEmail = async () => {
+    try {
+      const result = await api.post('/email/send-test').then(res => res.data);
+      alert(result.message);
+    } catch (error) {
+      alert('Error sending test email: ' + error.response?.data?.error);
+    }
+  };
+
+  return (
+    <div className="space-y-6 p-6">
+      <h2 className="text-2xl font-bold">Email Notification Settings</h2>
+
+      {/* SMTP Configuration */}
+      <div className="bg-white p-6 rounded-lg shadow">
+        <h3 className="text-xl font-semibold mb-4">SMTP Configuration</h3>
+        <div className="grid grid-cols-2 gap-4">
+          <input
+            placeholder="SMTP Host (e.g., smtp.gmail.com)"
+            value={smtpConfig.smtp_host}
+            onChange={(e) => setSMTPConfig({...smtpConfig, smtp_host: e.target.value})}
+            className="border p-2 rounded"
+          />
+          <input
+            type="number"
+            placeholder="SMTP Port (587 or 465)"
+            value={smtpConfig.smtp_port}
+            onChange={(e) => setSMTPConfig({...smtpConfig, smtp_port: parseInt(e.target.value)})}
+            className="border p-2 rounded"
+          />
+          <input
+            placeholder="Username / Email"
+            value={smtpConfig.smtp_user}
+            onChange={(e) => setSMTPConfig({...smtpConfig, smtp_user: e.target.value})}
+            className="border p-2 rounded"
+          />
+          <input
+            type="password"
+            placeholder="Password / App Password"
+            value={smtpConfig.smtp_password}
+            onChange={(e) => setSMTPConfig({...smtpConfig, smtp_password: e.target.value})}
+            className="border p-2 rounded"
+          />
+          <input
+            placeholder="From Email (optional)"
+            value={smtpConfig.from_email}
+            onChange={(e) => setSMTPConfig({...smtpConfig, from_email: e.target.value})}
+            className="border p-2 rounded"
+          />
+          <input
+            placeholder="From Name (optional)"
+            value={smtpConfig.from_name}
+            onChange={(e) => setSMTPConfig({...smtpConfig, from_name: e.target.value})}
+            className="border p-2 rounded"
+          />
+        </div>
+
+        <div className="flex gap-2 mt-4">
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={smtpConfig.smtp_use_tls}
+              onChange={(e) => setSMTPConfig({...smtpConfig, smtp_use_tls: e.target.checked})}
+            />
+            Use TLS
+          </label>
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={smtpConfig.smtp_use_ssl}
+              onChange={(e) => setSMTPConfig({...smtpConfig, smtp_use_ssl: e.target.checked})}
+            />
+            Use SSL
+          </label>
+        </div>
+
+        <div className="flex gap-2 mt-4">
+          <button onClick={saveSMTPConfig} className="bg-blue-500 text-white px-4 py-2 rounded">
+            Save Configuration
+          </button>
+          <button onClick={testConnection} className="bg-green-500 text-white px-4 py-2 rounded">
+            Test Connection
+          </button>
+        </div>
+      </div>
+
+      {/* Email Recipients */}
+      <div className="bg-white p-6 rounded-lg shadow">
+        <h3 className="text-xl font-semibold mb-4">Email Recipients</h3>
+        <div className="flex gap-2 mb-4">
+          <input
+            type="email"
+            placeholder="email@example.com"
+            value={newRecipient}
+            onChange={(e) => setNewRecipient(e.target.value)}
+            className="border p-2 rounded flex-1"
+          />
+          <button onClick={addRecipient} className="bg-blue-500 text-white px-4 py-2 rounded">
+            Add Recipient
+          </button>
+        </div>
+
+        <div className="space-y-2">
+          {recipients.map((email) => (
+            <div key={email} className="flex justify-between items-center p-2 bg-gray-50 rounded">
+              <span>{email}</span>
+              <button
+                onClick={() => removeRecipient(email)}
+                className="bg-red-500 text-white px-3 py-1 rounded text-sm"
+              >
+                Remove
+              </button>
+            </div>
+          ))}
+        </div>
+
+        <button onClick={sendTestEmail} className="mt-4 bg-purple-500 text-white px-4 py-2 rounded">
+          Send Test Email to All Recipients
+        </button>
+      </div>
+    </div>
+  );
+}
+```
+
+**IMPORTANT NOTES**:
+- **Gmail Users**: Use App Password instead of regular password (generate at: https://myaccount.google.com/apppasswords)
+- **Port 587**: Use with TLS enabled
+- **Port 465**: Use with SSL enabled
+- **Security**: SMTP password is NOT exposed in GET requests
+- **Automatic Emails**: When a scrape session completes in GitHub Actions, emails are sent automatically to all configured recipients
+
+---
+
 ## Summary: Implementation Priority
 
 ### Phase 1 (Week 1) - Core Features
@@ -1590,11 +2048,13 @@ export default function GitHubScraperControl() {
 8. **Price Drops** - `GET /api/price-drops`
 9. **Saved Searches** - `POST /api/searches`, `GET /api/searches`
 10. **Market Trends** - `GET /api/market-trends`
+11. **Email Notifications** - `POST /api/email/configure`, `POST /api/email/recipients`
 
 ### Phase 4 (Optional) - Admin Features
-11. **Health Monitoring** - `GET /api/health/overall`
-12. **Quality Filtering** - `POST /api/quality/score`
-13. **Statistics** - `GET /api/stats/overview`
+12. **Health Monitoring** - `GET /api/health/overall`
+13. **Quality Filtering** - `POST /api/quality/score`
+14. **Statistics** - `GET /api/stats/overview`
+15. **SMTP Management** - Full email notification settings page
 
 ---
 
