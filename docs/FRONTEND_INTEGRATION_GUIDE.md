@@ -1,8 +1,8 @@
 # Frontend Integration Guide
 
-**Date**: October 20, 2025
+**Date**: October 21, 2025
 **API Version**: 2.0
-**Total Endpoints**: 46
+**Total Endpoints**: 50 (46 Flask + 4 GitHub Actions)
 
 ---
 
@@ -860,6 +860,372 @@ curl -X POST http://localhost:5000/api/search/natural \
 
 # Get price drops
 curl "http://localhost:5000/api/price-drops?min_drop_pct=10&days=30"
+```
+
+---
+
+## GitHub Actions Integration (Serverless Deployment)
+
+For serverless scraping using GitHub Actions instead of running a local Flask API server.
+
+### Environment Variables
+
+```bash
+# .env.local
+GITHUB_TOKEN=ghp_your_personal_access_token_here
+GITHUB_OWNER=Tee-David
+GITHUB_REPO=realtors_practice
+```
+
+### 1. Trigger Scraper Workflow ⭐⭐⭐⭐
+
+**Endpoint**: `POST /api/github/trigger-scrape`
+
+**Purpose**: Trigger GitHub Actions workflow to run scraper in the cloud
+
+**Request**:
+```javascript
+const triggerGitHubScrape = async (options = {}) => {
+  const response = await api.post('/github/trigger-scrape', {
+    page_cap: options.pageCap || 20,
+    geocode: options.geocode !== undefined ? (options.geocode ? 1 : 0) : 1,
+    sites: options.sites || []  // Empty array = all enabled sites
+  });
+  return response.data;
+};
+
+// Usage
+const result = await triggerGitHubScrape({
+  pageCap: 30,
+  geocode: true,
+  sites: ['npc', 'propertypro']
+});
+```
+
+**Response**:
+```json
+{
+  "success": true,
+  "message": "Scraper workflow triggered successfully",
+  "run_url": "https://github.com/Tee-David/realtors_practice/actions",
+  "parameters": {
+    "page_cap": 30,
+    "geocode": 1,
+    "sites": ["npc", "propertypro"]
+  }
+}
+```
+
+**Error Response**:
+```json
+{
+  "error": "Missing GitHub configuration",
+  "details": "Set GITHUB_TOKEN, GITHUB_OWNER, and GITHUB_REPO environment variables"
+}
+```
+
+**UI Recommendation**:
+- "Trigger Cloud Scraper" button
+- Site selection (multi-select)
+- Pages per site slider
+- Enable geocoding checkbox
+- Link to GitHub Actions page to monitor progress
+
+---
+
+### 2. Get Workflow Runs ⭐⭐⭐⭐
+
+**Endpoint**: `GET /api/github/workflow-runs`
+
+**Purpose**: Monitor GitHub Actions workflow execution status
+
+**Request**:
+```javascript
+const getWorkflowRuns = async (perPage = 5) => {
+  const response = await api.get('/github/workflow-runs', {
+    params: { per_page: perPage }
+  });
+  return response.data;
+};
+
+// Usage
+const runs = await getWorkflowRuns(10);
+```
+
+**Response**:
+```json
+{
+  "workflow_runs": [
+    {
+      "id": 12345678,
+      "name": "Scraper Workflow",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2025-10-21T10:30:00Z",
+      "updated_at": "2025-10-21T10:45:00Z",
+      "html_url": "https://github.com/owner/repo/actions/runs/12345678",
+      "run_number": 42
+    }
+  ],
+  "total_count": 100
+}
+```
+
+**Status Values**:
+- `queued` - Workflow is waiting to start
+- `in_progress` - Workflow is currently running
+- `completed` - Workflow has finished
+
+**Conclusion Values** (when status is "completed"):
+- `success` - Workflow completed successfully
+- `failure` - Workflow failed with errors
+- `cancelled` - Workflow was cancelled manually
+- `skipped` - Workflow was skipped
+
+**UI Recommendation**:
+- Table/list of recent runs with status badges
+- Real-time polling (every 30 seconds while runs are active)
+- Link to GitHub Actions page for each run
+- Status indicators (green for success, red for failure, yellow for in_progress)
+
+---
+
+### 3. Get Artifacts (Scraped Data) ⭐⭐⭐⭐
+
+**Endpoint**: `GET /api/github/artifacts`
+
+**Purpose**: List available scraped data exports from GitHub Actions runs
+
+**Request**:
+```javascript
+const getArtifacts = async (perPage = 10) => {
+  const response = await api.get('/github/artifacts', {
+    params: { per_page: perPage }
+  });
+  return response.data;
+};
+
+// Usage
+const artifacts = await getArtifacts(20);
+```
+
+**Response**:
+```json
+{
+  "artifacts": [
+    {
+      "id": 987654321,
+      "name": "scraper-exports-42",
+      "size_in_bytes": 1048576,
+      "size_mb": 1.0,
+      "created_at": "2025-10-21T10:45:00Z",
+      "expired": false,
+      "archive_download_url": "https://api.github.com/repos/owner/repo/actions/artifacts/987654321/zip"
+    }
+  ],
+  "total_count": 25
+}
+```
+
+**UI Recommendation**:
+- Table of artifacts with name, size, and creation date
+- Download button for each artifact
+- Auto-refresh when new runs complete
+- Show expiration status (artifacts expire after 30 days)
+
+---
+
+### 4. Download Artifact ⭐⭐⭐
+
+**Endpoint**: `GET /api/github/artifact/<artifact_id>/download`
+
+**Purpose**: Get download URL for a specific artifact
+
+**Request**:
+```javascript
+const getArtifactDownloadUrl = async (artifactId) => {
+  const response = await api.get(`/github/artifact/${artifactId}/download`);
+  return response.data;
+};
+
+// Download artifact
+const downloadArtifact = async (artifactId) => {
+  const info = await getArtifactDownloadUrl(artifactId);
+
+  // Frontend must download with Authorization header
+  const githubToken = process.env.NEXT_PUBLIC_GITHUB_TOKEN;
+  const response = await fetch(info.download_url, {
+    headers: {
+      'Authorization': `Bearer ${githubToken}`
+    }
+  });
+
+  const blob = await response.blob();
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${info.name}.zip`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+};
+
+// Usage
+await downloadArtifact(987654321);
+```
+
+**Response**:
+```json
+{
+  "artifact_id": 987654321,
+  "name": "scraper-exports-42",
+  "download_url": "https://api.github.com/repos/owner/repo/actions/artifacts/987654321/zip",
+  "size_mb": 1.0,
+  "note": "Use this URL with Authorization header to download"
+}
+```
+
+**UI Recommendation**:
+- Download button that triggers browser download
+- Progress indicator during download
+- Success/error notifications
+
+---
+
+### GitHub Integration Example Component
+
+```tsx
+// components/GitHubScraperControl.tsx
+'use client';
+
+import { useState, useEffect } from 'react';
+import api from '@/lib/api';
+
+export default function GitHubScraperControl() {
+  const [runs, setRuns] = useState([]);
+  const [artifacts, setArtifacts] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const triggerScrape = async () => {
+    setLoading(true);
+    try {
+      const result = await api.post('/github/trigger-scrape', {
+        page_cap: 20,
+        geocode: 1
+      });
+      alert(result.message);
+      fetchWorkflowRuns();
+    } catch (error) {
+      alert(`Error: ${error.response?.data?.error || error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchWorkflowRuns = async () => {
+    try {
+      const { workflow_runs } = await api.get('/github/workflow-runs', {
+        params: { per_page: 5 }
+      }).then(res => res.data);
+      setRuns(workflow_runs);
+    } catch (error) {
+      console.error('Error fetching runs:', error);
+    }
+  };
+
+  const fetchArtifacts = async () => {
+    try {
+      const { artifacts: artifactList } = await api.get('/github/artifacts', {
+        params: { per_page: 10 }
+      }).then(res => res.data);
+      setArtifacts(artifactList);
+    } catch (error) {
+      console.error('Error fetching artifacts:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchWorkflowRuns();
+    fetchArtifacts();
+    const interval = setInterval(() => {
+      fetchWorkflowRuns();
+      fetchArtifacts();
+    }, 30000); // Refresh every 30 seconds
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="p-6">
+      <h2 className="text-2xl font-bold mb-4">GitHub Actions Scraper</h2>
+
+      {/* Trigger Button */}
+      <button
+        onClick={triggerScrape}
+        disabled={loading}
+        className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 disabled:opacity-50 mb-6"
+      >
+        {loading ? 'Triggering...' : 'Trigger Cloud Scraper'}
+      </button>
+
+      {/* Workflow Runs */}
+      <div className="mb-6">
+        <h3 className="text-xl font-semibold mb-3">Recent Runs</h3>
+        <div className="space-y-2">
+          {runs.map(run => (
+            <div key={run.id} className="border p-3 rounded flex justify-between items-center">
+              <div>
+                <div className="font-medium">Run #{run.run_number}</div>
+                <div className="text-sm text-gray-600">
+                  {new Date(run.created_at).toLocaleString()}
+                </div>
+              </div>
+              <div className="flex items-center space-x-3">
+                <span className={`px-3 py-1 rounded text-sm ${
+                  run.conclusion === 'success' ? 'bg-green-100 text-green-800' :
+                  run.conclusion === 'failure' ? 'bg-red-100 text-red-800' :
+                  'bg-yellow-100 text-yellow-800'
+                }`}>
+                  {run.status === 'completed' ? run.conclusion : run.status}
+                </span>
+                <a
+                  href={run.html_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-500 hover:underline text-sm"
+                >
+                  View →
+                </a>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Artifacts */}
+      <div>
+        <h3 className="text-xl font-semibold mb-3">Available Downloads</h3>
+        <div className="space-y-2">
+          {artifacts.map(artifact => (
+            <div key={artifact.id} className="border p-3 rounded flex justify-between items-center">
+              <div>
+                <div className="font-medium">{artifact.name}</div>
+                <div className="text-sm text-gray-600">
+                  {artifact.size_mb} MB • {new Date(artifact.created_at).toLocaleDateString()}
+                </div>
+              </div>
+              <button
+                onClick={() => window.open(artifact.archive_download_url, '_blank')}
+                className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+              >
+                Download
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
 ```
 
 ---

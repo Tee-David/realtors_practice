@@ -152,7 +152,7 @@ realtors_practice/
 - **Scraping history** - Complete audit trail of all scraping runs
 - **Error logging** - Comprehensive error tracking and reporting
 
-### 🔌 REST API (46 Endpoints)
+### 🔌 REST API (50 Endpoints)
 - **Scraping management** - Start, stop, monitor scraping via API
 - **Site configuration** - Add, update, delete, toggle sites programmatically
 - **Data query** - Search, filter, paginate property data
@@ -367,7 +367,7 @@ python test_site_specific.py            # Site config tests
 - **[FILE_STRUCTURE.md](docs/FILE_STRUCTURE.md)** - Clean file organization reference
 - **[COMPATIBILITY.md](docs/COMPATIBILITY.md)** - Firebase deployment compatibility
 
-## 🔌 Complete API Reference (46 Endpoints)
+## 🔌 Complete API Reference (50 Endpoints)
 
 ### **Scraping Management** (4 endpoints)
 - `POST /api/scrape/start` - Start scraping
@@ -433,6 +433,12 @@ python test_site_specific.py            # Site config tests
 - `POST /api/filter/location` - Filter by location
 - `POST /api/rate-limit/check` - Check rate limit
 
+### **GitHub Actions Integration** (4 endpoints)
+- `POST /api/github/trigger-scrape` - Trigger serverless scraping workflow
+- `GET /api/github/workflow-runs` - Monitor GitHub Actions runs
+- `GET /api/github/artifacts` - List scraped data artifacts
+- `GET /api/github/artifact/<id>/download` - Download artifact
+
 ## ✅ Production Ready Features
 
 ### **All Features Implemented (8/8)** ✓
@@ -451,7 +457,7 @@ python test_site_specific.py            # Site config tests
 - Integration tests complete
 
 ### **Code Metrics**
-- **Total API Endpoints**: 46
+- **Total API Endpoints**: 50
 - **Core Modules**: 15+
 - **Sites Configured**: 51 (unlimited scalability)
 - **Lines of Code**: ~25,000+
@@ -551,7 +557,7 @@ This scraper is an **enterprise-grade property aggregation platform** that:
 7. **Automates** - Scheduled scraping, saved searches, instant alerts
 8. **Monitors** - Site health tracking, error logging, performance metrics
 9. **Exports** - CSV, Excel, Parquet formats with master workbook
-10. **API** - Complete REST API with 46 endpoints for frontend integration
+10. **API** - Complete REST API with 50 endpoints for frontend integration
 
 **For End Users**: Search with plain English, save searches, get price alerts, find deals
 **For Developers**: Complete REST API, TypeScript types, React hooks, comprehensive docs

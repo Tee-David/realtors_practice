@@ -1068,6 +1068,677 @@ def score_quality():
         return jsonify({'error': str(e)}), 500
 
 # ============================================================================
+# FIRESTORE QUERY ENDPOINTS
+# ============================================================================
+
+@app.route('/api/firestore/query', methods=['POST'])
+def query_firestore():
+    """
+    Query properties from Firestore with advanced filtering
+
+    Body: {
+        "filters": {
+            "location": "Lekki",
+            "price_min": 5000000,
+            "price_max": 50000000,
+            "bedrooms_min": 3,
+            "bathrooms_min": 2,
+            "property_type": "Flat",
+            "source": "npc",
+            "quality_score_min": 0.7
+        },
+        "sort_by": "price",          # price, bedrooms, quality_score, scrape_timestamp
+        "sort_desc": true,
+        "limit": 50,
+        "offset": 0
+    }
+    """
+    try:
+        import firebase_admin
+        from firebase_admin import credentials, firestore
+
+        # Initialize Firebase if not already done
+        if not firebase_admin._apps:
+            cred_json = os.getenv('FIREBASE_CREDENTIALS')
+            cred_path = os.getenv('FIREBASE_SERVICE_ACCOUNT')
+
+            if cred_json:
+                cred = credentials.Certificate(json.loads(cred_json))
+            elif cred_path and Path(cred_path).exists():
+                cred = credentials.Certificate(cred_path)
+            else:
+                return jsonify({
+                    'error': 'Firebase not configured',
+                    'details': 'Set FIREBASE_CREDENTIALS or FIREBASE_SERVICE_ACCOUNT environment variable'
+                }), 500
+
+            firebase_admin.initialize_app(cred)
+
+        db = firestore.client()
+        data = request.get_json() or {}
+        filters = data.get('filters', {})
+
+        # Build query
+        query = db.collection('properties')
+
+        # Apply filters
+        if 'location' in filters:
+            query = query.where('location', '==', filters['location'])
+        if 'price_min' in filters:
+            query = query.where('price', '>=', filters['price_min'])
+        if 'price_max' in filters:
+            query = query.where('price', '<=', filters['price_max'])
+        if 'bedrooms_min' in filters:
+            query = query.where('bedrooms', '>=', filters['bedrooms_min'])
+        if 'bathrooms_min' in filters:
+            query = query.where('bathrooms', '>=', filters['bathrooms_min'])
+        if 'property_type' in filters:
+            query = query.where('property_type', '==', filters['property_type'])
+        if 'source' in filters:
+            query = query.where('source', '==', filters['source'])
+        if 'quality_score_min' in filters:
+            query = query.where('quality_score', '>=', filters['quality_score_min'])
+
+        # Apply sorting
+        sort_by = data.get('sort_by', 'scrape_timestamp')
+        sort_desc = data.get('sort_desc', True)
+        direction = firestore.Query.DESCENDING if sort_desc else firestore.Query.ASCENDING
+        query = query.order_by(sort_by, direction=direction)
+
+        # Apply pagination
+        limit = min(data.get('limit', 50), 1000)  # Max 1000 results
+        query = query.limit(limit)
+
+        if data.get('offset', 0) > 0:
+            query = query.offset(data['offset'])
+
+        # Execute query
+        results = query.stream()
+        properties = [doc.to_dict() for doc in results]
+
+        return jsonify({
+            'results': properties,
+            'count': len(properties),
+            'filters_applied': filters,
+            'sort_by': sort_by,
+            'sort_desc': sort_desc
+        }), 200
+
+    except ImportError:
+        return jsonify({
+            'error': 'Firebase Admin SDK not installed',
+            'details': 'Run: pip install firebase-admin'
+        }), 500
+    except Exception as e:
+        logger.error(f"Error querying Firestore: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+# ============================================================================
+# ADVANCED EXPORT ENDPOINTS (Multiple Formats & Filters)
+# ============================================================================
+
+@app.route('/api/export/generate', methods=['POST'])
+def generate_export():
+    """
+    Generate export file with advanced filtering and format options
+
+    Body: {
+        "format": "excel",           # excel, csv, json, parquet
+        "filters": {                 # Same as Firestore query filters
+            "location": "Lekki",
+            "price_min": 5000000,
+            "price_max": 50000000,
+            "bedrooms_min": 3,
+            "property_type": "Flat",
+            "date_from": "2025-01-01",
+            "date_to": "2025-10-21"
+        },
+        "columns": ["title", "price", "location", "bedrooms"],  # Optional: select specific columns
+        "sort_by": "price",
+        "sort_desc": true,
+        "include_images": false,     # Exclude images column for smaller file
+        "filename": "my_export"      # Optional custom filename
+    }
+    """
+    try:
+        data = request.get_json() or {}
+        export_format = data.get('format', 'excel').lower()
+        filters = data.get('filters', {})
+        columns = data.get('columns')
+        sort_by = data.get('sort_by', 'scrape_timestamp')
+        sort_desc = data.get('sort_desc', True)
+        include_images = data.get('include_images', True)
+        custom_filename = data.get('filename')
+
+        # Validate format
+        valid_formats = ['excel', 'csv', 'json', 'parquet']
+        if export_format not in valid_formats:
+            return jsonify({
+                'error': f'Invalid format: {export_format}',
+                'valid_formats': valid_formats
+            }), 400
+
+        # Query Firestore with filters
+        try:
+            import firebase_admin
+            from firebase_admin import firestore
+
+            if not firebase_admin._apps:
+                cred_json = os.getenv('FIREBASE_CREDENTIALS')
+                cred_path = os.getenv('FIREBASE_SERVICE_ACCOUNT')
+
+                if cred_json:
+                    from firebase_admin import credentials
+                    cred = credentials.Certificate(json.loads(cred_json))
+                    firebase_admin.initialize_app(cred)
+                elif cred_path and Path(cred_path).exists():
+                    from firebase_admin import credentials
+                    cred = credentials.Certificate(cred_path)
+                    firebase_admin.initialize_app(cred)
+
+            db = firestore.client()
+            query = db.collection('properties')
+
+            # Apply filters (same as query endpoint)
+            if 'location' in filters:
+                query = query.where('location', '==', filters['location'])
+            if 'price_min' in filters:
+                query = query.where('price', '>=', filters['price_min'])
+            if 'price_max' in filters:
+                query = query.where('price', '<=', filters['price_max'])
+            if 'bedrooms_min' in filters:
+                query = query.where('bedrooms', '>=', filters['bedrooms_min'])
+            if 'bathrooms_min' in filters:
+                query = query.where('bathrooms', '>=', filters['bathrooms_min'])
+            if 'property_type' in filters:
+                query = query.where('property_type', '==', filters['property_type'])
+            if 'source' in filters:
+                query = query.where('source', '==', filters['source'])
+
+            # Get all results (for export, we want everything matching filters)
+            results = query.stream()
+            properties = [doc.to_dict() for doc in results]
+
+        except ImportError:
+            # Fallback to local master workbook if Firestore not available
+            workbook_path = 'exports/cleaned/MASTER_CLEANED_WORKBOOK.xlsx'
+            if not Path(workbook_path).exists():
+                return jsonify({
+                    'error': 'No data available',
+                    'details': 'Firestore not configured and local master workbook not found'
+                }), 404
+
+            df = pd.read_excel(workbook_path)
+
+            # Apply filters to DataFrame
+            if 'location' in filters:
+                df = df[df['location'].str.contains(filters['location'], case=False, na=False)]
+            if 'price_min' in filters:
+                df = df[df['price'] >= filters['price_min']]
+            if 'price_max' in filters:
+                df = df[df['price'] <= filters['price_max']]
+            if 'bedrooms_min' in filters:
+                df = df[df['bedrooms'] >= filters['bedrooms_min']]
+            if 'property_type' in filters:
+                df = df[df['property_type'] == filters['property_type']]
+
+            properties = df.to_dict('records')
+
+        if not properties:
+            return jsonify({
+                'error': 'No properties match the filters',
+                'filters': filters
+            }), 404
+
+        # Convert to DataFrame for export
+        df = pd.DataFrame(properties)
+
+        # Select specific columns if requested
+        if columns:
+            available_cols = [col for col in columns if col in df.columns]
+            df = df[available_cols]
+
+        # Remove images column if requested
+        if not include_images and 'images' in df.columns:
+            df = df.drop('images', axis=1)
+
+        # Sort data
+        if sort_by in df.columns:
+            df = df.sort_values(sort_by, ascending=not sort_desc)
+
+        # Generate filename
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        if custom_filename:
+            base_filename = f"{custom_filename}_{timestamp}"
+        else:
+            base_filename = f"properties_export_{timestamp}"
+
+        # Create exports/temp directory if it doesn't exist
+        temp_dir = Path('exports/temp')
+        temp_dir.mkdir(parents=True, exist_ok=True)
+
+        # Generate file based on format
+        if export_format == 'excel':
+            filename = f"{base_filename}.xlsx"
+            filepath = temp_dir / filename
+            df.to_excel(filepath, index=False, engine='openpyxl')
+
+        elif export_format == 'csv':
+            filename = f"{base_filename}.csv"
+            filepath = temp_dir / filename
+            df.to_csv(filepath, index=False)
+
+        elif export_format == 'json':
+            filename = f"{base_filename}.json"
+            filepath = temp_dir / filename
+            df.to_json(filepath, orient='records', indent=2)
+
+        elif export_format == 'parquet':
+            filename = f"{base_filename}.parquet"
+            filepath = temp_dir / filename
+            df.to_parquet(filepath, index=False)
+
+        file_size = filepath.stat().st_size
+
+        return jsonify({
+            'success': True,
+            'download_url': f'/api/export/download/{filename}',
+            'filename': filename,
+            'format': export_format,
+            'record_count': len(df),
+            'file_size_bytes': file_size,
+            'file_size_mb': round(file_size / 1024 / 1024, 2),
+            'filters_applied': filters,
+            'columns': list(df.columns)
+        }), 200
+
+    except Exception as e:
+        logger.error(f"Error generating export: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/export/download/<filename>', methods=['GET'])
+def download_export_file(filename):
+    """Download generated export file"""
+    try:
+        from flask import send_file
+        filepath = Path('exports/temp') / filename
+
+        if not filepath.exists():
+            return jsonify({'error': 'File not found'}), 404
+
+        # Determine mimetype based on extension
+        extension = filepath.suffix.lower()
+        mimetypes = {
+            '.xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            '.csv': 'text/csv',
+            '.json': 'application/json',
+            '.parquet': 'application/octet-stream'
+        }
+
+        mimetype = mimetypes.get(extension, 'application/octet-stream')
+
+        return send_file(
+            filepath,
+            as_attachment=True,
+            download_name=filename,
+            mimetype=mimetype
+        )
+
+    except Exception as e:
+        logger.error(f"Error downloading export: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/export/formats', methods=['GET'])
+def get_export_formats():
+    """Get list of available export formats and their descriptions"""
+    return jsonify({
+        'formats': [
+            {
+                'format': 'excel',
+                'extension': '.xlsx',
+                'description': 'Microsoft Excel format - Best for manual analysis and sharing',
+                'supports_formulas': True,
+                'file_size': 'Medium',
+                'recommended_for': 'General use, business reports, manual analysis'
+            },
+            {
+                'format': 'csv',
+                'extension': '.csv',
+                'description': 'Comma-Separated Values - Universal compatibility',
+                'supports_formulas': False,
+                'file_size': 'Small',
+                'recommended_for': 'Import into other tools, lightweight storage'
+            },
+            {
+                'format': 'json',
+                'extension': '.json',
+                'description': 'JSON format - Best for programmatic access and APIs',
+                'supports_formulas': False,
+                'file_size': 'Medium',
+                'recommended_for': 'Web applications, API integration'
+            },
+            {
+                'format': 'parquet',
+                'extension': '.parquet',
+                'description': 'Apache Parquet - Optimized columnar format',
+                'supports_formulas': False,
+                'file_size': 'Very Small (compressed)',
+                'recommended_for': 'Data analysis, machine learning, big data'
+            }
+        ],
+        'available_filters': {
+            'location': 'Filter by location (exact match)',
+            'price_min': 'Minimum price',
+            'price_max': 'Maximum price',
+            'bedrooms_min': 'Minimum bedrooms',
+            'bathrooms_min': 'Minimum bathrooms',
+            'property_type': 'Property type (Flat, House, Land, etc.)',
+            'source': 'Data source (npc, propertypro, jiji, etc.)',
+            'quality_score_min': 'Minimum quality score (0.0 - 1.0)',
+            'date_from': 'Start date (YYYY-MM-DD)',
+            'date_to': 'End date (YYYY-MM-DD)'
+        }
+    }), 200
+
+
+# ============================================================================
+# GITHUB ACTIONS INTEGRATION ENDPOINTS
+# ============================================================================
+
+@app.route('/api/github/trigger-scrape', methods=['POST'])
+def trigger_github_scrape():
+    """
+    Trigger GitHub Actions workflow via repository_dispatch
+    Body: {
+        "page_cap": 20,         # Optional: pages per site
+        "geocode": 1,           # Optional: enable geocoding (0 or 1)
+        "sites": ["npc", ...]   # Optional: specific sites
+    }
+
+    Requires environment variables:
+    - GITHUB_TOKEN: Personal Access Token with 'repo' scope
+    - GITHUB_OWNER: Repository owner (e.g., 'Tee-David')
+    - GITHUB_REPO: Repository name (e.g., 'realtors_practice')
+    """
+    try:
+        import requests
+
+        # Get GitHub credentials from environment
+        github_token = os.getenv('GITHUB_TOKEN')
+        github_owner = os.getenv('GITHUB_OWNER')
+        github_repo = os.getenv('GITHUB_REPO')
+
+        if not all([github_token, github_owner, github_repo]):
+            return jsonify({
+                'error': 'Missing GitHub configuration',
+                'details': 'Set GITHUB_TOKEN, GITHUB_OWNER, and GITHUB_REPO environment variables'
+            }), 500
+
+        # Get request body
+        data = request.get_json() or {}
+        page_cap = data.get('page_cap', 20)
+        geocode = data.get('geocode', 1)
+        sites = data.get('sites', [])
+
+        # Prepare GitHub API request
+        url = f'https://api.github.com/repos/{github_owner}/{github_repo}/dispatches'
+        headers = {
+            'Accept': 'application/vnd.github+json',
+            'Authorization': f'Bearer {github_token}',
+            'X-GitHub-Api-Version': '2022-11-28'
+        }
+        payload = {
+            'event_type': 'trigger-scrape',
+            'client_payload': {
+                'page_cap': page_cap,
+                'geocode': geocode,
+                'sites': sites,
+                'triggered_by': 'api',
+                'timestamp': datetime.now().isoformat()
+            }
+        }
+
+        # Make request to GitHub API
+        response = requests.post(url, headers=headers, json=payload, timeout=10)
+
+        if response.status_code == 204:
+            return jsonify({
+                'success': True,
+                'message': 'Scraper workflow triggered successfully',
+                'run_url': f'https://github.com/{github_owner}/{github_repo}/actions',
+                'parameters': {
+                    'page_cap': page_cap,
+                    'geocode': geocode,
+                    'sites': sites if sites else 'all enabled sites'
+                }
+            }), 200
+        else:
+            return jsonify({
+                'error': f'GitHub API error: {response.status_code}',
+                'details': response.text
+            }), response.status_code
+
+    except requests.exceptions.Timeout:
+        logger.error("GitHub API request timed out")
+        return jsonify({'error': 'Request to GitHub API timed out'}), 504
+    except requests.exceptions.RequestException as e:
+        logger.error(f"GitHub API request failed: {e}")
+        return jsonify({'error': f'GitHub API request failed: {str(e)}'}), 500
+    except Exception as e:
+        logger.error(f"Error triggering GitHub workflow: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/github/workflow-runs', methods=['GET'])
+def get_workflow_runs():
+    """
+    Get recent GitHub Actions workflow runs
+    Query params:
+        - per_page: Number of runs to return (default: 5, max: 100)
+        - workflow_id: Filter by specific workflow file (optional)
+    """
+    try:
+        import requests
+
+        # Get GitHub credentials from environment
+        github_token = os.getenv('GITHUB_TOKEN')
+        github_owner = os.getenv('GITHUB_OWNER')
+        github_repo = os.getenv('GITHUB_REPO')
+
+        if not all([github_token, github_owner, github_repo]):
+            return jsonify({
+                'error': 'Missing GitHub configuration',
+                'details': 'Set GITHUB_TOKEN, GITHUB_OWNER, and GITHUB_REPO environment variables'
+            }), 500
+
+        # Get query parameters
+        per_page = min(int(request.args.get('per_page', 5)), 100)
+        workflow_id = request.args.get('workflow_id')
+
+        # Prepare GitHub API request
+        url = f'https://api.github.com/repos/{github_owner}/{github_repo}/actions/runs'
+        headers = {
+            'Accept': 'application/vnd.github+json',
+            'Authorization': f'Bearer {github_token}'
+        }
+        params = {'per_page': per_page}
+        if workflow_id:
+            params['workflow_id'] = workflow_id
+
+        # Make request to GitHub API
+        response = requests.get(url, headers=headers, params=params, timeout=10)
+
+        if response.status_code == 200:
+            data = response.json()
+            runs = data.get('workflow_runs', [])
+
+            # Simplify run data for frontend
+            simplified_runs = []
+            for run in runs:
+                simplified_runs.append({
+                    'id': run['id'],
+                    'name': run['name'],
+                    'status': run['status'],
+                    'conclusion': run['conclusion'],
+                    'created_at': run['created_at'],
+                    'updated_at': run['updated_at'],
+                    'html_url': run['html_url'],
+                    'run_number': run['run_number']
+                })
+
+            return jsonify({
+                'workflow_runs': simplified_runs,
+                'total_count': data.get('total_count', len(runs))
+            }), 200
+        else:
+            return jsonify({
+                'error': f'GitHub API error: {response.status_code}',
+                'details': response.text
+            }), response.status_code
+
+    except requests.exceptions.Timeout:
+        logger.error("GitHub API request timed out")
+        return jsonify({'error': 'Request to GitHub API timed out'}), 504
+    except requests.exceptions.RequestException as e:
+        logger.error(f"GitHub API request failed: {e}")
+        return jsonify({'error': f'GitHub API request failed: {str(e)}'}), 500
+    except Exception as e:
+        logger.error(f"Error getting workflow runs: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/github/artifacts', methods=['GET'])
+def get_artifacts():
+    """
+    Get GitHub Actions artifacts (scraped data exports)
+    Query params:
+        - per_page: Number of artifacts to return (default: 10, max: 100)
+    """
+    try:
+        import requests
+
+        # Get GitHub credentials from environment
+        github_token = os.getenv('GITHUB_TOKEN')
+        github_owner = os.getenv('GITHUB_OWNER')
+        github_repo = os.getenv('GITHUB_REPO')
+
+        if not all([github_token, github_owner, github_repo]):
+            return jsonify({
+                'error': 'Missing GitHub configuration',
+                'details': 'Set GITHUB_TOKEN, GITHUB_OWNER, and GITHUB_REPO environment variables'
+            }), 500
+
+        # Get query parameters
+        per_page = min(int(request.args.get('per_page', 10)), 100)
+
+        # Prepare GitHub API request
+        url = f'https://api.github.com/repos/{github_owner}/{github_repo}/actions/artifacts'
+        headers = {
+            'Accept': 'application/vnd.github+json',
+            'Authorization': f'Bearer {github_token}'
+        }
+        params = {'per_page': per_page}
+
+        # Make request to GitHub API
+        response = requests.get(url, headers=headers, params=params, timeout=10)
+
+        if response.status_code == 200:
+            data = response.json()
+            artifacts = data.get('artifacts', [])
+
+            # Simplify artifact data for frontend
+            simplified_artifacts = []
+            for artifact in artifacts:
+                simplified_artifacts.append({
+                    'id': artifact['id'],
+                    'name': artifact['name'],
+                    'size_in_bytes': artifact['size_in_bytes'],
+                    'size_mb': round(artifact['size_in_bytes'] / 1024 / 1024, 2),
+                    'created_at': artifact['created_at'],
+                    'expired': artifact['expired'],
+                    'archive_download_url': artifact['archive_download_url']
+                })
+
+            return jsonify({
+                'artifacts': simplified_artifacts,
+                'total_count': data.get('total_count', len(artifacts))
+            }), 200
+        else:
+            return jsonify({
+                'error': f'GitHub API error: {response.status_code}',
+                'details': response.text
+            }), response.status_code
+
+    except requests.exceptions.Timeout:
+        logger.error("GitHub API request timed out")
+        return jsonify({'error': 'Request to GitHub API timed out'}), 504
+    except requests.exceptions.RequestException as e:
+        logger.error(f"GitHub API request failed: {e}")
+        return jsonify({'error': f'GitHub API request failed: {str(e)}'}), 500
+    except Exception as e:
+        logger.error(f"Error getting artifacts: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/github/artifact/<int:artifact_id>/download', methods=['GET'])
+def download_artifact(artifact_id):
+    """
+    Download a specific GitHub artifact
+    Returns the download URL (frontend must download with Authorization header)
+    """
+    try:
+        import requests
+
+        # Get GitHub credentials from environment
+        github_token = os.getenv('GITHUB_TOKEN')
+        github_owner = os.getenv('GITHUB_OWNER')
+        github_repo = os.getenv('GITHUB_REPO')
+
+        if not all([github_token, github_owner, github_repo]):
+            return jsonify({
+                'error': 'Missing GitHub configuration',
+                'details': 'Set GITHUB_TOKEN, GITHUB_OWNER, and GITHUB_REPO environment variables'
+            }), 500
+
+        # Get artifact details first
+        url = f'https://api.github.com/repos/{github_owner}/{github_repo}/actions/artifacts/{artifact_id}'
+        headers = {
+            'Accept': 'application/vnd.github+json',
+            'Authorization': f'Bearer {github_token}'
+        }
+
+        response = requests.get(url, headers=headers, timeout=10)
+
+        if response.status_code == 200:
+            artifact = response.json()
+            return jsonify({
+                'artifact_id': artifact_id,
+                'name': artifact['name'],
+                'download_url': artifact['archive_download_url'],
+                'size_mb': round(artifact['size_in_bytes'] / 1024 / 1024, 2),
+                'note': 'Use this URL with Authorization header to download'
+            }), 200
+        else:
+            return jsonify({
+                'error': f'Artifact not found or GitHub API error: {response.status_code}',
+                'details': response.text
+            }), response.status_code
+
+    except requests.exceptions.Timeout:
+        logger.error("GitHub API request timed out")
+        return jsonify({'error': 'Request to GitHub API timed out'}), 504
+    except requests.exceptions.RequestException as e:
+        logger.error(f"GitHub API request failed: {e}")
+        return jsonify({'error': f'GitHub API request failed: {str(e)}'}), 500
+    except Exception as e:
+        logger.error(f"Error getting artifact download URL: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+# ============================================================================
 # ERROR HANDLERS
 # ============================================================================
 

@@ -1,9 +1,9 @@
 {
   "info": {
     "name": "Nigerian Real Estate Scraper API",
-    "description": "Complete API collection for the Nigerian Real Estate Scraper with 46 endpoints across 12 categories. Supports 82+ data sources with unlimited scalability.",
+    "description": "Complete API collection for the Nigerian Real Estate Scraper with 50 endpoints across 13 categories. Supports 82+ data sources with unlimited scalability. Includes GitHub Actions integration for serverless deployment.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "version": "2.0.0"
+    "version": "2.1.0"
   },
   "variable": [
     {
@@ -768,6 +768,73 @@
               "path": ["rate-limit", "status"]
             },
             "description": "Get rate limit status for all sites"
+          }
+        }
+      ]
+    },
+    {
+      "name": "12. GitHub Actions Integration",
+      "item": [
+        {
+          "name": "Trigger Scraper Workflow",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"page_cap\": 20,\n  \"geocode\": 1,\n  \"sites\": [\"npc\", \"propertypro\"]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/github/trigger-scrape",
+              "host": ["{{base_url}}"],
+              "path": ["github", "trigger-scrape"]
+            },
+            "description": "Trigger GitHub Actions workflow for serverless scraping. Requires GITHUB_TOKEN, GITHUB_OWNER, and GITHUB_REPO environment variables."
+          }
+        },
+        {
+          "name": "Get Workflow Runs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/github/workflow-runs?per_page=5",
+              "host": ["{{base_url}}"],
+              "path": ["github", "workflow-runs"],
+              "query": [
+                {"key": "per_page", "value": "5", "description": "Number of runs to return (max 100)"}
+              ]
+            },
+            "description": "Get recent GitHub Actions workflow runs with status and conclusion"
+          }
+        },
+        {
+          "name": "Get Artifacts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/github/artifacts?per_page=10",
+              "host": ["{{base_url}}"],
+              "path": ["github", "artifacts"],
+              "query": [
+                {"key": "per_page", "value": "10", "description": "Number of artifacts to return (max 100)"}
+              ]
+            },
+            "description": "List available scraped data artifacts from GitHub Actions runs"
+          }
+        },
+        {
+          "name": "Get Artifact Download URL",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/github/artifact/123456/download",
+              "host": ["{{base_url}}"],
+              "path": ["github", "artifact", "123456", "download"]
+            },
+            "description": "Get download URL for a specific artifact. Replace 123456 with actual artifact ID."
           }
         }
       ]

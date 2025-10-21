@@ -95,7 +95,7 @@ sites:
     parser: specials
     url: https://cwlagos.com/
   edenoasis:
-    enabled: true
+    enabled: false
     name: Eden Oasis
     parser: specials
     url: https://www.edenoasisrealty.com/
@@ -161,7 +161,7 @@ sites:
       property_type:
       - .property-type
       - .details dt:contains('Type') + dd
-    enabled: false
+    enabled: true
     name: Jiji Real Estate Section
     parser: specials
     url: https://jiji.ng/real-estate
