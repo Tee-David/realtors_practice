@@ -153,7 +153,7 @@ realtors_practice/
 - **Scraping history** - Complete audit trail of all scraping runs
 - **Error logging** - Comprehensive error tracking and reporting
 
-### 🔌 REST API (69 Endpoints)
+### 🔌 REST API (70 Endpoints)
 - **Scraping management** - Start, stop, monitor scraping via API
 - **Site configuration** - Add, update, delete, toggle sites programmatically
 - **Data query** - Search, filter, paginate property data
@@ -561,7 +561,7 @@ This scraper is an **enterprise-grade property aggregation platform** that:
 7. **Automates** - Scheduled scraping, saved searches, instant alerts
 8. **Monitors** - Site health tracking, error logging, performance metrics
 9. **Exports** - CSV, Excel, Parquet formats with master workbook
-10. **API** - Complete REST API with 69 endpoints for frontend integration
+10. **API** - Complete REST API with 70 endpoints for frontend integration
 11. **Firestore** - Cloud database storage with automatic uploads after scraping
 12. **Email Notifications** - SMTP configuration for automatic completion alerts
 

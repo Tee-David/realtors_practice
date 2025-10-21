@@ -147,6 +147,60 @@ jobs:
 
           echo "Firestore upload complete!"
 
+      - name: Send completion notification
+        if: success()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // Count properties from master workbook
+            const fs = require('fs');
+            let propertyCount = 'Unknown';
+            let siteCount = 'Unknown';
+
+            try {
+              const metadata = JSON.parse(fs.readFileSync('exports/cleaned/metadata.json', 'utf8'));
+              propertyCount = metadata.total_records || 'Unknown';
+              siteCount = metadata.site_count || 'Unknown';
+            } catch (e) {
+              console.log('Could not read metadata:', e.message);
+            }
+
+            // Create notification issue comment (if triggered via API, comment on issue)
+            // Otherwise, just log the notification
+            const notification = `
+            ## ✅ Scrape Session Completed Successfully!
+
+            **Workflow Run**: [#${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+
+            ### 📊 Results
+            - **Sites Scraped**: ${siteCount}
+            - **Properties Found**: ${propertyCount}
+            - **Duration**: ~${{ github.job.duration || 'N/A' }} minutes
+            - **Completed**: ${new Date().toISOString()}
+
+            ### 📥 Data Available
+            - **Firestore**: Data uploaded and queryable via \`POST /api/firestore/query\`
+            - **Artifacts**: Download exports from workflow run artifacts
+            - **Master Workbook**: Available in cleaned exports artifact
+
+            ### 🔗 Quick Links
+            - [View Workflow Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            - [Download Artifacts](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}#artifacts)
+
+            ---
+            🤖 Automated notification from GitHub Actions
+            `;
+
+            console.log(notification);
+
+            // If you want to send this to a specific GitHub issue or discussion, uncomment:
+            // await github.rest.issues.createComment({
+            //   owner: context.repo.owner,
+            //   repo: context.repo.repo,
+            //   issue_number: YOUR_ISSUE_NUMBER,
+            //   body: notification
+            // });
+
       - name: Generate summary
         if: always()
         run: |

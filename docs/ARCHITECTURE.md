@@ -202,8 +202,8 @@ Limitation: Must download entire file, not queryable
                          │  (Flask)         │
                          │  api_server.py   │
                          │                  │
-                         │  69 Endpoints    │
-                         │  + Email Notify  │
+                         │  70 Endpoints    │
+                         │  + Email + Export│
                          └────────┬─────────┘
                                   │
                 ┌─────────────────┼─────────────────┐

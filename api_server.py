@@ -1269,6 +1269,125 @@ def query_firestore_archive():
         return jsonify({'error': str(e)}), 500
 
 
+@app.route('/api/firestore/export', methods=['POST'])
+def export_firestore_data():
+    """
+    Export data directly from Firestore to various formats
+
+    Body: {
+        "format": "excel",      # excel, csv, json
+        "collection": "properties",  # properties or properties_archive
+        "filters": {...},       # Same filters as query endpoint
+        "limit": 1000          # Max records to export
+    }
+
+    Returns: File download or download URL
+    """
+    try:
+        import firebase_admin
+        from firebase_admin import credentials, firestore
+        import pandas as pd
+        import io
+
+        data = request.get_json() or {}
+        export_format = data.get('format', 'excel').lower()
+        collection_name = data.get('collection', 'properties')
+        filters = data.get('filters', {})
+        limit = min(data.get('limit', 1000), 10000)  # Max 10k records
+
+        # Validate format
+        valid_formats = ['excel', 'csv', 'json']
+        if export_format not in valid_formats:
+            return jsonify({
+                'error': f'Invalid format. Valid: {valid_formats}'
+            }), 400
+
+        # Initialize Firebase
+        if not firebase_admin._apps:
+            cred_path = os.getenv('FIREBASE_SERVICE_ACCOUNT', 'realtor-s-practice-firebase-adminsdk-fbsvc-c8563eb2f2.json')
+            cred = credentials.Certificate(cred_path)
+            firebase_admin.initialize_app(cred)
+
+        db = firestore.client()
+        query = db.collection(collection_name)
+
+        # Apply filters (same logic as query endpoint)
+        if filters.get('location'):
+            query = query.where('location', '==', filters['location'])
+        if filters.get('property_type'):
+            query = query.where('property_type', '==', filters['property_type'])
+        if filters.get('price_min'):
+            query = query.where('price', '>=', filters['price_min'])
+        if filters.get('price_max'):
+            query = query.where('price', '<=', filters['price_max'])
+
+        # Execute query
+        query = query.limit(limit)
+        docs = query.stream()
+
+        # Convert to list
+        properties = []
+        for doc in docs:
+            prop = doc.to_dict()
+            prop['id'] = doc.id
+            properties.append(prop)
+
+        if not properties:
+            return jsonify({
+                'error': 'No data found matching filters'
+            }), 404
+
+        # Convert to DataFrame
+        df = pd.DataFrame(properties)
+
+        # Remove Firebase internal fields
+        internal_fields = ['_firestore_id', '_timestamp']
+        df = df.drop(columns=[col for col in internal_fields if col in df.columns], errors='ignore')
+
+        # Generate file
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+
+        if export_format == 'excel':
+            output = io.BytesIO()
+            with pd.ExcelWriter(output, engine='openpyxl') as writer:
+                df.to_excel(writer, index=False, sheet_name='Properties')
+            output.seek(0)
+
+            return send_file(
+                output,
+                mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                as_attachment=True,
+                download_name=f'firestore_export_{timestamp}.xlsx'
+            )
+
+        elif export_format == 'csv':
+            output = io.StringIO()
+            df.to_csv(output, index=False)
+            output.seek(0)
+
+            return Response(
+                output.getvalue(),
+                mimetype='text/csv',
+                headers={'Content-Disposition': f'attachment; filename=firestore_export_{timestamp}.csv'}
+            )
+
+        elif export_format == 'json':
+            return jsonify({
+                'count': len(properties),
+                'properties': properties,
+                'exported_at': timestamp
+            }), 200
+
+    except ModuleNotFoundError:
+        return jsonify({
+            'error': 'Firebase Admin SDK not installed',
+            'details': 'Run: pip install firebase-admin'
+        }), 500
+    except Exception as e:
+        logger.error(f"Error exporting from Firestore: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
 # ============================================================================
 # ADVANCED EXPORT ENDPOINTS (Multiple Formats & Filters)
 # ============================================================================

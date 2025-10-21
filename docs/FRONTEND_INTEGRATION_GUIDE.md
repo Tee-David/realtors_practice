@@ -1,8 +1,50 @@
 # Frontend Integration Guide
 
 **Date**: October 21, 2025
-**API Version**: 2.2
-**Total Endpoints**: 69 (62 Core + 7 Email Notifications)
+**API Version**: 2.3
+**Total Endpoints**: 70 (62 Core + 7 Email + 1 Export)
+
+**Maps & Visualization**: Use **OpenStreetMap** for all map displays and location visualization
+
+### OpenStreetMap Integration
+
+For property locations and map visualization, use **OpenStreetMap** with **Leaflet.js** or **React-Leaflet**:
+
+```bash
+# Install Leaflet for maps
+npm install leaflet react-leaflet
+```
+
+**Example Map Component**:
+```typescript
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+
+function PropertyMap({ properties }) {
+  return (
+    <MapContainer center={[6.5244, 3.3792]} zoom={11} style={{height: '400px'}}>
+      {/* OpenStreetMap Tile Layer */}
+      <TileLayer
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      />
+
+      {/* Property Markers */}
+      {properties.map(property => (
+        property.latitude && property.longitude && (
+          <Marker key={property.id} position={[property.latitude, property.longitude]}>
+            <Popup>
+              <strong>{property.title}</strong><br/>
+              {property.price_formatted}<br/>
+              {property.location}
+            </Popup>
+          </Marker>
+        )
+      ))}
+    </MapContainer>
+  );
+}
+```
 
 ---
 
@@ -967,6 +1009,61 @@ Archived properties are listings that haven't been seen in recent scrapes (>30 d
 - Separate "Historical Data" section for analysts/developers
 - Export historical data for ML models
 - Price trend visualization over time
+
+---
+
+### Export Firestore Data Directly
+
+**Endpoint**: `POST /api/firestore/export`
+
+**Purpose**: Export data directly from Firestore database to Excel, CSV, or JSON
+
+**Request**:
+```javascript
+const exportFirestoreData = async (format, filters, limit = 1000) => {
+  const response = await api.post('/firestore/export', {
+    format: format,           // 'excel', 'csv', or 'json'
+    collection: 'properties', // 'properties' or 'properties_archive'
+    filters: filters,
+    limit: limit              // Max 10,000 records
+  }, {
+    responseType: format === 'json' ? 'json' : 'blob'
+  });
+  return response;
+};
+
+// Usage - Export filtered data
+const data = await exportFirestoreData('excel', {
+  location: 'Lekki',
+  price_min: 10000000,
+  price_max: 50000000
+}, 5000);
+
+// Download the file (for Excel/CSV)
+if (format !== 'json') {
+  const url = window.URL.createObjectURL(new Blob([data]));
+  const link = document.createElement('a');
+  link.href = url;
+  link.setAttribute('download', `firestore_export_${Date.now()}.${format === 'excel' ? 'xlsx' : 'csv'}`);
+  document.body.appendChild(link);
+  link.click();
+}
+```
+
+**Response** (JSON format):
+```json
+{
+  "count": 142,
+  "properties": [...],
+  "exported_at": "20251021_143022"
+}
+```
+
+**UI Recommendation**:
+- Add "Export from Cloud" button next to search results
+- Format selector (Excel, CSV, JSON)
+- Progress indicator for large exports
+- Download happens automatically for Excel/CSV
 
 ---
 
