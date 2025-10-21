@@ -43,7 +43,6 @@ realtors_practice/
 ├── main.py                    # Main scraper entry point
 ├── watcher.py                # Export watcher service
 ├── config.yaml               # Configuration file
-├── CLAUDE.md                 # AI assistant context
 │
 ├── core/                     # Core modules
 │   ├── config_loader.py     # Configuration management
@@ -365,7 +364,6 @@ python test_site_specific.py            # Site config tests
 - **[IMPLEMENTATION_COMPLETE.md](IMPLEMENTATION_COMPLETE.md)** - Complete feature documentation
 
 **Architecture:**
-- **[CLAUDE.md](CLAUDE.md)** - AI assistant context & project overview
 - **[STRUCTURE.md](docs/STRUCTURE.md)** - Detailed project architecture
 - **[FILE_STRUCTURE.md](docs/FILE_STRUCTURE.md)** - Clean file organization reference
 - **[COMPATIBILITY.md](docs/COMPATIBILITY.md)** - Firebase deployment compatibility

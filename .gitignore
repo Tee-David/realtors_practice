@@ -70,8 +70,14 @@ Thumbs.db
 # Local documentation (not for GitHub)
 LAYMAN.md
 
+# AI Context (internal use only - not for GitHub)
+AI_CONTEXT.md
+
 # Claude AI
 .claude/
 
 # Safepoint backups (local only)
 safepoint_backups/
+
+# Session summaries (internal documentation)
+docs/sessions/
