@@ -1,9 +1,9 @@
 {
   "info": {
     "name": "Nigerian Real Estate Scraper API",
-    "description": "Complete API collection for the Nigerian Real Estate Scraper with 50 endpoints across 13 categories. Supports 82+ data sources with unlimited scalability. Includes GitHub Actions integration for serverless deployment.",
+    "description": "Complete API collection for the Nigerian Real Estate Scraper with 58 endpoints across 16 categories. Supports 82+ data sources with unlimited scalability. Includes Firestore queries, advanced exports, scheduled scraping, and GitHub Actions integration.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "version": "2.1.0"
+    "version": "2.2.0"
   },
   "variable": [
     {

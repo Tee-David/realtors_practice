@@ -2,7 +2,7 @@
 
 **Date**: October 21, 2025
 **API Version**: 2.0
-**Total Endpoints**: 50 (46 Flask + 4 GitHub Actions)
+**Total Endpoints**: 58 (54 Flask + 4 GitHub Actions)
 
 ---
 
@@ -861,6 +861,318 @@ curl -X POST http://localhost:5000/api/search/natural \
 # Get price drops
 curl "http://localhost:5000/api/price-drops?min_drop_pct=10&days=30"
 ```
+
+---
+
+## Firestore Query (Fast Cloud Database) ⭐⭐⭐⭐⭐
+
+### Query Firestore Database
+
+**Endpoint**: `POST /api/firestore/query`
+
+**Purpose**: Query properties stored in Firebase Firestore with advanced filtering
+
+**Request**:
+```javascript
+const queryFirestore = async (filters, options = {}) => {
+  const response = await api.post('/firestore/query', {
+    filters: filters,
+    limit: options.limit || 50,
+    sort_by: options.sortBy || 'scrape_timestamp',
+    sort_desc: options.sortDesc !== false
+  });
+  return response.data;
+};
+
+// Usage
+const results = await queryFirestore({
+  location: 'Lekki',
+  price_min: 5000000,
+  price_max: 50000000,
+  bedrooms_min: 3,
+  property_type: 'Flat',
+  quality_score_min: 0.7
+});
+```
+
+**Available Filters**:
+- `location` - Exact location match
+- `price_min`, `price_max` - Price range
+- `bedrooms_min`, `bathrooms_min` - Minimum rooms
+- `property_type` - Property type (e.g., "Flat", "House", "Land")
+- `source` - Data source (e.g., "npc", "jiji", "propertypro")
+- `quality_score_min` - Minimum quality score (0.0 to 1.0)
+
+**Response**:
+```json
+{
+  "results": [
+    {
+      "title": "3 Bedroom Flat in Lekki Phase 1",
+      "price": 25000000,
+      "location": "Lekki",
+      "bedrooms": 3,
+      "bathrooms": 3,
+      "property_type": "Flat",
+      "listing_url": "https://...",
+      "source": "npc",
+      "quality_score": 0.85,
+      "images": "url1,url2",
+      "scrape_timestamp": "2025-10-21T10:00:00"
+    }
+  ],
+  "count": 142,
+  "filters_applied": {
+    "location": "Lekki",
+    "price_min": 5000000,
+    "price_max": 50000000,
+    "bedrooms_min": 3
+  }
+}
+```
+
+**UI Recommendation**:
+- Fast search with Firestore (no need to download Excel files)
+- Real-time results with filtering
+- Quality score filter to show only high-quality listings
+- Location-based filtering
+
+---
+
+## Advanced Export System ⭐⭐⭐⭐
+
+### 1. Generate Filtered Export
+
+**Endpoint**: `POST /api/export/generate`
+
+**Purpose**: Create custom filtered exports in multiple formats
+
+**Request**:
+```javascript
+const generateExport = async (format, filters, options = {}) => {
+  const response = await api.post('/export/generate', {
+    format: format,  // 'excel', 'csv', 'json', 'parquet'
+    filters: filters,
+    columns: options.columns || [],  // Empty = all columns
+    include_images: options.includeImages !== undefined ? options.includeImages : false,
+    filename: options.filename || 'export'
+  });
+  return response.data;
+};
+
+// Usage - Export Lekki properties to Excel
+const exportResult = await generateExport('excel', {
+  location: 'Lekki',
+  price_max: 50000000,
+  bedrooms_min: 3
+}, {
+  columns: ['title', 'price', 'location', 'bedrooms', 'listing_url'],
+  filename: 'lekki_properties'
+});
+
+// Download the file
+window.location.href = exportResult.download_url;
+```
+
+**Supported Formats**:
+- `excel` - Excel workbook (.xlsx)
+- `csv` - Comma-separated values (.csv)
+- `json` - JSON array (.json)
+- `parquet` - Apache Parquet (.parquet)
+
+**Response**:
+```json
+{
+  "success": true,
+  "download_url": "/api/export/download/lekki_properties_20251021.xlsx",
+  "filename": "lekki_properties_20251021.xlsx",
+  "format": "excel",
+  "record_count": 245,
+  "file_size_mb": 2.4,
+  "expires_in_seconds": 3600
+}
+```
+
+### 2. Download Export
+
+**Endpoint**: `GET /api/export/download/<filename>`
+
+**Purpose**: Download a generated export file
+
+**Request**:
+```javascript
+const downloadExport = (filename) => {
+  window.location.href = `/api/export/download/${filename}`;
+};
+
+// Usage
+downloadExport('lekki_properties_20251021.xlsx');
+```
+
+### 3. Get Available Export Formats
+
+**Endpoint**: `GET /api/export/formats`
+
+**Purpose**: List supported export formats
+
+**Response**:
+```json
+{
+  "formats": ["excel", "csv", "json", "parquet"],
+  "default_format": "excel",
+  "max_records_per_export": 100000
+}
+```
+
+**UI Recommendation**:
+- Export button with format dropdown
+- Show record count before exporting
+- Progress indicator during export generation
+- Auto-download when ready
+
+---
+
+## Scheduled Scraping ⭐⭐⭐⭐
+
+### 1. Schedule Future Scrape
+
+**Endpoint**: `POST /api/schedule/scrape`
+
+**Purpose**: Schedule a scrape to run at a specific future time
+
+**Request**:
+```javascript
+const scheduleScrape = async (scheduledTime, options = {}) => {
+  const response = await api.post('/schedule/scrape', {
+    scheduled_time: scheduledTime,  // ISO format or Unix timestamp
+    page_cap: options.pageCap || 20,
+    geocode: options.geocode !== undefined ? (options.geocode ? 1 : 0) : 1,
+    sites: options.sites || []  // Empty = all enabled sites
+  });
+  return response.data;
+};
+
+// Schedule scrape for tomorrow at 3 PM
+const tomorrow = new Date();
+tomorrow.setDate(tomorrow.getDate() + 1);
+tomorrow.setHours(15, 0, 0, 0);
+
+const job = await scheduleScrape(tomorrow.toISOString(), {
+  pageCap: 10,
+  geocode: false,
+  sites: ['npc', 'jiji']
+});
+```
+
+**Response**:
+```json
+{
+  "success": true,
+  "job_id": 1,
+  "scheduled_time": "2025-10-22T15:00:00Z",
+  "delay_seconds": 86400,
+  "status": "scheduled",
+  "cancel_url": "/api/schedule/jobs/1/cancel",
+  "check_status_url": "/api/schedule/jobs/1"
+}
+```
+
+### 2. List Scheduled Jobs
+
+**Endpoint**: `GET /api/schedule/jobs`
+
+**Purpose**: Get all scheduled scraping jobs
+
+**Request**:
+```javascript
+const getScheduledJobs = async () => {
+  const response = await api.get('/schedule/jobs');
+  return response.data;
+};
+```
+
+**Response**:
+```json
+{
+  "jobs": [
+    {
+      "job_id": 1,
+      "scheduled_time": "2025-10-22T15:00:00Z",
+      "page_cap": 10,
+      "geocode": 0,
+      "sites": ["npc", "jiji"],
+      "status": "scheduled",
+      "created_at": "2025-10-21T10:00:00Z"
+    }
+  ],
+  "count": 1
+}
+```
+
+### 3. Get Job Status
+
+**Endpoint**: `GET /api/schedule/jobs/<id>`
+
+**Purpose**: Check status of a specific scheduled job
+
+**Request**:
+```javascript
+const getJobStatus = async (jobId) => {
+  const response = await api.get(`/schedule/jobs/${jobId}`);
+  return response.data;
+};
+```
+
+**Response**:
+```json
+{
+  "job_id": 1,
+  "scheduled_time": "2025-10-22T15:00:00Z",
+  "page_cap": 10,
+  "geocode": 0,
+  "sites": ["npc", "jiji"],
+  "status": "scheduled",
+  "created_at": "2025-10-21T10:00:00Z"
+}
+```
+
+**Status Values**:
+- `scheduled` - Waiting to run
+- `running` - Currently executing
+- `completed` - Finished successfully
+- `failed` - Execution failed
+- `cancelled` - Cancelled by user
+
+### 4. Cancel Scheduled Job
+
+**Endpoint**: `POST /api/schedule/jobs/<id>/cancel`
+
+**Purpose**: Cancel a scheduled job before it runs
+
+**Request**:
+```javascript
+const cancelJob = async (jobId) => {
+  const response = await api.post(`/schedule/jobs/${jobId}/cancel`);
+  return response.data;
+};
+```
+
+**Response**:
+```json
+{
+  "success": true,
+  "job_id": 1,
+  "status": "cancelled",
+  "message": "Job cancelled successfully"
+}
+```
+
+**UI Recommendation**:
+- Calendar/datetime picker for scheduling
+- List of scheduled jobs with countdown timers
+- Cancel button for pending jobs
+- Status badges (scheduled/running/completed)
+- Auto-refresh job list
 
 ---
 
