@@ -53,6 +53,9 @@ debug_screenshots/  # Intelligent scraper screenshots
 .pytest_cache/
 .coverage
 htmlcov/
+test_report_*.json
+test_output.txt
+*.test.log
 
 # Environment variables
 .env

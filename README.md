@@ -344,15 +344,42 @@ All listings normalized to canonical schema:
 
 ## 🧪 Testing
 
+### Quick Test
 ```bash
-# Run all integration tests
-cd tests
-python test_watcher_integration.py      # Watcher service tests
-python test_milestone4_5.py             # Config system tests
-python test_site_specific.py            # Site config tests
-
-# Test results: 57/58 tests passing (98.3%)
+# Run all improvement tests
+cd scripts
+python run_all_improvement_tests.py
 ```
+
+### Comprehensive Testing
+```bash
+# Test all 68 API endpoints
+python tests/test_api_comprehensive.py
+
+# Security vulnerability scan
+python tests/test_security_comprehensive.py
+
+# Firestore integration tests
+python tests/test_firestore_integration.py
+
+# Feature-specific tests
+python tests/test_duplicate_detector.py
+python tests/test_quality_scorer.py
+python tests/test_natural_language_search.py
+python tests/test_price_history.py
+```
+
+**Test Coverage:**
+- ✅ All 68 API endpoints
+- ✅ Security & vulnerabilities (23 checks)
+- ✅ Scraper engine & data quality
+- ✅ Search, pricing, & automation
+- ✅ Firestore integration
+- ✅ Export & watcher services
+
+**See:** [TESTING_GUIDE.md](docs/TESTING_GUIDE.md) for complete testing documentation
+
+---
 
 ## 📚 Documentation
 
@@ -360,16 +387,16 @@ python test_site_specific.py            # Site config tests
 - **[USER_GUIDE.md](USER_GUIDE.md)** - Complete user guide for non-technical users
 - **[QUICKSTART.md](docs/guides/QUICKSTART.md)** - Quick start guide for scraper
 - **[WATCHER_QUICKSTART.md](docs/guides/WATCHER_QUICKSTART.md)** - Quick start for watcher service
-- **[API_QUICKSTART.md](docs/API_QUICKSTART.md)** - API quick start guide
+- **[API_QUICKSTART.md](docs/guides/API_QUICKSTART.md)** - API quick start guide
 
 **Integration Guides:**
 - **[FRONTEND_INTEGRATION_GUIDE.md](docs/FRONTEND_INTEGRATION_GUIDE.md)** - Complete frontend integration with priority endpoints
-- **[API_README.md](API_README.md)** - API overview and setup
+- **[TESTING_GUIDE.md](docs/TESTING_GUIDE.md)** - Comprehensive testing guide
 
-**Architecture:**
-- **[STRUCTURE.md](docs/STRUCTURE.md)** - Detailed project architecture
-- **[FILE_STRUCTURE.md](docs/FILE_STRUCTURE.md)** - Clean file organization reference
-- **[COMPATIBILITY.md](docs/COMPATIBILITY.md)** - Firebase deployment compatibility
+**Security & Operations:**
+- **[SECURITY_ANALYSIS.md](docs/SECURITY_ANALYSIS.md)** - Security audit, vulnerabilities, and recommendations
+- **[ARCHITECTURE.md](docs/ARCHITECTURE.md)** - Detailed project architecture
+- **[GITHUB_ACTIONS_SETUP.md](docs/GITHUB_ACTIONS_SETUP.md)** - CI/CD and automated workflows
 
 ## 🔌 Complete API Reference (50 Endpoints)
 
