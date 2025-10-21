@@ -22,9 +22,59 @@ on:
         default: ''
 
 jobs:
-  scrape:
+  detect-batch-size:
     runs-on: ubuntu-latest
-    timeout-minutes: 180  # Increased from 60 to 180 minutes (3 hours)
+    outputs:
+      is_large_batch: ${{ steps.check.outputs.is_large_batch }}
+      site_count: ${{ steps.check.outputs.site_count }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Detect batch size
+        id: check
+        run: |
+          python - <<'EOF'
+          import yaml
+          import os
+
+          # Load config
+          with open('config.yaml') as f:
+              config = yaml.safe_load(f)
+
+          # Get sites parameter (from frontend trigger or manual input)
+          sites_param = "${{ github.event.client_payload.sites || github.event.inputs.sites || '' }}"
+
+          if sites_param:
+              # Specific sites requested
+              site_count = len([s.strip() for s in sites_param.split(',') if s.strip()])
+          else:
+              # All enabled sites
+              site_count = sum(1 for site_config in config.get('sites', {}).values() if site_config.get('enabled', False))
+
+          # Determine if large batch (>30 sites = use multi-session)
+          is_large = site_count > 30
+
+          # Output for GitHub Actions
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f"is_large_batch={'true' if is_large else 'false'}\n")
+              f.write(f"site_count={site_count}\n")
+
+          print(f"Detected {site_count} sites to scrape")
+          print(f"Large batch mode: {'ENABLED' if is_large else 'DISABLED'}")
+          EOF
+
+  scrape:
+    needs: detect-batch-size
+    if: needs.detect-batch-size.outputs.is_large_batch == 'false'
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
 
     steps:
       - name: Checkout code
@@ -187,3 +237,41 @@ jobs:
         run: |
           echo "Scraper workflow failed!"
           echo "Check logs for details: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+  delegate-to-large-batch:
+    needs: detect-batch-size
+    if: needs.detect-batch-size.outputs.is_large_batch == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Notify large batch delegation
+        run: |
+          echo "🚀 LARGE BATCH DETECTED: ${{ needs.detect-batch-size.outputs.site_count }} sites"
+          echo "Delegating to multi-session workflow..."
+          echo ""
+          echo "The large batch workflow will:"
+          echo "  - Split sites into sessions of 20"
+          echo "  - Run 3 sessions in parallel"
+          echo "  - Consolidate all results"
+          echo "  - Upload to Firestore"
+          echo ""
+          echo "This prevents timeout and completes faster!"
+
+      - name: Trigger large batch workflow
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'scrape-large-batch.yml',
+              ref: 'main',
+              inputs: {
+                sites_per_session: '20',
+                page_cap: '${{ github.event.client_payload.page_cap || github.event.inputs.page_cap || "20" }}',
+                geocode: '${{ github.event.client_payload.geocode || github.event.inputs.geocode || "1" }}'
+              }
+            });
+
+            console.log('✅ Large batch workflow triggered successfully!');
+            console.log('Check the "Large Batch Scraper (Multi-Session)" workflow for progress.');
