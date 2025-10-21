@@ -20,11 +20,15 @@ from openpyxl import Workbook, load_workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
 from openpyxl.styles import Font, PatternFill, Alignment
 from openpyxl.worksheet.table import Table, TableStyleInfo
+import threading
 
 from core.data_cleaner import CANONICAL_SCHEMA
 
 # Metadata file for tracking master workbook state
 METADATA_FILE = Path("exports/cleaned/metadata.json")
+
+# Global lock for workbook operations (shared across all instances)
+_workbook_lock = threading.Lock()
 
 
 class MasterWorkbookManager:
@@ -34,6 +38,7 @@ class MasterWorkbookManager:
         self.workbook_path = workbook_path
         self.workbook_path.parent.mkdir(parents=True, exist_ok=True)
         self.metadata = self._load_metadata()
+        self.lock = _workbook_lock  # Use global lock to prevent concurrent file access
 
     def _load_metadata(self) -> Dict:
         """Load metadata tracking master workbook state."""

@@ -11,7 +11,7 @@ import subprocess
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_file, Response
 from flask_cors import CORS
 import logging
 
@@ -1576,7 +1576,6 @@ def generate_export():
 def download_export_file(filename):
     """Download generated export file"""
     try:
-        from flask import send_file
         filepath = Path('exports/temp') / filename
 
         if not filepath.exists():
