@@ -66,13 +66,103 @@ def clean_value(value):
     return value
 
 
-def upload_to_firestore(workbook_path='exports/cleaned/MASTER_CLEANED_WORKBOOK.xlsx', batch_size=500):
+def cleanup_stale_listings(db, current_hashes, max_age_days=30):
+    """
+    Archive stale listings that haven't been seen in recent scrapes
+
+    IMPORTANT: This ARCHIVES (not deletes) stale listings by moving them to
+    'properties_archive' collection. This preserves historical data for:
+    - Price prediction models
+    - Market trend analysis
+    - Historical property data
+
+    Args:
+        db: Firestore client
+        current_hashes: Set of property hashes from current scrape
+        max_age_days: Archive properties not updated in this many days (default: 30)
+
+    Returns:
+        Number of archived properties
+    """
+    from datetime import timedelta
+
+    print(f"\n{'='*60}")
+    print(f"Archiving stale listings (older than {max_age_days} days)")
+    print(f"{'='*60}\n")
+
+    cutoff_date = datetime.now() - timedelta(days=max_age_days)
+    collection_ref = db.collection('properties')
+    archive_ref = db.collection('properties_archive')
+
+    # Get all documents from active collection
+    all_docs = collection_ref.stream()
+
+    to_archive = []
+    checked = 0
+
+    for doc in all_docs:
+        checked += 1
+        doc_data = doc.to_dict()
+        doc_hash = doc_data.get('hash')
+        updated_at = doc_data.get('updated_at')
+
+        # Archive if:
+        # 1. Hash not in current scrape AND
+        # 2. Not updated recently (older than max_age_days)
+        if doc_hash not in current_hashes:
+            if updated_at and updated_at.replace(tzinfo=None) < cutoff_date:
+                to_archive.append((doc.id, doc_data))
+
+    # Archive in batches (copy to archive, then delete from active)
+    archived = 0
+    if to_archive:
+        print(f"Found {len(to_archive):,} stale listings to archive (out of {checked:,} total)")
+        batch = db.batch()
+
+        for idx, (doc_id, doc_data) in enumerate(to_archive):
+            # Add archived_at timestamp
+            doc_data['archived_at'] = firestore.SERVER_TIMESTAMP
+            doc_data['status'] = 'archived'
+
+            # Copy to archive collection
+            batch.set(archive_ref.document(doc_id), doc_data)
+
+            # Remove from active collection
+            batch.delete(collection_ref.document(doc_id))
+
+            archived += 1
+
+            # Commit every 250 operations (500 operations = 250 sets + 250 deletes)
+            if (idx + 1) % 250 == 0:
+                batch.commit()
+                print(f"  [PROGRESS] Archived {idx + 1:,}/{len(to_archive):,} stale listings")
+                batch = db.batch()
+
+        # Commit remaining
+        if archived % 250 != 0:
+            batch.commit()
+
+        print(f"[SUCCESS] Archived {archived:,} stale listings to 'properties_archive'")
+        print(f"          These are preserved for price prediction & historical analysis")
+    else:
+        print(f"[SUCCESS] No stale listings found (checked {checked:,} properties)")
+
+    print(f"{'='*60}\n")
+    return archived
+
+
+def upload_to_firestore(workbook_path='exports/cleaned/MASTER_CLEANED_WORKBOOK.xlsx',
+                        batch_size=500,
+                        cleanup_stale=False,
+                        max_age_days=30):
     """
     Upload master workbook to Firestore
 
     Args:
         workbook_path: Path to master workbook Excel file
         batch_size: Number of documents to write per batch (Firestore limit: 500)
+        cleanup_stale: If True, remove old listings not in current scrape (default: False)
+        max_age_days: When cleanup_stale=True, remove listings older than this (default: 30)
     """
     if not Path(workbook_path).exists():
         print(f"ERROR: Master workbook not found at {workbook_path}")
@@ -97,6 +187,7 @@ def upload_to_firestore(workbook_path='exports/cleaned/MASTER_CLEANED_WORKBOOK.x
     batch = db.batch()
     uploaded = 0
     errors = 0
+    current_hashes = set()  # Track current scrape hashes for cleanup
 
     for idx, row in df.iterrows():
         try:
@@ -139,6 +230,10 @@ def upload_to_firestore(workbook_path='exports/cleaned/MASTER_CLEANED_WORKBOOK.x
             batch.set(doc_ref, doc_data, merge=True)
             uploaded += 1
 
+            # Track hash for cleanup
+            if doc_data.get('hash'):
+                current_hashes.add(doc_data['hash'])
+
             # Commit batch every batch_size documents
             if uploaded % batch_size == 0:
                 batch.commit()
@@ -163,12 +258,35 @@ def upload_to_firestore(workbook_path='exports/cleaned/MASTER_CLEANED_WORKBOOK.x
     print(f"Total documents: {uploaded:,}")
     print(f"{'='*60}\n")
 
+    # Run cleanup if enabled
+    archived = 0
+    if cleanup_stale:
+        archived = cleanup_stale_listings(db, current_hashes, max_age_days)
+
     return {
         'uploaded': uploaded,
         'errors': errors,
-        'total': total_records
+        'total': total_records,
+        'archived': archived
     }
 
 
 if __name__ == '__main__':
-    upload_to_firestore()
+    import argparse
+
+    parser = argparse.ArgumentParser(description='Upload master workbook to Firestore')
+    parser.add_argument('--cleanup', action='store_true',
+                        help='Archive stale listings (default: False)')
+    parser.add_argument('--max-age-days', type=int, default=30,
+                        help='Archive listings older than this many days (default: 30)')
+    parser.add_argument('--workbook', type=str,
+                        default='exports/cleaned/MASTER_CLEANED_WORKBOOK.xlsx',
+                        help='Path to master workbook')
+
+    args = parser.parse_args()
+
+    upload_to_firestore(
+        workbook_path=args.workbook,
+        cleanup_stale=args.cleanup,
+        max_age_days=args.max_age_days
+    )

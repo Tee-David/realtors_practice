@@ -81,4 +81,10 @@ safepoint_backups/
 
 # Session summaries (internal documentation)
 docs/sessions/
+
+# Firebase credentials (NEVER commit these!)
 realtor-s-practice-firebase-adminsdk-fbsvc-c8563eb2f2.json
+*firebase*adminsdk*.json
+firebase-credentials.json
+firebase-temp-credentials.json
+serviceAccountKey.json

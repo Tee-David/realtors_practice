@@ -1,0 +1,273 @@
+name: Large Batch Scraper (Multi-Session)
+
+on:
+  # Manual trigger from GitHub Actions UI
+  workflow_dispatch:
+    inputs:
+      sites_per_session:
+        description: 'Number of sites per session (default: 20)'
+        required: false
+        default: '20'
+      page_cap:
+        description: 'Max pages per site'
+        required: false
+        default: '20'
+      geocode:
+        description: 'Enable geocoding (1=yes, 0=no)'
+        required: false
+        default: '1'
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      sessions: ${{ steps.split.outputs.sessions }}
+      total_sessions: ${{ steps.split.outputs.total_sessions }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Split sites into sessions
+        id: split
+        run: |
+          python - <<'EOF'
+          import yaml
+          import json
+          import os
+          import math
+
+          # Load config
+          with open('config.yaml') as f:
+              config = yaml.safe_load(f)
+
+          # Get enabled sites
+          enabled_sites = [
+              site_id for site_id, site_config in config.get('sites', {}).items()
+              if site_config.get('enabled', False)
+          ]
+
+          sites_per_session = int("${{ github.event.inputs.sites_per_session }}" or "20")
+          total_sessions = math.ceil(len(enabled_sites) / sites_per_session)
+
+          # Split into batches
+          sessions = []
+          for i in range(total_sessions):
+              start = i * sites_per_session
+              end = start + sites_per_session
+              batch = enabled_sites[start:end]
+              sessions.append({
+                  'session_id': i + 1,
+                  'sites': ','.join(batch),
+                  'site_count': len(batch)
+              })
+
+          # Output for matrix
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f"sessions={json.dumps(sessions)}\n")
+              f.write(f"total_sessions={total_sessions}\n")
+
+          print(f"Split {len(enabled_sites)} sites into {total_sessions} sessions")
+          for session in sessions:
+              print(f"  Session {session['session_id']}: {session['site_count']} sites")
+          EOF
+
+  scrape:
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    strategy:
+      max-parallel: 3  # Run 3 sessions in parallel
+      fail-fast: false  # Don't cancel other sessions if one fails
+      matrix:
+        session: ${{ fromJson(needs.prepare.outputs.sessions) }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Install Playwright and browsers
+        run: |
+          playwright install chromium
+          playwright install-deps chromium
+
+      - name: Run scraper (Session ${{ matrix.session.session_id }})
+        env:
+          RP_PAGE_CAP: ${{ github.event.inputs.page_cap || '20' }}
+          RP_GEOCODE: ${{ github.event.inputs.geocode || '1' }}
+          RP_HEADLESS: 1
+          RP_NO_IMAGES: 1
+          RP_DEBUG: 0
+        run: |
+          echo "=== Session ${{ matrix.session.session_id }} ==="
+          echo "Sites: ${{ matrix.session.site_count }}"
+          echo "Page cap: $RP_PAGE_CAP"
+          echo "Geocoding: $RP_GEOCODE"
+          echo ""
+
+          # Enable only this session's sites
+          python scripts/enable_sites.py ${{ matrix.session.sites }}
+
+          # Run scraper
+          python main.py
+
+      - name: Process exports with watcher
+        run: |
+          echo "Processing scraped data from session ${{ matrix.session.session_id }}..."
+          python watcher.py --once
+
+      - name: Upload session exports as artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: session-${{ matrix.session.session_id }}-exports
+          path: exports/
+          retention-days: 7
+
+  consolidate:
+    needs: [prepare, scrape]
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Download all session exports
+        uses: actions/download-artifact@v4
+        with:
+          path: session-exports/
+          pattern: session-*-exports
+          merge-multiple: false
+
+      - name: Consolidate all sessions
+        run: |
+          echo "Consolidating ${{ needs.prepare.outputs.total_sessions }} sessions..."
+
+          # Create consolidated exports directory
+          mkdir -p exports/sites exports/cleaned
+
+          # Merge all session exports
+          python - <<'EOF'
+          import os
+          import shutil
+          from pathlib import Path
+
+          session_dir = Path('session-exports')
+          consolidated_dir = Path('exports/sites')
+
+          # Copy all site exports from each session
+          for session_folder in session_dir.glob('session-*-exports'):
+              session_sites = session_folder / 'sites'
+              if session_sites.exists():
+                  for site_folder in session_sites.iterdir():
+                      if site_folder.is_dir():
+                          dest = consolidated_dir / site_folder.name
+                          dest.mkdir(exist_ok=True)
+
+                          # Copy all files from this site
+                          for file in site_folder.iterdir():
+                              shutil.copy2(file, dest / file.name)
+                              print(f"Copied: {file.name}")
+
+          print(f"\nConsolidated all sessions into {consolidated_dir}")
+          EOF
+
+      - name: Run watcher on consolidated data
+        run: |
+          echo "Creating master workbook from all sessions..."
+          python watcher.py --once
+
+      - name: Upload to Firestore
+        env:
+          FIREBASE_CREDENTIALS: ${{ secrets.FIREBASE_CREDENTIALS }}
+        run: |
+          echo "Uploading consolidated data to Firestore..."
+
+          # Create temporary credentials file
+          echo "$FIREBASE_CREDENTIALS" > firebase-temp-credentials.json
+
+          # Set environment variable
+          export FIREBASE_SERVICE_ACCOUNT=firebase-temp-credentials.json
+
+          # Run Firestore upload with cleanup
+          python scripts/upload_to_firestore.py --cleanup --max-age-days 30
+
+          # Clean up credentials
+          rm firebase-temp-credentials.json
+
+          echo "Firestore upload complete!"
+
+      - name: Generate consolidated summary
+        if: always()
+        run: |
+          echo "## Large Batch Scrape Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Sessions:** ${{ needs.prepare.outputs.total_sessions }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Count exports
+          if [ -d "exports/sites" ]; then
+            SITE_COUNT=$(find exports/sites -type d -mindepth 1 -maxdepth 1 | wc -l)
+            FILE_COUNT=$(find exports/sites -type f \( -name "*.csv" -o -name "*.xlsx" \) | wc -l)
+            echo "### Consolidated Exports" >> $GITHUB_STEP_SUMMARY
+            echo "- Total sites scraped: $SITE_COUNT" >> $GITHUB_STEP_SUMMARY
+            echo "- Total files: $FILE_COUNT" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          # Master workbook info
+          if [ -f "exports/cleaned/MASTER_CLEANED_WORKBOOK.xlsx" ]; then
+            SIZE=$(du -h exports/cleaned/MASTER_CLEANED_WORKBOOK.xlsx | cut -f1)
+            RECORD_COUNT=$(python -c "import pandas as pd; print(len(pd.read_excel('exports/cleaned/MASTER_CLEANED_WORKBOOK.xlsx')))" 2>/dev/null || echo "Unknown")
+            echo "### Master Workbook" >> $GITHUB_STEP_SUMMARY
+            echo "- Size: $SIZE" >> $GITHUB_STEP_SUMMARY
+            echo "- Total properties: $RECORD_COUNT" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          # Firestore status
+          echo "### Firestore Upload" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Consolidated data uploaded to Firestore" >> $GITHUB_STEP_SUMMARY
+          echo "- Collection: \`properties\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Queryable via: \`POST /api/firestore/query\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Stale listings archived to: \`properties_archive\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          echo "**Workflow:** #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Date:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')\" >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload consolidated exports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: consolidated-exports-${{ github.run_number }}
+          path: exports/cleaned/
+          retention-days: 30

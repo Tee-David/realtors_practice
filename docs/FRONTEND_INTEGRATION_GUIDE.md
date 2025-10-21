@@ -1,8 +1,8 @@
 # Frontend Integration Guide
 
 **Date**: October 21, 2025
-**API Version**: 2.0
-**Total Endpoints**: 58 (54 Flask + 4 GitHub Actions)
+**API Version**: 2.1
+**Total Endpoints**: 59 (55 Flask + 4 GitHub Actions)
 
 ---
 
@@ -936,6 +936,37 @@ const results = await queryFirestore({
 - Real-time results with filtering
 - Quality score filter to show only high-quality listings
 - Location-based filtering
+
+### 2. Query Archived Properties (Price Prediction) ⭐⭐⭐⭐⭐
+
+**Endpoint**: `POST /api/firestore/query-archive`
+
+**Purpose**: Query ARCHIVED properties for price prediction & historical analysis
+
+Archived properties are listings that haven't been seen in recent scrapes (>30 days old). These are automatically moved to `properties_archive` collection to keep the active collection clean while preserving historical data.
+
+**Use Cases**:
+- Price prediction models (train on historical data)
+- Market trend analysis
+- Track price changes over time
+- Historical property database
+
+**Request**: Same as `/api/firestore/query`
+
+**Response**:
+```json
+{
+  "results": [...],
+  "count": 1250,
+  "collection": "properties_archive",
+  "note": "These are archived (stale) properties for historical analysis"
+}
+```
+
+**UI Recommendation**:
+- Separate "Historical Data" section for analysts/developers
+- Export historical data for ML models
+- Price trend visualization over time
 
 ---
 

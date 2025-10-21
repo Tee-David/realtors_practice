@@ -88,8 +88,9 @@ jobs:
           # Set environment variable for the script
           export FIREBASE_SERVICE_ACCOUNT=firebase-temp-credentials.json
 
-          # Run Firestore upload
-          python scripts/upload_to_firestore.py
+          # Run Firestore upload with cleanup enabled
+          # Archives stale listings (>30 days old) to properties_archive collection
+          python scripts/upload_to_firestore.py --cleanup --max-age-days 30
 
           # Clean up credentials file
           rm firebase-temp-credentials.json

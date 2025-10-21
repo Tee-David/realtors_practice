@@ -1174,6 +1174,100 @@ def query_firestore():
         return jsonify({'error': str(e)}), 500
 
 
+@app.route('/api/firestore/query-archive', methods=['POST'])
+def query_firestore_archive():
+    """
+    Query ARCHIVED properties from Firestore (for price prediction & historical analysis)
+
+    Archived properties are those that haven't been seen in recent scrapes (>30 days old).
+    This is useful for:
+    - Price prediction models (historical data)
+    - Market trend analysis
+    - Tracking price changes over time
+
+    Body: Same as /api/firestore/query
+    """
+    try:
+        import firebase_admin
+        from firebase_admin import credentials, firestore
+
+        # Initialize Firebase if not already done
+        if not firebase_admin._apps:
+            cred_json = os.getenv('FIREBASE_CREDENTIALS')
+            cred_path = os.getenv('FIREBASE_SERVICE_ACCOUNT')
+
+            if cred_json:
+                cred = credentials.Certificate(json.loads(cred_json))
+            elif cred_path and Path(cred_path).exists():
+                cred = credentials.Certificate(cred_path)
+            else:
+                return jsonify({
+                    'error': 'Firebase not configured',
+                    'details': 'Set FIREBASE_CREDENTIALS or FIREBASE_SERVICE_ACCOUNT environment variable'
+                }), 500
+
+            firebase_admin.initialize_app(cred)
+
+        db = firestore.client()
+        data = request.get_json() or {}
+        filters = data.get('filters', {})
+
+        # Build query on ARCHIVE collection
+        query = db.collection('properties_archive')
+
+        # Apply filters (same as active properties)
+        if 'location' in filters:
+            query = query.where('location', '==', filters['location'])
+        if 'price_min' in filters:
+            query = query.where('price', '>=', filters['price_min'])
+        if 'price_max' in filters:
+            query = query.where('price', '<=', filters['price_max'])
+        if 'bedrooms_min' in filters:
+            query = query.where('bedrooms', '>=', filters['bedrooms_min'])
+        if 'bathrooms_min' in filters:
+            query = query.where('bathrooms', '>=', filters['bathrooms_min'])
+        if 'property_type' in filters:
+            query = query.where('property_type', '==', filters['property_type'])
+        if 'source' in filters:
+            query = query.where('source', '==', filters['source'])
+
+        # Apply sorting
+        sort_by = data.get('sort_by', 'archived_at')
+        sort_desc = data.get('sort_desc', True)
+        direction = firestore.Query.DESCENDING if sort_desc else firestore.Query.ASCENDING
+        query = query.order_by(sort_by, direction=direction)
+
+        # Apply pagination
+        limit = min(data.get('limit', 50), 1000)  # Max 1000 results
+        query = query.limit(limit)
+
+        if data.get('offset', 0) > 0:
+            query = query.offset(data['offset'])
+
+        # Execute query
+        results = query.stream()
+        properties = [doc.to_dict() for doc in results]
+
+        return jsonify({
+            'results': properties,
+            'count': len(properties),
+            'collection': 'properties_archive',
+            'filters_applied': filters,
+            'sort_by': sort_by,
+            'sort_desc': sort_desc,
+            'note': 'These are archived (stale) properties for historical analysis'
+        }), 200
+
+    except ImportError:
+        return jsonify({
+            'error': 'Firebase Admin SDK not installed',
+            'details': 'Run: pip install firebase-admin'
+        }), 500
+    except Exception as e:
+        logger.error(f"Error querying Firestore archive: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
 # ============================================================================
 # ADVANCED EXPORT ENDPOINTS (Multiple Formats & Filters)
 # ============================================================================
