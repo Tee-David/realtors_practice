@@ -1739,6 +1739,236 @@ def download_artifact(artifact_id):
 
 
 # ============================================================================
+# SCHEDULED SCRAPING ENDPOINTS
+# ============================================================================
+
+# In-memory storage for scheduled jobs (use Redis/database in production)
+scheduled_jobs = {}
+job_id_counter = 1
+
+@app.route('/api/schedule/scrape', methods=['POST'])
+def schedule_scrape():
+    """
+    Schedule a scrape to run at a specific time
+    Body: {
+        "scheduled_time": "2025-10-22T15:00:00",  # ISO format or Unix timestamp
+        "page_cap": 20,                            # Optional
+        "geocode": 1,                              # Optional
+        "sites": ["npc", "jiji"]                   # Optional
+    }
+
+    Returns: {
+        "job_id": 1,
+        "scheduled_time": "2025-10-22T15:00:00",
+        "status": "scheduled",
+        "trigger_url": "/api/schedule/jobs/1/cancel"
+    }
+    """
+    global job_id_counter
+
+    try:
+        from datetime import datetime, timezone
+        import threading
+        import time
+
+        data = request.get_json() or {}
+        scheduled_time_str = data.get('scheduled_time')
+
+        if not scheduled_time_str:
+            return jsonify({'error': 'scheduled_time is required'}), 400
+
+        # Parse scheduled time
+        try:
+            # Try ISO format first
+            if isinstance(scheduled_time_str, str):
+                scheduled_time = datetime.fromisoformat(scheduled_time_str.replace('Z', '+00:00'))
+            else:
+                # Unix timestamp
+                scheduled_time = datetime.fromtimestamp(scheduled_time_str, tz=timezone.utc)
+        except Exception as e:
+            return jsonify({
+                'error': 'Invalid scheduled_time format',
+                'details': 'Use ISO format (2025-10-22T15:00:00) or Unix timestamp'
+            }), 400
+
+        # Check if time is in the future
+        now = datetime.now(timezone.utc)
+        if scheduled_time <= now:
+            return jsonify({
+                'error': 'scheduled_time must be in the future',
+                'current_time': now.isoformat()
+            }), 400
+
+        # Calculate delay in seconds
+        delay_seconds = (scheduled_time - now).total_seconds()
+
+        # Create job
+        job_id = job_id_counter
+        job_id_counter += 1
+
+        job = {
+            'job_id': job_id,
+            'scheduled_time': scheduled_time.isoformat(),
+            'page_cap': data.get('page_cap', 20),
+            'geocode': data.get('geocode', 1),
+            'sites': data.get('sites', []),
+            'status': 'scheduled',
+            'created_at': now.isoformat()
+        }
+
+        # Define the job execution function
+        def execute_scheduled_job(job_id):
+            time.sleep(delay_seconds)
+
+            # Check if job was cancelled
+            if job_id not in scheduled_jobs or scheduled_jobs[job_id]['status'] == 'cancelled':
+                return
+
+            # Update status
+            scheduled_jobs[job_id]['status'] = 'running'
+
+            # Trigger GitHub Actions workflow
+            try:
+                import requests
+
+                github_token = os.getenv('GITHUB_TOKEN')
+                github_owner = os.getenv('GITHUB_OWNER')
+                github_repo = os.getenv('GITHUB_REPO')
+
+                if all([github_token, github_owner, github_repo]):
+                    url = f'https://api.github.com/repos/{github_owner}/{github_repo}/dispatches'
+                    headers = {
+                        'Accept': 'application/vnd.github+json',
+                        'Authorization': f'Bearer {github_token}',
+                        'X-GitHub-Api-Version': '2022-11-28'
+                    }
+                    payload = {
+                        'event_type': 'trigger-scrape',
+                        'client_payload': {
+                            'page_cap': scheduled_jobs[job_id]['page_cap'],
+                            'geocode': scheduled_jobs[job_id]['geocode'],
+                            'sites': scheduled_jobs[job_id]['sites']
+                        }
+                    }
+
+                    response = requests.post(url, json=payload, headers=headers, timeout=30)
+
+                    if response.status_code == 204:
+                        scheduled_jobs[job_id]['status'] = 'completed'
+                        scheduled_jobs[job_id]['completed_at'] = datetime.now(timezone.utc).isoformat()
+                    else:
+                        scheduled_jobs[job_id]['status'] = 'failed'
+                        scheduled_jobs[job_id]['error'] = f'GitHub API returned {response.status_code}'
+                else:
+                    scheduled_jobs[job_id]['status'] = 'failed'
+                    scheduled_jobs[job_id]['error'] = 'Missing GitHub configuration'
+
+            except Exception as e:
+                scheduled_jobs[job_id]['status'] = 'failed'
+                scheduled_jobs[job_id]['error'] = str(e)
+
+        # Start background thread
+        thread = threading.Thread(target=execute_scheduled_job, args=(job_id,), daemon=True)
+        thread.start()
+
+        # Store job
+        scheduled_jobs[job_id] = job
+
+        return jsonify({
+            'success': True,
+            'job_id': job_id,
+            'scheduled_time': scheduled_time.isoformat(),
+            'delay_seconds': int(delay_seconds),
+            'status': 'scheduled',
+            'cancel_url': f'/api/schedule/jobs/{job_id}/cancel',
+            'check_status_url': f'/api/schedule/jobs/{job_id}'
+        }), 201
+
+    except Exception as e:
+        logger.error(f"Error scheduling scrape: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/schedule/jobs', methods=['GET'])
+def get_scheduled_jobs():
+    """
+    Get all scheduled jobs
+
+    Returns: {
+        "jobs": [...],
+        "count": 5
+    }
+    """
+    try:
+        jobs_list = list(scheduled_jobs.values())
+
+        # Sort by scheduled time (most recent first)
+        jobs_list.sort(key=lambda x: x['scheduled_time'], reverse=True)
+
+        return jsonify({
+            'jobs': jobs_list,
+            'count': len(jobs_list)
+        }), 200
+
+    except Exception as e:
+        logger.error(f"Error getting scheduled jobs: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/schedule/jobs/<int:job_id>', methods=['GET'])
+def get_scheduled_job(job_id):
+    """
+    Get details of a specific scheduled job
+
+    Returns job details including status
+    """
+    try:
+        if job_id not in scheduled_jobs:
+            return jsonify({'error': 'Job not found'}), 404
+
+        return jsonify(scheduled_jobs[job_id]), 200
+
+    except Exception as e:
+        logger.error(f"Error getting job {job_id}: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/schedule/jobs/<int:job_id>/cancel', methods=['POST', 'DELETE'])
+def cancel_scheduled_job(job_id):
+    """
+    Cancel a scheduled job
+
+    Returns confirmation of cancellation
+    """
+    try:
+        if job_id not in scheduled_jobs:
+            return jsonify({'error': 'Job not found'}), 404
+
+        job = scheduled_jobs[job_id]
+
+        if job['status'] in ['completed', 'failed']:
+            return jsonify({
+                'error': f'Cannot cancel job with status: {job["status"]}'
+            }), 400
+
+        # Mark as cancelled
+        job['status'] = 'cancelled'
+        from datetime import datetime, timezone
+        job['cancelled_at'] = datetime.now(timezone.utc).isoformat()
+
+        return jsonify({
+            'success': True,
+            'job_id': job_id,
+            'status': 'cancelled',
+            'message': 'Job cancelled successfully'
+        }), 200
+
+    except Exception as e:
+        logger.error(f"Error cancelling job {job_id}: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+# ============================================================================
 # ERROR HANDLERS
 # ============================================================================
 

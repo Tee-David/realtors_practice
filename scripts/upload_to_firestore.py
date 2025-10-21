@@ -39,11 +39,11 @@ def initialize_firebase():
 
     if cred_path and Path(cred_path).exists():
         cred = credentials.Certificate(cred_path)
-        print(f"✓ Loaded Firebase credentials from {cred_path}")
+        print(f"[SUCCESS] Loaded Firebase credentials from {cred_path}")
     elif cred_json:
         cred_dict = json.loads(cred_json)
         cred = credentials.Certificate(cred_dict)
-        print("✓ Loaded Firebase credentials from environment variable")
+        print("[SUCCESS] Loaded Firebase credentials from environment variable")
     else:
         print("ERROR: Firebase credentials not found!")
         print("Set FIREBASE_SERVICE_ACCOUNT or FIREBASE_CREDENTIALS environment variable")
@@ -90,7 +90,7 @@ def upload_to_firestore(workbook_path='exports/cleaned/MASTER_CLEANED_WORKBOOK.x
     print(f"Loading master workbook: {workbook_path}")
     df = pd.read_excel(workbook_path)
     total_records = len(df)
-    print(f"✓ Loaded {total_records:,} properties\n")
+    print(f"[SUCCESS] Loaded {total_records:,} properties\n")
 
     # Upload to Firestore in batches
     collection_ref = db.collection('properties')
@@ -142,12 +142,12 @@ def upload_to_firestore(workbook_path='exports/cleaned/MASTER_CLEANED_WORKBOOK.x
             # Commit batch every batch_size documents
             if uploaded % batch_size == 0:
                 batch.commit()
-                print(f"  ✓ Uploaded {uploaded:,}/{total_records:,} properties ({uploaded/total_records*100:.1f}%)")
+                print(f"  [PROGRESS] Uploaded {uploaded:,}/{total_records:,} properties ({uploaded/total_records*100:.1f}%)")
                 batch = db.batch()
 
         except Exception as e:
             errors += 1
-            print(f"  ✗ Error uploading property {idx}: {e}")
+            print(f"  [ERROR] Error uploading property {idx}: {e}")
 
     # Commit final batch
     if uploaded % batch_size != 0:
@@ -156,9 +156,9 @@ def upload_to_firestore(workbook_path='exports/cleaned/MASTER_CLEANED_WORKBOOK.x
     print(f"\n{'='*60}")
     print(f"Upload Complete!")
     print(f"{'='*60}")
-    print(f"✓ Successfully uploaded: {uploaded:,} properties")
+    print(f"[SUCCESS] Successfully uploaded: {uploaded:,} properties")
     if errors > 0:
-        print(f"✗ Errors: {errors}")
+        print(f"[ERROR] Errors: {errors}")
     print(f"\nFirestore collection: 'properties'")
     print(f"Total documents: {uploaded:,}")
     print(f"{'='*60}\n")
