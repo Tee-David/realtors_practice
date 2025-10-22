@@ -1,8 +1,6 @@
 # Nigerian Real Estate Scraper
 
-> **⚠️ DO NOT DELETE: README.md, HOW_TO_GET_API_KEY.md, .env.example, docs/ folder**
-
-> Enterprise-grade property aggregation platform with unlimited scalability (currently 82+ data sources configured), intelligent search, price tracking, and complete REST API. Automatically scrapes, cleans, deduplicates, and monitors 1000+ Lagos property listings daily. Add unlimited new sites via config.yaml - no code changes needed.
+Enterprise-grade property aggregation platform with unlimited scalability (currently 82+ data sources configured), intelligent search, price tracking, and complete REST API. Automatically scrapes, cleans, deduplicates, and monitors 1000+ Lagos property listings daily. Add unlimited new sites via config.yaml - no code changes needed.
 
 ## 🚀 Quick Start
 
@@ -344,70 +342,30 @@ All listings normalized to canonical schema:
 }
 ```
 
-## 🧪 Testing
-
-### Quick Test
-```bash
-# Run all improvement tests
-cd scripts
-python run_all_improvement_tests.py
-```
-
-### Comprehensive Testing
-```bash
-# Test all 68 API endpoints
-python tests/test_api_comprehensive.py
-
-# Security vulnerability scan
-python tests/test_security_comprehensive.py
-
-# Firestore integration tests
-python tests/test_firestore_integration.py
-
-# Feature-specific tests
-python tests/test_duplicate_detector.py
-python tests/test_quality_scorer.py
-python tests/test_natural_language_search.py
-python tests/test_price_history.py
-```
-
-**Test Coverage:**
-- ✅ All 68 API endpoints
-- ✅ Security & vulnerabilities (23 checks)
-- ✅ Scraper engine & data quality
-- ✅ Search, pricing, & automation
-- ✅ Firestore integration
-- ✅ Export & watcher services
+## 🧪 API Testing
 
 **Postman Collection:** [Nigerian_Real_Estate_API.postman_collection.json](docs/Nigerian_Real_Estate_API.postman_collection.json)
 
-**See:** [TESTING_GUIDE.md](docs/TESTING_GUIDE.md) | [POSTMAN_GUIDE.md](docs/POSTMAN_GUIDE.md)
+Import the collection into Postman to test all 68 API endpoints. See [POSTMAN_GUIDE.md](docs/POSTMAN_GUIDE.md) for setup instructions.
 
 ---
 
 ## 📚 Documentation
 
 **Getting Started:**
-- **[USER_GUIDE.md](USER_GUIDE.md)** - Complete user guide for non-technical users
-- **[QUICKSTART.md](docs/guides/QUICKSTART.md)** - Quick start guide for scraper
-- **[WATCHER_QUICKSTART.md](docs/guides/WATCHER_QUICKSTART.md)** - Quick start for watcher service
-- **[API_QUICKSTART.md](docs/guides/API_QUICKSTART.md)** - API quick start guide
+- **[USER_GUIDE.md](USER_GUIDE.md)** - Complete user guide
+- **[QUICKSTART.md](docs/guides/QUICKSTART.md)** - Quick start guide
+- **[WATCHER_QUICKSTART.md](docs/guides/WATCHER_QUICKSTART.md)** - Watcher service guide
 
-**Integration Guides:**
+**API Integration:**
 - **[FRONTEND_AUTH_GUIDE.md](docs/FRONTEND_AUTH_GUIDE.md)** - Frontend integration with authentication (React/Vue/Angular)
 - **[FRONTEND_INTEGRATION_GUIDE.md](docs/FRONTEND_INTEGRATION_GUIDE.md)** - Complete API reference (all 68 endpoints)
-- **[TESTING_GUIDE.md](docs/TESTING_GUIDE.md)** - Comprehensive testing guide
-- **[POSTMAN_GUIDE.md](docs/POSTMAN_GUIDE.md)** - Postman collection testing guide
+- **[POSTMAN_GUIDE.md](docs/POSTMAN_GUIDE.md)** - Postman testing guide
+- **[.env.example](.env.example)** - Environment configuration template
 
-**API Keys & Security:**
-- **[HOW_TO_GET_API_KEY.md](HOW_TO_GET_API_KEY.md)** - ⭐ Generate API keys (30 seconds!)
-- **[SECURITY_IMPLEMENTATION.md](docs/SECURITY_IMPLEMENTATION.md)** - How to enable security (5 minutes)
-- **[SECURITY_ANALYSIS.md](docs/SECURITY_ANALYSIS.md)** - Security audit and recommendations
-- **[API_KEY_MANAGEMENT.md](docs/API_KEY_MANAGEMENT.md)** - Advanced key management
-
-**Architecture & Deployment:**
-- **[ARCHITECTURE.md](docs/ARCHITECTURE.md)** - Detailed project architecture
-- **[GITHUB_ACTIONS_SETUP.md](docs/GITHUB_ACTIONS_SETUP.md)** - CI/CD and automated workflows
+**Deployment:**
+- **[ARCHITECTURE.md](docs/ARCHITECTURE.md)** - Project architecture
+- **[GITHUB_ACTIONS_SETUP.md](docs/GITHUB_ACTIONS_SETUP.md)** - CI/CD workflows
 
 ## 🔌 Complete API Reference (50 Endpoints)
 
