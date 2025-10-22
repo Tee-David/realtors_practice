@@ -153,7 +153,7 @@ realtors_practice/
 - **Scraping history** - Complete audit trail of all scraping runs
 - **Error logging** - Comprehensive error tracking and reporting
 
-### 🔌 REST API (70 Endpoints)
+### 🔌 REST API (68 Endpoints)
 - **Scraping management** - Start, stop, monitor scraping via API
 - **Site configuration** - Add, update, delete, toggle sites programmatically
 - **Data query** - Search, filter, paginate property data
@@ -367,77 +367,67 @@ Import the collection into Postman to test all 68 API endpoints. See [POSTMAN_GU
 - **[ARCHITECTURE.md](docs/ARCHITECTURE.md)** - Project architecture
 - **[GITHUB_ACTIONS_SETUP.md](docs/GITHUB_ACTIONS_SETUP.md)** - CI/CD workflows
 
-## 🔌 Complete API Reference (50 Endpoints)
+## 🔌 Complete API Reference (68 Endpoints)
 
-### **Scraping Management** (4 endpoints)
+### **1. Scraping Management** (5 endpoints)
+- `GET /api/health` - Health check
 - `POST /api/scrape/start` - Start scraping
-- `GET /api/scrape/status` - Get status
 - `POST /api/scrape/stop` - Stop scraping
-- `GET /api/scrape/history` - Get history
+- `GET /api/scrape/status` - Get current status
+- `GET /api/scrape/history` - Get scrape history
 
-### **Site Configuration** (6 endpoints)
+### **2. Site Configuration** (6 endpoints)
 - `GET /api/sites` - List all sites
 - `GET /api/sites/<key>` - Get specific site
 - `POST /api/sites` - Add new site
-- `PUT /api/sites/<key>` - Update site
+- `PUT /api/sites/<key>` - Update site config
 - `DELETE /api/sites/<key>` - Delete site
 - `PATCH /api/sites/<key>/toggle` - Enable/disable site
 
-### **Data Query** (6 endpoints)
-- `GET /api/data/sites` - List data files
-- `GET /api/data/sites/<key>` - Get site data
-- `GET /api/data/master` - Get master workbook
-- `GET /api/data/search` - Search data
-- `POST /api/query` - Advanced query
-- `GET /api/query/summary` - Query summary
+### **3. Data Access** (4 endpoints)
+- `GET /api/properties` - Get all properties
+- `GET /api/search` - Search properties
+- `POST /api/search/natural` - Natural language search
+- `POST /api/query` - Advanced query builder
 
-### **Price History** (4 endpoints)
-- `GET /api/price-history/<id>` - Get price history for property
-- `GET /api/price-drops` - Get recent price drops
-- `GET /api/stale-listings` - Get listings that haven't sold
-- `GET /api/market-trends` - Get market trend analysis
+### **4. Price Intelligence** (4 endpoints)
+- `GET /api/price-history/<id>` - Get price history
+- `GET /api/price-drops` - Get price drops
+- `GET /api/stale-listings` - Get stale listings
+- `GET /api/market-trends` - Market trend analysis
 
-### **Natural Language Search** (2 endpoints)
-- `POST /api/search/natural` - Search with plain English
-- `GET /api/search/suggestions` - Get search suggestions
+### **5. Saved Searches** (5 endpoints)
+- `GET /api/searches` - List saved searches
+- `POST /api/searches` - Create saved search
+- `GET /api/searches/<id>` - Get saved search
+- `PUT /api/searches/<id>` - Update saved search
+- `DELETE /api/searches/<id>` - Delete saved search
 
-### **Saved Searches** (6 endpoints)
-- `GET /api/searches` - List all searches
-- `POST /api/searches` - Create search
-- `GET /api/searches/<id>` - Get search
-- `PUT /api/searches/<id>` - Update search
-- `DELETE /api/searches/<id>` - Delete search
-- `GET /api/searches/<id>/stats` - Get search stats
+### **6. GitHub Actions Integration** (4 endpoints)
+- `POST /api/github/trigger-scrape` - Trigger workflow
+- `POST /api/github/estimate-time` - Estimate scrape time
+- `GET /api/github/workflow-runs` - List workflow runs
+- `GET /api/github/artifacts` - List artifacts
 
-### **Health Monitoring** (4 endpoints)
-- `GET /api/health/overall` - Overall system health
-- `GET /api/health/sites/<key>` - Site-specific health
-- `GET /api/health/alerts` - Active alerts
-- `GET /api/health/top-performers` - Top performing sites
+### **7. Firestore Integration** (3 endpoints)
+- `POST /api/firestore/query` - Query Firestore
+- `POST /api/firestore/archive` - Archive to Firestore
+- `GET /api/firestore/export` - Export from Firestore
 
-### **Duplicates & Quality** (2 endpoints)
-- `POST /api/duplicates/detect` - Detect duplicates
-- `POST /api/quality/score` - Score data quality
+### **8. Email Notifications** (5 endpoints)
+- `POST /api/email/configure` - Configure SMTP
+- `POST /api/email/test` - Test email connection
+- `POST /api/email/add-recipient` - Add recipient
+- `DELETE /api/email/remove-recipient` - Remove recipient
+- `POST /api/email/send` - Send notification
 
-### **Logs & Statistics** (8 endpoints)
-- `GET /api/logs` - Get logs
-- `GET /api/logs/errors` - Get errors
-- `GET /api/logs/site/<key>` - Site logs
-- `GET /api/stats/overview` - Overview stats
-- `GET /api/stats/sites` - Per-site stats
-- `GET /api/stats/trends` - Trend analysis
+### **Additional Endpoints** (32 endpoints)
+- Health monitoring, duplicates detection, quality scoring
+- Logs and statistics, site health, performance metrics
+- Data validation, location filtering, export management
+- Advanced filtering, pagination, and search capabilities
 
-### **Utilities** (4 endpoints)
-- `GET /api/health` - Health check
-- `POST /api/validate/url` - Validate URL
-- `POST /api/filter/location` - Filter by location
-- `POST /api/rate-limit/check` - Check rate limit
-
-### **GitHub Actions Integration** (4 endpoints)
-- `POST /api/github/trigger-scrape` - Trigger serverless scraping workflow
-- `GET /api/github/workflow-runs` - Monitor GitHub Actions runs
-- `GET /api/github/artifacts` - List scraped data artifacts
-- `GET /api/github/artifact/<id>/download` - Download artifact
+See **[FRONTEND_INTEGRATION_GUIDE.md](docs/FRONTEND_INTEGRATION_GUIDE.md)** for complete documentation of all 68 endpoints.
 
 ## ✅ Production Ready Features
 
@@ -457,9 +447,9 @@ Import the collection into Postman to test all 68 API endpoints. See [POSTMAN_GU
 - Integration tests complete
 
 ### **Code Metrics**
-- **Total API Endpoints**: 50
+- **Total API Endpoints**: 68
 - **Core Modules**: 15+
-- **Sites Configured**: 51 (unlimited scalability)
+- **Sites Configured**: 82+ (unlimited scalability)
 - **Lines of Code**: ~25,000+
 - **Test Coverage**: 100%
 
@@ -557,7 +547,7 @@ This scraper is an **enterprise-grade property aggregation platform** that:
 7. **Automates** - Scheduled scraping, saved searches, instant alerts
 8. **Monitors** - Site health tracking, error logging, performance metrics
 9. **Exports** - CSV, Excel, Parquet formats with master workbook
-10. **API** - Complete REST API with 70 endpoints for frontend integration
+10. **API** - Complete REST API with 68 endpoints for frontend integration
 11. **Firestore** - Cloud database storage with automatic uploads after scraping
 12. **Email Notifications** - SMTP configuration for automatic completion alerts
 

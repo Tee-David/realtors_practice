@@ -175,12 +175,14 @@ Internal planning and design documents:
 - ✅ Idempotent operations
 
 ### REST API
-- ✅ 25+ endpoints across 6 categories
+- ✅ 68 endpoints across 8 categories
 - ✅ Scraping management
 - ✅ Site configuration CRUD
-- ✅ Log viewing and filtering
-- ✅ Data querying with pagination
-- ✅ Statistics and trends
+- ✅ Data access and search
+- ✅ Price intelligence and tracking
+- ✅ Saved searches and alerts
+- ✅ GitHub Actions integration
+- ✅ Firestore and email notifications
 
 ### Frontend Integration
 - ✅ Complete Next.js examples
