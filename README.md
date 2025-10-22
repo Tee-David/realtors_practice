@@ -379,7 +379,9 @@ python tests/test_price_history.py
 - ✅ Firestore integration
 - ✅ Export & watcher services
 
-**See:** [TESTING_GUIDE.md](docs/TESTING_GUIDE.md) for complete testing documentation
+**Postman Collection:** [Nigerian_Real_Estate_API.postman_collection.json](docs/Nigerian_Real_Estate_API.postman_collection.json)
+
+**See:** [TESTING_GUIDE.md](docs/TESTING_GUIDE.md) | [POSTMAN_GUIDE.md](docs/POSTMAN_GUIDE.md)
 
 ---
 
@@ -392,11 +394,18 @@ python tests/test_price_history.py
 - **[API_QUICKSTART.md](docs/guides/API_QUICKSTART.md)** - API quick start guide
 
 **Integration Guides:**
-- **[FRONTEND_INTEGRATION_GUIDE.md](docs/FRONTEND_INTEGRATION_GUIDE.md)** - Complete frontend integration with priority endpoints
+- **[FRONTEND_AUTH_GUIDE.md](docs/FRONTEND_AUTH_GUIDE.md)** - Frontend integration with authentication (React/Vue/Angular)
+- **[FRONTEND_INTEGRATION_GUIDE.md](docs/FRONTEND_INTEGRATION_GUIDE.md)** - Complete API reference (all 68 endpoints)
 - **[TESTING_GUIDE.md](docs/TESTING_GUIDE.md)** - Comprehensive testing guide
+- **[POSTMAN_GUIDE.md](docs/POSTMAN_GUIDE.md)** - Postman collection testing guide
 
-**Security & Operations:**
-- **[SECURITY_ANALYSIS.md](docs/SECURITY_ANALYSIS.md)** - Security audit, vulnerabilities, and recommendations
+**API Keys & Security:**
+- **[HOW_TO_GET_API_KEY.md](HOW_TO_GET_API_KEY.md)** - ⭐ Generate API keys (30 seconds!)
+- **[SECURITY_IMPLEMENTATION.md](docs/SECURITY_IMPLEMENTATION.md)** - How to enable security (5 minutes)
+- **[SECURITY_ANALYSIS.md](docs/SECURITY_ANALYSIS.md)** - Security audit and recommendations
+- **[API_KEY_MANAGEMENT.md](docs/API_KEY_MANAGEMENT.md)** - Advanced key management
+
+**Architecture & Deployment:**
 - **[ARCHITECTURE.md](docs/ARCHITECTURE.md)** - Detailed project architecture
 - **[GITHUB_ACTIONS_SETUP.md](docs/GITHUB_ACTIONS_SETUP.md)** - CI/CD and automated workflows
 
