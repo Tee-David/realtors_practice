@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "Nigerian Real Estate Scraper API",
-    "description": "Complete collection of all 68 API endpoints with authentication",
+    "description": "Complete collection of all 68 API endpoints. Default BASE_URL is set to Firebase (https://us-central1-realtor-s-practice.cloudfunctions.net/api). For local testing, change BASE_URL to {{LOCAL_URL}}.",
     "version": "2.2.0",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
@@ -23,6 +23,11 @@
   "variable": [
     {
       "key": "BASE_URL",
+      "value": "https://us-central1-realtor-s-practice.cloudfunctions.net/api",
+      "type": "string"
+    },
+    {
+      "key": "LOCAL_URL",
       "value": "http://localhost:5000",
       "type": "string"
     },

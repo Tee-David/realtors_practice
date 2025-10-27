@@ -12,13 +12,22 @@ Enterprise-grade property aggregation platform with unlimited scalability (curre
 // API Base URL - Use this in your frontend
 const API_URL = 'https://us-central1-realtor-s-practice.cloudfunctions.net/api';
 
+// Quick Test - Run in browser console
+fetch('https://us-central1-realtor-s-practice.cloudfunctions.net/api/api/health')
+  .then(res => res.json())
+  .then(data => console.log('API Status:', data));
+
 // Example: Fetch all sites
 fetch(`${API_URL}/api/sites`)
   .then(res => res.json())
-  .then(data => console.log(data));
+  .then(data => console.log('Total Sites:', data.total, 'Sites:', data.sites));
 ```
 
-**Quick Start Guide**: See [docs/FRONTEND_QUICKSTART.md](docs/FRONTEND_QUICKSTART.md) for complete integration examples.
+**📖 Documentation for Frontend Developers**:
+- **Start Here**: [FOR_FRONTEND_DEVELOPER.md](FOR_FRONTEND_DEVELOPER.md) - Main entry point (5-minute read)
+- **Quick Start**: [docs/FRONTEND_QUICKSTART.md](docs/FRONTEND_QUICKSTART.md) - React/Next.js integration examples
+- **Complete API Reference**: [docs/FRONTEND_INTEGRATION_GUIDE.md](docs/FRONTEND_INTEGRATION_GUIDE.md) - All 68 endpoints documented
+- **Postman Testing**: [docs/Nigerian_Real_Estate_API.postman_collection.json](docs/Nigerian_Real_Estate_API.postman_collection.json) - Import and test all endpoints
 
 ---
 
@@ -364,9 +373,43 @@ All listings normalized to canonical schema:
 
 ## 🧪 API Testing
 
+### Quick Browser Test (30 Seconds)
+
+Open your browser console and paste:
+
+```javascript
+// Test 1: Health Check
+fetch('https://us-central1-realtor-s-practice.cloudfunctions.net/api/api/health')
+  .then(res => res.json())
+  .then(data => console.log('✅ API Health:', data));
+
+// Test 2: Get All Sites
+fetch('https://us-central1-realtor-s-practice.cloudfunctions.net/api/api/sites')
+  .then(res => res.json())
+  .then(data => console.log('✅ Total Sites:', data.total, 'Sites:', data.sites));
+
+// Test 3: Search Properties
+fetch('https://us-central1-realtor-s-practice.cloudfunctions.net/api/api/search/natural', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ query: '3 bedroom flat in Lekki' })
+})
+  .then(res => res.json())
+  .then(data => console.log('✅ Search Results:', data.count, 'properties found'));
+```
+
+If you see responses, **your API is working!** ✅
+
+### Postman Testing
+
 **Postman Collection:** [Nigerian_Real_Estate_API.postman_collection.json](docs/Nigerian_Real_Estate_API.postman_collection.json)
 
-Import the collection into Postman to test all 68 API endpoints. See [POSTMAN_GUIDE.md](docs/POSTMAN_GUIDE.md) for setup instructions.
+Import the collection into Postman to test all 68 API endpoints:
+1. **Import**: File → Import → Select `Nigerian_Real_Estate_API.postman_collection.json`
+2. **Set Base URL**: Update `BASE_URL` variable to `https://us-central1-realtor-s-practice.cloudfunctions.net/api`
+3. **Test**: Run any endpoint to verify API is working
+
+See [POSTMAN_GUIDE.md](docs/POSTMAN_GUIDE.md) for detailed setup instructions.
 
 ---
 

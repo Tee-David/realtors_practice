@@ -1,8 +1,6 @@
 # Postman Testing Guide
 
-> **⚠️ DO NOT DELETE THIS FILE!** Essential guide for API testing with Postman.
-
-Complete guide for testing all 68 API endpoints using Postman.
+Complete guide for testing all 68 API endpoints using Postman with the live Firebase backend or local server.
 
 ---
 
@@ -10,29 +8,41 @@ Complete guide for testing all 68 API endpoints using Postman.
 
 ### Step 1: Import Collection
 
-1. Download: `Nigerian_Real_Estate_API.postman_collection.json` (in project root)
+1. Download: `Nigerian_Real_Estate_API.postman_collection.json` (in `docs/` folder)
 2. Open Postman
 3. Click **Import** button (top left)
 4. Drag the JSON file or click "Upload Files"
 5. Click **Import**
 
-### Step 2: Set Variables
+### Step 2: Choose Your Environment
 
-1. Click the **eye icon** (👁️) in top right
-2. Add these variables:
+**Option A: Firebase (Recommended) - Already Configured!**
+- ✅ The collection is pre-configured with Firebase URL
+- ✅ No setup needed - just start testing!
+- ✅ BASE_URL: `https://us-central1-realtor-s-practice.cloudfunctions.net/api`
 
-| Variable | Value |
-|----------|-------|
-| `BASE_URL` | `http://localhost:5000` |
-| `API_KEY` | `your-api-key-here` |
-
-3. Click **Save**
+**Option B: Local Server**
+1. Start local API server: `python api_server.py`
+2. In Postman, click the **eye icon** (👁️) in top right
+3. Change `BASE_URL` to `{{LOCAL_URL}}` or `http://localhost:5000`
+4. Click **Save**
 
 ### Step 3: Test!
 
-1. Start API server: `python api_server.py`
-2. In Postman, select any request
-3. Click **Send**
+1. Select any request from the collection
+2. Click **Send**
+3. View response in the bottom panel
+
+**Quick Test:** Open "1. Core Operations" → "Health Check" → Click **Send**
+
+Expected Response:
+```json
+{
+  "status": "healthy",
+  "timestamp": "2025-10-27T...",
+  "version": "1.0.0"
+}
+```
 
 ---
 
