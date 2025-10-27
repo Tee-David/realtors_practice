@@ -1,0 +1,58 @@
+{
+  "npc": {
+    "last_scrape": "2025-10-21T11:32:22.201769",
+    "total_scrapes": 25,
+    "last_successful_scrape": "2025-10-21T11:32:22.201773",
+    "last_count": 2
+  },
+  "propertypro": {
+    "last_scrape": "2025-10-21T11:32:22.201788",
+    "last_successful_scrape": "2025-10-21T11:32:22.201791",
+    "last_count": 411,
+    "total_scrapes": 6
+  },
+  "property24": {
+    "last_scrape": "2025-10-19T15:39:01.574987",
+    "total_scrapes": 3
+  },
+  "lamudi": {
+    "last_scrape": "2025-10-05T14:34:44.303757",
+    "total_scrapes": 2
+  },
+  "jiji": {
+    "last_scrape": "2025-10-21T11:32:22.201778",
+    "last_successful_scrape": "2025-10-21T11:32:22.201781",
+    "last_count": 17,
+    "total_scrapes": 4
+  },
+  "buyletlive": {
+    "last_scrape": "2025-10-21T11:32:22.201738",
+    "last_successful_scrape": "2025-10-20T14:36:10.078163",
+    "last_count": 30,
+    "total_scrapes": 3
+  },
+  "cwlagos": {
+    "last_scrape": "2025-10-21T11:32:22.201757",
+    "last_successful_scrape": "2025-10-21T11:32:22.201763",
+    "last_count": 44,
+    "total_scrapes": 3
+  },
+  "edenoasis": {
+    "last_scrape": "2025-10-21T04:55:31.743074",
+    "last_successful_scrape": "2025-10-21T04:55:31.743094",
+    "last_count": 20,
+    "total_scrapes": 2
+  },
+  "pwanhomes": {
+    "last_scrape": "2025-10-20T14:36:10.078189",
+    "last_successful_scrape": "2025-10-20T14:36:10.078192",
+    "last_count": 1,
+    "total_scrapes": 1
+  },
+  "privateproperty": {
+    "last_scrape": "2025-10-20T14:36:10.078196",
+    "last_successful_scrape": "2025-10-20T14:36:10.078199",
+    "last_count": 12,
+    "total_scrapes": 1
+  }
+}

@@ -1,0 +1,1700 @@
+
+================================================================================
+Error Report - 2025-10-05T16:35:46.412060
+================================================================================
+
+1. PROCESSING_ERROR
+   File: exports\sites\npc\2025-08-21_11-38-11_npc.csv
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+2. PROCESSING_ERROR
+   File: exports\sites\npc\2025-08-21_11-38-11_npc.xlsx
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+3. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-08-21_11-40-25_propertypro.csv
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+4. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-08-21_11-40-25_propertypro.xlsx
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+5. PROCESSING_ERROR
+   File: exports\sites\privateproperty\2025-08-21_11-52-05_privateproperty.csv
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+6. PROCESSING_ERROR
+   File: exports\sites\privateproperty\2025-08-21_11-52-05_privateproperty.xlsx
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+7. PROCESSING_ERROR
+   File: exports\sites\property24\2025-08-21_12-02-18_property24.csv
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+8. PROCESSING_ERROR
+   File: exports\sites\property24\2025-08-21_12-02-18_property24.xlsx
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+9. PROCESSING_ERROR
+   File: exports\sites\hutbay\2025-08-21_12-11-17_hutbay.csv
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+10. PROCESSING_ERROR
+   File: exports\sites\hutbay\2025-08-21_12-11-17_hutbay.xlsx
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+11. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-08-21_12-27-15_jiji.csv
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+12. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-08-21_12-27-15_jiji.xlsx
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+13. PROCESSING_ERROR
+   File: exports\sites\nigerianpropertymarket\2025-08-21_12-41-27_nigerianpropertymarket.csv
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+14. PROCESSING_ERROR
+   File: exports\sites\nigerianpropertymarket\2025-08-21_12-41-27_nigerianpropertymarket.xlsx
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+15. PROCESSING_ERROR
+   File: exports\sites\propertylisthub\2025-08-21_12-54-58_propertylisthub.csv
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+16. PROCESSING_ERROR
+   File: exports\sites\propertylisthub\2025-08-21_12-54-58_propertylisthub.xlsx
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+17. PROCESSING_ERROR
+   File: exports\sites\naijahouses\2025-08-21_13-10-28_naijahouses.csv
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+18. PROCESSING_ERROR
+   File: exports\sites\naijahouses\2025-08-21_13-10-28_naijahouses.xlsx
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+19. PROCESSING_ERROR
+   File: exports\sites\oparahrealty\2025-08-21_13-21-10_oparahrealty.csv
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+20. PROCESSING_ERROR
+   File: exports\sites\oparahrealty\2025-08-21_13-21-10_oparahrealty.xlsx
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+21. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-08-21_14-01-56_cwlagos.csv
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+22. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-08-21_14-01-56_cwlagos.xlsx
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+23. PROCESSING_ERROR
+   File: exports\sites\landng\2025-08-21_14-11-51_landng.csv
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+24. PROCESSING_ERROR
+   File: exports\sites\landng\2025-08-21_14-11-51_landng.xlsx
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+25. PROCESSING_ERROR
+   File: exports\sites\lagosproperty\2025-08-21_14-23-57_lagosproperty.csv
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+26. PROCESSING_ERROR
+   File: exports\sites\lagosproperty\2025-08-21_14-23-57_lagosproperty.xlsx
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+27. PROCESSING_ERROR
+   File: exports\sites\ramos\2025-08-21_14-36-26_ramos.csv
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+28. PROCESSING_ERROR
+   File: exports\sites\ramos\2025-08-21_14-36-26_ramos.xlsx
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+29. PROCESSING_ERROR
+   File: exports\sites\edenoasis\2025-08-21_14-48-28_edenoasis.csv
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+30. PROCESSING_ERROR
+   File: exports\sites\edenoasis\2025-08-21_14-48-28_edenoasis.xlsx
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+31. PROCESSING_ERROR
+   File: exports\sites\adronhomes\2025-08-21_14-54-57_adronhomes.csv
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+32. PROCESSING_ERROR
+   File: exports\sites\adronhomes\2025-08-21_14-54-57_adronhomes.xlsx
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+33. PROCESSING_ERROR
+   File: exports\sites\naijalandlord\2025-08-21_15-04-43_naijalandlord.csv
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+34. PROCESSING_ERROR
+   File: exports\sites\naijalandlord\2025-08-21_15-04-43_naijalandlord.xlsx
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+35. PROCESSING_ERROR
+   File: exports\sites\trovit\2025-08-21_15-16-18_trovit.csv
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+36. PROCESSING_ERROR
+   File: exports\sites\trovit\2025-08-21_15-16-18_trovit.xlsx
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+37. PROCESSING_ERROR
+   File: exports\sites\nigeriapropertyzone\2025-08-21_15-37-39_nigeriapropertyzone.csv
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+38. PROCESSING_ERROR
+   File: exports\sites\nigeriapropertyzone\2025-08-21_15-37-39_nigeriapropertyzone.xlsx
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+39. PROCESSING_ERROR
+   File: exports\sites\castles\2025-08-21_15-50-43_castles.csv
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+40. PROCESSING_ERROR
+   File: exports\sites\castles\2025-08-21_15-50-43_castles.xlsx
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+41. PROCESSING_ERROR
+   File: exports\sites\landmall\2025-08-21_16-28-43_landmall.csv
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+42. PROCESSING_ERROR
+   File: exports\sites\landmall\2025-08-21_16-28-43_landmall.xlsx
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+43. PROCESSING_ERROR
+   File: exports\sites\giddaa\2025-08-21_16-32-43_giddaa.csv
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+44. PROCESSING_ERROR
+   File: exports\sites\giddaa\2025-08-21_16-32-43_giddaa.xlsx
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+45. PROCESSING_ERROR
+   File: exports\sites\realtorintl\2025-08-21_16-44-18_realtorintl.csv
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+46. PROCESSING_ERROR
+   File: exports\sites\realtorintl\2025-08-21_16-44-18_realtorintl.xlsx
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+47. PROCESSING_ERROR
+   File: exports\sites\facibus\2025-08-21_16-52-08_facibus.csv
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+48. PROCESSING_ERROR
+   File: exports\sites\facibus\2025-08-21_16-52-08_facibus.xlsx
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+49. PROCESSING_ERROR
+   File: exports\sites\ubosieleh\2025-08-21_17-57-47_ubosieleh.csv
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+50. PROCESSING_ERROR
+   File: exports\sites\ubosieleh\2025-08-21_17-57-47_ubosieleh.xlsx
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+51. PROCESSING_ERROR
+   File: exports\sites\npc\2025-08-22_08-11-32_npc.csv
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+52. PROCESSING_ERROR
+   File: exports\sites\npc\2025-08-22_08-11-32_npc.xlsx
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+53. PROCESSING_ERROR
+   File: exports\sites\npc\2025-10-05_11-49-27_npc.csv
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+54. PROCESSING_ERROR
+   File: exports\sites\npc\2025-10-05_11-49-27_npc.xlsx
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+55. PROCESSING_ERROR
+   File: exports\sites\npc\2025-10-05_12-03-47_npc.csv
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+56. PROCESSING_ERROR
+   File: exports\sites\npc\2025-10-05_12-03-47_npc.xlsx
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+57. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-05_12-06-44_propertypro.csv
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+58. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-05_12-06-44_propertypro.xlsx
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+59. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-05_12-10-12_propertypro.csv
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+60. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-05_12-10-12_propertypro.xlsx
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+61. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-05_12-28-03_jiji.csv
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+62. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-05_12-28-03_jiji.xlsx
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+63. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-05_12-56-27_jiji.csv
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+64. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-05_12-56-27_jiji.xlsx
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+65. PROCESSING_ERROR
+   File: exports\sites\npc\2025-10-05_14-18-49_npc.csv
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+66. PROCESSING_ERROR
+   File: exports\sites\npc\2025-10-05_14-18-49_npc.xlsx
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+67. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-05_14-24-51_propertypro.csv
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+68. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-05_14-24-51_propertypro.xlsx
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+69. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-05_14-42-47_jiji.csv
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+70. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-05_14-42-47_jiji.xlsx
+   Error: Value does not match pattern ^[$]?([A-Za-z]{1,3})[$]?(\d+)(:[$]?([A-Za-z]{1,3})[$]?(\d+)?)?$|^[A-Za-z]{1,3}:[A-Za-z]{1,3}$
+
+Total Errors: 70
+
+================================================================================
+Error Report - 2025-10-20T07:19:16.914568
+================================================================================
+
+1. PROCESSING_ERROR
+   File: exports\sites\npc\2025-10-19_14-40-34_npc.csv
+   Error: File is not a zip file
+
+2. PROCESSING_ERROR
+   File: exports\sites\npc\2025-10-19_14-37-54_npc.xlsx
+   Error: 
+
+3. PROCESSING_ERROR
+   File: exports\sites\npc\2025-10-19_14-40-34_npc.xlsx
+   Error: File is not a zip file
+
+4. PROCESSING_ERROR
+   File: exports\sites\npc\2025-10-19_14-51-54_npc.csv
+   Error: File is not a zip file
+
+5. PROCESSING_ERROR
+   File: exports\sites\npc\2025-10-19_14-52-11_npc.csv
+   Error: File is not a zip file
+
+6. PROCESSING_ERROR
+   File: exports\sites\npc\2025-10-19_14-52-11_npc.xlsx
+   Error: File is not a zip file
+
+7. PROCESSING_ERROR
+   File: exports\sites\npc\2025-10-19_15-15-21_npc.csv
+   Error: File is not a zip file
+
+8. PROCESSING_ERROR
+   File: exports\sites\npc\2025-10-19_15-15-21_npc.xlsx
+   Error: File is not a zip file
+
+9. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_15-32-46_jiji.csv
+   Error: File is not a zip file
+
+10. PROCESSING_ERROR
+   File: exports\sites\npc\2025-10-19_14-51-54_npc.xlsx
+   Error: File is not a zip file
+
+11. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_15-32-46_jiji.xlsx
+   Error: File is not a zip file
+
+12. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-19_16-05-51_propertypro.csv
+   Error: File is not a zip file
+
+13. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_22-43-04_jiji.csv
+   Error: File is not a zip file
+
+14. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_22-43-04_jiji.xlsx
+   Error: File is not a zip file
+
+15. PROCESSING_ERROR
+   File: exports\sites\npc\2025-10-19_22-45-09_npc.csv
+   Error: File is not a zip file
+
+16. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-19_16-05-51_propertypro.xlsx
+   Error: File is not a zip file
+
+17. PROCESSING_ERROR
+   File: exports\sites\npc\2025-10-19_22-45-09_npc.xlsx
+   Error: File is not a zip file
+
+18. PROCESSING_ERROR
+   File: exports\sites\npc\2025-10-19_22-53-18_npc.csv
+   Error: File is not a zip file
+
+19. PROCESSING_ERROR
+   File: exports\sites\npc\2025-10-19_22-53-18_npc.xlsx
+   Error: File is not a zip file
+
+20. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_23-08-16_jiji.csv
+   Error: File is not a zip file
+
+21. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_23-08-16_jiji.xlsx
+   Error: File is not a zip file
+
+22. PROCESSING_ERROR
+   File: exports\sites\npc\2025-10-19_23-37-17_npc.csv
+   Error: File is not a zip file
+
+23. PROCESSING_ERROR
+   File: exports\sites\npc\2025-10-19_23-37-17_npc.xlsx
+   Error: File is not a zip file
+
+24. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_23-43-30_jiji.csv
+   Error: File is not a zip file
+
+25. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_23-43-30_jiji.xlsx
+   Error: File is not a zip file
+
+26. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-20_07-18-51_propertypro.csv
+   Error: File is not a zip file
+
+27. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-20_07-18-51_propertypro.xlsx
+   Error: File is not a zip file
+
+Total Errors: 27
+
+================================================================================
+Error Report - 2025-10-20T09:10:11.095592
+================================================================================
+
+1. PROCESSING_ERROR
+   File: exports\sites\npc\2025-10-19_14-51-54_npc.csv
+   Error: Truncated file header
+
+2. PROCESSING_ERROR
+   File: exports\sites\npc\2025-10-19_14-40-34_npc.csv
+   Error: 
+
+3. PROCESSING_ERROR
+   File: exports\sites\npc\2025-10-19_14-52-11_npc.csv
+   Error: File is not a zip file
+
+4. PROCESSING_ERROR
+   File: exports\sites\npc\2025-10-19_14-52-11_npc.xlsx
+   Error: File is not a zip file
+
+5. PROCESSING_ERROR
+   File: exports\sites\npc\2025-10-19_15-15-21_npc.csv
+   Error: File is not a zip file
+
+6. PROCESSING_ERROR
+   File: exports\sites\npc\2025-10-19_15-15-21_npc.xlsx
+   Error: File is not a zip file
+
+7. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_15-32-46_jiji.csv
+   Error: File is not a zip file
+
+8. PROCESSING_ERROR
+   File: exports\sites\npc\2025-10-19_14-51-54_npc.xlsx
+   Error: File is not a zip file
+
+9. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_15-32-46_jiji.xlsx
+   Error: File is not a zip file
+
+10. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-19_16-05-51_propertypro.csv
+   Error: File is not a zip file
+
+11. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_22-43-04_jiji.csv
+   Error: File is not a zip file
+
+12. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_22-43-04_jiji.xlsx
+   Error: File is not a zip file
+
+13. PROCESSING_ERROR
+   File: exports\sites\npc\2025-10-19_22-45-09_npc.csv
+   Error: File is not a zip file
+
+14. PROCESSING_ERROR
+   File: exports\sites\npc\2025-10-19_22-45-09_npc.xlsx
+   Error: File is not a zip file
+
+15. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-19_16-05-51_propertypro.xlsx
+   Error: File is not a zip file
+
+16. PROCESSING_ERROR
+   File: exports\sites\npc\2025-10-19_22-53-18_npc.csv
+   Error: File is not a zip file
+
+17. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_23-08-16_jiji.csv
+   Error: File is not a zip file
+
+18. PROCESSING_ERROR
+   File: exports\sites\npc\2025-10-19_22-53-18_npc.xlsx
+   Error: File is not a zip file
+
+19. PROCESSING_ERROR
+   File: exports\sites\npc\2025-10-19_23-37-17_npc.csv
+   Error: File is not a zip file
+
+20. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_23-08-16_jiji.xlsx
+   Error: File is not a zip file
+
+21. PROCESSING_ERROR
+   File: exports\sites\npc\2025-10-19_23-37-17_npc.xlsx
+   Error: File is not a zip file
+
+22. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_23-43-30_jiji.csv
+   Error: File is not a zip file
+
+23. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_23-43-30_jiji.xlsx
+   Error: File is not a zip file
+
+24. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-20_07-18-51_propertypro.csv
+   Error: File is not a zip file
+
+25. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-20_09-09-53_propertypro.csv
+   Error: File is not a zip file
+
+26. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-20_07-18-51_propertypro.xlsx
+   Error: File is not a zip file
+
+27. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-20_09-09-53_propertypro.xlsx
+   Error: File is not a zip file
+
+Total Errors: 27
+
+================================================================================
+Error Report - 2025-10-20T14:36:43.406981
+================================================================================
+
+1. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_15-32-46_jiji.xlsx
+   Error: Truncated file header
+
+2. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-19_16-05-51_propertypro.csv
+   Error: Truncated file header
+
+3. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_22-43-04_jiji.csv
+   Error: File is not a zip file
+
+4. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_22-43-04_jiji.xlsx
+   Error: File is not a zip file
+
+5. PROCESSING_ERROR
+   File: exports\sites\npc\2025-10-19_22-45-09_npc.csv
+   Error: File is not a zip file
+
+6. PROCESSING_ERROR
+   File: exports\sites\npc\2025-10-19_22-45-09_npc.xlsx
+   Error: File is not a zip file
+
+7. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-19_16-05-51_propertypro.xlsx
+   Error: File is not a zip file
+
+8. PROCESSING_ERROR
+   File: exports\sites\npc\2025-10-19_22-53-18_npc.csv
+   Error: File is not a zip file
+
+9. PROCESSING_ERROR
+   File: exports\sites\npc\2025-10-19_22-53-18_npc.xlsx
+   Error: File is not a zip file
+
+10. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_23-08-16_jiji.csv
+   Error: File is not a zip file
+
+11. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_23-08-16_jiji.xlsx
+   Error: File is not a zip file
+
+12. PROCESSING_ERROR
+   File: exports\sites\npc\2025-10-19_23-37-17_npc.csv
+   Error: File is not a zip file
+
+13. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_23-43-30_jiji.csv
+   Error: File is not a zip file
+
+14. PROCESSING_ERROR
+   File: exports\sites\npc\2025-10-19_23-37-17_npc.xlsx
+   Error: File is not a zip file
+
+15. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_23-43-30_jiji.xlsx
+   Error: File is not a zip file
+
+16. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-20_07-18-51_propertypro.csv
+   Error: File is not a zip file
+
+17. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-20_09-09-53_propertypro.csv
+   Error: File is not a zip file
+
+18. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-20_07-18-51_propertypro.xlsx
+   Error: File is not a zip file
+
+19. PROCESSING_ERROR
+   File: exports\sites\buyletlive\2025-10-20_13-45-47_buyletlive.csv
+   Error: File is not a zip file
+
+20. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-20_09-09-53_propertypro.xlsx
+   Error: File is not a zip file
+
+21. PROCESSING_ERROR
+   File: exports\sites\buyletlive\2025-10-20_13-45-47_buyletlive.xlsx
+   Error: File is not a zip file
+
+22. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-20_13-57-42_cwlagos.csv
+   Error: File is not a zip file
+
+23. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-20_13-57-42_cwlagos.xlsx
+   Error: File is not a zip file
+
+24. PROCESSING_ERROR
+   File: exports\sites\edenoasis\2025-10-20_14-07-07_edenoasis.csv
+   Error: File is not a zip file
+
+25. PROCESSING_ERROR
+   File: exports\sites\pwanhomes\2025-10-20_14-12-53_pwanhomes.csv
+   Error: File is not a zip file
+
+26. PROCESSING_ERROR
+   File: exports\sites\edenoasis\2025-10-20_14-07-07_edenoasis.xlsx
+   Error: File is not a zip file
+
+27. PROCESSING_ERROR
+   File: exports\sites\privateproperty\2025-10-20_14-36-10_privateproperty.csv
+   Error: File is not a zip file
+
+28. PROCESSING_ERROR
+   File: exports\sites\pwanhomes\2025-10-20_14-12-53_pwanhomes.xlsx
+   Error: File is not a zip file
+
+29. PROCESSING_ERROR
+   File: exports\sites\privateproperty\2025-10-20_14-36-10_privateproperty.xlsx
+   Error: File is not a zip file
+
+Total Errors: 29
+
+================================================================================
+Error Report - 2025-10-20T23:33:44.552265
+================================================================================
+
+1. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-19_16-05-51_propertypro.csv
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+2. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_22-43-04_jiji.csv
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+3. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-19_16-05-51_propertypro.xlsx
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+4. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_22-43-04_jiji.xlsx
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+5. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_23-08-16_jiji.csv
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+6. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_23-08-16_jiji.xlsx
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+7. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_23-43-30_jiji.xlsx
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+8. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_23-43-30_jiji.csv
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+9. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-20_07-18-51_propertypro.csv
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+10. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-20_07-18-51_propertypro.xlsx
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+11. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-20_09-09-53_propertypro.csv
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+12. PROCESSING_ERROR
+   File: exports\sites\buyletlive\2025-10-20_13-45-47_buyletlive.csv
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+13. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-20_09-09-53_propertypro.xlsx
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+14. PROCESSING_ERROR
+   File: exports\sites\buyletlive\2025-10-20_13-45-47_buyletlive.xlsx
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+15. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-20_13-57-42_cwlagos.csv
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+16. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-20_13-57-42_cwlagos.xlsx
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+17. PROCESSING_ERROR
+   File: exports\sites\edenoasis\2025-10-20_14-07-07_edenoasis.xlsx
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+18. PROCESSING_ERROR
+   File: exports\sites\edenoasis\2025-10-20_14-07-07_edenoasis.csv
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+19. PROCESSING_ERROR
+   File: exports\sites\pwanhomes\2025-10-20_14-12-53_pwanhomes.xlsx
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+20. PROCESSING_ERROR
+   File: exports\sites\pwanhomes\2025-10-20_14-12-53_pwanhomes.csv
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+21. PROCESSING_ERROR
+   File: exports\sites\privateproperty\2025-10-20_14-36-10_privateproperty.csv
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+22. PROCESSING_ERROR
+   File: exports\sites\privateproperty\2025-10-20_14-36-10_privateproperty.xlsx
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+23. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-20_17-40-39_cwlagos.csv
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+24. PROCESSING_ERROR
+   File: exports\sites\edenoasis\2025-10-20_17-47-21_edenoasis.csv
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+25. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-20_17-40-39_cwlagos.xlsx
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+26. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-20_22-33-14_cwlagos.csv
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+27. PROCESSING_ERROR
+   File: exports\sites\edenoasis\2025-10-20_17-47-21_edenoasis.xlsx
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+28. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-20_22-33-14_cwlagos.xlsx
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+29. PROCESSING_ERROR
+   File: exports\sites\edenoasis\2025-10-20_22-38-31_edenoasis.csv
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+30. PROCESSING_ERROR
+   File: exports\sites\edenoasis\2025-10-20_22-38-31_edenoasis.xlsx
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+Total Errors: 30
+
+================================================================================
+Error Report - 2025-10-21T04:56:24.778288
+================================================================================
+
+1. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-19_16-05-51_propertypro.csv
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+2. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_22-43-04_jiji.csv
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+3. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_22-43-04_jiji.xlsx
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+4. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-19_16-05-51_propertypro.xlsx
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+5. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_23-08-16_jiji.csv
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+6. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_23-08-16_jiji.xlsx
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+7. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_23-43-30_jiji.csv
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+8. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-20_07-18-51_propertypro.csv
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+9. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_23-43-30_jiji.xlsx
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+10. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-20_09-09-53_propertypro.csv
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+11. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-20_07-18-51_propertypro.xlsx
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+12. PROCESSING_ERROR
+   File: exports\sites\buyletlive\2025-10-20_13-45-47_buyletlive.csv
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+13. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-20_09-09-53_propertypro.xlsx
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+14. PROCESSING_ERROR
+   File: exports\sites\buyletlive\2025-10-20_13-45-47_buyletlive.xlsx
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+15. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-20_13-57-42_cwlagos.csv
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+16. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-20_13-57-42_cwlagos.xlsx
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+17. PROCESSING_ERROR
+   File: exports\sites\edenoasis\2025-10-20_14-07-07_edenoasis.xlsx
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+18. PROCESSING_ERROR
+   File: exports\sites\edenoasis\2025-10-20_14-07-07_edenoasis.csv
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+19. PROCESSING_ERROR
+   File: exports\sites\pwanhomes\2025-10-20_14-12-53_pwanhomes.csv
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+20. PROCESSING_ERROR
+   File: exports\sites\pwanhomes\2025-10-20_14-12-53_pwanhomes.xlsx
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+21. PROCESSING_ERROR
+   File: exports\sites\privateproperty\2025-10-20_14-36-10_privateproperty.csv
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+22. PROCESSING_ERROR
+   File: exports\sites\privateproperty\2025-10-20_14-36-10_privateproperty.xlsx
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+23. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-20_17-40-39_cwlagos.csv
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+24. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-20_17-40-39_cwlagos.xlsx
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+25. PROCESSING_ERROR
+   File: exports\sites\edenoasis\2025-10-20_17-47-21_edenoasis.xlsx
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+26. PROCESSING_ERROR
+   File: exports\sites\edenoasis\2025-10-20_17-47-21_edenoasis.csv
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+27. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-20_22-33-14_cwlagos.csv
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+28. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-20_22-33-14_cwlagos.xlsx
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+29. PROCESSING_ERROR
+   File: exports\sites\edenoasis\2025-10-20_22-38-31_edenoasis.csv
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+30. PROCESSING_ERROR
+   File: exports\sites\edenoasis\2025-10-20_22-38-31_edenoasis.xlsx
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+31. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-21_04-55-30_propertypro.csv
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+32. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-21_04-55-30_propertypro.xlsx
+   Error: [Errno 13] Permission denied: 'exports\\cleaned\\MASTER_CLEANED_WORKBOOK.xlsx'
+
+Total Errors: 32
+
+================================================================================
+Error Report - 2025-10-21T11:32:48.931286
+================================================================================
+
+1. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_22-43-04_jiji.csv
+   Error: 
+
+2. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-19_16-05-51_propertypro.xlsx
+   Error: File is not a zip file
+
+3. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_23-08-16_jiji.csv
+   Error: File is not a zip file
+
+4. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_22-43-04_jiji.xlsx
+   Error: File is not a zip file
+
+5. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_23-43-30_jiji.csv
+   Error: File is not a zip file
+
+6. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_23-08-16_jiji.xlsx
+   Error: File is not a zip file
+
+7. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_23-43-30_jiji.xlsx
+   Error: File is not a zip file
+
+8. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-20_07-18-51_propertypro.csv
+   Error: File is not a zip file
+
+9. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-20_09-09-53_propertypro.csv
+   Error: File is not a zip file
+
+10. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-20_07-18-51_propertypro.xlsx
+   Error: File is not a zip file
+
+11. PROCESSING_ERROR
+   File: exports\sites\buyletlive\2025-10-20_13-45-47_buyletlive.csv
+   Error: File is not a zip file
+
+12. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-20_09-09-53_propertypro.xlsx
+   Error: File is not a zip file
+
+13. PROCESSING_ERROR
+   File: exports\sites\buyletlive\2025-10-20_13-45-47_buyletlive.xlsx
+   Error: File is not a zip file
+
+14. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-20_13-57-42_cwlagos.csv
+   Error: File is not a zip file
+
+15. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-20_13-57-42_cwlagos.xlsx
+   Error: File is not a zip file
+
+16. PROCESSING_ERROR
+   File: exports\sites\edenoasis\2025-10-20_14-07-07_edenoasis.csv
+   Error: File is not a zip file
+
+17. PROCESSING_ERROR
+   File: exports\sites\pwanhomes\2025-10-20_14-12-53_pwanhomes.csv
+   Error: File is not a zip file
+
+18. PROCESSING_ERROR
+   File: exports\sites\edenoasis\2025-10-20_14-07-07_edenoasis.xlsx
+   Error: File is not a zip file
+
+19. PROCESSING_ERROR
+   File: exports\sites\pwanhomes\2025-10-20_14-12-53_pwanhomes.xlsx
+   Error: File is not a zip file
+
+20. PROCESSING_ERROR
+   File: exports\sites\privateproperty\2025-10-20_14-36-10_privateproperty.csv
+   Error: File is not a zip file
+
+21. PROCESSING_ERROR
+   File: exports\sites\privateproperty\2025-10-20_14-36-10_privateproperty.xlsx
+   Error: File is not a zip file
+
+22. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-20_17-40-39_cwlagos.csv
+   Error: File is not a zip file
+
+23. PROCESSING_ERROR
+   File: exports\sites\edenoasis\2025-10-20_17-47-21_edenoasis.csv
+   Error: File is not a zip file
+
+24. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-20_17-40-39_cwlagos.xlsx
+   Error: File is not a zip file
+
+25. PROCESSING_ERROR
+   File: exports\sites\edenoasis\2025-10-20_17-47-21_edenoasis.xlsx
+   Error: File is not a zip file
+
+26. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-20_22-33-14_cwlagos.csv
+   Error: File is not a zip file
+
+27. PROCESSING_ERROR
+   File: exports\sites\edenoasis\2025-10-20_22-38-31_edenoasis.csv
+   Error: File is not a zip file
+
+28. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-20_22-33-14_cwlagos.xlsx
+   Error: File is not a zip file
+
+29. PROCESSING_ERROR
+   File: exports\sites\edenoasis\2025-10-20_22-38-31_edenoasis.xlsx
+   Error: File is not a zip file
+
+30. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-21_04-55-30_propertypro.csv
+   Error: File is not a zip file
+
+31. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-21_10-31-03_cwlagos.csv
+   Error: File is not a zip file
+
+32. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-21_10-31-03_cwlagos.xlsx
+   Error: File is not a zip file
+
+33. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-21_04-55-30_propertypro.xlsx
+   Error: File is not a zip file
+
+34. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-21_10-34-27_jiji.csv
+   Error: File is not a zip file
+
+35. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-21_10-34-27_jiji.xlsx
+   Error: File is not a zip file
+
+36. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-21_11-32-22_propertypro.csv
+   Error: File is not a zip file
+
+37. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-21_11-32-22_propertypro.xlsx
+   Error: File is not a zip file
+
+Total Errors: 37
+
+================================================================================
+Error Report - 2025-10-21T11:38:12.868834
+================================================================================
+
+1. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_22-43-04_jiji.xlsx
+   Error: 
+
+2. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-19_16-05-51_propertypro.xlsx
+   Error: File is not a zip file
+
+3. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_23-08-16_jiji.csv
+   Error: File is not a zip file
+
+4. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_23-08-16_jiji.xlsx
+   Error: File is not a zip file
+
+5. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_23-43-30_jiji.xlsx
+   Error: File is not a zip file
+
+6. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_23-43-30_jiji.csv
+   Error: File is not a zip file
+
+7. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-20_07-18-51_propertypro.csv
+   Error: File is not a zip file
+
+8. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-20_09-09-53_propertypro.csv
+   Error: File is not a zip file
+
+9. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-20_07-18-51_propertypro.xlsx
+   Error: File is not a zip file
+
+10. PROCESSING_ERROR
+   File: exports\sites\buyletlive\2025-10-20_13-45-47_buyletlive.csv
+   Error: File is not a zip file
+
+11. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-20_09-09-53_propertypro.xlsx
+   Error: File is not a zip file
+
+12. PROCESSING_ERROR
+   File: exports\sites\buyletlive\2025-10-20_13-45-47_buyletlive.xlsx
+   Error: File is not a zip file
+
+13. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-20_13-57-42_cwlagos.csv
+   Error: File is not a zip file
+
+14. PROCESSING_ERROR
+   File: exports\sites\edenoasis\2025-10-20_14-07-07_edenoasis.csv
+   Error: File is not a zip file
+
+15. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-20_13-57-42_cwlagos.xlsx
+   Error: File is not a zip file
+
+16. PROCESSING_ERROR
+   File: exports\sites\edenoasis\2025-10-20_14-07-07_edenoasis.xlsx
+   Error: File is not a zip file
+
+17. PROCESSING_ERROR
+   File: exports\sites\pwanhomes\2025-10-20_14-12-53_pwanhomes.csv
+   Error: File is not a zip file
+
+18. PROCESSING_ERROR
+   File: exports\sites\pwanhomes\2025-10-20_14-12-53_pwanhomes.xlsx
+   Error: File is not a zip file
+
+19. PROCESSING_ERROR
+   File: exports\sites\privateproperty\2025-10-20_14-36-10_privateproperty.csv
+   Error: File is not a zip file
+
+20. PROCESSING_ERROR
+   File: exports\sites\privateproperty\2025-10-20_14-36-10_privateproperty.xlsx
+   Error: File is not a zip file
+
+21. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-20_17-40-39_cwlagos.csv
+   Error: File is not a zip file
+
+22. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-20_17-40-39_cwlagos.xlsx
+   Error: File is not a zip file
+
+23. PROCESSING_ERROR
+   File: exports\sites\edenoasis\2025-10-20_17-47-21_edenoasis.csv
+   Error: File is not a zip file
+
+24. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-20_22-33-14_cwlagos.csv
+   Error: File is not a zip file
+
+25. PROCESSING_ERROR
+   File: exports\sites\edenoasis\2025-10-20_17-47-21_edenoasis.xlsx
+   Error: File is not a zip file
+
+26. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-20_22-33-14_cwlagos.xlsx
+   Error: File is not a zip file
+
+27. PROCESSING_ERROR
+   File: exports\sites\edenoasis\2025-10-20_22-38-31_edenoasis.csv
+   Error: File is not a zip file
+
+28. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-21_04-55-30_propertypro.csv
+   Error: File is not a zip file
+
+29. PROCESSING_ERROR
+   File: exports\sites\edenoasis\2025-10-20_22-38-31_edenoasis.xlsx
+   Error: File is not a zip file
+
+30. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-21_10-31-03_cwlagos.csv
+   Error: File is not a zip file
+
+31. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-21_04-55-30_propertypro.xlsx
+   Error: File is not a zip file
+
+32. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-21_10-31-03_cwlagos.xlsx
+   Error: 
+
+33. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-21_10-34-27_jiji.csv
+   Error: File is not a zip file
+
+34. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-21_10-34-27_jiji.xlsx
+   Error: File is not a zip file
+
+35. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-21_11-32-22_propertypro.csv
+   Error: File is not a zip file
+
+36. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-21_11-32-22_propertypro.xlsx
+   Error: File is not a zip file
+
+Total Errors: 36
+
+================================================================================
+Error Report - 2025-10-21T11:39:30.255929
+================================================================================
+
+1. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_23-08-16_jiji.xlsx
+   Error: File is not a zip file
+
+2. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_23-43-30_jiji.csv
+   Error: File is not a zip file
+
+3. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_23-43-30_jiji.xlsx
+   Error: File is not a zip file
+
+4. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-20_07-18-51_propertypro.csv
+   Error: File is not a zip file
+
+5. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-20_07-18-51_propertypro.xlsx
+   Error: File is not a zip file
+
+6. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-20_09-09-53_propertypro.csv
+   Error: File is not a zip file
+
+7. PROCESSING_ERROR
+   File: exports\sites\buyletlive\2025-10-20_13-45-47_buyletlive.csv
+   Error: File is not a zip file
+
+8. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-20_09-09-53_propertypro.xlsx
+   Error: File is not a zip file
+
+9. PROCESSING_ERROR
+   File: exports\sites\buyletlive\2025-10-20_13-45-47_buyletlive.xlsx
+   Error: File is not a zip file
+
+10. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-20_13-57-42_cwlagos.csv
+   Error: File is not a zip file
+
+11. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-20_13-57-42_cwlagos.xlsx
+   Error: File is not a zip file
+
+12. PROCESSING_ERROR
+   File: exports\sites\edenoasis\2025-10-20_14-07-07_edenoasis.csv
+   Error: File is not a zip file
+
+13. PROCESSING_ERROR
+   File: exports\sites\edenoasis\2025-10-20_14-07-07_edenoasis.xlsx
+   Error: File is not a zip file
+
+14. PROCESSING_ERROR
+   File: exports\sites\pwanhomes\2025-10-20_14-12-53_pwanhomes.csv
+   Error: File is not a zip file
+
+15. PROCESSING_ERROR
+   File: exports\sites\pwanhomes\2025-10-20_14-12-53_pwanhomes.xlsx
+   Error: File is not a zip file
+
+16. PROCESSING_ERROR
+   File: exports\sites\privateproperty\2025-10-20_14-36-10_privateproperty.csv
+   Error: File is not a zip file
+
+17. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-20_17-40-39_cwlagos.csv
+   Error: File is not a zip file
+
+18. PROCESSING_ERROR
+   File: exports\sites\privateproperty\2025-10-20_14-36-10_privateproperty.xlsx
+   Error: File is not a zip file
+
+19. PROCESSING_ERROR
+   File: exports\sites\edenoasis\2025-10-20_17-47-21_edenoasis.csv
+   Error: File is not a zip file
+
+20. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-20_17-40-39_cwlagos.xlsx
+   Error: File is not a zip file
+
+21. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-20_22-33-14_cwlagos.csv
+   Error: File is not a zip file
+
+22. PROCESSING_ERROR
+   File: exports\sites\edenoasis\2025-10-20_17-47-21_edenoasis.xlsx
+   Error: File is not a zip file
+
+23. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-20_22-33-14_cwlagos.xlsx
+   Error: File is not a zip file
+
+24. PROCESSING_ERROR
+   File: exports\sites\edenoasis\2025-10-20_22-38-31_edenoasis.csv
+   Error: File is not a zip file
+
+25. PROCESSING_ERROR
+   File: exports\sites\edenoasis\2025-10-20_22-38-31_edenoasis.xlsx
+   Error: File is not a zip file
+
+26. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-21_04-55-30_propertypro.csv
+   Error: File is not a zip file
+
+27. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-21_10-31-03_cwlagos.csv
+   Error: File is not a zip file
+
+28. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-21_04-55-30_propertypro.xlsx
+   Error: File is not a zip file
+
+29. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-21_10-34-27_jiji.csv
+   Error: File is not a zip file
+
+30. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-21_10-31-03_cwlagos.xlsx
+   Error: File is not a zip file
+
+31. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-21_11-32-22_propertypro.csv
+   Error: File is not a zip file
+
+32. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-21_10-34-27_jiji.xlsx
+   Error: File is not a zip file
+
+33. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-21_11-32-22_propertypro.xlsx
+   Error: File is not a zip file
+
+Total Errors: 33
+
+================================================================================
+Error Report - 2025-10-21T11:40:19.858840
+================================================================================
+
+1. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_23-43-30_jiji.csv
+   Error: Truncated file header
+
+2. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_23-43-30_jiji.xlsx
+   Error: Truncated file header
+
+3. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-20_07-18-51_propertypro.csv
+   Error: Truncated central directory
+
+4. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-20_07-18-51_propertypro.xlsx
+   Error: File is not a zip file
+
+5. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-20_09-09-53_propertypro.csv
+   Error: File is not a zip file
+
+6. PROCESSING_ERROR
+   File: exports\sites\buyletlive\2025-10-20_13-45-47_buyletlive.csv
+   Error: File is not a zip file
+
+7. PROCESSING_ERROR
+   File: exports\sites\buyletlive\2025-10-20_13-45-47_buyletlive.xlsx
+   Error: File is not a zip file
+
+8. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-20_13-57-42_cwlagos.csv
+   Error: Truncated file header
+
+9. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-20_13-57-42_cwlagos.xlsx
+   Error: File is not a zip file
+
+10. PROCESSING_ERROR
+   File: exports\sites\edenoasis\2025-10-20_14-07-07_edenoasis.csv
+   Error: File is not a zip file
+
+11. PROCESSING_ERROR
+   File: exports\sites\pwanhomes\2025-10-20_14-12-53_pwanhomes.csv
+   Error: File is not a zip file
+
+12. PROCESSING_ERROR
+   File: exports\sites\pwanhomes\2025-10-20_14-12-53_pwanhomes.xlsx
+   Error: Truncated file header
+
+13. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-20_09-09-53_propertypro.xlsx
+   Error: File is not a zip file
+
+14. PROCESSING_ERROR
+   File: exports\sites\privateproperty\2025-10-20_14-36-10_privateproperty.csv
+   Error: File is not a zip file
+
+15. PROCESSING_ERROR
+   File: exports\sites\edenoasis\2025-10-20_14-07-07_edenoasis.xlsx
+   Error: Truncated file header
+
+16. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-20_17-40-39_cwlagos.xlsx
+   Error: File is not a zip file
+
+17. PROCESSING_ERROR
+   File: exports\sites\edenoasis\2025-10-20_17-47-21_edenoasis.csv
+   Error: File is not a zip file
+
+18. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-20_17-40-39_cwlagos.csv
+   Error: 'Worksheet cwlagos does not exist.'
+
+19. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-20_22-33-14_cwlagos.csv
+   Error: Truncated file header
+
+20. PROCESSING_ERROR
+   File: exports\sites\privateproperty\2025-10-20_14-36-10_privateproperty.xlsx
+   Error: Truncated file header
+
+21. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-20_22-33-14_cwlagos.xlsx
+   Error: File is not a zip file
+
+22. PROCESSING_ERROR
+   File: exports\sites\edenoasis\2025-10-20_22-38-31_edenoasis.csv
+   Error: File is not a zip file
+
+23. PROCESSING_ERROR
+   File: exports\sites\edenoasis\2025-10-20_22-38-31_edenoasis.xlsx
+   Error: File is not a zip file
+
+24. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-21_04-55-30_propertypro.csv
+   Error: File is not a zip file
+
+25. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-21_04-55-30_propertypro.xlsx
+   Error: File is not a zip file
+
+26. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-21_10-31-03_cwlagos.csv
+   Error: File is not a zip file
+
+27. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-21_10-31-03_cwlagos.xlsx
+   Error: File is not a zip file
+
+28. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-21_10-34-27_jiji.csv
+   Error: File is not a zip file
+
+29. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-21_11-32-22_propertypro.csv
+   Error: File is not a zip file
+
+30. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-21_11-32-22_propertypro.xlsx
+   Error: File is not a zip file
+
+Total Errors: 30
+
+================================================================================
+Error Report - 2025-10-22T00:15:15.336377
+================================================================================
+
+1. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_23-43-30_jiji.xlsx
+   Error: 
+
+2. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_23-43-30_jiji.csv
+   Error: 
+
+3. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-20_09-09-53_propertypro.csv
+   Error: File is not a zip file
+
+4. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-20_07-18-51_propertypro.xlsx
+   Error: File is not a zip file
+
+5. PROCESSING_ERROR
+   File: exports\sites\buyletlive\2025-10-20_13-45-47_buyletlive.csv
+   Error: File is not a zip file
+
+6. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-20_09-09-53_propertypro.xlsx
+   Error: File is not a zip file
+
+7. PROCESSING_ERROR
+   File: exports\sites\buyletlive\2025-10-20_13-45-47_buyletlive.xlsx
+   Error: File is not a zip file
+
+8. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-20_13-57-42_cwlagos.csv
+   Error: File is not a zip file
+
+9. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-20_13-57-42_cwlagos.xlsx
+   Error: File is not a zip file
+
+10. PROCESSING_ERROR
+   File: exports\sites\edenoasis\2025-10-20_14-07-07_edenoasis.csv
+   Error: File is not a zip file
+
+11. PROCESSING_ERROR
+   File: exports\sites\pwanhomes\2025-10-20_14-12-53_pwanhomes.csv
+   Error: File is not a zip file
+
+12. PROCESSING_ERROR
+   File: exports\sites\pwanhomes\2025-10-20_14-12-53_pwanhomes.xlsx
+   Error: File is not a zip file
+
+13. PROCESSING_ERROR
+   File: exports\sites\edenoasis\2025-10-20_14-07-07_edenoasis.xlsx
+   Error: File is not a zip file
+
+14. PROCESSING_ERROR
+   File: exports\sites\privateproperty\2025-10-20_14-36-10_privateproperty.csv
+   Error: File is not a zip file
+
+15. PROCESSING_ERROR
+   File: exports\sites\privateproperty\2025-10-20_14-36-10_privateproperty.xlsx
+   Error: File is not a zip file
+
+16. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-20_17-40-39_cwlagos.xlsx
+   Error: Truncated file header
+
+17. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-20_17-40-39_cwlagos.csv
+   Error: 
+
+18. PROCESSING_ERROR
+   File: exports\sites\edenoasis\2025-10-20_17-47-21_edenoasis.csv
+   Error: File is not a zip file
+
+19. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-20_22-33-14_cwlagos.csv
+   Error: File is not a zip file
+
+20. PROCESSING_ERROR
+   File: exports\sites\edenoasis\2025-10-20_22-38-31_edenoasis.csv
+   Error: File is not a zip file
+
+21. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-20_22-33-14_cwlagos.xlsx
+   Error: File is not a zip file
+
+22. PROCESSING_ERROR
+   File: exports\sites\edenoasis\2025-10-20_22-38-31_edenoasis.xlsx
+   Error: File is not a zip file
+
+23. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-21_04-55-30_propertypro.csv
+   Error: File is not a zip file
+
+24. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-21_10-31-03_cwlagos.csv
+   Error: File is not a zip file
+
+25. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-21_04-55-30_propertypro.xlsx
+   Error: File is not a zip file
+
+26. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-21_10-31-03_cwlagos.xlsx
+   Error: File is not a zip file
+
+27. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-21_10-34-27_jiji.csv
+   Error: File is not a zip file
+
+28. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-21_11-32-22_propertypro.csv
+   Error: File is not a zip file
+
+29. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-21_11-32-22_propertypro.xlsx
+   Error: File is not a zip file
+
+Total Errors: 29
+
+================================================================================
+Error Report - 2025-10-22T00:15:49.785126
+================================================================================
+
+1. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_23-43-30_jiji.xlsx
+   Error: File is not a zip file
+
+2. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-20_07-18-51_propertypro.xlsx
+   Error: Truncated file header
+
+3. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-19_23-43-30_jiji.csv
+   Error: 'Worksheet jiji does not exist.'
+
+4. PROCESSING_ERROR
+   File: exports\sites\buyletlive\2025-10-20_13-45-47_buyletlive.csv
+   Error: File is not a zip file
+
+5. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-20_09-09-53_propertypro.xlsx
+   Error: File is not a zip file
+
+6. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-20_13-57-42_cwlagos.csv
+   Error: Truncated file header
+
+7. PROCESSING_ERROR
+   File: exports\sites\buyletlive\2025-10-20_13-45-47_buyletlive.xlsx
+   Error: File is not a zip file
+
+8. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-20_13-57-42_cwlagos.xlsx
+   Error: Truncated file header
+
+9. PROCESSING_ERROR
+   File: exports\sites\edenoasis\2025-10-20_14-07-07_edenoasis.csv
+   Error: 
+
+10. PROCESSING_ERROR
+   File: exports\sites\edenoasis\2025-10-20_14-07-07_edenoasis.xlsx
+   Error: File is not a zip file
+
+11. PROCESSING_ERROR
+   File: exports\sites\privateproperty\2025-10-20_14-36-10_privateproperty.csv
+   Error: File is not a zip file
+
+12. PROCESSING_ERROR
+   File: exports\sites\pwanhomes\2025-10-20_14-12-53_pwanhomes.xlsx
+   Error: File is not a zip file
+
+13. PROCESSING_ERROR
+   File: exports\sites\pwanhomes\2025-10-20_14-12-53_pwanhomes.csv
+   Error: Truncated file header
+
+14. PROCESSING_ERROR
+   File: exports\sites\privateproperty\2025-10-20_14-36-10_privateproperty.xlsx
+   Error: Truncated file header
+
+15. PROCESSING_ERROR
+   File: exports\sites\edenoasis\2025-10-20_17-47-21_edenoasis.csv
+   Error: File is not a zip file
+
+16. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-20_17-40-39_cwlagos.xlsx
+   Error: File is not a zip file
+
+17. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-20_22-33-14_cwlagos.csv
+   Error: Truncated file header
+
+18. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-20_22-33-14_cwlagos.xlsx
+   Error: File is not a zip file
+
+19. PROCESSING_ERROR
+   File: exports\sites\edenoasis\2025-10-20_22-38-31_edenoasis.csv
+   Error: File is not a zip file
+
+20. PROCESSING_ERROR
+   File: exports\sites\edenoasis\2025-10-20_22-38-31_edenoasis.xlsx
+   Error: File is not a zip file
+
+21. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-21_04-55-30_propertypro.csv
+   Error: File is not a zip file
+
+22. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-21_10-31-03_cwlagos.csv
+   Error: File is not a zip file
+
+23. PROCESSING_ERROR
+   File: exports\sites\cwlagos\2025-10-21_10-31-03_cwlagos.xlsx
+   Error: Truncated file header
+
+24. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-21_04-55-30_propertypro.xlsx
+   Error: File is not a zip file
+
+25. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-21_11-32-22_propertypro.csv
+   Error: File is not a zip file
+
+26. PROCESSING_ERROR
+   File: exports\sites\jiji\2025-10-21_10-34-27_jiji.csv
+   Error: File is not a zip file
+
+27. PROCESSING_ERROR
+   File: exports\sites\propertypro\2025-10-21_11-32-22_propertypro.xlsx
+   Error: File is not a zip file
+
+Total Errors: 27

@@ -1,0 +1,791 @@
+{
+  "processed_files": {
+    "npc\\2025-08-21_11-38-11_npc.csv": {
+      "hash": "51f9b81df2e35e9146b28e0bae1262d52b546d9411d7d065da58b5cc8b08fbc5",
+      "timestamp": "2025-10-05T16:36:16.650155",
+      "record_count": 23,
+      "size_bytes": 84789
+    },
+    "npc\\2025-08-21_11-38-11_npc.xlsx": {
+      "hash": "73de07d49bb149dec8080b9a2cd9edb01296ea4596ee419bfcbfefb866bfd9c1",
+      "timestamp": "2025-10-05T16:36:16.845191",
+      "record_count": 23,
+      "size_bytes": 31316
+    },
+    "propertypro\\2025-08-21_11-40-25_propertypro.csv": {
+      "hash": "3574f080b07055c821031f458626d6ace5803b2eead5104e1debfa21641f9ec2",
+      "timestamp": "2025-10-05T16:36:17.311630",
+      "record_count": 28,
+      "size_bytes": 7657
+    },
+    "propertypro\\2025-08-21_11-40-25_propertypro.xlsx": {
+      "hash": "89a6aeb2978806cc2c8f38956d09cfa59eb54cca00f9829e9c7a99db144071e4",
+      "timestamp": "2025-10-05T16:36:17.393538",
+      "record_count": 28,
+      "size_bytes": 9619
+    },
+    "privateproperty\\2025-08-21_11-52-05_privateproperty.csv": {
+      "hash": "e0302a116887ec74e64172c548f6ed42e1f85bb7bc7cafdb9a706312eedcb9f1",
+      "timestamp": "2025-10-05T16:36:18.068233",
+      "record_count": 13,
+      "size_bytes": 53786
+    },
+    "privateproperty\\2025-08-21_11-52-05_privateproperty.xlsx": {
+      "hash": "1a93755aaa071edcf6811a5662472b6be2bd95bb1bb8dea73e6d35c9ad008d2a",
+      "timestamp": "2025-10-05T16:36:18.308076",
+      "record_count": 13,
+      "size_bytes": 22348
+    },
+    "property24\\2025-08-21_12-02-18_property24.csv": {
+      "hash": "b33386344aef7db55b58bb265ede7f437a1d41ef8ffa99106ee6ad6e1c6dea34",
+      "timestamp": "2025-10-05T16:36:19.172717",
+      "record_count": 1,
+      "size_bytes": 2129
+    },
+    "property24\\2025-08-21_12-02-18_property24.xlsx": {
+      "hash": "8598ec5eace36a677421f020de26529451a977d58ca13b3533f7d88f776b68fe",
+      "timestamp": "2025-10-05T16:36:19.251332",
+      "record_count": 1,
+      "size_bytes": 5933
+    },
+    "hutbay\\2025-08-21_12-11-17_hutbay.csv": {
+      "hash": "41c86c4ed3611746e2d6067392f2847455ffc92d098a23241254efb844b7c629",
+      "timestamp": "2025-10-05T16:36:20.391888",
+      "record_count": 24,
+      "size_bytes": 86033
+    },
+    "hutbay\\2025-08-21_12-11-17_hutbay.xlsx": {
+      "hash": "b8049820036e11f116e66ca5e71139ced44b6b96f3d90117ab7d11e46e8779f8",
+      "timestamp": "2025-10-05T16:36:20.963878",
+      "record_count": 24,
+      "size_bytes": 34087
+    },
+    "jiji\\2025-08-21_12-27-15_jiji.csv": {
+      "hash": "88af2312ef2f9919f64d744e15dbb5ee5e564b306aec364b56e7ef2ff2b5f572",
+      "timestamp": "2025-10-05T16:36:22.095815",
+      "record_count": 11,
+      "size_bytes": 50888
+    },
+    "jiji\\2025-08-21_12-27-15_jiji.xlsx": {
+      "hash": "138edb9020ed9322e5a74726bdb15f40d1c83ce3aa8c43187bff145b0582ee9a",
+      "timestamp": "2025-10-05T16:36:22.209388",
+      "record_count": 11,
+      "size_bytes": 14398
+    },
+    "nigerianpropertymarket\\2025-08-21_12-41-27_nigerianpropertymarket.csv": {
+      "hash": "b6ab28b97a440dc6ff43f2774cdd87d44ccb94febd884a70a76187a1e3d928eb",
+      "timestamp": "2025-10-05T16:36:23.225913",
+      "record_count": 8,
+      "size_bytes": 68457
+    },
+    "nigerianpropertymarket\\2025-08-21_12-41-27_nigerianpropertymarket.xlsx": {
+      "hash": "3d6a34450fef60719227f3a1f74665eafd1959d96e3f83051361e8c7b384832e",
+      "timestamp": "2025-10-05T16:36:23.381910",
+      "record_count": 8,
+      "size_bytes": 20292
+    },
+    "propertylisthub\\2025-08-21_12-54-58_propertylisthub.csv": {
+      "hash": "777404203edaa9b20a44dbbb96c6c5c1938550fb33c5cacb7d51d5acd7737c0d",
+      "timestamp": "2025-10-05T16:36:25.099209",
+      "record_count": 20,
+      "size_bytes": 204687
+    },
+    "propertylisthub\\2025-08-21_12-54-58_propertylisthub.xlsx": {
+      "hash": "3bd1e3e8f3148213d742fc3ec5cd159d631d1d1f9d6d81eb0992eca29ecfd3b7",
+      "timestamp": "2025-10-05T16:36:25.501948",
+      "record_count": 20,
+      "size_bytes": 57310
+    },
+    "naijahouses\\2025-08-21_13-10-28_naijahouses.csv": {
+      "hash": "c3fff3a4e3f0d724211485578fe6a1413ec68717050fcd67adeff6443dfea7bd",
+      "timestamp": "2025-10-05T16:36:26.824514",
+      "record_count": 16,
+      "size_bytes": 39364
+    },
+    "naijahouses\\2025-08-21_13-10-28_naijahouses.xlsx": {
+      "hash": "6c2197514a7db21589d5d8e7ea3aaf2a6e3bd2b3f8e3f478fa420e5dbb9a1015",
+      "timestamp": "2025-10-05T16:36:26.951472",
+      "record_count": 16,
+      "size_bytes": 14693
+    },
+    "oparahrealty\\2025-08-21_13-21-10_oparahrealty.csv": {
+      "hash": "a7f430b6a7f21aa87a520b7c45b703c8c62b3d95296e4296cdea9071ddae0eee",
+      "timestamp": "2025-10-05T16:36:28.363955",
+      "record_count": 3,
+      "size_bytes": 3734
+    },
+    "oparahrealty\\2025-08-21_13-21-10_oparahrealty.xlsx": {
+      "hash": "72f7d400d3a3b23b10eb52823c8aa76f58b59ca1d494c3464bea062a9605dee4",
+      "timestamp": "2025-10-05T16:36:28.452637",
+      "record_count": 3,
+      "size_bytes": 6115
+    },
+    "cwlagos\\2025-08-21_14-01-56_cwlagos.csv": {
+      "hash": "92a6ffeb9682cfb945f8464eee6c57b8bbf7a774086d662095b2d89008b01ebf",
+      "timestamp": "2025-10-05T16:36:30.832201",
+      "record_count": 41,
+      "size_bytes": 32220
+    },
+    "cwlagos\\2025-08-21_14-01-56_cwlagos.xlsx": {
+      "hash": "cfc5001682bd9513e156ae657550e6eb293ddfe1a008783a4015d502aff19dc4",
+      "timestamp": "2025-10-05T16:36:30.991466",
+      "record_count": 41,
+      "size_bytes": 16972
+    },
+    "landng\\2025-08-21_14-11-51_landng.csv": {
+      "hash": "227a48252e47f78f6e3c9959a4f3f2288351cafc616750021bbd7368d17d8ace",
+      "timestamp": "2025-10-05T16:36:32.663143",
+      "record_count": 6,
+      "size_bytes": 70797
+    },
+    "landng\\2025-08-21_14-11-51_landng.xlsx": {
+      "hash": "38946c6b6d1d4418f69639aae60df331d2226ed891637bbac92f51cbed8f40e9",
+      "timestamp": "2025-10-05T16:36:32.810213",
+      "record_count": 6,
+      "size_bytes": 15147
+    },
+    "lagosproperty\\2025-08-21_14-23-57_lagosproperty.csv": {
+      "hash": "246fb540518319a854ee93d180e51f76da6b53909de11307047ae47d092011d8",
+      "timestamp": "2025-10-05T16:36:35.256287",
+      "record_count": 13,
+      "size_bytes": 203187
+    },
+    "lagosproperty\\2025-08-21_14-23-57_lagosproperty.xlsx": {
+      "hash": "3b5cc5c426b697630f5c1a8785b74ac15f48227465c3081bab332c805b208b1b",
+      "timestamp": "2025-10-05T16:36:35.705557",
+      "record_count": 13,
+      "size_bytes": 49978
+    },
+    "ramos\\2025-08-21_14-36-26_ramos.csv": {
+      "hash": "7bd6f9dc3b23c98cb49e0d93805af1301f73e7e71c89eb4147f8684d0e5cd570",
+      "timestamp": "2025-10-05T16:36:37.608049",
+      "record_count": 9,
+      "size_bytes": 90673
+    },
+    "ramos\\2025-08-21_14-36-26_ramos.xlsx": {
+      "hash": "6b598322eb7e0278e7ee7e42e7f5e5f442d789c6d063b51ead01ffbcbb5b187c",
+      "timestamp": "2025-10-05T16:36:37.909871",
+      "record_count": 9,
+      "size_bytes": 26233
+    },
+    "edenoasis\\2025-08-21_14-48-28_edenoasis.csv": {
+      "hash": "e5bbf96155df77117119ec6a120fb19ba86d8ee544d5bd724d3b8668985339e9",
+      "timestamp": "2025-10-05T16:36:40.240731",
+      "record_count": 19,
+      "size_bytes": 331197
+    },
+    "edenoasis\\2025-08-21_14-48-28_edenoasis.xlsx": {
+      "hash": "dbce75382fe49f1c658d628108be80c9909b0948975595626008f644840f33fd",
+      "timestamp": "2025-10-05T16:36:40.616457",
+      "record_count": 19,
+      "size_bytes": 79656
+    },
+    "adronhomes\\2025-08-21_14-54-57_adronhomes.csv": {
+      "hash": "4f3810762376bea215c03da93bba8076ec025cb7b87c1dc44b9e8684f562aa00",
+      "timestamp": "2025-10-05T16:36:43.659841",
+      "record_count": 4,
+      "size_bytes": 77007
+    },
+    "adronhomes\\2025-08-21_14-54-57_adronhomes.xlsx": {
+      "hash": "f54561afe46e83df29f09e61558ff06813570dbf11f747d31ae768b39bae94b1",
+      "timestamp": "2025-10-05T16:36:43.875252",
+      "record_count": 4,
+      "size_bytes": 16461
+    },
+    "naijalandlord\\2025-08-21_15-04-43_naijalandlord.csv": {
+      "hash": "8acb5e166a903d246f92e75bddbac7e017543809fd16cc8b3137174798784fbe",
+      "timestamp": "2025-10-05T16:36:46.897006",
+      "record_count": 81,
+      "size_bytes": 452611
+    },
+    "naijalandlord\\2025-08-21_15-04-43_naijalandlord.xlsx": {
+      "hash": "bcfd18bb94031d0f608da97019e5e2d12a17583e8aa4885318e5f63e0d6ab96f",
+      "timestamp": "2025-10-05T16:36:47.556526",
+      "record_count": 81,
+      "size_bytes": 139247
+    },
+    "trovit\\2025-08-21_15-16-18_trovit.csv": {
+      "hash": "33e2dca6f5f9e58028d8f61d086c9e0db098ff216e8ce0c24be7433d660acda7",
+      "timestamp": "2025-10-05T16:36:50.303657",
+      "record_count": 2,
+      "size_bytes": 7272
+    },
+    "trovit\\2025-08-21_15-16-18_trovit.xlsx": {
+      "hash": "34949332ca3fd3e209ef459f977e9bfcc228b8d07660e7a6c8f16e3772c2848a",
+      "timestamp": "2025-10-05T16:36:50.466047",
+      "record_count": 2,
+      "size_bytes": 7759
+    },
+    "nigeriapropertyzone\\2025-08-21_15-37-39_nigeriapropertyzone.csv": {
+      "hash": "1ca62db20a60497d91652ce99279b4e2d34cbb234d688d4fedb5d7f21ff2d189",
+      "timestamp": "2025-10-05T16:36:53.481428",
+      "record_count": 20,
+      "size_bytes": 280647
+    },
+    "nigeriapropertyzone\\2025-08-21_15-37-39_nigeriapropertyzone.xlsx": {
+      "hash": "5a7b801811d0a5fc9fe32849ba3891b2a2ce40516f6242d8f5fc0b6183d32514",
+      "timestamp": "2025-10-05T16:36:54.039706",
+      "record_count": 20,
+      "size_bytes": 80831
+    },
+    "castles\\2025-08-21_15-50-43_castles.csv": {
+      "hash": "4805dbaf88270b1d7bba61126cc410ea3433870197deae2fd663fed24c205ff3",
+      "timestamp": "2025-10-05T16:36:56.737068",
+      "record_count": 9,
+      "size_bytes": 130992
+    },
+    "castles\\2025-08-21_15-50-43_castles.xlsx": {
+      "hash": "783ca3e3494d885a674c1ab6b956ffdb05d2168da3d843068234ce67f55671f8",
+      "timestamp": "2025-10-05T16:36:57.095534",
+      "record_count": 9,
+      "size_bytes": 28007
+    },
+    "landmall\\2025-08-21_16-28-43_landmall.csv": {
+      "hash": "51bb00bd31ce04d52451bab633112faa741aad0d5918093eee7de875068a6a0c",
+      "timestamp": "2025-10-05T16:37:01.310488",
+      "record_count": 19,
+      "size_bytes": 228522
+    },
+    "landmall\\2025-08-21_16-28-43_landmall.xlsx": {
+      "hash": "4dd7040c5aeef3928e65b2e426a06770c6fd8c065d5906201f1b21fe0831cc23",
+      "timestamp": "2025-10-05T16:37:01.816842",
+      "record_count": 19,
+      "size_bytes": 66953
+    },
+    "giddaa\\2025-08-21_16-32-43_giddaa.csv": {
+      "hash": "e7c8dd4c866130a8a4b7293d075acdc525fc1a1aab2880048dd46eb278f966f4",
+      "timestamp": "2025-10-05T16:37:07.120887",
+      "record_count": 2,
+      "size_bytes": 7497
+    },
+    "giddaa\\2025-08-21_16-32-43_giddaa.xlsx": {
+      "hash": "1faacf9a4cb1ceebe86fa990548aa90bf7c740c0321c83319fa942e034c6bf72",
+      "timestamp": "2025-10-05T16:37:07.417039",
+      "record_count": 2,
+      "size_bytes": 7813
+    },
+    "realtorintl\\2025-08-21_16-44-18_realtorintl.csv": {
+      "hash": "184b199718ef16f9334247e4d7e642ce12e3a057d4d9c022070d86ca47c7f78e",
+      "timestamp": "2025-10-05T16:37:11.978030",
+      "record_count": 1,
+      "size_bytes": 1670
+    },
+    "realtorintl\\2025-08-21_16-44-18_realtorintl.xlsx": {
+      "hash": "483ce331ae5739d4152c020ee4bf3de25b7a913d175b5f019aef88c4d15ab19e",
+      "timestamp": "2025-10-05T16:37:12.117520",
+      "record_count": 1,
+      "size_bytes": 5810
+    },
+    "facibus\\2025-08-21_16-52-08_facibus.csv": {
+      "hash": "9fb6531b800b0f41d96efed0925909285401a3ca707b2937702fccae8b4cd58f",
+      "timestamp": "2025-10-05T16:37:15.427752",
+      "record_count": 4,
+      "size_bytes": 73467
+    },
+    "facibus\\2025-08-21_16-52-08_facibus.xlsx": {
+      "hash": "8e1384527ad9dbee6290b31fde0245c5d4621d2141aad9c37e2230b2710870e0",
+      "timestamp": "2025-10-05T16:37:15.634419",
+      "record_count": 4,
+      "size_bytes": 17591
+    },
+    "ubosieleh\\2025-08-21_17-57-47_ubosieleh.csv": {
+      "hash": "684343a4e55ceea691e2ec6996f942627a331e1234a8891c0b8d133c36adace5",
+      "timestamp": "2025-10-05T16:37:18.935321",
+      "record_count": 3,
+      "size_bytes": 30687
+    },
+    "ubosieleh\\2025-08-21_17-57-47_ubosieleh.xlsx": {
+      "hash": "fc322a101f826ed5390376cfc051caaf6d2d33835f999af4cf0496bd63387803",
+      "timestamp": "2025-10-05T16:37:19.147209",
+      "record_count": 3,
+      "size_bytes": 10116
+    },
+    "npc\\2025-08-22_08-11-32_npc.csv": {
+      "hash": "287c6a88f35e63718c4a643979e8559238f872600a12de900391adb26709bc85",
+      "timestamp": "2025-10-05T16:37:21.797248",
+      "record_count": 22,
+      "size_bytes": 62197
+    },
+    "npc\\2025-08-22_08-11-32_npc.xlsx": {
+      "hash": "b3e13ce816689bb3a37ddc3ee89842ba3327f9eedc4c825992c7b83b9b6d586a",
+      "timestamp": "2025-10-05T16:37:22.059067",
+      "record_count": 22,
+      "size_bytes": 25945
+    },
+    "npc\\2025-10-05_11-49-27_npc.csv": {
+      "hash": "10881bb1c9ed147a4ef35eefd75aa5d0e22c7e2840498701e9d48a9bb3754703",
+      "timestamp": "2025-10-05T16:37:24.467905",
+      "record_count": 25,
+      "size_bytes": 244977
+    },
+    "npc\\2025-10-05_11-49-27_npc.xlsx": {
+      "hash": "8a21ac5d31f54cd8e2ea886c1deb5de9710cb8f3fbf007e9e4b100e07b4fe628",
+      "timestamp": "2025-10-05T16:37:25.044276",
+      "record_count": 25,
+      "size_bytes": 72256
+    },
+    "npc\\2025-10-05_12-03-47_npc.csv": {
+      "hash": "d0265497ec55128d31c235c3e474bccd8847c3138e32655aa9348747fc61d8a6",
+      "timestamp": "2025-10-05T16:37:25.155594",
+      "record_count": 25,
+      "size_bytes": 81857
+    },
+    "npc\\2025-10-05_12-03-47_npc.xlsx": {
+      "hash": "c19f0cb48bdb507e926e70a26bcae6b12399a238ee64b4064518825e29ed98d5",
+      "timestamp": "2025-10-05T16:37:25.370851",
+      "record_count": 25,
+      "size_bytes": 29878
+    },
+    "propertypro\\2025-10-05_12-06-44_propertypro.csv": {
+      "hash": "780d88102de963cdb6cdfae3fbec44352a092cc7aad71458fa2c9d62f7e0b91b",
+      "timestamp": "2025-10-05T16:37:25.570534",
+      "record_count": 28,
+      "size_bytes": 222217
+    },
+    "propertypro\\2025-10-05_12-06-44_propertypro.xlsx": {
+      "hash": "cc15fd1cf4b4348d65cdc24bacc937edf623b5daf3757cdf7013f5710acf2f8f",
+      "timestamp": "2025-10-05T16:37:26.374706",
+      "record_count": 28,
+      "size_bytes": 127835
+    },
+    "propertypro\\2025-10-05_12-10-12_propertypro.csv": {
+      "hash": "df7490e995bdcb8dc6b659e5d1884cd741d29300cbc25a9eb00f50f49377c24d",
+      "timestamp": "2025-10-05T16:37:26.590412",
+      "record_count": 28,
+      "size_bytes": 74217
+    },
+    "propertypro\\2025-10-05_12-10-12_propertypro.xlsx": {
+      "hash": "91b38b0fb73205580c036ef3a1d57f19242e28a3095320bd01d1480f3aaa6ade",
+      "timestamp": "2025-10-05T16:37:27.219715",
+      "record_count": 28,
+      "size_bytes": 46227
+    },
+    "jiji\\2025-10-05_12-28-03_jiji.csv": {
+      "hash": "68f77b41d756e720a0c45fca2b212c2dda38ad3f70b9117bc64da7cab6b15786",
+      "timestamp": "2025-10-05T16:37:29.415706",
+      "record_count": 10,
+      "size_bytes": 30035
+    },
+    "jiji\\2025-10-05_12-28-03_jiji.xlsx": {
+      "hash": "39e046900553d9f7f3afcdc9a4f4cc6e5c3680915d6a436e54b553e80eeb82af",
+      "timestamp": "2025-10-05T16:37:29.599816",
+      "record_count": 10,
+      "size_bytes": 12029
+    },
+    "jiji\\2025-10-05_12-56-27_jiji.csv": {
+      "hash": "cf4058e678eff8451e2ccdf7a1d685a6701efcc24d142ee790c38d6dd52b21cd",
+      "timestamp": "2025-10-05T16:37:32.302921",
+      "record_count": 29,
+      "size_bytes": 90554
+    },
+    "jiji\\2025-10-05_12-56-27_jiji.xlsx": {
+      "hash": "14e477bb9d276e4275dc609d13ccf5dd5853b5a45d0f6ffedaf11702466b69f5",
+      "timestamp": "2025-10-05T16:37:32.566199",
+      "record_count": 29,
+      "size_bytes": 25313
+    },
+    "npc\\2025-10-05_14-18-49_npc.csv": {
+      "hash": "a9873cb2d32ba25ca76706c263aaca3b8ce96f3f494f33356dde6cc617d650e0",
+      "timestamp": "2025-10-05T16:37:32.675545",
+      "record_count": 25,
+      "size_bytes": 81857
+    },
+    "npc\\2025-10-05_14-18-49_npc.xlsx": {
+      "hash": "49cf1fb695419dc51a6f5c1600987b9a1c979c68185b3d94e1771533e706b3ef",
+      "timestamp": "2025-10-05T16:37:32.939377",
+      "record_count": 25,
+      "size_bytes": 29878
+    },
+    "propertypro\\2025-10-05_14-24-51_propertypro.csv": {
+      "hash": "8d8bed6f34c4af1ef49a502ab5de8e0dccccab13997dd50ac6b45812449dbc3c",
+      "timestamp": "2025-10-05T16:37:33.084986",
+      "record_count": 28,
+      "size_bytes": 74217
+    },
+    "propertypro\\2025-10-05_14-24-51_propertypro.xlsx": {
+      "hash": "0377ac70677b1319f25d8dc9400ae5538ef946565de2c5416371466391dbdb50",
+      "timestamp": "2025-10-05T16:37:33.435912",
+      "record_count": 28,
+      "size_bytes": 46228
+    },
+    "jiji\\2025-10-05_14-42-47_jiji.csv": {
+      "hash": "bf1232a40fbd3a0277626a3d15be62abb528095a6eb23f00722d9d4e6d854a80",
+      "timestamp": "2025-10-05T16:37:36.109583",
+      "record_count": 10,
+      "size_bytes": 30075
+    },
+    "jiji\\2025-10-05_14-42-47_jiji.xlsx": {
+      "hash": "cc3ea6a4efd2f0081435edfed49ddf71c582c5a5d40282737901b17cf5b51b04",
+      "timestamp": "2025-10-05T16:37:36.332045",
+      "record_count": 10,
+      "size_bytes": 12287
+    },
+    "npc\\2025-10-18_15-59-51_npc.csv": {
+      "hash": "b4a4f5d9f231a326c50a33f2744f7e8623bce4b4232b9a5d906c68c4bb48a260",
+      "timestamp": "2025-10-18T16:25:19.037430",
+      "record_count": 21,
+      "size_bytes": 168267
+    },
+    "npc\\2025-10-18_15-59-51_npc.xlsx": {
+      "hash": "4f443cf12dce8120ffc98913f2bdf00377b4b5c93b278c9b32bec4eb3a083d73",
+      "timestamp": "2025-10-18T16:25:19.369241",
+      "record_count": 21,
+      "size_bytes": 58676
+    },
+    "npc\\2025-10-18_20-34-30_npc.csv": {
+      "hash": "6ac751e7dd3481e069174f1ec02bd839fd0314af27db1acb27dc92bf5ff28a90",
+      "timestamp": "2025-10-20T07:19:00.619639",
+      "record_count": 21,
+      "size_bytes": 5479
+    },
+    "npc\\2025-10-18_20-25-48_npc.xlsx": {
+      "hash": "23656777e9bc0df927b263c41d62f24e6f690c36708cc5b2d4c875c5e273f368",
+      "timestamp": "2025-10-20T07:19:00.619838",
+      "record_count": 21,
+      "size_bytes": 8442
+    },
+    "npc\\2025-10-18_20-25-48_npc.csv": {
+      "hash": "b4115bdf4bc6c6a13a8ea2d46263fe6e049214b1e506ca1bf34d9dd033eaadd5",
+      "timestamp": "2025-10-20T07:19:00.633636",
+      "record_count": 21,
+      "size_bytes": 5479
+    },
+    "npc\\2025-10-18_20-34-30_npc.xlsx": {
+      "hash": "c7be8f70fe318b4063b6022d8d2e509206c0a1dfbb0dbe94b0f2ca8a0cf8d805",
+      "timestamp": "2025-10-20T07:19:01.080926",
+      "record_count": 21,
+      "size_bytes": 8442
+    },
+    "npc\\2025-10-18_20-36-12_npc.csv": {
+      "hash": "cff8fa1c8faf139d2c73d447484ca827e5b549611c2f70b855d72877d4f7f50d",
+      "timestamp": "2025-10-20T07:19:01.088683",
+      "record_count": 21,
+      "size_bytes": 5479
+    },
+    "npc\\2025-10-18_20-36-12_npc.xlsx": {
+      "hash": "4d594ad83db6e272f063065c381eaa14a612d9d9b5dcced750bb6301f7b2a9dd",
+      "timestamp": "2025-10-20T07:19:01.125778",
+      "record_count": 21,
+      "size_bytes": 8442
+    },
+    "npc\\2025-10-18_20-37-25_npc.csv": {
+      "hash": "48dbb35527953eebc84a1e1648f4e2bd00cadeb9092b53eca84cf233d7c0f7bc",
+      "timestamp": "2025-10-20T07:19:01.423815",
+      "record_count": 21,
+      "size_bytes": 5479
+    },
+    "npc\\2025-10-18_20-37-25_npc.xlsx": {
+      "hash": "dd1b450db2d0c7b2da33046bf6d30fcf7561e86573fdca74dcd60ff60b79b961",
+      "timestamp": "2025-10-20T07:19:01.481499",
+      "record_count": 21,
+      "size_bytes": 8443
+    },
+    "npc\\2025-10-18_20-49-42_npc.csv": {
+      "hash": "dee58f86d851bb7ada3869b87472ff768b1d6c8ff20ed3ffb17fe7d538e7f653",
+      "timestamp": "2025-10-20T07:19:01.529286",
+      "record_count": 21,
+      "size_bytes": 5479
+    },
+    "npc\\2025-10-18_20-49-42_npc.xlsx": {
+      "hash": "aba9ae133e9c74791e8b17f0f44af71512c7145255e39592e2e625968163a193",
+      "timestamp": "2025-10-20T07:19:01.915976",
+      "record_count": 21,
+      "size_bytes": 8447
+    },
+    "npc\\2025-10-18_20-55-02_npc.csv": {
+      "hash": "56a6723b66529517278370191bf2e4b9c67cfbfeb9314cb78982d8d5559eb016",
+      "timestamp": "2025-10-20T07:19:01.985760",
+      "record_count": 21,
+      "size_bytes": 5479
+    },
+    "npc\\2025-10-18_20-55-02_npc.xlsx": {
+      "hash": "ec76a87dea8bab32bf13a6bec9ba4abd888d49b5484e56ec096fc92efed1f87d",
+      "timestamp": "2025-10-20T07:19:02.099999",
+      "record_count": 21,
+      "size_bytes": 8442
+    },
+    "npc\\2025-10-18_20-59-11_npc.csv": {
+      "hash": "fddd4845e4550bafec10fef4d017281e0bab4b8dcb4f19b0f87b8aa90c89ff8f",
+      "timestamp": "2025-10-20T07:19:02.444628",
+      "record_count": 21,
+      "size_bytes": 5479
+    },
+    "npc\\2025-10-18_20-59-11_npc.xlsx": {
+      "hash": "b545018b3685f3390ee24c9698466914a3cd9cb988c117ffb95a34925cc87de5",
+      "timestamp": "2025-10-20T07:19:02.486996",
+      "record_count": 21,
+      "size_bytes": 8442
+    },
+    "npc\\2025-10-18_21-02-37_npc.csv": {
+      "hash": "705ec67fb0211ee961e2dc64ffad3c23f1184d18188ea15a119e37f52270a0ca",
+      "timestamp": "2025-10-20T07:19:02.598883",
+      "record_count": 21,
+      "size_bytes": 5479
+    },
+    "npc\\2025-10-18_21-02-37_npc.xlsx": {
+      "hash": "8dd0850497b4a5ad4746eb17c2025ec8d399df92fa5f458424440ec1f1895c64",
+      "timestamp": "2025-10-20T07:19:03.038445",
+      "record_count": 21,
+      "size_bytes": 8442
+    },
+    "npc\\2025-10-18_21-40-56_npc.csv": {
+      "hash": "5829e26775fda8078a86436dc2beb10d69c71d31cf8f34dbaa1ba3f794401810",
+      "timestamp": "2025-10-20T07:19:03.056476",
+      "record_count": 21,
+      "size_bytes": 78683
+    },
+    "npc\\2025-10-18_21-40-56_npc.xlsx": {
+      "hash": "432867a1b3e5a40a56e1a5bae7b1bcb921d5d27aeab97ec4cb9dc3b1e2b962f7",
+      "timestamp": "2025-10-20T07:19:03.548934",
+      "record_count": 21,
+      "size_bytes": 31459
+    },
+    "npc\\2025-10-19_08-33-03_npc.csv": {
+      "hash": "dbb8c4825ee6294b3611a09260e4fddb8ed2a500403081d00d8bc9cd628ab2a7",
+      "timestamp": "2025-10-20T07:19:04.019801",
+      "record_count": 21,
+      "size_bytes": 168267
+    },
+    "npc\\2025-10-19_08-33-03_npc.xlsx": {
+      "hash": "6e4545e3ca53469183755b897fb3bbd4c14cd1af67d498c3b67229710d977ccc",
+      "timestamp": "2025-10-20T07:19:04.138454",
+      "record_count": 21,
+      "size_bytes": 58675
+    },
+    "npc\\2025-10-19_08-43-49_npc.csv": {
+      "hash": "d276d0a0f1880645d3690babfcd32fc2a798dbd3c8ef63d0132ff18d6291e187",
+      "timestamp": "2025-10-20T07:19:04.251986",
+      "record_count": 21,
+      "size_bytes": 168267
+    },
+    "npc\\2025-10-19_09-10-05_npc.csv": {
+      "hash": "3d3564acc4624ec7438508424922551be3865529b931d7d6008116dfb79ea2ba",
+      "timestamp": "2025-10-20T07:19:05.893512",
+      "record_count": 21,
+      "size_bytes": 168267
+    },
+    "npc\\2025-10-19_08-43-49_npc.xlsx": {
+      "hash": "af99ded57afd6e5c045f0e3ecf7ec269799478b860e2bbedb8c211cd8f5f2b4c",
+      "timestamp": "2025-10-20T07:19:06.316280",
+      "record_count": 21,
+      "size_bytes": 58701
+    },
+    "npc\\2025-10-19_09-10-05_npc.xlsx": {
+      "hash": "43659ec78f6c578848b76bde07d75549d779731bf808054e0d39d3e29c303ece",
+      "timestamp": "2025-10-20T07:19:06.397059",
+      "record_count": 21,
+      "size_bytes": 58700
+    },
+    "npc\\2025-10-19_14-10-43_npc.csv": {
+      "hash": "5c0587db79e5b34861e3d77b928fe57aaa955472a5c2d36c36260609f0775531",
+      "timestamp": "2025-10-20T07:19:06.930590",
+      "record_count": 21,
+      "size_bytes": 67485
+    },
+    "npc\\2025-10-19_14-10-43_npc.xlsx": {
+      "hash": "36914545c3a4ea229e803f05dc9366948a77a5184e32640c15789953cec050f5",
+      "timestamp": "2025-10-20T07:19:07.701906",
+      "record_count": 21,
+      "size_bytes": 28018
+    },
+    "npc\\2025-10-19_14-11-07_npc.csv": {
+      "hash": "b9fd1bcad4eac029e5ba952b8f5d3a72f20d0a0a141e0354bf9cf9dd11732176",
+      "timestamp": "2025-10-20T07:19:07.706284",
+      "record_count": 21,
+      "size_bytes": 145871
+    },
+    "npc\\2025-10-19_14-11-07_npc.xlsx": {
+      "hash": "b2f4c6c85f593e707c07f81cda4baff7fffae7f63e1816dccd16579fc994f336",
+      "timestamp": "2025-10-20T07:19:07.961502",
+      "record_count": 21,
+      "size_bytes": 51888
+    },
+    "npc\\2025-10-19_14-37-54_npc.csv": {
+      "hash": "6cb1bb055053b39d59afc354f7dec0ea0d08d8776380d2d5efdddf743b4a1244",
+      "timestamp": "2025-10-20T07:19:16.904766",
+      "record_count": 61,
+      "size_bytes": 28985
+    },
+    "npc\\2025-10-19_14-37-54_npc.xlsx": {
+      "hash": "2f6fbd80905309a83d0202c70ad61f9512d31ab1d586f50c07901b448d5a620f",
+      "timestamp": "2025-10-20T09:10:01.593159",
+      "record_count": 61,
+      "size_bytes": 23165
+    },
+    "npc\\2025-10-19_14-40-34_npc.xlsx": {
+      "hash": "31da10c9b3576d42d1becb269e4e41b6b831eb3c8acd144cd9503d1c3a12db6b",
+      "timestamp": "2025-10-20T09:10:11.063881",
+      "record_count": 1,
+      "size_bytes": 5698
+    },
+    "npc\\2025-10-19_14-40-34_npc.csv": {
+      "hash": "1a9c1c85e069120c57fb7ea872bfb95008f2a09d858bd4aad7baf2f2c6e5382d",
+      "timestamp": "2025-10-20T14:36:25.673274",
+      "record_count": 1,
+      "size_bytes": 1577
+    },
+    "npc\\2025-10-19_14-51-54_npc.csv": {
+      "hash": "3a7e72fd1164d5dbd74be2950c69e3ad5f183f5dea5ae0d4b99a22cae0ca8c1e",
+      "timestamp": "2025-10-20T14:36:26.047385",
+      "record_count": 61,
+      "size_bytes": 463347
+    },
+    "npc\\2025-10-19_14-52-11_npc.csv": {
+      "hash": "3dda48dcd3e2640b93a41b1db6b17bd7089a3f14b14548e8a2246441a05b27c9",
+      "timestamp": "2025-10-20T14:36:27.568030",
+      "record_count": 1,
+      "size_bytes": 1577
+    },
+    "npc\\2025-10-19_14-51-54_npc.xlsx": {
+      "hash": "2d14ce43c080eee43f5787a7cafabc14aa1c6f13ceb78a41df89fc1b4609dd6c",
+      "timestamp": "2025-10-20T14:36:27.620618",
+      "record_count": 61,
+      "size_bytes": 291547
+    },
+    "npc\\2025-10-19_14-52-11_npc.xlsx": {
+      "hash": "1953cc28fb0e7cb17f5f63a85fb099718fe96793894a1413088522ad9c046e9b",
+      "timestamp": "2025-10-20T14:36:27.621160",
+      "record_count": 1,
+      "size_bytes": 5697
+    },
+    "npc\\2025-10-19_15-15-21_npc.csv": {
+      "hash": "0223cb5f9f73a4cb1e0c508c18e2c04eed19c04ca7012e693e2ac57eddb7091e",
+      "timestamp": "2025-10-20T14:36:28.620891",
+      "record_count": 1,
+      "size_bytes": 1577
+    },
+    "npc\\2025-10-19_15-15-21_npc.xlsx": {
+      "hash": "a0a98e599c74805e45f478b0056ec527d15b5389cb0c9ef6c41de10b58822ac2",
+      "timestamp": "2025-10-20T14:36:28.889567",
+      "record_count": 1,
+      "size_bytes": 5697
+    },
+    "jiji\\2025-10-19_15-32-46_jiji.csv": {
+      "hash": "c0bd042053f05c2ca0bcf15e8885c2b6e1fa8377966dcbd2c2ce2c9b39592ee4",
+      "timestamp": "2025-10-20T14:36:43.392311",
+      "record_count": 13,
+      "size_bytes": 39149
+    },
+    "jiji\\2025-10-19_15-32-46_jiji.xlsx": {
+      "hash": "8c1bc03ff82e839357654a52dc981869b8247d77a69fdad0514ab068f4768824",
+      "timestamp": "2025-10-20T23:32:01.068661",
+      "record_count": 13,
+      "size_bytes": 14183
+    },
+    "npc\\2025-10-19_22-45-09_npc.csv": {
+      "hash": "704e04a0f99ad89a6e67592063f570f02633232e8c4c0f1a2e4ee7b94b11a64a",
+      "timestamp": "2025-10-20T23:32:12.287181",
+      "record_count": 1,
+      "size_bytes": 1577
+    },
+    "npc\\2025-10-19_22-53-18_npc.csv": {
+      "hash": "56bc23db2a305d810fe0dcbf7cc1bbe8a0d5a8f0be74f39f057f4cec0e231819",
+      "timestamp": "2025-10-20T23:32:15.510201",
+      "record_count": 1,
+      "size_bytes": 1577
+    },
+    "npc\\2025-10-19_22-45-09_npc.xlsx": {
+      "hash": "5ba7def24e3329752cfe9fd3226389db5d5cb74e0b1940cefba3a9cc19b04c6b",
+      "timestamp": "2025-10-20T23:32:16.982493",
+      "record_count": 1,
+      "size_bytes": 5698
+    },
+    "npc\\2025-10-19_22-53-18_npc.xlsx": {
+      "hash": "93adb3af782b453bb2f508531b46bcef2d1e381412d21641c2b98180c5589b62",
+      "timestamp": "2025-10-20T23:32:18.330525",
+      "record_count": 1,
+      "size_bytes": 5698
+    },
+    "npc\\2025-10-19_23-37-17_npc.csv": {
+      "hash": "c249b8d08f4b604ab36bd255a22b9c153ec2dba1a17cea1bdee271dfe8500d4a",
+      "timestamp": "2025-10-20T23:32:21.188662",
+      "record_count": 1,
+      "size_bytes": 1577
+    },
+    "npc\\2025-10-19_23-37-17_npc.xlsx": {
+      "hash": "1617104c27672d32a809a69f68a791e40f7d5c9b975561023f032d63defb6c0c",
+      "timestamp": "2025-10-20T23:32:25.577588",
+      "record_count": 1,
+      "size_bytes": 5698
+    },
+    "npc\\2025-10-20_22-35-49_npc.csv": {
+      "hash": "f6dd5d221804b14e1f7f283428e5b50a7ec4ba08fb366ea231b33721ef4786d7",
+      "timestamp": "2025-10-20T23:33:35.509412",
+      "record_count": 1,
+      "size_bytes": 1518
+    },
+    "npc\\2025-10-20_22-35-49_npc.xlsx": {
+      "hash": "fc76f5bcd6a4c584c5e792cc1417f509df618fc698072819f6b0962f6393b614",
+      "timestamp": "2025-10-20T23:33:38.874451",
+      "record_count": 1,
+      "size_bytes": 5709
+    },
+    "propertypro\\2025-10-19_16-05-51_propertypro.csv": {
+      "hash": "6963e16daf776f83a7052e46d625a8b324262a904c458b3dc62c4f78c9fded02",
+      "timestamp": "2025-10-21T11:32:48.917587",
+      "record_count": 45,
+      "size_bytes": 331924
+    },
+    "jiji\\2025-10-19_22-43-04_jiji.csv": {
+      "hash": "15a351d9f064ed6cbebb86db032e77d1852813fd43601efa432aa9a3f83bf2a7",
+      "timestamp": "2025-10-21T11:38:12.861420",
+      "record_count": 10,
+      "size_bytes": 6919
+    },
+    "jiji\\2025-10-19_22-43-04_jiji.xlsx": {
+      "hash": "730822f8a6e700ed3b27028cc8502baf390dacd9cdc580ae4f0bb6e700c07664",
+      "timestamp": "2025-10-21T11:39:18.638201",
+      "record_count": 10,
+      "size_bytes": 8514
+    },
+    "propertypro\\2025-10-19_16-05-51_propertypro.xlsx": {
+      "hash": "75705fe9bd6e432f387b1ee5ad1e65361d7d838b1bfda87499d9b57859d10f47",
+      "timestamp": "2025-10-21T11:39:19.611186",
+      "record_count": 45,
+      "size_bytes": 204970
+    },
+    "jiji\\2025-10-19_23-08-16_jiji.csv": {
+      "hash": "c62e4c5870eac43321da491f3f621b0c02fd1c55eb7f4575a7fbd04561b3b7cd",
+      "timestamp": "2025-10-21T11:39:30.244147",
+      "record_count": 12,
+      "size_bytes": 8390
+    },
+    "jiji\\2025-10-19_23-08-16_jiji.xlsx": {
+      "hash": "4c533b722ac28e5f40376de4f2829c8692d3c993b3d4b8aa49328d6849ec08b5",
+      "timestamp": "2025-10-21T11:40:10.684205",
+      "record_count": 12,
+      "size_bytes": 9099
+    },
+    "edenoasis\\2025-10-20_17-47-21_edenoasis.xlsx": {
+      "hash": "096136c65f470bbcaefe305d0fe777e7ce7312f7436b795a5df6c76af427a057",
+      "timestamp": "2025-10-21T11:40:16.520969",
+      "record_count": 18,
+      "size_bytes": 38026
+    },
+    "jiji\\2025-10-21_10-34-27_jiji.xlsx": {
+      "hash": "dcc2701a9d622ce9e3cdcd94f8472d8e180250f542ffc57f1191d474f36c39fd",
+      "timestamp": "2025-10-21T11:40:19.814717",
+      "record_count": 17,
+      "size_bytes": 10991
+    },
+    "propertypro\\2025-10-20_07-18-51_propertypro.csv": {
+      "hash": "d31d5896a2ad4d9dec4dba1264ed8fc752b4dfb4758d8c74bcd7d10006b9bc7c",
+      "timestamp": "2025-10-22T00:15:15.317470",
+      "record_count": 33,
+      "size_bytes": 189330
+    },
+    "propertypro\\2025-10-20_09-09-53_propertypro.csv": {
+      "hash": "cd584849a9b2356f98730fffb6dd1c1f49bc3230f1ac1a63f02f15e49a0b5230",
+      "timestamp": "2025-10-22T00:15:46.535719",
+      "record_count": 34,
+      "size_bytes": 199656
+    },
+    "cwlagos\\2025-10-20_17-40-39_cwlagos.csv": {
+      "hash": "19fdf6520090c27c9f5bfed86724be44853b7a68acc73d37db3b8c093abf1638",
+      "timestamp": "2025-10-22T00:15:49.772526",
+      "record_count": 37,
+      "size_bytes": 115028
+    }
+  },
+  "last_updated": "2025-10-22T00:15:49.773035"
+}
