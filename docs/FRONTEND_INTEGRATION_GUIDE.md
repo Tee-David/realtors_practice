@@ -1007,7 +1007,7 @@ Archived properties are listings that haven't been seen in recent scrapes (>30 d
 
 **UI Recommendation**:
 - Separate "Historical Data" section for analysts/developers
-- Export historical data for ML models
+- Export historical data for analytics and modeling
 - Price trend visualization over time
 
 ---
