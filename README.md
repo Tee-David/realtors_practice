@@ -4,6 +4,26 @@ Enterprise-grade property aggregation platform with unlimited scalability (curre
 
 ## 🚀 Quick Start
 
+### For Frontend Developers (API Integration)
+
+**Your backend is already deployed and live on Firebase!**
+
+```javascript
+// API Base URL - Use this in your frontend
+const API_URL = 'https://us-central1-realtor-s-practice.cloudfunctions.net/api';
+
+// Example: Fetch all sites
+fetch(`${API_URL}/api/sites`)
+  .then(res => res.json())
+  .then(data => console.log(data));
+```
+
+**Quick Start Guide**: See [docs/FRONTEND_QUICKSTART.md](docs/FRONTEND_QUICKSTART.md) for complete integration examples.
+
+---
+
+### For Backend Development (Local)
+
 ```bash
 # 1. Install dependencies
 pip install -r requirements.txt
@@ -14,7 +34,7 @@ playwright install chromium
 # 3. Configure sites (optional)
 cp config.example.yaml config.yaml
 
-# 4. Start API server (recommended)
+# 4. Start API server (local testing)
 python api_server.py
 
 # 5. Or run scraper directly
@@ -24,10 +44,10 @@ python main.py
 python watcher.py --once
 ```
 
-### Quick Test (API)
+### Quick Test (Local API)
 
 ```bash
-# Start API server
+# Start API server locally
 python api_server.py
 
 # In another terminal, test endpoints:
@@ -455,13 +475,50 @@ See **[FRONTEND_INTEGRATION_GUIDE.md](docs/FRONTEND_INTEGRATION_GUIDE.md)** for 
 
 ## 🚀 Deployment
 
-### FREE Deployment Options (No Cost!) 💰
+### ✅ Current Deployment Status
+
+**Your backend is already deployed and running on Firebase!**
+
+```
+API URL: https://us-central1-realtor-s-practice.cloudfunctions.net/api
+Status: ✅ Live and Ready
+Region: us-central1 (USA)
+Runtime: Python 3.11
+```
+
+**For Frontend Developers**:
+- **Quick Start**: [docs/FRONTEND_QUICKSTART.md](docs/FRONTEND_QUICKSTART.md)
+- **Complete API Docs**: [docs/FRONTEND_INTEGRATION_GUIDE.md](docs/FRONTEND_INTEGRATION_GUIDE.md)
+- **Postman Collection**: [docs/Nigerian_Real_Estate_API.postman_collection.json](docs/Nigerian_Real_Estate_API.postman_collection.json)
+- **Deployment Info**: [FIREBASE_DEPLOYMENT_SUCCESS.md](FIREBASE_DEPLOYMENT_SUCCESS.md)
+
+---
+
+### Firebase Deployment (Current)
+
+**Your API is deployed with**:
+- ✅ **Firebase Cloud Functions** - Serverless Python 3.11
+- ✅ **All 68 API endpoints** - Fully functional
+- ✅ **Auto-scaling** - Handles traffic automatically
+- ✅ **Global CDN** - Fast worldwide access
+- ✅ **Monitoring** - Built-in logs and metrics
+
+**Cost**: ~$1-5/month (Blaze pay-as-you-go plan)
+
+**Management**:
+- **Firebase Console**: https://console.firebase.google.com/project/realtor-s-practice
+- **View Logs**: `firebase functions:log --only api`
+- **Redeploy**: `firebase deploy --only functions`
+
+---
+
+### Alternative FREE Deployment Options
 
 **🏆 RECOMMENDED**: See **[FREE_DEPLOYMENT.md](FREE_DEPLOYMENT.md)** - Complete guide to FREE deployment
 
 **Top FREE Options**:
 
-1. **⭐ GitHub Actions** (Best for most users)
+1. **⭐ GitHub Actions** (Best for scheduled scraping)
    - ✅ $0/month - Completely FREE
    - ✅ 2000 minutes/month free
    - ✅ No credit card required
@@ -474,7 +531,7 @@ See **[FRONTEND_INTEGRATION_GUIDE.md](docs/FRONTEND_INTEGRATION_GUIDE.md)** for 
    - ✅ 1-4 CPUs, 6-24GB RAM free
    - ✅ Can run 24/7
    - ⚠️ Requires credit card verification (never charges)
-   - **Perfect for**: 24/7 availability or API hosting
+   - **Perfect for**: 24/7 availability
 
 3. **💻 Local Machine**
    - ✅ $0/month - Completely FREE
@@ -483,28 +540,7 @@ See **[FRONTEND_INTEGRATION_GUIDE.md](docs/FRONTEND_INTEGRATION_GUIDE.md)** for 
    - ❌ Computer must stay on
    - **Perfect for**: Testing and development
 
-**See [FREE_DEPLOYMENT.md](FREE_DEPLOYMENT.md) for complete setup guides for all FREE options!**
-
----
-
-### Firebase Deployment (Paid, ~$1-5/month)
-
-**Quick Start**: See **[FIREBASE_QUICKSTART.md](FIREBASE_QUICKSTART.md)** - Fast setup guide
-
-**Complete Guide**: See **[docs/FIREBASE_DEPLOYMENT.md](docs/FIREBASE_DEPLOYMENT.md)** - Step-by-step deployment walkthrough
-
-**What you get**:
-- ✅ **Serverless** - No server management required
-- ✅ **Cloud Functions** - Automated scheduled scraping
-- ✅ **Cloud Storage** - Unlimited data storage with CDN
-- ✅ **Scalable** - Auto-scales based on demand
-- ✅ **Cost**: ~$1-5/month (pay-as-you-go)
-
-**When to use Firebase**:
-- Need enterprise-grade reliability
-- Want global CDN for data access
-- Integrating with Firebase-based frontend
-- Need more than 2000 minutes/month
+**See [FREE_DEPLOYMENT.md](FREE_DEPLOYMENT.md) for complete setup guides!**
 
 ## 🤝 Contributing
 

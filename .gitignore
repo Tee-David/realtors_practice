@@ -113,3 +113,10 @@ tests/test_api_comprehensive.py
 tests/test_security_comprehensive.py
 tests/test_firestore_integration.py
 tests/run_all_comprehensive_tests.py
+
+# Firebase Functions
+functions/venv/
+functions/__pycache__/
+functions/**/__pycache__/
+functions/.firebase/
+functions/firebase-debug.log
