@@ -1639,7 +1639,7 @@ def get_export_formats():
                 'description': 'Apache Parquet - Optimized columnar format',
                 'supports_formulas': False,
                 'file_size': 'Very Small (compressed)',
-                'recommended_for': 'Data analysis, machine learning, big data'
+                'recommended_for': 'Data analysis, analytics, big data processing'
             }
         ],
         'available_filters': {

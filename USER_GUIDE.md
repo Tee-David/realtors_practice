@@ -111,19 +111,19 @@ You can filter to show only listings above 80% quality.
 
 ---
 
-### 6. No Duplicates (AI-Powered)
+### 6. No Duplicates (Advanced Matching)
 
-**What it does**: Uses AI to find and remove the same property listed on multiple websites.
+**What it does**: Automatically finds and removes the same property listed on multiple websites.
 
 **Why it matters**: You don't waste time looking at the same property 5-10 times on different websites.
 
-**How it works**: Uses fuzzy matching (similar titles, same location, same price, GPS coordinates) to detect duplicates even if worded differently.
+**How it works**: Uses advanced fuzzy matching (similar titles, same location, same price, GPS coordinates) to detect duplicates even if worded differently.
 
 **Example**:
 - PropertyPro: "3 Bedroom Flat in Lekki Phase 1 - ₦28M"
 - NPC: "3BR Apartment, Lekki Ph1, 28 Million Naira"
 - Jiji: "Three Bedroom Flat @ Lekki Phase I (N28,000,000)"
-- The AI recognizes all three are THE SAME property
+- The system recognizes all three are THE SAME property
 - You only see it once, not three times
 
 ---
@@ -334,7 +334,7 @@ The scraper understands they all mean the same thing and standardizes it to "3 b
 | Takes 2-3 hours per day | Takes 5 minutes per day |
 | Miss properties between checks | Never miss anything |
 | No price tracking | Automatic price alerts |
-| See duplicates multiple times | AI-powered duplicate removal |
+| See duplicates multiple times | Advanced duplicate removal |
 | Can't save searches | Unlimited saved searches |
 | No quality filtering | 1-100% quality scoring |
 | Can't search with plain English | Natural language search |

@@ -160,7 +160,7 @@ realtors_practice/
 - **Price per sqm calculation** - Compare value across properties
 
 ### 🧹 Data Quality Management
-- **Duplicate detection** - AI-powered fuzzy matching across all configured sites (currently 82+)
+- **Duplicate detection** - Advanced fuzzy matching across all configured sites (currently 82+)
 - **Quality scoring** - 0.0-1.0 score based on data completeness
 - **Intelligent normalization** - Standardizes prices, locations, property types
 - **Geocoding** - Converts addresses to GPS coordinates (OpenStreetMap)
@@ -496,7 +496,7 @@ See **[FRONTEND_INTEGRATION_GUIDE.md](docs/FRONTEND_INTEGRATION_GUIDE.md)** for 
 
 ### **All Features Implemented (8/8)** ✓
 1. ✅ **Incremental Scraping** - Only scrape new listings (80-90% faster)
-2. ✅ **Duplicate Detection** - AI-powered fuzzy matching across 82+ sites
+2. ✅ **Duplicate Detection** - Advanced fuzzy matching across 82+ sites
 3. ✅ **Data Quality Scoring** - 0-100% scoring based on data completeness
 4. ✅ **Saved Searches & Alerts** - Save criteria, get alerts for new matches
 5. ✅ **Automated Scheduler** - Cron-style and interval scheduling

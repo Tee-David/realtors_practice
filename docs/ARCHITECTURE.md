@@ -618,8 +618,8 @@ User → Frontend → API Server → Firestore
 - [ ] Market insights and trends
 
 ### **Phase 4: Advanced Features (FUTURE 🚀)**
-- [ ] Machine learning price predictions
-- [ ] Image recognition for property features
+- [ ] Statistical price prediction models
+- [ ] Image analysis for property features
 - [ ] Mobile app (React Native)
 - [ ] Agent portal
 - [ ] Payment integration (premium features)

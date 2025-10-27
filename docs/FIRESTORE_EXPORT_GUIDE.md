@@ -246,7 +246,7 @@ Downloads the generated file directly to browser.
       "extension": ".parquet",
       "description": "Apache Parquet - Optimized columnar format",
       "file_size": "Very Small (compressed)",
-      "recommended_for": "Data analysis, machine learning, big data"
+      "recommended_for": "Data analysis, analytics, big data processing"
     }
   ],
   "available_filters": {
