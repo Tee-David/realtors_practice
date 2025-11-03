@@ -112,6 +112,9 @@ docs/guides/WATCHER_QUICKSTART.md
 # Safepoint backups (local only)
 safepoint_backups/
 
+# Archived documentation (local only)
+archived_docs/
+
 # Session summaries (internal documentation)
 docs/sessions/
 
