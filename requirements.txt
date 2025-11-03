@@ -13,6 +13,7 @@ pandas
 # API server (for frontend integration)
 flask
 flask-cors
+gunicorn
 
 # Performance & monitoring (optional but recommended)
 tqdm>=4.66.0          # Progress bars for parallel processing

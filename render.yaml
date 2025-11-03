@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: real-estate-api
+    env: python
+    buildCommand: pip install -r requirements.txt && playwright install chromium
+    startCommand: gunicorn api_server:app --bind 0.0.0.0:$PORT --timeout 300
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: FIREBASE_CREDENTIALS
+        sync: false
+      - key: GITHUB_TOKEN
+        sync: false
+      - key: GITHUB_OWNER
+        sync: false
+      - key: GITHUB_REPO
+        sync: false
+      - key: RP_HEADLESS
+        value: 1
+      - key: RP_GEOCODE
+        value: 0
