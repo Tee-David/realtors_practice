@@ -1,562 +1,383 @@
-# 🚀 Complete Deployment Guide: Frontend (Vercel) + Backend (GitHub Actions)
+# 🚀 Frontend Setup - Connect to Deployed Backend
 
-## 🎯 What Your Client Wants
-
-Your client wants to see the **full system working**:
-
-- ✅ Frontend deployed on Vercel (accessible via URL)
-- ✅ Backend API running (to handle requests from frontend)
-- ✅ GitHub Actions scraping (triggered from frontend)
-- ✅ Everything connected and working together
+**From:** Tee-David (Backend Developer)
+**To:** Hameedah (Frontend Developer)
 
 ---
 
-## 📋 Current Setup Overview
+## ✅ Good News - Backend is Live!
 
-```
-┌─────────────────────────────────────────────────────────┐
-│  USER'S BROWSER                                         │
-│  https://your-app.vercel.app                           │
-└─────────────────┬───────────────────────────────────────┘
-                  │
-                  │ API Calls
-                  ↓
-┌─────────────────────────────────────────────────────────┐
-│  BACKEND API (Need to Deploy!)                         │
-│  Flask API Server (api_server.py)                      │
-│  - Handles requests from frontend                       │
-│  - Triggers GitHub Actions                              │
-│  - Queries Firestore                                    │
-└─────────────────┬───────────────────────────────────────┘
-                  │
-                  │ Triggers
-                  ↓
-┌─────────────────────────────────────────────────────────┐
-│  GITHUB ACTIONS (Already Set Up!)                      │
-│  - Runs scraper                                         │
-│  - Collects property data                               │
-│  - Uploads to Firestore                                 │
-└─────────────────────────────────────────────────────────┘
-```
+The backend API has been successfully deployed and is now accessible from the internet!
+
+**Backend URL:** `https://realtors-practice-api.onrender.com/api`
+
+**Test it here:** https://realtors-practice-api.onrender.com/api/health
+(You should see: `{"status": "ok", "timestamp": "...", "version": "2.2"}`)
 
 ---
 
-## 🔴 THE MISSING PIECE: Backend API Deployment
+## 🎯 What You Need To Do
 
-**Problem:** Your frontend is on Vercel, but your backend (Flask API) is still only on your local machine!
+You need to update your frontend to connect to the deployed backend instead of `localhost:5000`.
 
-**Solution:** You need to deploy the backend API server so the frontend can talk to it.
-
----
-
-## 🚀 Step-by-Step Setup Guide
-
-## STEP 1: Deploy Backend API (Choose One Option)
-
-### Option A: Deploy Backend to Render (Recommended - FREE)
-
-Render is perfect for Flask APIs and has a generous free tier.
-
-#### 1.1 Prepare Your Backend for Deployment
-
-Create a `render.yaml` file in your backend folder:
-
-```bash
-cd "C:\Users\Uche\Documents\Real Estate Scrapper\realtors_practice-main"
-```
-
-Create `render.yaml`:
-
-```yaml
-services:
-  - type: web
-    name: real-estate-api
-    env: python
-    buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn api_server:app
-    envVars:
-      - key: PYTHON_VERSION
-        value: 3.11.0
-      - key: FIREBASE_CREDENTIALS
-        sync: false
-      - key: GITHUB_TOKEN
-        sync: false
-      - key: GITHUB_OWNER
-        sync: false
-      - key: GITHUB_REPO
-        sync: false
-```
-
-#### 1.2 Add Gunicorn to Requirements
-
-Add to your `requirements.txt`:
-
-```bash
-echo gunicorn >> requirements.txt
-```
-
-#### 1.3 Deploy to Render
-
-1. Go to https://render.com
-2. Sign up/login with GitHub
-3. Click **"New +"** → **"Web Service"**
-4. Connect your GitHub repository
-5. Configure:
-   - **Name:** `real-estate-api`
-   - **Environment:** `Python 3`
-   - **Build Command:** `pip install -r requirements.txt`
-   - **Start Command:** `gunicorn api_server:app --bind 0.0.0.0:$PORT`
-   - **Instance Type:** `Free`
-6. Click **"Create Web Service"**
-7. Wait for deployment (5-10 minutes)
-8. You'll get a URL like: `https://real-estate-api.onrender.com`
-
-#### 1.4 Add Environment Variables in Render
-
-In Render dashboard:
-
-1. Go to your service → **Environment**
-2. Add these variables:
-   - `FIREBASE_CREDENTIALS` - Your Firebase JSON (from local file)
-   - `GITHUB_TOKEN` - Your GitHub Personal Access Token
-   - `GITHUB_OWNER` - Your GitHub username
-   - `GITHUB_REPO` - Your repo name (e.g., `Scrap`)
+This is a **3-step process** that takes about 15 minutes.
 
 ---
 
-### Option B: Deploy Backend to Railway (Alternative - FREE)
+## STEP 1: Update Your Frontend Code (5 min)
 
-Railway is another great option similar to Render.
+### Option A: Environment Variables (Recommended ⭐)
 
-1. Go to https://railway.app
-2. Sign up with GitHub
-3. Click **"New Project"** → **"Deploy from GitHub repo"**
-4. Select your repository
-5. Railway auto-detects Python and deploys
-6. Add environment variables in **Variables** tab
-7. You'll get a URL like: `https://real-estate-api.up.railway.app`
-
----
-
-### Option C: Keep Backend Local (For Testing Only)
-
-**Only use this for initial testing!** You'll need to:
-
-1. Run backend locally:
-
-   ```bash
-   cd "C:\Users\Uche\Documents\Real Estate Scrapper\realtors_practice-main"
-   python api_server.py
-   ```
-
-2. Expose it to the internet using ngrok:
-
-   ```bash
-   # Install ngrok: https://ngrok.com/download
-   ngrok http 5000
-   ```
-
-3. You'll get a URL like: `https://abc123.ngrok.io`
-
-**⚠️ Limitation:** This only works while your computer is on and ngrok is running.
-
----
-
-## STEP 2: Update Frontend to Use Deployed Backend
-
-### 2.1 Update API Base URL in Frontend
-
-Edit `scrapper-ui/lib/api.ts`:
-
-```typescript
-// Find this line:
-private baseURL = "http://localhost:5000/api";
-
-// Change to your deployed backend URL:
-private baseURL = "https://real-estate-api.onrender.com/api"; // Or your Railway/ngrok URL
-```
-
-**BETTER APPROACH:** Use environment variables:
-
-Create `scrapper-ui/.env.local`:
+**1. Create or edit `.env.local` in your Next.js project root:**
 
 ```env
-NEXT_PUBLIC_API_URL=https://real-estate-api.onrender.com/api
+NEXT_PUBLIC_API_URL=https://realtors-practice-api.onrender.com/api
 ```
 
-Update `scrapper-ui/lib/api.ts`:
+**2. Update your API client file** (probably `lib/api.ts` or `lib/api-client.ts`):
 
+Find this line:
+```typescript
+private baseURL = "http://localhost:5000/api";
+```
+
+Change it to:
 ```typescript
 private baseURL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 ```
 
-### 2.2 Add Environment Variable in Vercel
+This way:
+- ✅ Production uses the deployed backend
+- ✅ Local development still works with localhost
+- ✅ You can change the URL without modifying code
 
-1. Go to your Vercel project dashboard
-2. Click **Settings** → **Environment Variables**
-3. Add:
+---
+
+### Option B: Direct Update (Quick Test Only)
+
+**Not recommended for production**, but good for quick testing:
+
+In your API client file (probably `lib/api.ts`), change:
+
+```typescript
+// From:
+private baseURL = "http://localhost:5000/api";
+
+// To:
+private baseURL = "https://realtors-practice-api.onrender.com/api";
+```
+
+**Note:** You'll need to change it back to `localhost` when developing locally.
+
+---
+
+## STEP 2: Update Vercel Environment Variables (5 min)
+
+If your frontend is deployed on Vercel:
+
+1. **Go to your Vercel project dashboard:** https://vercel.com/dashboard
+
+2. **Click** on your project
+
+3. **Click** "Settings" (top menu)
+
+4. **Click** "Environment Variables" (left sidebar)
+
+5. **Click** "Add New" button
+
+6. **Fill in:**
    - **Key:** `NEXT_PUBLIC_API_URL`
-   - **Value:** `https://real-estate-api.onrender.com/api` (your backend URL)
-   - **Environment:** All (Production, Preview, Development)
-4. Click **Save**
+   - **Value:** `https://realtors-practice-api.onrender.com/api`
+   - **Environments:** Check all three:
+     - ☑ Production
+     - ☑ Preview
+     - ☑ Development
 
-### 2.3 Redeploy Frontend
+7. **Click** "Save"
+
+---
+
+## STEP 3: Deploy Your Frontend (5 min)
+
+**Commit and push your changes:**
 
 ```bash
-cd "C:\Users\Uche\Documents\Real Estate Scrapper\scrapper-ui"
-
-# Commit changes
+# In your frontend project directory
 git add .
-git commit -m "Update API URL for production"
+git commit -m "Connect to deployed backend API"
 git push origin main
 ```
 
-Vercel will automatically redeploy with the new environment variable.
+**Vercel will automatically redeploy** (if auto-deploy is enabled)
+
+Or manually redeploy:
+- Go to Vercel dashboard
+- Click "Deployments"
+- Click "Redeploy" on the latest deployment
+
+**Wait 2-3 minutes** for deployment to complete.
 
 ---
 
-## STEP 3: Set Up GitHub Actions Secrets
+## ✅ Test Everything Works
 
-Your GitHub Actions workflows need secrets to work:
+### Test 1: Check Your Deployed Frontend
 
-1. Go to your GitHub repository: `https://github.com/UchennaAustine-dev/Scrap`
-2. Click **Settings** → **Secrets and variables** → **Actions**
-3. Click **"New repository secret"** and add each of these:
+1. **Open your deployed frontend** (your Vercel URL)
 
-### Required Secrets:
+2. **Open browser console** (Press F12 → Console tab)
 
-**1. FIREBASE_CREDENTIALS**
+3. **Check for errors:**
+   - ❌ CORS errors? (Tell Tee-David - should be enabled)
+   - ❌ 404 errors? (Check your API URL is correct)
+   - ✅ No errors? Great! API is connected!
 
-- Click **"New repository secret"**
-- Name: `FIREBASE_CREDENTIALS`
-- Value: Copy entire content of `realtor-s-practice-firebase-adminsdk-*.json`
-- Click **"Add secret"**
-
-**2. GITHUB_TOKEN (for API triggering)**
-
-- Go to: https://github.com/settings/tokens
-- Click **"Generate new token (classic)"**
-- Name: `Scraper API Token`
-- Expiration: `No expiration`
-- Scopes: Check `repo` and `workflow`
-- Click **"Generate token"**
-- Copy the token (you won't see it again!)
-- Add as secret:
-  - Name: `GH_PAT`
-  - Value: Your token
+4. **Verify data loads:**
+   - Dashboard shows stats? ✅
+   - Sites list loads? ✅
+   - Property data appears? ✅
 
 ---
 
-## STEP 4: Update Backend Environment Variables
+### Test 2: Test API Endpoints Directly
 
-Your backend needs GitHub credentials to trigger workflows.
+Open these URLs in your browser to verify the backend is responding:
 
-### For Render:
-
-1. Go to Render dashboard → Your service
-2. Click **Environment**
-3. Add these variables:
-   ```
-   GITHUB_TOKEN=ghp_your_token_here
-   GITHUB_OWNER=UchennaAustine-dev
-   GITHUB_REPO=Scrap
-   ```
-4. Click **Save**
-
-### For Railway:
-
-1. Go to Railway project → **Variables** tab
-2. Add the same variables
-3. Railway will auto-restart
-
----
-
-## STEP 5: Test the Complete Flow
-
-Now test everything working together!
-
-### Test 1: Check Backend API is Live
-
-Open in browser:
-
+**Health Check:**
 ```
-https://your-backend-url.onrender.com/api/health
+https://realtors-practice-api.onrender.com/api/health
 ```
+Should return: `{"status": "ok", ...}`
 
-You should see:
+**List All Sites:**
+```
+https://realtors-practice-api.onrender.com/api/sites
+```
+Should return: JSON array of 82+ configured sites
 
-```json
-{
-  "status": "ok",
-  "timestamp": "2025-11-01T10:00:00",
-  "version": "1.0.0"
-}
+**Get Statistics:**
+```
+https://realtors-practice-api.onrender.com/api/stats
+```
+Should return: Scraper statistics
+
+---
+
+## ⚠️ Important: First Request Delay
+
+**The first API request after 15 minutes of inactivity will take 30-60 seconds.**
+
+This is because Render's free tier "sleeps" after inactivity to save resources. The first request "wakes it up."
+
+**What to do:**
+- Add a loading spinner for initial data load
+- Show a message: "Loading... (This may take a moment)"
+- After the first request, all subsequent requests are fast!
+
+**Example code:**
+```typescript
+const [isLoading, setIsLoading] = useState(true);
+
+useEffect(() => {
+  // First request may be slow
+  fetch(baseURL + '/health')
+    .then(() => {
+      setIsLoading(false);
+      // Now load your actual data
+    });
+}, []);
 ```
 
-### Test 2: Test from Frontend (Deployed)
+---
 
-1. Open your Vercel URL: `https://your-app.vercel.app`
-2. Go to **Dashboard** page
-3. You should see:
-   - ✅ Stats loading (proves frontend → backend connection works)
-   - ✅ Sites list
-   - ✅ Scraper controls
+## 📚 Available API Endpoints
 
-### Test 3: Trigger GitHub Actions from Frontend
+All **68 endpoints** are now available at:
 
-1. On your deployed frontend, go to **Dashboard**
-2. Find the **Scraper Control** panel
-3. Configure:
-   - **Max Pages:** 2
-   - **Geocoding:** Off
-   - **Sites:** Select 1-2 sites
-4. Click **"Start Scraping"**
-5. You should see:
-   - Success message
-   - Link to GitHub Actions run
-6. Click the link → Opens GitHub Actions workflow running!
+`https://realtors-practice-api.onrender.com/api/...`
 
-### Test 4: View Results
+**Main Categories:**
 
-After workflow completes (5-10 minutes):
+1. **Scraping Management**
+   - `POST /api/scrape/start` - Start scraping
+   - `GET /api/scrape/status` - Get status
+   - `POST /api/scrape/stop` - Stop scraping
 
-1. **In GitHub:**
+2. **Site Configuration**
+   - `GET /api/sites` - List all sites
+   - `GET /api/sites/{site_key}` - Get site details
+   - `PUT /api/sites/{site_key}` - Update site config
 
-   - Go to Actions tab
-   - See completed workflow with green checkmark
-   - Download artifacts (cleaned Excel file)
+3. **Data Access**
+   - `GET /api/data/sites/{site_key}` - Get scraped data
+   - `GET /api/data/search` - Search properties
+   - `GET /api/data/latest` - Get latest data
 
-2. **In Frontend:**
+4. **GitHub Actions**
+   - `POST /api/github/trigger-scrape` - Trigger scraping workflow
+   - `GET /api/github/status` - Check workflow status
 
-   - Go to **Data Explorer** page
-   - Search for properties
-   - Should show newly scraped data (if Firestore upload enabled)
+5. **Statistics**
+   - `GET /api/stats` - Get overview statistics
+   - `GET /api/stats/sites/{site_key}` - Site-specific stats
 
-3. **In Firestore (Optional):**
-   - Go to Firebase Console
-   - Check `properties` collection
-   - Should have new documents
+See the repo documentation for complete API reference.
 
 ---
 
-## 🎯 Complete Testing Checklist
+## 🔧 Troubleshooting
 
-### ✅ Backend Deployed
+### Issue: "Network Error" or "Failed to Fetch"
 
-- [ ] Backend API deployed (Render/Railway/ngrok)
-- [ ] Backend URL is accessible (test /api/health)
-- [ ] Environment variables set (GITHUB_TOKEN, FIREBASE_CREDENTIALS)
-
-### ✅ Frontend Updated
-
-- [ ] API base URL updated to deployed backend
-- [ ] Environment variable added in Vercel
-- [ ] Frontend redeployed to Vercel
-
-### ✅ GitHub Actions Configured
-
-- [ ] FIREBASE_CREDENTIALS secret added
-- [ ] GH_PAT secret added (for triggering)
-- [ ] Workflow files exist in .github/workflows/
-
-### ✅ Testing Complete
-
-- [ ] Health endpoint responds
-- [ ] Frontend loads without errors
-- [ ] Can trigger scrape from frontend
-- [ ] GitHub Actions workflow runs successfully
-- [ ] Can see results in Data Explorer
-
----
-
-## 🐛 Common Issues & Solutions
-
-### Issue: Frontend can't connect to backend
-
-**Symptoms:** Network errors, CORS errors in console
-
-**Solutions:**
-
-1. Check backend URL in frontend is correct
-2. Check backend API is running (visit health endpoint)
-3. Check CORS is enabled in backend:
-   ```python
-   # In api_server.py, should have:
-   from flask_cors import CORS
-   CORS(app)
-   ```
-
-### Issue: "GITHUB_TOKEN not found" when triggering
+**Possible causes:**
+1. Backend is sleeping (wait 30-60 seconds and retry)
+2. Wrong API URL (check spelling)
+3. CORS issue (should be pre-configured)
 
 **Solution:**
-
-1. Check environment variable in Render/Railway
-2. Make sure it's named exactly: `GITHUB_TOKEN`
-3. Restart backend service after adding
-
-### Issue: GitHub Actions not triggering
-
-**Solutions:**
-
-1. Check GH_PAT secret exists in GitHub repo
-2. Verify token has `workflow` scope
-3. Check backend logs for API errors
-
-### Issue: Firestore upload fails
-
-**Solutions:**
-
-1. Check FIREBASE_CREDENTIALS secret in GitHub
-2. Verify Firebase project ID matches
-3. Check Firestore rules allow writes
+- Test the URL directly in browser: https://realtors-practice-api.onrender.com/api/health
+- Check browser console for detailed error messages
+- Verify environment variables in Vercel
 
 ---
 
-## 📊 Architecture Flow
+### Issue: "CORS Error"
 
-Here's how everything works together:
-
+**Symptoms:**
 ```
-1. USER → Opens Vercel URL
-   https://your-app.vercel.app
-   ↓
-
-2. FRONTEND → Calls Backend API
-   GET https://backend.onrender.com/api/stats
-   ↓
-
-3. BACKEND → Returns data
-   { sites: [...], stats: {...} }
-   ↓
-
-4. USER → Clicks "Start Scraping"
-   ↓
-
-5. FRONTEND → Calls Backend API
-   POST https://backend.onrender.com/api/github/trigger-scrape
-   { page_cap: 10, sites: ['npc', 'jiji'] }
-   ↓
-
-6. BACKEND → Calls GitHub API
-   POST https://api.github.com/repos/{owner}/{repo}/dispatches
-   { event_type: 'trigger-scrape', client_payload: {...} }
-   ↓
-
-7. GITHUB ACTIONS → Starts workflow
-   - Install Python
-   - Run scraper
-   - Upload to Firestore
-   ↓
-
-8. FRONTEND → Shows results
-   - Query Firestore
-   - Display properties
+Access to fetch has been blocked by CORS policy
 ```
 
----
-
-## 🎉 Final Deployment URLs
-
-After setup, you'll have:
-
-1. **Frontend (Vercel):**
-
-   - `https://your-app.vercel.app`
-   - Users access this
-
-2. **Backend API (Render/Railway):**
-
-   - `https://real-estate-api.onrender.com`
-   - Frontend calls this
-
-3. **GitHub Actions:**
-
-   - `https://github.com/UchennaAustine-dev/Scrap/actions`
-   - Scraper runs here
-
-4. **Firebase/Firestore:**
-   - `https://console.firebase.google.com`
-   - Data stored here
+**Solution:**
+- CORS is already enabled in the backend
+- Make sure you're using the correct URL with `https://` (not `http://`)
+- Contact Tee-David if issue persists
 
 ---
 
-## 📝 Quick Start Commands
+### Issue: Data Not Loading
 
-```bash
-# 1. Deploy Backend to Render (via GitHub)
-# - Connect repo to Render
-# - Add environment variables
-# - Deploy automatically
+**Check:**
+1. API URL is correct (includes `https://` and ends with `/api`)
+2. Environment variables set correctly in Vercel
+3. Frontend redeployed after adding environment variables
+4. Backend is responding (test health endpoint in browser)
 
-# 2. Update Frontend
-cd "C:\Users\Uche\Documents\Real Estate Scrapper\scrapper-ui"
+**Solution:**
+- Check browser console for errors
+- Test API endpoints directly in browser
+- Verify Vercel environment variables: Settings → Environment Variables
 
-# Create .env.local
-echo "NEXT_PUBLIC_API_URL=https://your-backend.onrender.com/api" > .env.local
+---
 
-# Update API client
-# Edit lib/api.ts to use environment variable
+## 📊 How It All Works Together
 
-# Commit and push
-git add .
-git commit -m "Connect to deployed backend"
-git push origin main
+After setup, here's the complete flow:
 
-# 3. Add environment variable in Vercel dashboard
-
-# 4. Test on deployed URL!
+```
+┌─────────────────────────────┐
+│  USER                       │
+│  Opens your frontend        │
+│  (Vercel)                   │
+└────────┬────────────────────┘
+         │
+         │ 1. Clicks button/loads page
+         ↓
+┌─────────────────────────────┐
+│  YOUR FRONTEND              │
+│  (Next.js on Vercel)        │
+│  Makes API calls            │
+└────────┬────────────────────┘
+         │
+         │ 2. API request
+         │ (e.g., GET /api/sites)
+         ↓
+┌─────────────────────────────┐
+│  BACKEND API                │
+│  (Tee-David's Render)       │
+│  https://realtors-practice  │
+│  -api.onrender.com/api      │
+│  Processes & returns data   │
+└────────┬────────────────────┘
+         │
+         │ 3. If scraping triggered
+         ↓
+┌─────────────────────────────┐
+│  GITHUB ACTIONS             │
+│  Runs scraper workflow      │
+│  Uploads to Firestore       │
+└─────────────────────────────┘
 ```
 
 ---
 
-## 🎯 What Your Client Will See
+## ✅ Success Checklist
 
-When you demo to your client:
+Mark these off as you complete them:
 
-1. **Open deployed URL:** `https://your-app.vercel.app`
-2. **Show Dashboard:** Real-time stats, sites, scraper status
-3. **Trigger Scrape:** Click button → Starts GitHub Actions
-4. **Show Progress:** Open GitHub Actions tab → See workflow running
-5. **Show Results:** After 10 min → Data appears in frontend
-6. **Demo Search:** Search properties by location, price, bedrooms
-
-**Client will be impressed by:**
-
-- ✅ Professional deployed application
-- ✅ Automated cloud scraping
-- ✅ Real-time data updates
-- ✅ Full-stack integration
+- [ ] Updated `.env.local` with API URL
+- [ ] Updated API client code to use environment variable
+- [ ] Added environment variable in Vercel
+- [ ] Committed and pushed changes
+- [ ] Frontend redeployed successfully
+- [ ] Opened deployed frontend - no console errors
+- [ ] Data loads from backend correctly
+- [ ] Tested at least 2-3 API endpoints
+- [ ] Loading spinner added for first request
+- [ ] Everything works smoothly!
 
 ---
 
-## 💡 Pro Tips
+## 🎯 Quick Reference
 
-1. **Use Render Free Tier:**
+**Backend API Base URL:**
+```
+https://realtors-practice-api.onrender.com/api
+```
 
-   - Perfect for demos
-   - Sleeps after 15 min inactivity
-   - First request wakes it up (30 sec delay)
+**Environment Variable Name:**
+```
+NEXT_PUBLIC_API_URL
+```
 
-2. **Add Loading States:**
+**Health Check URL:**
+```
+https://realtors-practice-api.onrender.com/api/health
+```
 
-   - Show "Waking up server..." if first request is slow
-   - Improves user experience
-
-3. **Monitor Logs:**
-
-   - Render: Check logs tab
-   - Vercel: Check Functions logs
-   - GitHub Actions: Check workflow logs
-
-4. **Set Realistic Expectations:**
-   - First scrape takes 10-30 minutes
-   - Subsequent scrapes are faster
-   - Free tier has some limitations
+**All Endpoints Start With:**
+```
+https://realtors-practice-api.onrender.com/api/...
+```
 
 ---
 
-## ✅ You're Ready!
+## 📞 Need Help?
 
-Follow the steps above, and you'll have a fully deployed, production-ready application that impresses your client! 🚀
+If you get stuck:
 
-**Next:** Deploy backend to Render → Update frontend environment variable → Test complete flow → Show client! 🎯
+1. Check browser console for error messages
+2. Test API endpoints directly in browser
+3. Review the troubleshooting section above
+4. Contact Tee-David with:
+   - What you tried
+   - Error messages from console
+   - Which step you're stuck on
+
+---
+
+## 🎉 You're Done When...
+
+1. ✅ Your deployed frontend loads without errors
+2. ✅ Data displays correctly from the backend
+3. ✅ No CORS errors in browser console
+4. ✅ All features work as expected
+5. ✅ You can trigger scraping (if that feature exists)
+
+**Let Tee-David know when everything is working!** 🚀
+
+---
+
+**For more detailed information, see:** `FOR_HAMEEDAH_FRONTEND_SETUP.md` in the repo.
+
+**Happy coding!** 💪

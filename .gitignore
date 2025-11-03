@@ -77,6 +77,16 @@ LAYMAN.md
 AI_CONTEXT.md
 claude.md
 
+# Deployment docs (backend already deployed - keep local only)
+DEPLOYMENT_STATUS.md
+DEPLOY_BACKEND.md
+FOR_HAMEEDAH_FRONTEND_SETUP.md
+MESSAGE_FOR_HAMEEDAH.md
+QUICKSTART_DEPLOY.md
+START_HERE.md
+YOUR_TODO_DEPLOY.md
+WHAT_I_DID.md
+
 # Claude AI
 .claude/
 
