@@ -90,21 +90,7 @@ for_hameedah.md
 
 # Backend-only documentation (keep local)
 HOW_TO_GET_API_KEY.md
-docs/API_KEY_MANAGEMENT.md
-docs/SECURITY_ANALYSIS.md
-docs/SECURITY_IMPLEMENTATION.md
-docs/TESTING_GUIDE.md
-docs/LAYMAN.md
-docs/FOR_FRONTEND_DEVELOPER.md
-docs/FIREBASE_DEPLOYMENT.md
-docs/FIREBASE_DEPLOYMENT_SUCCESS.md
-docs/FIREBASE_SECRETS_SETUP.md
-docs/deployment/FIREBASE_QUICKSTART.md
-docs/deployment/FREE_DEPLOYMENT.md
-docs/deployment/GITHUB_ACTIONS_TESTING.md
-docs/guides/API_QUICKSTART.md
-docs/guides/QUICKSTART.md
-docs/guides/WATCHER_QUICKSTART.md
+docs/backend-only/
 
 # Claude AI
 .claude/
