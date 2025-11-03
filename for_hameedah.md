@@ -1,8 +1,5 @@
 # 🚀 Frontend Setup - Connect to Deployed Backend
 
-**From:** Tee-David (Backend Developer)
-**To:** Hameedah (Frontend Developer)
-
 ---
 
 ## ✅ Good News - Backend is Live!
@@ -128,7 +125,7 @@ Or manually redeploy:
 2. **Open browser console** (Press F12 → Console tab)
 
 3. **Check for errors:**
-   - ❌ CORS errors? (Tell Tee-David - should be enabled)
+   - ❌ CORS errors? (Let me know - should be enabled)
    - ❌ 404 errors? (Check your API URL is correct)
    - ✅ No errors? Great! API is connected!
 
@@ -251,7 +248,7 @@ Access to fetch has been blocked by CORS policy
 **Solution:**
 - CORS is already enabled in the backend
 - Make sure you're using the correct URL with `https://` (not `http://`)
-- Contact Tee-David if issue persists
+- Let me know if issue persists
 
 ---
 
@@ -294,7 +291,7 @@ After setup, here's the complete flow:
          ↓
 ┌─────────────────────────────┐
 │  BACKEND API                │
-│  (Tee-David's Render)       │
+│  (Deployed on Render)       │
 │  https://realtors-practice  │
 │  -api.onrender.com/api      │
 │  Processes & returns data   │
@@ -359,7 +356,7 @@ If you get stuck:
 1. Check browser console for error messages
 2. Test API endpoints directly in browser
 3. Review the troubleshooting section above
-4. Contact Tee-David with:
+4. Let me know if you get stuck - send me:
    - What you tried
    - Error messages from console
    - Which step you're stuck on
@@ -374,7 +371,7 @@ If you get stuck:
 4. ✅ All features work as expected
 5. ✅ You can trigger scraping (if that feature exists)
 
-**Let Tee-David know when everything is working!** 🚀
+**Let me know when everything is working!** 🚀
 
 ---
 
