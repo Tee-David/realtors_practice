@@ -70,9 +70,6 @@ test_output.txt
 Thumbs.db
 .DS_Store
 
-# Local documentation (not for GitHub)
-LAYMAN.md
-
 # AI Context (internal use only - not for GitHub)
 AI_CONTEXT.md
 claude.md
