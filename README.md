@@ -69,8 +69,18 @@ python main.py
 python watcher.py --once
 ```
 
-### Quick Test (Local API)
+### Quick Test
 
+**Test Live API:**
+```bash
+# Health check
+curl https://realtors-practice-api.onrender.com/api/health
+
+# List sites
+curl https://realtors-practice-api.onrender.com/api/sites
+```
+
+**Test Local API:**
 ```bash
 # Start API server locally
 python api_server.py
@@ -431,20 +441,21 @@ See [POSTMAN_GUIDE.md](docs/POSTMAN_GUIDE.md) for detailed setup instructions.
 
 ## 📚 Documentation
 
+**For Everyone:**
+- **[LAYMAN.md](LAYMAN.md)** - 🌟 **Non-technical explanation** for clients and stakeholders (what it does, how it works, architecture in simple terms)
+- **[USER_GUIDE.md](USER_GUIDE.md)** - Complete user guide for developers
+
 **Getting Started:**
-- **[USER_GUIDE.md](USER_GUIDE.md)** - Complete user guide
-- **[QUICKSTART.md](docs/guides/QUICKSTART.md)** - Quick start guide
-- **[WATCHER_QUICKSTART.md](docs/guides/WATCHER_QUICKSTART.md)** - Watcher service guide
+- **[frontend/FRONTEND_DEVELOPER_SETUP.md](frontend/FRONTEND_DEVELOPER_SETUP.md)** - Frontend integration quick start (3 steps)
+- **[docs/frontend/FRONTEND_INTEGRATION_GUIDE.md](docs/frontend/FRONTEND_INTEGRATION_GUIDE.md)** - Complete API reference (all 68 endpoints)
+- **[docs/frontend/POSTMAN_GUIDE.md](docs/frontend/POSTMAN_GUIDE.md)** - Postman testing guide
+- **[docs/frontend/FRONTEND_AUTH_GUIDE.md](docs/frontend/FRONTEND_AUTH_GUIDE.md)** - Authentication integration
 
-**API Integration:**
-- **[FRONTEND_AUTH_GUIDE.md](docs/FRONTEND_AUTH_GUIDE.md)** - Frontend integration with authentication (React/Vue/Angular)
-- **[FRONTEND_INTEGRATION_GUIDE.md](docs/FRONTEND_INTEGRATION_GUIDE.md)** - Complete API reference (all 68 endpoints)
-- **[POSTMAN_GUIDE.md](docs/POSTMAN_GUIDE.md)** - Postman testing guide
-- **[.env.example](.env.example)** - Environment configuration template
-
-**Deployment:**
-- **[ARCHITECTURE.md](docs/ARCHITECTURE.md)** - Project architecture
-- **[GITHUB_ACTIONS_SETUP.md](docs/GITHUB_ACTIONS_SETUP.md)** - CI/CD workflows
+**Architecture & Technical:**
+- **[docs/architecture/ARCHITECTURE.md](docs/architecture/ARCHITECTURE.md)** - System architecture and design
+- **[docs/architecture/QUALITY_FILTERING.md](docs/architecture/QUALITY_FILTERING.md)** - Data quality system
+- **[docs/architecture/GITHUB_ACTIONS_SETUP.md](docs/architecture/GITHUB_ACTIONS_SETUP.md)** - CI/CD workflows
+- **[docs/architecture/FIRESTORE_EXPORT_GUIDE.md](docs/architecture/FIRESTORE_EXPORT_GUIDE.md)** - Firestore integration
 
 ## 🔌 Complete API Reference (68 Endpoints)
 
@@ -536,38 +547,39 @@ See **[FRONTEND_INTEGRATION_GUIDE.md](docs/FRONTEND_INTEGRATION_GUIDE.md)** for 
 
 ### ✅ Current Deployment Status
 
-**Your backend is already deployed and running on Firebase!**
+**Backend is deployed and running on Render.com!**
 
 ```
-API URL: https://us-central1-realtor-s-practice.cloudfunctions.net/api
+API URL: https://realtors-practice-api.onrender.com/api
 Status: ✅ Live and Ready
-Region: us-central1 (USA)
+Platform: Render.com (Free Tier)
 Runtime: Python 3.11
 ```
 
 **For Frontend Developers**:
-- **Quick Start**: [docs/FRONTEND_QUICKSTART.md](docs/FRONTEND_QUICKSTART.md)
-- **Complete API Docs**: [docs/FRONTEND_INTEGRATION_GUIDE.md](docs/FRONTEND_INTEGRATION_GUIDE.md)
-- **Postman Collection**: [docs/Nigerian_Real_Estate_API.postman_collection.json](docs/Nigerian_Real_Estate_API.postman_collection.json)
-- **Deployment Info**: [FIREBASE_DEPLOYMENT_SUCCESS.md](FIREBASE_DEPLOYMENT_SUCCESS.md)
+- **Quick Start**: [frontend/FRONTEND_DEVELOPER_SETUP.md](frontend/FRONTEND_DEVELOPER_SETUP.md)
+- **Complete API Docs**: [docs/frontend/FRONTEND_INTEGRATION_GUIDE.md](docs/frontend/FRONTEND_INTEGRATION_GUIDE.md)
+- **Postman Collection**: [docs/frontend/POSTMAN_GUIDE.md](docs/frontend/POSTMAN_GUIDE.md)
 
 ---
 
-### Firebase Deployment (Current)
+### Render Deployment (Current)
 
 **Your API is deployed with**:
-- ✅ **Firebase Cloud Functions** - Serverless Python 3.11
+- ✅ **Render.com** - Cloud application hosting
 - ✅ **All 68 API endpoints** - Fully functional
 - ✅ **Auto-scaling** - Handles traffic automatically
-- ✅ **Global CDN** - Fast worldwide access
+- ✅ **HTTPS** - Secure by default
 - ✅ **Monitoring** - Built-in logs and metrics
 
-**Cost**: ~$1-5/month (Blaze pay-as-you-go plan)
+**Cost**: $0/month (Free tier)
+
+**Note**: Free tier sleeps after 15 minutes of inactivity. First request after sleep takes 30-60 seconds to wake up.
 
 **Management**:
-- **Firebase Console**: https://console.firebase.google.com/project/realtor-s-practice
-- **View Logs**: `firebase functions:log --only api`
-- **Redeploy**: `firebase deploy --only functions`
+- **Render Dashboard**: https://dashboard.render.com
+- **View Logs**: Available in Render dashboard
+- **Redeploy**: Automatic on git push, or manual via dashboard
 
 ---
 
