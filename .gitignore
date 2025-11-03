@@ -86,8 +86,10 @@ QUICKSTART_DEPLOY.md
 START_HERE.md
 YOUR_TODO_DEPLOY.md
 WHAT_I_DID.md
+for_hameedah.md
 
 # Backend-only documentation (keep local)
+HOW_TO_GET_API_KEY.md
 docs/API_KEY_MANAGEMENT.md
 docs/SECURITY_ANALYSIS.md
 docs/SECURITY_IMPLEMENTATION.md

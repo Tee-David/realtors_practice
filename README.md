@@ -4,11 +4,21 @@ Enterprise-grade property aggregation platform with unlimited scalability (curre
 
 ## 🚀 Quick Start
 
+### 🌐 Live API (Deployed & Ready)
+
+**Backend API URL**: `https://realtors-practice-api.onrender.com/api`
+
+**Test it**: [https://realtors-practice-api.onrender.com/api/health](https://realtors-practice-api.onrender.com/api/health)
+
+All 68 endpoints are live and accessible. See [frontend/FRONTEND_DEVELOPER_SETUP.md](frontend/FRONTEND_DEVELOPER_SETUP.md) for integration guide.
+
+---
+
 ### For Frontend Developers (API Integration)
 
 **🎯 Everything you need is in the `frontend/` folder!**
 
-**📖 START HERE**: → [**frontend/README_FOR_DEVELOPER.md**](frontend/README_FOR_DEVELOPER.md) ← **5-minute setup**
+**📖 START HERE**: → [**frontend/FRONTEND_DEVELOPER_SETUP.md**](frontend/FRONTEND_DEVELOPER_SETUP.md) ← **3-step setup guide**
 
 ```typescript
 // Complete TypeScript integration with React hooks
@@ -23,15 +33,14 @@ export default function PropertiesPage() {
 
 **What's Included in `frontend/` folder**:
 - ✅ **Complete TypeScript types** - Full autocomplete support
-- ✅ **API Client** - All 67 endpoints typed and ready
+- ✅ **API Client** - All 68 endpoints typed and ready
 - ✅ **React Hooks** - Zero-config data fetching with SWR
 - ✅ **Documentation** - Step-by-step guides and examples
 - ✅ **Tested & Verified** - Everything works out of the box
 
 **Quick Links**:
-- 📦 [**frontend/README_FOR_DEVELOPER.md**](frontend/README_FOR_DEVELOPER.md) - 5-minute quick start
-- 📚 [**frontend/FRONTEND_DEVELOPER_SETUP.md**](frontend/FRONTEND_DEVELOPER_SETUP.md) - Complete guide
-- 📋 [**frontend/API_ENDPOINTS_ACTUAL.md**](frontend/API_ENDPOINTS_ACTUAL.md) - All 67 endpoints
+- 📚 [**frontend/FRONTEND_DEVELOPER_SETUP.md**](frontend/FRONTEND_DEVELOPER_SETUP.md) - **Deployment info & setup**
+- 📋 [**frontend/API_ENDPOINTS_ACTUAL.md**](frontend/API_ENDPOINTS_ACTUAL.md) - All 68 endpoints
 - 🔧 [**frontend/types.ts**](frontend/types.ts) - TypeScript definitions
 - 🌐 [**frontend/api-client.ts**](frontend/api-client.ts) - API client
 - ⚛️ [**frontend/hooks.tsx**](frontend/hooks.tsx) - React hooks
