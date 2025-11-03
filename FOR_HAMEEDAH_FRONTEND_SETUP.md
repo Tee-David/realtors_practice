@@ -9,9 +9,9 @@
 
 Great news! The backend API has been deployed and is now accessible from the internet.
 
-**API Base URL:** `https://[REPLACE-WITH-ACTUAL-URL]/api`
+**API Base URL:** `https://realtors-practice-api.onrender.com/api`
 
-**Test it here:** `https://[REPLACE-WITH-ACTUAL-URL]/api/health`
+**Test it here:** `https://realtors-practice-api.onrender.com/api/health`
 
 You should see: `{"status": "ok", "timestamp": "...", "version": "2.2"}`
 
@@ -34,7 +34,7 @@ This is the best practice - keeps your code flexible.
 **1. Create/Edit `.env.local` in your Next.js project root:**
 
 ```env
-NEXT_PUBLIC_API_URL=https://[REPLACE-WITH-ACTUAL-URL]/api
+NEXT_PUBLIC_API_URL=https://realtors-practice-api.onrender.com/api
 ```
 
 **2. Update your API client file** (probably `lib/api.ts` or `lib/api-client.ts`):
@@ -69,7 +69,7 @@ private baseURL = "http://localhost:5000/api";
 
 **To:**
 ```typescript
-private baseURL = "https://[REPLACE-WITH-ACTUAL-URL]/api";
+private baseURL = "https://realtors-practice-api.onrender.com/api";
 ```
 
 **Note:** This means you'll need to change it back to `localhost` when developing locally.
@@ -92,7 +92,7 @@ If your frontend is deployed on Vercel:
 
 6. **Fill in:**
    - **Key:** `NEXT_PUBLIC_API_URL`
-   - **Value:** `https://[REPLACE-WITH-ACTUAL-URL]/api`
+   - **Value:** `https://realtors-practice-api.onrender.com/api`
    - **Environments:** Check all three:
      - ☑ Production
      - ☑ Preview
@@ -150,19 +150,19 @@ Open these URLs in your browser (replace with actual URL):
 
 **Health Check:**
 ```
-https://[REPLACE-WITH-ACTUAL-URL]/api/health
+https://realtors-practice-api.onrender.com/api/health
 ```
 Should return: `{"status": "ok", ...}`
 
 **List Sites:**
 ```
-https://[REPLACE-WITH-ACTUAL-URL]/api/sites
+https://realtors-practice-api.onrender.com/api/sites
 ```
 Should return: JSON array of 82+ sites
 
 **Get Stats:**
 ```
-https://[REPLACE-WITH-ACTUAL-URL]/api/stats
+https://realtors-practice-api.onrender.com/api/stats
 ```
 Should return: Statistics about the scraper
 
@@ -223,7 +223,7 @@ If you see CORS errors:
 
 ### 3. Available Endpoints
 
-All **68 API endpoints** are available at: `https://[URL]/api/...`
+All **68 API endpoints** are available at: `https://realtors-practice-api.onrender.com/api/...`
 
 **Categories:**
 1. Scraping Management (`/api/scrape/...`)
@@ -245,7 +245,7 @@ You can now trigger scraping from your frontend!
 
 **Endpoint:**
 ```
-POST https://[URL]/api/github/trigger-scrape
+POST https://realtors-practice-api.onrender.com/api/github/trigger-scrape
 ```
 
 **Body:**
@@ -275,7 +275,7 @@ This will trigger a GitHub Actions workflow that:
 3. Backend is down (check with Tee-David)
 
 **Solution:**
-- Open the API URL in browser to test: `https://[URL]/api/health`
+- Open the API URL in browser to test: `https://realtors-practice-api.onrender.com/api/health`
 - Check browser console for detailed error message
 - Verify environment variables in Vercel
 
@@ -410,13 +410,13 @@ After setup, here's how everything works:
 
 ## 🎯 Quick Reference
 
-**Backend API URL:** `https://[REPLACE]/api`
+**Backend API URL:** `https://realtors-practice-api.onrender.com/api`
 
 **Environment Variable Name:** `NEXT_PUBLIC_API_URL`
 
-**Health Check:** `https://[REPLACE]/api/health`
+**Health Check:** `https://realtors-practice-api.onrender.com/api/health`
 
-**All Endpoints:** Start with `https://[REPLACE]/api/...`
+**All Endpoints:** Start with `https://realtors-practice-api.onrender.com/api/...`
 
 ---
 
