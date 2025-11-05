@@ -1,0 +1,116 @@
+name: Quick Test Scrape
+
+on:
+  workflow_dispatch:
+    inputs:
+      site:
+        description: 'Site to test (default: cwlagos)'
+        required: false
+        default: 'cwlagos'
+      pages:
+        description: 'Max pages to scrape'
+        required: false
+        default: '3'
+
+jobs:
+  test-scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('requirements.txt') }}
+
+      - name: Install dependencies
+        run: |
+          echo "Installing Python packages..."
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          echo "Done!"
+
+      - name: Install Playwright browsers
+        run: |
+          echo "Installing Playwright browsers..."
+          playwright install --with-deps chromium
+          echo "Done!"
+
+      - name: Check system resources (BEFORE)
+        run: |
+          echo "=== System Resources BEFORE Scraping ==="
+          free -h
+          df -h
+          echo "========================================"
+
+      - name: Enable test site
+        run: |
+          echo "Enabling site: ${{ github.event.inputs.site || 'cwlagos' }}"
+          python scripts/enable_one_site.py ${{ github.event.inputs.site || 'cwlagos' }}
+
+      - name: Run test scrape
+        env:
+          RP_HEADLESS: 1
+          RP_PAGE_CAP: ${{ github.event.inputs.pages || '3' }}
+          RP_NO_IMAGES: 1
+          RP_GEOCODE: 0
+          RP_DEBUG: 1
+          RP_NO_AUTO_WATCHER: 1
+        run: |
+          echo "Starting scrape..."
+          echo "Site: ${{ github.event.inputs.site || 'cwlagos' }}"
+          echo "Max pages: ${{ github.event.inputs.pages || '3' }}"
+          echo ""
+          python main.py
+          echo "Scrape complete!"
+
+      - name: Check system resources (AFTER)
+        if: always()
+        run: |
+          echo "=== System Resources AFTER Scraping ==="
+          free -h
+          df -h
+          echo "========================================"
+
+      - name: Check results
+        if: always()
+        run: |
+          echo "=== Scrape Results ==="
+          echo "Export files:"
+          find exports/ -name "*.csv" -o -name "*.xlsx" 2>/dev/null || echo "No export files found"
+          echo ""
+          echo "Latest log entries:"
+          tail -50 logs/scraper.log 2>/dev/null || echo "No log file found"
+          echo "======================"
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-scrape-results
+          path: |
+            exports/
+            logs/scraper.log
+          retention-days: 7
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "=== Test Scrape Summary ==="
+          echo "Site: ${{ github.event.inputs.site || 'cwlagos' }}"
+          echo "Pages: ${{ github.event.inputs.pages || '3' }}"
+          echo "Status: ${{ job.status }}"
+
+          # Count results
+          TOTAL=$(find exports/ -name "*.csv" -exec wc -l {} \; 2>/dev/null | awk '{sum+=$1} END {print sum}' || echo "0")
+          echo "Total records: $TOTAL"
+          echo "=========================="
