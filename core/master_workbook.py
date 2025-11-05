@@ -8,10 +8,13 @@ Handles:
 - Append-only idempotent logic
 - Workbook optimization (freeze panes, filters, column widths)
 - Per-site CSV and Parquet exports
+- File-based locking for multi-process coordination
 """
 
 import logging
 import json
+import time
+import os
 from pathlib import Path
 from typing import Dict, List, Set, Optional, Any
 from datetime import datetime
@@ -30,6 +33,93 @@ METADATA_FILE = Path("exports/cleaned/metadata.json")
 # Global lock for workbook operations (shared across all instances)
 _workbook_lock = threading.Lock()
 
+# File lock path
+LOCK_FILE = Path("exports/cleaned/.workbook.lock")
+
+
+class FileLock:
+    """Simple file-based lock for multi-process coordination."""
+
+    def __init__(self, lock_path: Path, timeout: int = 300, check_interval: float = 0.5):
+        self.lock_path = lock_path
+        self.timeout = timeout
+        self.check_interval = check_interval
+        self.lock_path.parent.mkdir(parents=True, exist_ok=True)
+
+    def acquire(self) -> bool:
+        """Acquire the lock, wait up to timeout seconds."""
+        start_time = time.time()
+
+        while True:
+            try:
+                # Try to create the lock file exclusively
+                fd = os.open(str(self.lock_path), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+                os.write(fd, f"{os.getpid()}:{time.time()}".encode())
+                os.close(fd)
+                logging.debug(f"Acquired file lock: {self.lock_path}")
+                return True
+            except FileExistsError:
+                # Lock file exists, check if it's stale
+                if self._is_stale_lock():
+                    logging.warning("Removing stale lock file")
+                    self.release()
+                    continue
+
+                # Check timeout
+                elapsed = time.time() - start_time
+                if elapsed >= self.timeout:
+                    logging.error(f"Failed to acquire lock after {self.timeout}s")
+                    return False
+
+                # Wait and retry
+                time.sleep(self.check_interval)
+            except Exception as e:
+                logging.error(f"Error acquiring lock: {e}")
+                return False
+
+    def _is_stale_lock(self) -> bool:
+        """Check if lock file is stale (older than 10 minutes)."""
+        try:
+            if not self.lock_path.exists():
+                return False
+
+            # Read lock file
+            with open(self.lock_path, 'r') as f:
+                content = f.read().strip()
+
+            if ':' in content:
+                _, timestamp_str = content.split(':', 1)
+                lock_time = float(timestamp_str)
+
+                # Consider stale if older than 10 minutes
+                if time.time() - lock_time > 600:
+                    return True
+
+        except Exception as e:
+            logging.warning(f"Error checking stale lock: {e}")
+            return True  # Assume stale if we can't read it
+
+        return False
+
+    def release(self):
+        """Release the lock."""
+        try:
+            if self.lock_path.exists():
+                self.lock_path.unlink()
+                logging.debug(f"Released file lock: {self.lock_path}")
+        except Exception as e:
+            logging.warning(f"Error releasing lock: {e}")
+
+    def __enter__(self):
+        """Context manager entry."""
+        if not self.acquire():
+            raise TimeoutError(f"Could not acquire lock on {self.lock_path}")
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """Context manager exit."""
+        self.release()
+
 
 class MasterWorkbookManager:
     """Manages the master cleaned workbook with per-site sheets."""
@@ -38,7 +128,8 @@ class MasterWorkbookManager:
         self.workbook_path = workbook_path
         self.workbook_path.parent.mkdir(parents=True, exist_ok=True)
         self.metadata = self._load_metadata()
-        self.lock = _workbook_lock  # Use global lock to prevent concurrent file access
+        self.lock = _workbook_lock  # Use global lock to prevent concurrent thread access
+        self.file_lock = FileLock(LOCK_FILE)  # File-based lock for multi-process
 
     def _load_metadata(self) -> Dict:
         """Load metadata tracking master workbook state."""
@@ -201,42 +292,53 @@ class MasterWorkbookManager:
 
     def _append_records_to_sheet(self, site_key: str, new_records: List[Dict]) -> int:
         """
-        Append new records to a site sheet.
+        Append new records to a site sheet with retry logic.
 
         Returns number of records actually appended (after deduplication).
         """
-        try:
-            # Get existing hashes for deduplication
-            existing_hashes = self._get_existing_hashes(site_key)
-            logging.debug(f"Sheet {site_key} has {len(existing_hashes)} existing records")
+        max_retries = 3
+        retry_delay = 2  # seconds
 
-            # Filter out duplicates
-            records_to_append = [
-                r for r in new_records
-                if r.get('hash') not in existing_hashes
-            ]
+        for attempt in range(max_retries):
+            try:
+                # Get existing hashes for deduplication
+                existing_hashes = self._get_existing_hashes(site_key)
+                logging.debug(f"Sheet {site_key} has {len(existing_hashes)} existing records")
 
-            if not records_to_append:
-                logging.info(f"No new records to append to {site_key} (all duplicates)")
-                return 0
+                # Filter out duplicates
+                records_to_append = [
+                    r for r in new_records
+                    if r.get('hash') not in existing_hashes
+                ]
 
-            # Load workbook
-            wb = load_workbook(self.workbook_path)
-            ws = wb[site_key]
+                if not records_to_append:
+                    logging.info(f"No new records to append to {site_key} (all duplicates)")
+                    return 0
 
-            # Append records
-            for record in records_to_append:
-                row = [record.get(field, '') for field in CANONICAL_SCHEMA]
-                ws.append(row)
+                # Load workbook
+                wb = load_workbook(self.workbook_path)
+                ws = wb[site_key]
 
-            wb.save(self.workbook_path)
-            logging.info(f"Appended {len(records_to_append)} new records to {site_key}")
+                # Append records
+                for record in records_to_append:
+                    row = [record.get(field, '') for field in CANONICAL_SCHEMA]
+                    ws.append(row)
 
-            return len(records_to_append)
+                wb.save(self.workbook_path)
+                logging.info(f"Appended {len(records_to_append)} new records to {site_key}")
 
-        except Exception as e:
-            logging.error(f"Failed to append records to {site_key}: {e}")
-            raise
+                return len(records_to_append)
+
+            except PermissionError as e:
+                if attempt < max_retries - 1:
+                    logging.warning(f"Permission error on attempt {attempt + 1}/{max_retries} for {site_key}: {e}")
+                    time.sleep(retry_delay * (attempt + 1))  # Exponential backoff
+                else:
+                    logging.error(f"Failed to append records to {site_key} after {max_retries} attempts: {e}")
+                    raise
+            except Exception as e:
+                logging.error(f"Failed to append records to {site_key}: {e}")
+                raise
 
     def _update_metadata_sheet(self):
         """Update _Metadata sheet with current statistics."""
@@ -277,6 +379,21 @@ class MasterWorkbookManager:
         if not records:
             logging.warning(f"No records to append for {site_key}")
             return 0
+
+        # Use both thread lock and file lock for multi-process safety
+        with self.lock:
+            try:
+                with self.file_lock:
+                    return self._append_to_site_locked(site_key, records)
+            except TimeoutError:
+                logging.error(f"Timeout acquiring file lock for {site_key}")
+                return 0
+            except Exception as e:
+                logging.error(f"Error appending to {site_key}: {e}")
+                return 0
+
+    def _append_to_site_locked(self, site_key: str, records: List[Dict]) -> int:
+        """Internal method to append records while holding locks."""
 
         # Ensure workbook exists
         self._ensure_workbook_exists()

@@ -46,6 +46,14 @@ config.yaml
 *.backup
 debug_screenshots/  # Intelligent scraper screenshots
 
+# Temporary files
+nul
+new_tasks.txt
+github_runs.json
+.workbook.lock
+scraper_state.json
+batch_progress.json
+
 # Playwright
 .playwright/
 

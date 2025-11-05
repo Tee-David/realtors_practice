@@ -134,6 +134,32 @@ def stop_scrape():
             'error': str(e)
         }), 500
 
+@app.route('/api/scrape/pause', methods=['POST'])
+def pause_scrape():
+    """Pause current scraping run (pauses after current batch completes)"""
+    try:
+        result = scraper_manager.pause_scrape()
+        return jsonify(result), 200
+    except Exception as e:
+        logger.error(f"Error pausing scrape: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@app.route('/api/scrape/resume', methods=['POST'])
+def resume_scrape():
+    """Resume paused scraping run"""
+    try:
+        result = scraper_manager.resume_scrape()
+        return jsonify(result), 200
+    except Exception as e:
+        logger.error(f"Error resuming scrape: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
 @app.route('/api/scrape/history', methods=['GET'])
 def scrape_history():
     """Get scraping history"""
