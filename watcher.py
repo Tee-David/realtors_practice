@@ -233,10 +233,15 @@ def process_file(file_path: Path, state: WatcherState, dry_run: bool = False, er
         # Step 2: Determine site from file path
         site_key = file_path.parent.name
 
-        # Step 3: Append to master workbook (idempotent)
-        if not dry_run:
+        # Step 3: Append to master workbook (optional - check MASTER_WORKBOOK_ENABLED)
+        master_workbook_enabled = os.getenv('MASTER_WORKBOOK_ENABLED', '1') == '1'
+
+        if not dry_run and master_workbook_enabled:
             new_count = append_to_master(site_key, cleaned_records, MASTER_WORKBOOK)
             logging.info(f"  Added {new_count} new records to {site_key} sheet")
+        elif not dry_run and not master_workbook_enabled:
+            new_count = len(cleaned_records)
+            logging.info(f"  Master workbook generation disabled (MASTER_WORKBOOK_ENABLED=0)")
         else:
             new_count = len(cleaned_records)
             logging.info(f"  [DRY RUN] Would add {new_count} records to {site_key}")

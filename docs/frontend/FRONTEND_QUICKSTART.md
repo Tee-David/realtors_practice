@@ -403,8 +403,8 @@ export async function searchProperties(query: string): Promise<SearchResponse> {
 
 ## 📚 Full API Documentation
 
-For complete API documentation with all 68 endpoints, see:
-- **[FRONTEND_INTEGRATION_GUIDE.md](./FRONTEND_INTEGRATION_GUIDE.md)** - Complete API reference
+For complete API documentation with all 79 (68 original + 11 new Firestore-optimized) endpoints, see:
+- **[API_ENDPOINTS_ACTUAL.md](../API_ENDPOINTS_ACTUAL.md)** - Complete API reference
 - **[POSTMAN_GUIDE.md](./POSTMAN_GUIDE.md)** - Postman collection for testing
 - **[Nigerian_Real_Estate_API.postman_collection.json](./Nigerian_Real_Estate_API.postman_collection.json)** - Import into Postman
 

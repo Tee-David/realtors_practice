@@ -2780,6 +2780,374 @@ def send_test_email():
 
 
 # ============================================================================
+# FIRESTORE OPTIMIZED QUERY ENDPOINTS (NEW)
+# ============================================================================
+
+@app.route('/api/firestore/dashboard', methods=['GET'])
+def get_firestore_dashboard():
+    """
+    Get dashboard statistics (replaces _Dashboard sheet).
+
+    Returns aggregated stats: total properties, price ranges, breakdowns, etc.
+    Uses cached aggregates when available (updated hourly).
+    """
+    try:
+        from core.firestore_queries import get_dashboard_stats
+
+        stats = get_dashboard_stats()
+
+        if not stats:
+            return jsonify({'error': 'No statistics available'}), 404
+
+        return jsonify({
+            'success': True,
+            'data': stats
+        })
+
+    except Exception as e:
+        logger.error(f"Error getting dashboard stats: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/firestore/top-deals', methods=['GET'])
+def get_firestore_top_deals():
+    """
+    Get cheapest properties across all sites (replaces _Top_100_Cheapest sheet).
+
+    Query params:
+        - limit: Number of results (default 100)
+        - min_quality: Minimum quality score 0.0-1.0 (default 0.0)
+        - property_type: Filter by property type (optional)
+    """
+    try:
+        from core.firestore_queries import get_cheapest_properties
+
+        limit = int(request.args.get('limit', 100))
+        min_quality = float(request.args.get('min_quality', 0.0))
+        property_type = request.args.get('property_type')
+
+        properties = get_cheapest_properties(
+            limit=limit,
+            min_quality_score=min_quality,
+            property_type=property_type
+        )
+
+        return jsonify({
+            'success': True,
+            'count': len(properties),
+            'data': properties
+        })
+
+    except Exception as e:
+        logger.error(f"Error getting top deals: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/firestore/newest', methods=['GET'])
+def get_firestore_newest():
+    """
+    Get newest listings (replaces _Newest_Listings sheet).
+
+    Query params:
+        - limit: Number of results (default 50)
+        - days_back: Days to look back (default 7)
+        - site_key: Filter by site (optional)
+    """
+    try:
+        from core.firestore_queries import get_newest_listings
+
+        limit = int(request.args.get('limit', 50))
+        days_back = int(request.args.get('days_back', 7))
+        site_key = request.args.get('site_key')
+
+        properties = get_newest_listings(
+            limit=limit,
+            days_back=days_back,
+            site_key=site_key
+        )
+
+        return jsonify({
+            'success': True,
+            'count': len(properties),
+            'data': properties
+        })
+
+    except Exception as e:
+        logger.error(f"Error getting newest listings: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/firestore/for-sale', methods=['GET'])
+def get_firestore_for_sale():
+    """
+    Get properties for sale (replaces _For_Sale sheet).
+
+    Query params:
+        - limit: Number of results (default 100)
+        - price_max: Maximum price filter (optional)
+    """
+    try:
+        from core.firestore_queries import get_for_sale_properties
+
+        limit = int(request.args.get('limit', 100))
+        price_max = request.args.get('price_max')
+        price_max = int(price_max) if price_max else None
+
+        properties = get_for_sale_properties(
+            limit=limit,
+            price_max=price_max
+        )
+
+        return jsonify({
+            'success': True,
+            'count': len(properties),
+            'data': properties
+        })
+
+    except Exception as e:
+        logger.error(f"Error getting for-sale properties: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/firestore/for-rent', methods=['GET'])
+def get_firestore_for_rent():
+    """
+    Get properties for rent (replaces _For_Rent sheet).
+
+    Query params:
+        - limit: Number of results (default 100)
+        - price_max: Maximum price filter (optional)
+    """
+    try:
+        from core.firestore_queries import get_for_rent_properties
+
+        limit = int(request.args.get('limit', 100))
+        price_max = request.args.get('price_max')
+        price_max = int(price_max) if price_max else None
+
+        properties = get_for_rent_properties(
+            limit=limit,
+            price_max=price_max
+        )
+
+        return jsonify({
+            'success': True,
+            'count': len(properties),
+            'data': properties
+        })
+
+    except Exception as e:
+        logger.error(f"Error getting for-rent properties: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/firestore/land', methods=['GET'])
+def get_firestore_land():
+    """
+    Get land-only properties (replaces _Land_Only sheet).
+
+    Query params:
+        - limit: Number of results (default 100)
+        - price_max: Maximum price filter (optional)
+    """
+    try:
+        from core.firestore_queries import get_land_only_properties
+
+        limit = int(request.args.get('limit', 100))
+        price_max = request.args.get('price_max')
+        price_max = int(price_max) if price_max else None
+
+        properties = get_land_only_properties(
+            limit=limit,
+            price_max=price_max
+        )
+
+        return jsonify({
+            'success': True,
+            'count': len(properties),
+            'data': properties
+        })
+
+    except Exception as e:
+        logger.error(f"Error getting land properties: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/firestore/premium', methods=['GET'])
+def get_firestore_premium():
+    """
+    Get premium properties (replaces _4BR_Plus sheet).
+
+    Query params:
+        - min_bedrooms: Minimum bedrooms (default 4)
+        - limit: Number of results (default 100)
+        - price_max: Maximum price filter (optional)
+    """
+    try:
+        from core.firestore_queries import get_premium_properties
+
+        min_bedrooms = int(request.args.get('min_bedrooms', 4))
+        limit = int(request.args.get('limit', 100))
+        price_max = request.args.get('price_max')
+        price_max = int(price_max) if price_max else None
+
+        properties = get_premium_properties(
+            min_bedrooms=min_bedrooms,
+            limit=limit,
+            price_max=price_max
+        )
+
+        return jsonify({
+            'success': True,
+            'count': len(properties),
+            'data': properties
+        })
+
+    except Exception as e:
+        logger.error(f"Error getting premium properties: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/firestore/search', methods=['POST'])
+def search_firestore_properties():
+    """
+    Advanced cross-site property search with multiple filters.
+
+    JSON body:
+        - filters: Dict of filters (location, price_min/max, bedrooms_min/max, property_type, site_key, quality_score_min)
+        - sort_by: Field to sort by (default 'price')
+        - sort_desc: Sort descending (default false)
+        - limit: Number of results (default 50)
+        - offset: Pagination offset (default 0)
+
+    Example:
+        {
+            "filters": {
+                "location": "Lekki",
+                "price_min": 5000000,
+                "price_max": 50000000,
+                "bedrooms_min": 3,
+                "property_type": "Flat",
+                "quality_score_min": 0.7
+            },
+            "sort_by": "price",
+            "limit": 50
+        }
+    """
+    try:
+        from core.firestore_queries import search_properties
+
+        data = request.get_json() or {}
+
+        filters = data.get('filters', {})
+        sort_by = data.get('sort_by', 'price')
+        sort_desc = data.get('sort_desc', False)
+        limit = data.get('limit', 50)
+        offset = data.get('offset', 0)
+
+        result = search_properties(
+            filters=filters,
+            sort_by=sort_by,
+            sort_desc=sort_desc,
+            limit=limit,
+            offset=offset
+        )
+
+        return jsonify({
+            'success': True,
+            **result
+        })
+
+    except Exception as e:
+        logger.error(f"Error searching properties: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/firestore/site/<site_key>', methods=['GET'])
+def get_firestore_site_properties(site_key):
+    """
+    Get all properties from a specific site.
+
+    Query params:
+        - limit: Number of results (default 100)
+        - offset: Pagination offset (default 0)
+        - sort_by: Field to sort by (default 'scrape_timestamp')
+        - sort_desc: Sort descending (default true)
+    """
+    try:
+        from core.firestore_queries import get_site_properties
+
+        limit = int(request.args.get('limit', 100))
+        offset = int(request.args.get('offset', 0))
+        sort_by = request.args.get('sort_by', 'scrape_timestamp')
+        sort_desc = request.args.get('sort_desc', 'true').lower() == 'true'
+
+        result = get_site_properties(
+            site_key=site_key,
+            limit=limit,
+            offset=offset,
+            sort_by=sort_by,
+            sort_desc=sort_desc
+        )
+
+        return jsonify({
+            'success': True,
+            'site_key': site_key,
+            **result
+        })
+
+    except Exception as e:
+        logger.error(f"Error getting site properties: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/firestore/property/<property_hash>', methods=['GET'])
+def get_firestore_property_by_hash(property_hash):
+    """
+    Get a single property by its hash (document ID).
+    """
+    try:
+        from core.firestore_queries import get_property_by_hash
+
+        property_data = get_property_by_hash(property_hash)
+
+        if not property_data:
+            return jsonify({'error': 'Property not found'}), 404
+
+        return jsonify({
+            'success': True,
+            'data': property_data
+        })
+
+    except Exception as e:
+        logger.error(f"Error getting property by hash: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/firestore/site-stats/<site_key>', methods=['GET'])
+def get_firestore_site_stats(site_key):
+    """
+    Get statistics for a specific site.
+    """
+    try:
+        from core.firestore_queries import get_site_statistics
+
+        stats = get_site_statistics(site_key)
+
+        if not stats:
+            return jsonify({'error': 'Site not found'}), 404
+
+        return jsonify({
+            'success': True,
+            'data': stats
+        })
+
+    except Exception as e:
+        logger.error(f"Error getting site statistics: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+# ============================================================================
 # ERROR HANDLERS
 # ============================================================================
 

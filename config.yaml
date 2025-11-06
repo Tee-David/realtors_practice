@@ -75,7 +75,7 @@ sites:
     parser: specials
     url: https://brokerfieldrealestate.com/
   buyletlive:
-    enabled: true
+    enabled: false
     name: BuyLetLive
     parser: specials
     url: https://buyletlive.com/
@@ -95,7 +95,7 @@ sites:
     parser: specials
     url: https://cwlagos.com/
   edenoasis:
-    enabled: true
+    enabled: false
     name: Eden Oasis
     parser: specials
     url: https://www.edenoasisrealty.com/
@@ -161,7 +161,7 @@ sites:
       property_type:
       - .property-type
       - .details dt:contains('Type') + dd
-    enabled: true
+    enabled: false
     name: Jiji Real Estate Section
     parser: specials
     url: https://jiji.ng/real-estate
@@ -194,7 +194,7 @@ sites:
       - .price
       property_type:
       - .property-type
-    enabled: true
+    enabled: false
     name: Lamudi Nigeria
     parser: specials
     url: https://www.lamudi.com.ng/
@@ -234,7 +234,7 @@ sites:
     parser: specials
     url: https://hive.nazaprime.com.ng
   nigerianpropertymarket:
-    enabled: true
+    enabled: false
     name: Nigerian Property Market
     parser: specials
     url: https://nigerianpropertymarket.com/
@@ -285,7 +285,7 @@ sites:
       toilets:
       - .toilets .value
       - '[class*=''toilet'' i]'
-    enabled: true
+    enabled: false
     list_paths:
     - ''
     location_discovery:
@@ -344,7 +344,7 @@ sites:
     parser: specials
     url: https://ownahome.ng/
   privateproperty:
-    enabled: true
+    enabled: false
     name: Private Property Nigeria
     parser: specials
     url: https://www.privateproperty.com.ng/
@@ -377,7 +377,7 @@ sites:
       - .price
       property_type:
       - .property-type
-    enabled: true
+    enabled: false
     name: Property24 Nigeria
     parser: specials
     url: https://www.property24.com.ng/
@@ -425,7 +425,7 @@ sites:
       - .type
       toilets:
       - '[class*=''toilet'' i]'
-    enabled: true
+    enabled: false
     lagos_paths:
     - /property-for-sale/lagos
     - /property-for-rent/lagos

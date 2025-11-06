@@ -96,7 +96,7 @@ useEffect(() => {
 
 ## Available API Endpoints
 
-All **68 endpoints** are available at:
+All **79 (68 original + 11 new Firestore-optimized) endpoints** are available at:
 
 `https://realtors-practice-api.onrender.com/api/...`
 
@@ -146,7 +146,7 @@ Everything you need is in this `frontend/` folder:
 - ✅ `types.ts` - TypeScript definitions
 - ✅ `api-client.ts` - Complete API client
 - ✅ `hooks.tsx` - React hooks with SWR
-- ✅ `API_ENDPOINTS_ACTUAL.md` - All 68 endpoints documented
+- ✅ `API_ENDPOINTS_ACTUAL.md` - All 79 (68 original + 11 new Firestore-optimized) endpoints documented
 
 ---
 

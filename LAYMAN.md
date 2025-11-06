@@ -229,7 +229,7 @@ The system understands and finds matching properties.
 - **Cloud-based** - Runs on Render.com (reliable, fast)
 - **Scalable** - Can handle millions of properties
 - **API-first** - Easy to integrate with websites/apps
-- **68 API endpoints** - Complete access to all features
+- **79 (68 original + 11 new Firestore-optimized) API endpoints** - Complete access to all features
 
 ---
 
@@ -317,7 +317,7 @@ The system understands and finds matching properties.
 - Integrate property search into your website
 - Build custom apps using our data
 - Get real-time property updates
-- Access 68 different API endpoints
+- Access 79 (68 original + 11 new Firestore-optimized) different API endpoints
 
 ---
 

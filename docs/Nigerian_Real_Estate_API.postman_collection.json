@@ -1,8 +1,8 @@
 {
   "info": {
     "name": "Nigerian Real Estate Scraper API",
-    "description": "Complete collection of all 68 API endpoints. Default BASE_URL is set to Firebase (https://us-central1-realtor-s-practice.cloudfunctions.net/api). For local testing, change BASE_URL to {{LOCAL_URL}}.",
-    "version": "2.2.0",
+    "description": "Complete collection of all 79 API endpoints (68 original + 11 new Firestore-optimized endpoints). Default BASE_URL is set to Firebase (https://us-central1-realtor-s-practice.cloudfunctions.net/api). For local testing, change BASE_URL to {{LOCAL_URL}}.",
+    "version": "2.3.0",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "auth": {
@@ -457,7 +457,7 @@
       "name": "7. Firestore",
       "item": [
         {
-          "name": "Query Firestore",
+          "name": "Query Firestore (Legacy)",
           "request": {
             "method": "POST",
             "header": [{"key": "Content-Type", "value": "application/json"}],
@@ -473,7 +473,7 @@
           }
         },
         {
-          "name": "Query Archive",
+          "name": "Query Archive (Legacy)",
           "request": {
             "method": "POST",
             "header": [{"key": "Content-Type", "value": "application/json"}],
@@ -489,7 +489,7 @@
           }
         },
         {
-          "name": "Export to Firestore",
+          "name": "Export to Firestore (Legacy)",
           "request": {
             "method": "POST",
             "header": [{"key": "Content-Type", "value": "application/json"}],
@@ -502,6 +502,183 @@
               "host": ["{{BASE_URL}}"],
               "path": ["api", "firestore", "export"]
             }
+          }
+        },
+        {
+          "name": "Dashboard Statistics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/api/firestore/dashboard",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "firestore", "dashboard"]
+            },
+            "description": "Get aggregate dashboard statistics including total properties, sites, price ranges, and property type breakdown. Replaces _Dashboard Excel sheet."
+          }
+        },
+        {
+          "name": "Top Deals (Cheapest Properties)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/api/firestore/top-deals?limit=100&min_quality=0.7",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "firestore", "top-deals"],
+              "query": [
+                {"key": "limit", "value": "100", "description": "Maximum number of results (default: 100)"},
+                {"key": "min_quality", "value": "0.7", "description": "Minimum quality score (0.0-1.0)"}
+              ]
+            },
+            "description": "Get cheapest properties across all sites. Replaces _Top_100_Cheapest Excel sheet."
+          }
+        },
+        {
+          "name": "Newest Listings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/api/firestore/newest?limit=50&days_back=30",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "firestore", "newest"],
+              "query": [
+                {"key": "limit", "value": "50", "description": "Maximum number of results (default: 50)"},
+                {"key": "days_back", "value": "30", "description": "Look back this many days (default: 30)"}
+              ]
+            },
+            "description": "Get newest property listings. Replaces _Newest_Listings Excel sheet."
+          }
+        },
+        {
+          "name": "For Sale Properties",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/api/firestore/for-sale?limit=50&offset=0",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "firestore", "for-sale"],
+              "query": [
+                {"key": "limit", "value": "50", "description": "Maximum number of results (default: 50)"},
+                {"key": "offset", "value": "0", "description": "Pagination offset (default: 0)"}
+              ]
+            },
+            "description": "Get properties listed for sale. Replaces _For_Sale Excel sheet."
+          }
+        },
+        {
+          "name": "For Rent Properties",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/api/firestore/for-rent?limit=50&offset=0",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "firestore", "for-rent"],
+              "query": [
+                {"key": "limit", "value": "50", "description": "Maximum number of results (default: 50)"},
+                {"key": "offset", "value": "0", "description": "Pagination offset (default: 0)"}
+              ]
+            },
+            "description": "Get properties listed for rent. Replaces _For_Rent Excel sheet."
+          }
+        },
+        {
+          "name": "Land Only Properties",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/api/firestore/land?limit=50&offset=0",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "firestore", "land"],
+              "query": [
+                {"key": "limit", "value": "50", "description": "Maximum number of results (default: 50)"},
+                {"key": "offset", "value": "0", "description": "Pagination offset (default: 0)"}
+              ]
+            },
+            "description": "Get land-only properties. Replaces _Land_Only Excel sheet."
+          }
+        },
+        {
+          "name": "Premium Properties (4+ Bedrooms)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/api/firestore/premium?min_bedrooms=4&limit=50&offset=0",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "firestore", "premium"],
+              "query": [
+                {"key": "min_bedrooms", "value": "4", "description": "Minimum bedrooms (default: 4)"},
+                {"key": "limit", "value": "50", "description": "Maximum number of results (default: 50)"},
+                {"key": "offset", "value": "0", "description": "Pagination offset (default: 0)"}
+              ]
+            },
+            "description": "Get premium properties with 4+ bedrooms. Replaces _4BR_Plus Excel sheet."
+          }
+        },
+        {
+          "name": "Advanced Search",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"filters\": {\n    \"price_min\": 10000000,\n    \"price_max\": 50000000,\n    \"bedrooms_min\": 3,\n    \"bedrooms_max\": 4,\n    \"location\": \"Lekki\",\n    \"property_type\": \"Flat\"\n  },\n  \"sort_by\": \"price\",\n  \"sort_desc\": false,\n  \"limit\": 50,\n  \"offset\": 0\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/firestore/search",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "firestore", "search"]
+            },
+            "description": "Advanced cross-site property search with multiple filters. Supports price range, bedrooms, bathrooms, location, property type, quality score, and date range filtering."
+          }
+        },
+        {
+          "name": "Site-Specific Properties",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/api/firestore/site/npc?limit=50&offset=0&sort_by=price",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "firestore", "site", "npc"],
+              "query": [
+                {"key": "limit", "value": "50", "description": "Maximum number of results (default: 50)"},
+                {"key": "offset", "value": "0", "description": "Pagination offset (default: 0)"},
+                {"key": "sort_by", "value": "price", "description": "Sort field: price, scrape_timestamp, quality_score"}
+              ]
+            },
+            "description": "Get properties from a specific site. Replaces per-site Excel sheets (e.g., npc, propertypro)."
+          }
+        },
+        {
+          "name": "Get Property by Hash",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/api/firestore/property/abc123hash",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "firestore", "property", "abc123hash"]
+            },
+            "description": "Get a single property by its unique hash ID."
+          }
+        },
+        {
+          "name": "Site Statistics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/api/firestore/site-stats/npc",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "firestore", "site-stats", "npc"]
+            },
+            "description": "Get statistics for a specific site including total properties, price ranges, and property type breakdown."
           }
         }
       ]

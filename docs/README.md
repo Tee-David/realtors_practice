@@ -175,7 +175,7 @@ Internal planning and design documents:
 - ✅ Idempotent operations
 
 ### REST API
-- ✅ 68 endpoints across 8 categories
+- ✅ 79 (68 original + 11 new Firestore-optimized) endpoints across 19 categories
 - ✅ Scraping management
 - ✅ Site configuration CRUD
 - ✅ Data access and search

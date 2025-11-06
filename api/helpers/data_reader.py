@@ -1,6 +1,9 @@
 """
-Data Reader - Read and query Excel/CSV data files
+Data Reader - Read and query Excel/CSV data files and Firestore
+
+Prioritizes Firestore over Excel for better performance and real-time data.
 """
+import os
 import json
 import pandas as pd
 from pathlib import Path
@@ -8,6 +11,56 @@ from typing import Dict, List, Optional
 import logging
 
 logger = logging.getLogger(__name__)
+
+# Firestore client (lazy loaded)
+_firestore_client = None
+
+
+def _get_firestore():
+    """Get Firestore client (lazy initialization)"""
+    global _firestore_client
+
+    if _firestore_client is not None:
+        return _firestore_client
+
+    # Check if Firestore is enabled
+    firestore_enabled = os.getenv('FIRESTORE_ENABLED', '1') == '1'
+    if not firestore_enabled:
+        return None
+
+    try:
+        import firebase_admin
+        from firebase_admin import credentials, firestore
+
+        # Check if already initialized
+        if firebase_admin._apps:
+            _firestore_client = firestore.client()
+            return _firestore_client
+
+        # Try to load credentials
+        cred_path = os.getenv('FIREBASE_SERVICE_ACCOUNT')
+        cred_json = os.getenv('FIREBASE_CREDENTIALS')
+
+        if cred_path and Path(cred_path).exists():
+            cred = credentials.Certificate(cred_path)
+            firebase_admin.initialize_app(cred)
+            _firestore_client = firestore.client()
+            logger.info("Firestore initialized for API queries")
+            return _firestore_client
+        elif cred_json:
+            cred_dict = json.loads(cred_json)
+            cred = credentials.Certificate(cred_dict)
+            firebase_admin.initialize_app(cred)
+            _firestore_client = firestore.client()
+            logger.info("Firestore initialized from env var")
+            return _firestore_client
+
+    except ImportError:
+        logger.debug("firebase-admin not installed, using Excel fallback")
+    except Exception as e:
+        logger.warning(f"Firestore init failed, using Excel fallback: {e}")
+
+    return None
 
 
 class DataReader:
@@ -65,12 +118,50 @@ class DataReader:
         """
         Get data for a specific site
 
+        Prioritizes Firestore over Excel for better performance.
+
         Args:
             site_key: Site identifier
             limit: Number of records to return
             offset: Pagination offset
-            source: 'raw' or 'cleaned'
+            source: 'raw', 'cleaned', or 'firestore' (default: tries firestore first)
         """
+        # Try Firestore first (if enabled and not explicitly requesting raw/cleaned)
+        db = _get_firestore()
+        if db and source != 'raw':
+            try:
+                collection_ref = db.collection('properties')
+                query = collection_ref.where('site_key', '==', site_key)
+
+                # Get total count (for pagination metadata)
+                all_docs = list(query.stream())
+                total_records = len(all_docs)
+
+                # Apply pagination
+                paginated_docs = all_docs[offset:offset + limit]
+
+                # Convert to records
+                records = []
+                for doc in paginated_docs:
+                    data = doc.to_dict()
+                    records.append(data)
+
+                logger.info(f"Served {len(records)} records from Firestore for {site_key}")
+
+                return {
+                    'site_key': site_key,
+                    'data': records,
+                    'total_records': total_records,
+                    'limit': limit,
+                    'offset': offset,
+                    'source': 'firestore'
+                }
+
+            except Exception as e:
+                logger.warning(f"Firestore query failed for {site_key}, falling back to Excel: {e}")
+                # Fall through to Excel fallback
+
+        # Fallback to Excel/CSV
         if source == 'cleaned':
             # Read from cleaned directory
             csv_file = self.cleaned_dir / site_key / f"{site_key}_cleaned.csv"

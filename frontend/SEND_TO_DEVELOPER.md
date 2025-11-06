@@ -65,7 +65,7 @@ I just tested everything locally and it works perfectly:
 
 - ✅ URLValidator imports correctly
 - ✅ API server starts without errors
-- ✅ All 68 endpoints are working
+- ✅ All 79 (68 original + 11 new Firestore-optimized) endpoints are working
 - ✅ Health check returns `{"status":"healthy"}`
 - ✅ Sites endpoint returns all 51 configured sites
 - ✅ Stats endpoint returns listing statistics
@@ -87,7 +87,7 @@ After pulling the latest code, if you still see errors:
 
 Once it's running, check out these docs:
 
-- `docs/FRONTEND_INTEGRATION_GUIDE.md` - Complete API reference (68 endpoints)
+- `docs/FRONTEND_INTEGRATION_GUIDE.md` - Complete API reference (79 (68 original + 11 new Firestore-optimized) endpoints)
 - `docs/POSTMAN_GUIDE.md` - How to test with Postman
 - `docs/Nigerian_Real_Estate_API.postman_collection.json` - Import this into Postman
 

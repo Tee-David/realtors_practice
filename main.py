@@ -15,6 +15,7 @@ from core.cleaner import normalize_listing
 from core.geo import geocode_listings
 from core.exporter import export_listings
 from core.utils import is_lagos_like
+from core.firestore_direct import upload_listings_to_firestore
 
 # ---------------- LOGGING SETUP (will be reconfigured after loading config) ----------------
 os.makedirs("logs", exist_ok=True)
@@ -229,6 +230,15 @@ def run_site(site_key: str, site_config: Dict) -> Tuple[int, str]:
     except Exception as e:
         logging.error(f"{site_key}: export failed: {e}")
         return 0, base_url
+
+    # 5) Upload to Firestore (PRIMARY DATA STORE - eliminates corruption)
+    try:
+        firestore_stats = upload_listings_to_firestore(site_key, geocoded)
+        if firestore_stats.get('uploaded', 0) > 0:
+            logging.info(f"{site_key}: Uploaded {firestore_stats['uploaded']} listings to Firestore")
+    except Exception as e:
+        logging.warning(f"{site_key}: Firestore upload failed (non-fatal): {e}")
+        # Non-fatal - Excel export still succeeded
 
     logging.info(f"Exported {len(geocoded)} listings for {site_key}")
     return len(geocoded), base_url

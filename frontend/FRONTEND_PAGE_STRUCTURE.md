@@ -1,9 +1,10 @@
 # Frontend Page Structure Guide
-## Consolidating 68 API Endpoints into 5 Strategic Pages
+## Consolidating 79 API Endpoints into 5 Strategic Pages
 
-**Version**: 1.0
-**Date**: 2025-11-04
+**Version**: 2.0
+**Date**: 2025-11-06
 **Target**: Frontend Developer (Next.js/React)
+**Update**: Added 11 new Firestore-optimized endpoints
 
 ---
 
@@ -27,10 +28,10 @@
 - Difficult to maintain
 
 ### Solution
-Consolidate 68 API endpoints into **5 strategic pages** that align with user workflows:
+Consolidate 79 API endpoints into **5 strategic pages** that align with user workflows:
 
-1. **Dashboard** (Home/Overview)
-2. **Properties** (Browse & Search)
+1. **Dashboard** (Home/Overview) - **Enhanced with Firestore stats**
+2. **Properties** (Browse & Search) - **Enhanced with Firestore queries**
 3. **Scraper Control** (Admin/Backend Management)
 4. **Saved Searches** (User Preferences)
 5. **Settings** (Configuration & System)
@@ -41,13 +42,13 @@ Consolidate 68 API endpoints into **5 strategic pages** that align with user wor
 
 | Page | Primary Purpose | Endpoint Count | User Type |
 |------|----------------|----------------|-----------|
-| **Dashboard** | Overview, stats, quick actions | 12 endpoints | All users |
-| **Properties** | Browse, search, view listings | 15 endpoints | End users |
+| **Dashboard** | Overview, stats, quick actions | 13 endpoints (+1 Firestore) | All users |
+| **Properties** | Browse, search, view listings | 25 endpoints (+10 Firestore) | End users |
 | **Scraper Control** | Manage scraping operations | 20 endpoints | Admin only |
 | **Saved Searches** | Manage alerts & preferences | 10 endpoints | End users |
 | **Settings** | System config, sites, emails | 11 endpoints | Admin only |
 
-**Total**: 68 endpoints across 5 pages
+**Total**: 79 endpoints across 5 pages (68 original + 11 new Firestore-optimized)
 
 ---
 
@@ -76,7 +77,7 @@ Consolidate 68 API endpoints into **5 strategic pages** that align with user wor
   - New properties matching saved searches
   - System alerts/notifications
 
-#### API Endpoints Used (12)
+#### API Endpoints Used (13)
 
 **Statistics & Overview**:
 ```
@@ -84,6 +85,7 @@ GET /api/stats/overview
 GET /api/stats/trends
 GET /api/health
 GET /api/scrape/status
+GET /api/firestore/dashboard ⭐ NEW - Fast aggregate stats from Firestore
 ```
 
 **Recent Data**:
@@ -105,6 +107,8 @@ GET /api/sites/enabled
 GET /api/github/workflow-status
 GET /api/firestore/status
 ```
+
+**Note**: The new `/api/firestore/dashboard` endpoint provides 40-300x faster statistics compared to `/api/stats/overview`. Use this for real-time dashboard updates!
 
 #### Component Structure
 ```
@@ -147,9 +151,23 @@ Dashboard/
   - Save search button
   - Contact agent button
 
-#### API Endpoints Used (15)
+#### API Endpoints Used (25)
 
-**Search & Browse**:
+**NEW: Firestore-Optimized Queries (40-300x faster!)**:
+```
+GET /api/firestore/top-deals ⭐ NEW - Cheapest properties (replaces Excel _Top_100_Cheapest)
+GET /api/firestore/newest ⭐ NEW - Newest listings (replaces Excel _Newest_Listings)
+GET /api/firestore/for-sale ⭐ NEW - For sale properties (replaces Excel _For_Sale)
+GET /api/firestore/for-rent ⭐ NEW - For rent properties (replaces Excel _For_Rent)
+GET /api/firestore/land ⭐ NEW - Land-only properties (replaces Excel _Land_Only)
+GET /api/firestore/premium ⭐ NEW - Premium 4+ bedroom properties (replaces Excel _4BR_Plus)
+POST /api/firestore/search ⭐ NEW - Advanced cross-site search with filters
+GET /api/firestore/site/{site_key} ⭐ NEW - Site-specific properties (replaces per-site Excel sheets)
+GET /api/firestore/property/{hash} ⭐ NEW - Individual property by hash
+GET /api/firestore/site-stats/{site_key} ⭐ NEW - Site statistics
+```
+
+**Legacy Search & Browse** (still supported, use Firestore endpoints above for better performance):
 ```
 GET /api/data/all?limit=50&offset=0&sort=price_desc
 GET /api/data/search?query=3%20bedroom%20Lekki
@@ -192,6 +210,8 @@ GET /api/data/export/excel?filters=...
 GET /api/prices/trends?location=Lekki
 GET /api/prices/history?property_id={id}
 ```
+
+**Performance Tip**: Start with Firestore endpoints for better performance. Fall back to legacy `/api/data/*` endpoints only if needed.
 
 #### Component Structure
 ```
@@ -480,7 +500,7 @@ Settings/
 
 ### Complete Endpoint Distribution
 
-#### Dashboard (12 endpoints)
+#### Dashboard (13 endpoints)
 ```
 ✓ GET  /api/stats/overview
 ✓ GET  /api/stats/trends
@@ -494,9 +514,10 @@ Settings/
 ✓ GET  /api/sites/enabled
 ✓ GET  /api/github/workflow-status
 ✓ GET  /api/firestore/status
+⭐ GET  /api/firestore/dashboard (NEW - 40-300x faster stats)
 ```
 
-#### Properties (15 endpoints)
+#### Properties (25 endpoints)
 ```
 ✓ GET  /api/data/all
 ✓ GET  /api/data/search
@@ -513,6 +534,18 @@ Settings/
 ✓ GET  /api/data/export/csv
 ✓ GET  /api/data/export/excel
 ✓ GET  /api/prices/trends
+
+⭐ NEW Firestore-Optimized Endpoints (40-300x faster):
+⭐ GET  /api/firestore/top-deals
+⭐ GET  /api/firestore/newest
+⭐ GET  /api/firestore/for-sale
+⭐ GET  /api/firestore/for-rent
+⭐ GET  /api/firestore/land
+⭐ GET  /api/firestore/premium
+⭐ POST /api/firestore/search
+⭐ GET  /api/firestore/site/{site_key}
+⭐ GET  /api/firestore/property/{hash}
+⭐ GET  /api/firestore/site-stats/{site_key}
 ```
 
 #### Scraper Control (20 endpoints)
@@ -568,7 +601,7 @@ Settings/
 ✓ GET    /api/firestore/collections
 ```
 
-**Total: 68 endpoints** ✓
+**Total: 79 endpoints** ✓ (68 original + 11 new Firestore-optimized)
 
 ---
 
@@ -1226,8 +1259,12 @@ const { data } = await fetch('/api/data/all?limit=50&offset=0');
 
 | When you need to... | Use this page | Endpoints |
 |---------------------|---------------|-----------|
-| Show overview stats | Dashboard | `/api/stats/overview`, `/api/health` |
-| Browse properties | Properties | `/api/data/all`, `/api/data/search` |
+| Show overview stats | Dashboard | ⭐ `/api/firestore/dashboard` (NEW - fast), `/api/stats/overview` |
+| Browse properties | Properties | ⭐ `/api/firestore/top-deals` (NEW), `/api/data/all`, `/api/data/search` |
+| Search properties | Properties | ⭐ `POST /api/firestore/search` (NEW - fastest), `POST /api/data/advanced-search` |
+| Get site properties | Properties | ⭐ `/api/firestore/site/{site_key}` (NEW), `/api/data/sites/{site}` |
+| View property details | Properties | ⭐ `/api/firestore/property/{hash}` (NEW), `/api/data/property/{id}` |
+| Get newest listings | Properties | ⭐ `/api/firestore/newest` (NEW - fast) |
 | Start a scrape | Scraper Control | `POST /api/scrape/start` |
 | Monitor scrape progress | Scraper Control | `/api/scrape/status`, `/api/logs` |
 | Save a search | Properties → Saved Searches | `POST /api/saved-searches/create` |
@@ -1236,18 +1273,28 @@ const { data } = await fetch('/api/data/all?limit=50&offset=0');
 | Add/remove sites | Settings | `/api/sites/add`, `/api/sites/{site}` |
 | Export data | Properties | `/api/data/export/csv` |
 
+**Note**: ⭐ NEW Firestore endpoints provide 40-300x faster performance than legacy endpoints!
+
 ---
 
 ## Support & Questions
 
 If your frontend developer has questions:
-1. Refer to `docs/FRONTEND_INTEGRATION.md` for detailed API documentation
-2. Refer to `docs/POSTMAN_GUIDE.md` for API testing examples
-3. Check the Postman collection: `docs/Nigerian_Real_Estate_API.postman_collection.json`
-4. Test endpoints using curl (examples in API_QUICKSTART.md)
+1. Refer to `docs/FOR_FRONTEND_DEVELOPER.md` ⭐ **NEW** - Complete Firestore integration guide
+2. Refer to `docs/FRONTEND_INTEGRATION.md` for detailed API documentation
+3. Refer to `docs/POSTMAN_GUIDE.md` for API testing examples
+4. Check the Postman collection: `docs/Nigerian_Real_Estate_API.postman_collection.json` (v2.3.0 with all 79 endpoints)
+5. Test endpoints using curl (examples in API_QUICKSTART.md)
 
 ---
 
 **End of Guide**
 
-This structure consolidates 68 endpoints into 5 intuitive, user-focused pages that align with real-world workflows. Your frontend developer should be able to reduce from 20+ pages to 5 pages easily while maintaining all functionality and improving user experience.
+This structure consolidates **79 endpoints** (68 original + 11 new Firestore-optimized) into 5 intuitive, user-focused pages that align with real-world workflows. Your frontend developer should be able to reduce from 20+ pages to 5 pages easily while maintaining all functionality and improving user experience.
+
+**Key Advantages with New Firestore Endpoints:**
+- ⚡ **40-300x faster** queries compared to legacy endpoints
+- 📊 Replaces all Excel sheets with API endpoints
+- 🔍 Advanced cross-site search with filtering
+- 🏆 Optimized for real-time dashboard updates
+- 💾 Scalable to millions of properties

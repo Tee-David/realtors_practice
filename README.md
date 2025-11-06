@@ -10,7 +10,7 @@ Enterprise-grade property aggregation platform with unlimited scalability (curre
 
 **Test it**: [https://realtors-practice-api.onrender.com/api/health](https://realtors-practice-api.onrender.com/api/health)
 
-All 68 endpoints are live and accessible. See [frontend/FRONTEND_DEVELOPER_SETUP.md](frontend/FRONTEND_DEVELOPER_SETUP.md) for integration guide.
+All 79 (68 original + 11 new Firestore-optimized) endpoints are live and accessible. See [frontend/FRONTEND_DEVELOPER_SETUP.md](frontend/FRONTEND_DEVELOPER_SETUP.md) for integration guide.
 
 ---
 
@@ -33,14 +33,14 @@ export default function PropertiesPage() {
 
 **What's Included in `frontend/` folder**:
 - ✅ **Complete TypeScript types** - Full autocomplete support
-- ✅ **API Client** - All 68 endpoints typed and ready
+- ✅ **API Client** - All 79 (68 original + 11 new Firestore-optimized) endpoints typed and ready
 - ✅ **React Hooks** - Zero-config data fetching with SWR
 - ✅ **Documentation** - Step-by-step guides and examples
 - ✅ **Tested & Verified** - Everything works out of the box
 
 **Quick Links**:
 - 📚 [**frontend/FRONTEND_DEVELOPER_SETUP.md**](frontend/FRONTEND_DEVELOPER_SETUP.md) - **Deployment info & setup**
-- 📋 [**frontend/API_ENDPOINTS_ACTUAL.md**](frontend/API_ENDPOINTS_ACTUAL.md) - All 68 endpoints
+- 📋 [**frontend/API_ENDPOINTS_ACTUAL.md**](frontend/API_ENDPOINTS_ACTUAL.md) - All 79 (68 original + 11 new Firestore-optimized) endpoints
 - 🔧 [**frontend/types.ts**](frontend/types.ts) - TypeScript definitions
 - 🌐 [**frontend/api-client.ts**](frontend/api-client.ts) - API client
 - ⚛️ [**frontend/hooks.tsx**](frontend/hooks.tsx) - React hooks
@@ -208,7 +208,7 @@ realtors_practice/
 - **Scraping history** - Complete audit trail of all scraping runs
 - **Error logging** - Comprehensive error tracking and reporting
 
-### 🔌 REST API (68 Endpoints)
+### 🔌 REST API (79 (68 original + 11 new Firestore-optimized) Endpoints)
 - **Scraping management** - Start, stop, monitor scraping via API
 - **Site configuration** - Add, update, delete, toggle sites programmatically
 - **Data query** - Search, filter, paginate property data
@@ -430,7 +430,7 @@ If you see responses, **your API is working!** ✅
 
 **Postman Collection:** [Nigerian_Real_Estate_API.postman_collection.json](docs/Nigerian_Real_Estate_API.postman_collection.json)
 
-Import the collection into Postman to test all 68 API endpoints:
+Import the collection into Postman to test all 79 (68 original + 11 new Firestore-optimized) API endpoints:
 1. **Import**: File → Import → Select `Nigerian_Real_Estate_API.postman_collection.json`
 2. **Set Base URL**: Update `BASE_URL` variable to `https://us-central1-realtor-s-practice.cloudfunctions.net/api`
 3. **Test**: Run any endpoint to verify API is working
@@ -447,7 +447,7 @@ See [POSTMAN_GUIDE.md](docs/POSTMAN_GUIDE.md) for detailed setup instructions.
 
 **Getting Started:**
 - **[frontend/FRONTEND_DEVELOPER_SETUP.md](frontend/FRONTEND_DEVELOPER_SETUP.md)** - Frontend integration quick start (3 steps)
-- **[docs/frontend/FRONTEND_INTEGRATION_GUIDE.md](docs/frontend/FRONTEND_INTEGRATION_GUIDE.md)** - Complete API reference (all 68 endpoints)
+- **[docs/frontend/FRONTEND_INTEGRATION_GUIDE.md](docs/frontend/FRONTEND_INTEGRATION_GUIDE.md)** - Complete API reference (all 79 (68 original + 11 new Firestore-optimized) endpoints)
 - **[docs/frontend/POSTMAN_GUIDE.md](docs/frontend/POSTMAN_GUIDE.md)** - Postman testing guide
 - **[docs/frontend/FRONTEND_AUTH_GUIDE.md](docs/frontend/FRONTEND_AUTH_GUIDE.md)** - Authentication integration
 
@@ -457,7 +457,7 @@ See [POSTMAN_GUIDE.md](docs/POSTMAN_GUIDE.md) for detailed setup instructions.
 - **[docs/architecture/GITHUB_ACTIONS_SETUP.md](docs/architecture/GITHUB_ACTIONS_SETUP.md)** - CI/CD workflows
 - **[docs/architecture/FIRESTORE_EXPORT_GUIDE.md](docs/architecture/FIRESTORE_EXPORT_GUIDE.md)** - Firestore integration
 
-## 🔌 Complete API Reference (68 Endpoints)
+## 🔌 Complete API Reference (79 (68 original + 11 new Firestore-optimized) Endpoints)
 
 ### **1. Scraping Management** (5 endpoints)
 - `GET /api/health` - Health check
@@ -499,10 +499,25 @@ See [POSTMAN_GUIDE.md](docs/POSTMAN_GUIDE.md) for detailed setup instructions.
 - `GET /api/github/workflow-runs` - List workflow runs
 - `GET /api/github/artifacts` - List artifacts
 
-### **7. Firestore Integration** (3 endpoints)
-- `POST /api/firestore/query` - Query Firestore
-- `POST /api/firestore/archive` - Archive to Firestore
-- `GET /api/firestore/export` - Export from Firestore
+### **7. Firestore Integration** (14 endpoints)
+
+**Legacy Endpoints (3):**
+- `POST /api/firestore/query` - Query Firestore (legacy)
+- `POST /api/firestore/query-archive` - Query archive (legacy)
+- `POST /api/firestore/export` - Export to Firestore (legacy)
+
+**⭐ NEW: Optimized Query Endpoints (11 - 40-300x faster!):**
+- `GET /api/firestore/dashboard` ✅ - Dashboard statistics
+- `GET /api/firestore/top-deals` ✅ - Top 100 cheapest properties
+- `GET /api/firestore/newest` ✅ - Newest listings
+- `GET /api/firestore/for-sale` ✅ - For sale properties
+- `GET /api/firestore/for-rent` ✅ - For rent properties
+- `GET /api/firestore/land` ✅ - Land-only properties
+- `GET /api/firestore/premium` ✅ - Premium 4+ bedroom properties
+- `POST /api/firestore/search` ✅ - Advanced cross-site search with filters
+- `GET /api/firestore/site/{site_key}` ✅ - Site-specific properties
+- `GET /api/firestore/property/{hash}` ✅ - Individual property by hash
+- `GET /api/firestore/site-stats/{site_key}` ✅ - Site statistics
 
 ### **8. Email Notifications** (5 endpoints)
 - `POST /api/email/configure` - Configure SMTP
@@ -517,7 +532,7 @@ See [POSTMAN_GUIDE.md](docs/POSTMAN_GUIDE.md) for detailed setup instructions.
 - Data validation, location filtering, export management
 - Advanced filtering, pagination, and search capabilities
 
-See **[FRONTEND_INTEGRATION_GUIDE.md](docs/FRONTEND_INTEGRATION_GUIDE.md)** for complete documentation of all 68 endpoints.
+See **[FRONTEND_INTEGRATION_GUIDE.md](docs/frontend/FRONTEND_INTEGRATION_GUIDE.md)** for complete documentation of all 79 (68 original + 11 new Firestore-optimized) endpoints.
 
 ## ✅ Production Ready Features
 
@@ -537,7 +552,7 @@ See **[FRONTEND_INTEGRATION_GUIDE.md](docs/FRONTEND_INTEGRATION_GUIDE.md)** for 
 - Integration tests complete
 
 ### **Code Metrics**
-- **Total API Endpoints**: 68
+- **Total API Endpoints**: 79 (68 original + 11 new Firestore-optimized)
 - **Core Modules**: 15+
 - **Sites Configured**: 82+ (unlimited scalability)
 - **Lines of Code**: ~25,000+

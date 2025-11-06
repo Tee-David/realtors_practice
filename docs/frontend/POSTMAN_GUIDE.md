@@ -1,6 +1,6 @@
 # Postman Testing Guide
 
-Complete guide for testing all 68 API endpoints using Postman with the live Firebase backend or local server.
+Complete guide for testing all 79 (68 original + 11 new Firestore-optimized) API endpoints using Postman with the live Firebase backend or local server.
 
 ---
 
@@ -46,7 +46,7 @@ Expected Response:
 
 ---
 
-## 📋 68 Endpoints Included
+## 📋 79 (68 original + 11 new Firestore-optimized) Endpoints Included
 
 ### 1. Core Operations (5)
 - Health Check, Start/Stop Scraping, Status, History
@@ -66,8 +66,9 @@ Expected Response:
 ### 6. GitHub Actions (4)
 - Trigger, Estimate, Workflow Runs, Artifacts
 
-### 7. Firestore (3)
-- Query, Archive, Export
+### 7. Firestore (14)
+- Query, Archive, Export (Legacy)
+- Dashboard, Top Deals, Newest, For Sale, For Rent, Land, Premium, Search, Site Properties, Property by Hash, Site Stats (New)
 
 ### 8. Email (5)
 - Configure, Test, Recipients, Send
@@ -129,5 +130,5 @@ GET {{BASE_URL}}/api/price-drops?min_drop_pct=10
 ---
 
 **Collection:** `Nigerian_Real_Estate_API.postman_collection.json`
-**Total Endpoints:** 68
+**Total Endpoints:** 79 (68 original + 11 new Firestore-optimized)
 **Status:** ✅ Complete
