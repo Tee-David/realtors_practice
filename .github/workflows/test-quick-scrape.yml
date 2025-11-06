@@ -45,6 +45,9 @@ jobs:
           playwright install --with-deps chromium
           echo "Done!"
 
+      - name: Install system dependencies
+        run: |
+          playwright install-deps
       - name: Check system resources (BEFORE)
         run: |
           echo "=== System Resources BEFORE Scraping ==="
