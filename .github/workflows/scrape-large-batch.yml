@@ -121,8 +121,11 @@ jobs:
           echo "Geocoding: $RP_GEOCODE"
           echo ""
 
-          # Enable only this session's sites
-          python scripts/enable_sites.py ${{ matrix.session.sites }}
+          # Enable only this session's sites (convert comma-separated to space-separated)
+          SITES="${{ matrix.session.sites }}"
+          SITES_SPACE=$(echo "$SITES" | tr ',' ' ')
+          echo "Enabling sites: $SITES_SPACE"
+          python scripts/enable_sites.py $SITES_SPACE
 
           # Run scraper
           python main.py

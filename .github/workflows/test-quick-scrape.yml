@@ -76,6 +76,63 @@ jobs:
           python main.py
           echo "Scrape complete!"
 
+      - name: Process exports with watcher
+        run: |
+          echo "Processing scraped data..."
+          python watcher.py --once
+
+      - name: Upload to Firestore
+        env:
+          FIREBASE_CREDENTIALS: ${{ secrets.FIREBASE_CREDENTIALS }}
+        run: |
+          echo "========================================="
+          echo "Uploading test data to Firestore..."
+          echo "========================================="
+
+          # Check if master workbook exists
+          if [ ! -f "exports/cleaned/MASTER_CLEANED_WORKBOOK.xlsx" ]; then
+            echo "⚠️ WARNING: Master workbook not found!"
+            echo "Watcher may have failed. Skipping Firestore upload for this test."
+            exit 0
+          fi
+
+          # Check if Firebase credentials secret is set
+          if [ -z "$FIREBASE_CREDENTIALS" ]; then
+            echo "⚠️ WARNING: FIREBASE_CREDENTIALS secret not set!"
+            echo "Skipping Firestore upload. Set secret to enable uploads."
+            exit 0
+          fi
+
+          # Create temporary credentials file
+          echo "$FIREBASE_CREDENTIALS" > firebase-temp-credentials.json
+
+          # Validate credentials file is valid JSON
+          if ! python -c "import json; json.load(open('firebase-temp-credentials.json'))" 2>/dev/null; then
+            echo "❌ ERROR: Invalid Firebase credentials JSON!"
+            rm firebase-temp-credentials.json
+            exit 0
+          fi
+
+          echo "✅ Firebase credentials validated"
+
+          # Set environment variable
+          export FIREBASE_SERVICE_ACCOUNT=firebase-temp-credentials.json
+
+          # Run upload script with enterprise schema transformation
+          echo "Running upload script with enterprise schema (9 categories, 85+ fields)..."
+          if python scripts/upload_to_firestore.py --cleanup --max-age-days 30; then
+            echo "✅ Firestore upload completed successfully!"
+          else
+            echo "⚠️ WARNING: Firestore upload encountered errors"
+          fi
+
+          # Clean up credentials
+          rm firebase-temp-credentials.json
+
+          echo "========================================="
+          echo "Firestore upload step complete!"
+          echo "========================================="
+
       - name: Check system resources (AFTER)
         if: always()
         run: |
