@@ -2,7 +2,7 @@
 
 Complete documentation for the Nigerian Real Estate Scraper project.
 
-**Last Updated:** 2025-10-13
+**Last Updated:** 2025-11-10
 
 ---
 
@@ -175,14 +175,14 @@ Internal planning and design documents:
 - ✅ Idempotent operations
 
 ### REST API
-- ✅ 79 (68 original + 11 new Firestore-optimized) endpoints across 19 categories
-- ✅ Scraping management
-- ✅ Site configuration CRUD
-- ✅ Data access and search
+- ✅ 84 endpoints (68 original + 16 enterprise Firestore) across 20 categories
+- ✅ Enterprise Firestore integration (9 categories, 85+ fields)
+- ✅ Scraping management and site configuration
+- ✅ Data access and advanced search
 - ✅ Price intelligence and tracking
 - ✅ Saved searches and alerts
 - ✅ GitHub Actions integration
-- ✅ Firestore and email notifications
+- ✅ Email notifications and health monitoring
 
 ### Frontend Integration
 - ✅ Complete Next.js examples
@@ -298,5 +298,5 @@ Internal planning and design documents:
 
 ---
 
-**Last Major Update:** 2025-10-20 (Implementation Complete - 8/8 Features)
+**Last Major Update:** 2025-11-10 (Enterprise Firestore v3.1 Complete)
 **Status:** ✅ Complete and Up-to-Date

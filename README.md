@@ -10,7 +10,7 @@ Enterprise-grade property aggregation platform with unlimited scalability (curre
 
 **Test it**: [https://realtors-practice-api.onrender.com/api/health](https://realtors-practice-api.onrender.com/api/health)
 
-All 79 (68 original + 11 new Firestore-optimized) endpoints are live and accessible. See [frontend/FRONTEND_DEVELOPER_SETUP.md](frontend/FRONTEND_DEVELOPER_SETUP.md) for integration guide.
+All 84 (68 original + 16 enterprise Firestore) endpoints are live and accessible. See [frontend/FRONTEND_DEVELOPER_SETUP.md](frontend/FRONTEND_DEVELOPER_SETUP.md) for integration guide.
 
 ---
 
@@ -33,14 +33,14 @@ export default function PropertiesPage() {
 
 **What's Included in `frontend/` folder**:
 - ✅ **Complete TypeScript types** - Full autocomplete support
-- ✅ **API Client** - All 79 (68 original + 11 new Firestore-optimized) endpoints typed and ready
+- ✅ **API Client** - All 84 (68 original + 16 enterprise Firestore) endpoints typed and ready
 - ✅ **React Hooks** - Zero-config data fetching with SWR
 - ✅ **Documentation** - Step-by-step guides and examples
 - ✅ **Tested & Verified** - Everything works out of the box
 
 **Quick Links**:
 - 📚 [**frontend/FRONTEND_DEVELOPER_SETUP.md**](frontend/FRONTEND_DEVELOPER_SETUP.md) - **Deployment info & setup**
-- 📋 [**frontend/API_ENDPOINTS_ACTUAL.md**](frontend/API_ENDPOINTS_ACTUAL.md) - All 79 (68 original + 11 new Firestore-optimized) endpoints
+- 📋 [**frontend/API_ENDPOINTS_ACTUAL.md**](frontend/API_ENDPOINTS_ACTUAL.md) - All 84 (68 original + 16 enterprise Firestore) endpoints
 - 🔧 [**frontend/types.ts**](frontend/types.ts) - TypeScript definitions
 - 🌐 [**frontend/api-client.ts**](frontend/api-client.ts) - API client
 - ⚛️ [**frontend/hooks.tsx**](frontend/hooks.tsx) - React hooks
