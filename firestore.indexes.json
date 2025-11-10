@@ -5,11 +5,11 @@
       "queryScope": "COLLECTION",
       "fields": [
         {
-          "fieldPath": "site_key",
+          "fieldPath": "basic_info.site_key",
           "order": "ASCENDING"
         },
         {
-          "fieldPath": "scrape_timestamp",
+          "fieldPath": "metadata.scrape_timestamp",
           "order": "DESCENDING"
         }
       ]
@@ -19,11 +19,11 @@
       "queryScope": "COLLECTION",
       "fields": [
         {
-          "fieldPath": "price",
+          "fieldPath": "financial.price",
           "order": "ASCENDING"
         },
         {
-          "fieldPath": "quality_score",
+          "fieldPath": "metadata.quality_score",
           "order": "DESCENDING"
         }
       ]
@@ -33,11 +33,11 @@
       "queryScope": "COLLECTION",
       "fields": [
         {
-          "fieldPath": "quality_score",
+          "fieldPath": "metadata.quality_score",
           "order": "DESCENDING"
         },
         {
-          "fieldPath": "price",
+          "fieldPath": "financial.price",
           "order": "ASCENDING"
         }
       ]
@@ -47,15 +47,15 @@
       "queryScope": "COLLECTION",
       "fields": [
         {
-          "fieldPath": "property_type",
+          "fieldPath": "property_details.property_type",
           "order": "ASCENDING"
         },
         {
-          "fieldPath": "bedrooms",
+          "fieldPath": "property_details.bedrooms",
           "order": "ASCENDING"
         },
         {
-          "fieldPath": "price",
+          "fieldPath": "financial.price",
           "order": "ASCENDING"
         }
       ]
@@ -65,11 +65,11 @@
       "queryScope": "COLLECTION",
       "fields": [
         {
-          "fieldPath": "location",
+          "fieldPath": "location.area",
           "order": "ASCENDING"
         },
         {
-          "fieldPath": "price",
+          "fieldPath": "financial.price",
           "order": "ASCENDING"
         }
       ]
@@ -79,11 +79,11 @@
       "queryScope": "COLLECTION",
       "fields": [
         {
-          "fieldPath": "site_key",
+          "fieldPath": "basic_info.site_key",
           "order": "ASCENDING"
         },
         {
-          "fieldPath": "price",
+          "fieldPath": "financial.price",
           "order": "ASCENDING"
         }
       ]
@@ -93,11 +93,11 @@
       "queryScope": "COLLECTION",
       "fields": [
         {
-          "fieldPath": "site_key",
+          "fieldPath": "basic_info.site_key",
           "order": "ASCENDING"
         },
         {
-          "fieldPath": "price",
+          "fieldPath": "financial.price",
           "order": "DESCENDING"
         }
       ]
@@ -107,11 +107,11 @@
       "queryScope": "COLLECTION",
       "fields": [
         {
-          "fieldPath": "bedrooms",
+          "fieldPath": "property_details.bedrooms",
           "order": "ASCENDING"
         },
         {
-          "fieldPath": "price",
+          "fieldPath": "financial.price",
           "order": "ASCENDING"
         }
       ]
@@ -121,11 +121,11 @@
       "queryScope": "COLLECTION",
       "fields": [
         {
-          "fieldPath": "property_type",
+          "fieldPath": "property_details.property_type",
           "order": "ASCENDING"
         },
         {
-          "fieldPath": "price",
+          "fieldPath": "financial.price",
           "order": "ASCENDING"
         }
       ]
@@ -135,11 +135,173 @@
       "queryScope": "COLLECTION",
       "fields": [
         {
-          "fieldPath": "scrape_timestamp",
+          "fieldPath": "metadata.scrape_timestamp",
           "order": "DESCENDING"
         },
         {
-          "fieldPath": "price",
+          "fieldPath": "financial.price",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "properties",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "basic_info.status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "financial.price",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "properties",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "basic_info.status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "property_details.property_type",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "financial.price",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "properties",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "basic_info.listing_type",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "financial.price",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "properties",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "property_details.furnishing",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "financial.price",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "properties",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "metadata.days_on_market",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "financial.price",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "properties",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "metadata.view_count",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "metadata.uploaded_at",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "properties",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "tags.premium",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "financial.price",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "properties",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "location.lga",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "property_details.bedrooms",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "financial.price",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "properties",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "basic_info.verification_status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "financial.price",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "properties",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "agent_info.agent_verified",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "financial.price",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "properties",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "location.coordinates",
+          "mode": "ASCENDING"
+        },
+        {
+          "fieldPath": "financial.price",
           "order": "ASCENDING"
         }
       ]
@@ -148,7 +310,7 @@
   "fieldOverrides": [
     {
       "collectionGroup": "properties",
-      "fieldPath": "site_key",
+      "fieldPath": "basic_info.site_key",
       "indexes": [
         {
           "order": "ASCENDING",
@@ -158,7 +320,27 @@
     },
     {
       "collectionGroup": "properties",
-      "fieldPath": "price",
+      "fieldPath": "basic_info.status",
+      "indexes": [
+        {
+          "order": "ASCENDING",
+          "queryScope": "COLLECTION"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "properties",
+      "fieldPath": "basic_info.listing_type",
+      "indexes": [
+        {
+          "order": "ASCENDING",
+          "queryScope": "COLLECTION"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "properties",
+      "fieldPath": "financial.price",
       "indexes": [
         {
           "order": "ASCENDING",
@@ -172,7 +354,7 @@
     },
     {
       "collectionGroup": "properties",
-      "fieldPath": "scrape_timestamp",
+      "fieldPath": "metadata.scrape_timestamp",
       "indexes": [
         {
           "order": "DESCENDING",
@@ -182,7 +364,7 @@
     },
     {
       "collectionGroup": "properties",
-      "fieldPath": "quality_score",
+      "fieldPath": "metadata.quality_score",
       "indexes": [
         {
           "order": "DESCENDING",
@@ -192,7 +374,17 @@
     },
     {
       "collectionGroup": "properties",
-      "fieldPath": "location",
+      "fieldPath": "metadata.view_count",
+      "indexes": [
+        {
+          "order": "DESCENDING",
+          "queryScope": "COLLECTION"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "properties",
+      "fieldPath": "metadata.days_on_market",
       "indexes": [
         {
           "order": "ASCENDING",
@@ -202,7 +394,7 @@
     },
     {
       "collectionGroup": "properties",
-      "fieldPath": "property_type",
+      "fieldPath": "location.area",
       "indexes": [
         {
           "order": "ASCENDING",
@@ -212,10 +404,60 @@
     },
     {
       "collectionGroup": "properties",
-      "fieldPath": "bedrooms",
+      "fieldPath": "location.lga",
       "indexes": [
         {
           "order": "ASCENDING",
+          "queryScope": "COLLECTION"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "properties",
+      "fieldPath": "property_details.property_type",
+      "indexes": [
+        {
+          "order": "ASCENDING",
+          "queryScope": "COLLECTION"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "properties",
+      "fieldPath": "property_details.bedrooms",
+      "indexes": [
+        {
+          "order": "ASCENDING",
+          "queryScope": "COLLECTION"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "properties",
+      "fieldPath": "property_details.furnishing",
+      "indexes": [
+        {
+          "order": "ASCENDING",
+          "queryScope": "COLLECTION"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "properties",
+      "fieldPath": "tags.premium",
+      "indexes": [
+        {
+          "order": "DESCENDING",
+          "queryScope": "COLLECTION"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "properties",
+      "fieldPath": "agent_info.agent_verified",
+      "indexes": [
+        {
+          "order": "DESCENDING",
           "queryScope": "COLLECTION"
         }
       ]

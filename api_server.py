@@ -2792,7 +2792,7 @@ def get_firestore_dashboard():
     Uses cached aggregates when available (updated hourly).
     """
     try:
-        from core.firestore_queries import get_dashboard_stats
+        from core.firestore_queries_enterprise import get_dashboard_stats
 
         stats = get_dashboard_stats()
 
@@ -2820,7 +2820,7 @@ def get_firestore_top_deals():
         - property_type: Filter by property type (optional)
     """
     try:
-        from core.firestore_queries import get_cheapest_properties
+        from core.firestore_queries_enterprise import get_cheapest_properties
 
         limit = int(request.args.get('limit', 100))
         min_quality = float(request.args.get('min_quality', 0.0))
@@ -2854,7 +2854,7 @@ def get_firestore_newest():
         - site_key: Filter by site (optional)
     """
     try:
-        from core.firestore_queries import get_newest_listings
+        from core.firestore_queries_enterprise import get_newest_listings
 
         limit = int(request.args.get('limit', 50))
         days_back = int(request.args.get('days_back', 7))
@@ -2887,13 +2887,14 @@ def get_firestore_for_sale():
         - price_max: Maximum price filter (optional)
     """
     try:
-        from core.firestore_queries import get_for_sale_properties
+        from core.firestore_queries_enterprise import get_properties_by_listing_type
 
         limit = int(request.args.get('limit', 100))
         price_max = request.args.get('price_max')
         price_max = int(price_max) if price_max else None
 
-        properties = get_for_sale_properties(
+        properties = get_properties_by_listing_type(
+            listing_type='sale',
             limit=limit,
             price_max=price_max
         )
@@ -2919,13 +2920,14 @@ def get_firestore_for_rent():
         - price_max: Maximum price filter (optional)
     """
     try:
-        from core.firestore_queries import get_for_rent_properties
+        from core.firestore_queries_enterprise import get_properties_by_listing_type
 
         limit = int(request.args.get('limit', 100))
         price_max = request.args.get('price_max')
         price_max = int(price_max) if price_max else None
 
-        properties = get_for_rent_properties(
+        properties = get_properties_by_listing_type(
+            listing_type='rent',
             limit=limit,
             price_max=price_max
         )
@@ -2951,15 +2953,20 @@ def get_firestore_land():
         - price_max: Maximum price filter (optional)
     """
     try:
-        from core.firestore_queries import get_land_only_properties
+        from core.firestore_queries_enterprise import search_properties_advanced
 
         limit = int(request.args.get('limit', 100))
         price_max = request.args.get('price_max')
         price_max = int(price_max) if price_max else None
 
-        properties = get_land_only_properties(
-            limit=limit,
-            price_max=price_max
+        # Filter for land only
+        filters = {'property_type': 'Land'}
+        if price_max:
+            filters['price_max'] = price_max
+
+        properties = search_properties_advanced(
+            filters=filters,
+            limit=limit
         )
 
         return jsonify({
@@ -2984,17 +2991,15 @@ def get_firestore_premium():
         - price_max: Maximum price filter (optional)
     """
     try:
-        from core.firestore_queries import get_premium_properties
+        from core.firestore_queries_enterprise import get_premium_properties
 
-        min_bedrooms = int(request.args.get('min_bedrooms', 4))
         limit = int(request.args.get('limit', 100))
-        price_max = request.args.get('price_max')
-        price_max = int(price_max) if price_max else None
+        min_price = request.args.get('min_price')
+        min_price = int(min_price) if min_price else None
 
         properties = get_premium_properties(
-            min_bedrooms=min_bedrooms,
             limit=limit,
-            price_max=price_max
+            min_price=min_price
         )
 
         return jsonify({
@@ -3035,23 +3040,22 @@ def search_firestore_properties():
         }
     """
     try:
-        from core.firestore_queries import search_properties
+        from core.firestore_queries_enterprise import search_properties_advanced
 
         data = request.get_json() or {}
 
         filters = data.get('filters', {})
-        sort_by = data.get('sort_by', 'price')
-        sort_desc = data.get('sort_desc', False)
         limit = data.get('limit', 50)
-        offset = data.get('offset', 0)
 
-        result = search_properties(
+        properties = search_properties_advanced(
             filters=filters,
-            sort_by=sort_by,
-            sort_desc=sort_desc,
-            limit=limit,
-            offset=offset
+            limit=limit
         )
+
+        result = {
+            'count': len(properties),
+            'data': properties
+        }
 
         return jsonify({
             'success': True,
@@ -3075,20 +3079,21 @@ def get_firestore_site_properties(site_key):
         - sort_desc: Sort descending (default true)
     """
     try:
-        from core.firestore_queries import get_site_properties
+        from core.firestore_queries_enterprise import get_site_properties
 
         limit = int(request.args.get('limit', 100))
         offset = int(request.args.get('offset', 0))
-        sort_by = request.args.get('sort_by', 'scrape_timestamp')
-        sort_desc = request.args.get('sort_desc', 'true').lower() == 'true'
 
-        result = get_site_properties(
+        properties = get_site_properties(
             site_key=site_key,
             limit=limit,
-            offset=offset,
-            sort_by=sort_by,
-            sort_desc=sort_desc
+            offset=offset
         )
+
+        result = {
+            'count': len(properties),
+            'data': properties
+        }
 
         return jsonify({
             'success': True,
@@ -3107,7 +3112,7 @@ def get_firestore_property_by_hash(property_hash):
     Get a single property by its hash (document ID).
     """
     try:
-        from core.firestore_queries import get_property_by_hash
+        from core.firestore_queries_enterprise import get_property_by_hash
 
         property_data = get_property_by_hash(property_hash)
 
@@ -3130,12 +3135,35 @@ def get_firestore_site_stats(site_key):
     Get statistics for a specific site.
     """
     try:
-        from core.firestore_queries import get_site_statistics
+        from core.firestore_queries_enterprise import get_site_properties
 
-        stats = get_site_statistics(site_key)
+        # Get all properties for this site
+        properties = get_site_properties(site_key=site_key, limit=1000)
 
-        if not stats:
-            return jsonify({'error': 'Site not found'}), 404
+        if not properties:
+            return jsonify({'error': 'No properties found for this site'}), 404
+
+        # Calculate statistics
+        total = len(properties)
+        prices = [p.get('financial', {}).get('price', 0) for p in properties if p.get('financial', {}).get('price')]
+
+        stats = {
+            'site_key': site_key,
+            'total_properties': total,
+            'avg_price': sum(prices) / len(prices) if prices else 0,
+            'min_price': min(prices) if prices else 0,
+            'max_price': max(prices) if prices else 0,
+            'property_types': {},
+            'listing_types': {}
+        }
+
+        # Count property types and listing types
+        for prop in properties:
+            pt = prop.get('property_details', {}).get('property_type', 'Unknown')
+            stats['property_types'][pt] = stats['property_types'].get(pt, 0) + 1
+
+            lt = prop.get('basic_info', {}).get('listing_type', 'Unknown')
+            stats['listing_types'][lt] = stats['listing_types'].get(lt, 0) + 1
 
         return jsonify({
             'success': True,
@@ -3144,6 +3172,228 @@ def get_firestore_site_stats(site_key):
 
     except Exception as e:
         logger.error(f"Error getting site statistics: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/firestore/properties/furnished', methods=['GET'])
+def get_firestore_furnished():
+    """
+    Get furnished properties.
+
+    Query params:
+        - furnishing: Furnishing type (furnished, semi-furnished, unfurnished) - default: furnished
+        - limit: Number of results (default 100)
+        - price_max: Maximum price filter (optional)
+    """
+    try:
+        from core.firestore_queries_enterprise import get_furnished_properties
+
+        furnishing = request.args.get('furnishing', 'furnished')
+        limit = int(request.args.get('limit', 100))
+        price_max = request.args.get('price_max')
+        price_max = int(price_max) if price_max else None
+
+        properties = get_furnished_properties(
+            furnishing=furnishing,
+            limit=limit,
+            price_max=price_max
+        )
+
+        return jsonify({
+            'success': True,
+            'count': len(properties),
+            'data': properties
+        })
+
+    except Exception as e:
+        logger.error(f"Error getting furnished properties: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/firestore/properties/verified', methods=['GET'])
+def get_firestore_verified():
+    """
+    Get verified properties.
+
+    Query params:
+        - limit: Number of results (default 100)
+        - price_min: Minimum price filter (optional)
+        - price_max: Maximum price filter (optional)
+    """
+    try:
+        from core.firestore_queries_enterprise import get_verified_properties
+
+        limit = int(request.args.get('limit', 100))
+        price_min = request.args.get('price_min')
+        price_max = request.args.get('price_max')
+        price_min = int(price_min) if price_min else None
+        price_max = int(price_max) if price_max else None
+
+        properties = get_verified_properties(
+            limit=limit,
+            price_min=price_min,
+            price_max=price_max
+        )
+
+        return jsonify({
+            'success': True,
+            'count': len(properties),
+            'data': properties
+        })
+
+    except Exception as e:
+        logger.error(f"Error getting verified properties: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/firestore/properties/trending', methods=['GET'])
+def get_firestore_trending():
+    """
+    Get trending properties (highest view count).
+
+    Query params:
+        - limit: Number of results (default 50)
+    """
+    try:
+        from core.firestore_queries_enterprise import get_trending_properties
+
+        limit = int(request.args.get('limit', 50))
+
+        properties = get_trending_properties(limit=limit)
+
+        return jsonify({
+            'success': True,
+            'count': len(properties),
+            'data': properties
+        })
+
+    except Exception as e:
+        logger.error(f"Error getting trending properties: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/firestore/properties/hot-deals', methods=['GET'])
+def get_firestore_hot_deals():
+    """
+    Get hot deal properties (auto-tagged as hot_deal).
+
+    Query params:
+        - limit: Number of results (default 50)
+    """
+    try:
+        from core.firestore_queries_enterprise import get_hot_deals
+
+        limit = int(request.args.get('limit', 50))
+
+        properties = get_hot_deals(limit=limit)
+
+        return jsonify({
+            'success': True,
+            'count': len(properties),
+            'data': properties
+        })
+
+    except Exception as e:
+        logger.error(f"Error getting hot deals: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/firestore/properties/by-lga/<lga>', methods=['GET'])
+def get_firestore_by_lga(lga):
+    """
+    Get properties by LGA (Local Government Area).
+
+    Query params:
+        - limit: Number of results (default 100)
+        - bedrooms_min: Minimum bedrooms (optional)
+        - price_max: Maximum price (optional)
+    """
+    try:
+        from core.firestore_queries_enterprise import get_properties_by_lga
+
+        limit = int(request.args.get('limit', 100))
+        bedrooms_min = request.args.get('bedrooms_min')
+        price_max = request.args.get('price_max')
+        bedrooms_min = int(bedrooms_min) if bedrooms_min else None
+        price_max = int(price_max) if price_max else None
+
+        properties = get_properties_by_lga(
+            lga=lga,
+            limit=limit,
+            bedrooms_min=bedrooms_min,
+            price_max=price_max
+        )
+
+        return jsonify({
+            'success': True,
+            'lga': lga,
+            'count': len(properties),
+            'data': properties
+        })
+
+    except Exception as e:
+        logger.error(f"Error getting properties by LGA: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/firestore/properties/by-area/<area>', methods=['GET'])
+def get_firestore_by_area(area):
+    """
+    Get properties by area.
+
+    Query params:
+        - limit: Number of results (default 100)
+        - listing_type: Filter by listing type (optional)
+    """
+    try:
+        from core.firestore_queries_enterprise import get_properties_by_area
+
+        limit = int(request.args.get('limit', 100))
+        listing_type = request.args.get('listing_type')
+
+        properties = get_properties_by_area(
+            area=area,
+            limit=limit,
+            listing_type=listing_type
+        )
+
+        return jsonify({
+            'success': True,
+            'area': area,
+            'count': len(properties),
+            'data': properties
+        })
+
+    except Exception as e:
+        logger.error(f"Error getting properties by area: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/firestore/properties/new-on-market', methods=['GET'])
+def get_firestore_new_on_market():
+    """
+    Get newly listed properties.
+
+    Query params:
+        - days: Days on market (default 7)
+        - limit: Number of results (default 100)
+    """
+    try:
+        from core.firestore_queries_enterprise import get_new_on_market
+
+        days = int(request.args.get('days', 7))
+        limit = int(request.args.get('limit', 100))
+
+        properties = get_new_on_market(days=days, limit=limit)
+
+        return jsonify({
+            'success': True,
+            'count': len(properties),
+            'data': properties
+        })
+
+    except Exception as e:
+        logger.error(f"Error getting new properties: {e}")
         return jsonify({'error': str(e)}), 500
 
 

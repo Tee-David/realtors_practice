@@ -1,4 +1,8 @@
 # main.py
+# Load environment variables FIRST (before any other imports)
+from dotenv import load_dotenv
+load_dotenv()  # Load .env file into environment
+
 import os
 import sys
 import time
@@ -15,7 +19,7 @@ from core.cleaner import normalize_listing
 from core.geo import geocode_listings
 from core.exporter import export_listings
 from core.utils import is_lagos_like
-from core.firestore_direct import upload_listings_to_firestore
+from core.firestore_enterprise import upload_listings_to_firestore  # Use enterprise schema
 
 # ---------------- LOGGING SETUP (will be reconfigured after loading config) ----------------
 os.makedirs("logs", exist_ok=True)
