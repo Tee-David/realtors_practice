@@ -4,6 +4,11 @@ Upload master workbook data to Firebase Firestore for queryable storage.
 This script reads the master workbook and uploads each property as a Firestore document,
 enabling fast queries without downloading the entire dataset.
 
+**IMPORTANT**: This script uses the ENTERPRISE FIRESTORE SCHEMA (v3.1) with:
+- 9 nested categories (basic_info, property_details, financial, location, etc.)
+- 85+ structured fields
+- Intelligent auto-detection and tagging
+
 Usage:
     python scripts/upload_to_firestore.py
 
@@ -25,6 +30,10 @@ try:
 except ImportError:
     print("ERROR: firebase-admin not installed. Run: pip install firebase-admin")
     sys.exit(1)
+
+# Import enterprise Firestore transformation
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from core.firestore_enterprise import transform_to_firestore_enterprise
 
 
 def initialize_firebase():
@@ -191,48 +200,33 @@ def upload_to_firestore(workbook_path='exports/cleaned/MASTER_CLEANED_WORKBOOK.x
 
     for idx, row in df.iterrows():
         try:
+            # Convert pandas row to dict
+            row_dict = row.to_dict()
+
             # Use hash as document ID (prevents duplicates)
-            doc_id = str(row.get('hash', f'property_{idx}'))
+            doc_id = str(row_dict.get('hash', f'property_{idx}'))
             doc_ref = collection_ref.document(doc_id)
 
-            # Prepare document data
-            doc_data = {
-                'title': clean_value(row.get('title')),
-                'price': clean_value(row.get('price')),
-                'location': clean_value(row.get('location')),
-                'bedrooms': clean_value(row.get('bedrooms')),
-                'bathrooms': clean_value(row.get('bathrooms')),
-                'property_type': clean_value(row.get('property_type')),
-                'land_size': clean_value(row.get('land_size')),
-                'description': clean_value(row.get('description')),
-                'agent_name': clean_value(row.get('agent_name')),
-                'agent_phone': clean_value(row.get('agent_phone')),
-                'listing_url': clean_value(row.get('listing_url')),
-                'images': clean_value(row.get('images')),
-                'source': clean_value(row.get('source')),
-                'scrape_timestamp': clean_value(row.get('scrape_timestamp')),
-                'hash': clean_value(row.get('hash')),
-                'quality_score': clean_value(row.get('quality_score')),
+            # Transform to enterprise Firestore schema (9 categories, 85+ fields)
+            # This function handles all intelligent features:
+            # - Auto-detection (listing_type, furnishing, condition)
+            # - Auto-tagging (premium, hot_deal)
+            # - Location intelligence (area, LGA, landmarks)
+            # - Amenity categorization
+            # - Search keyword generation
+            doc_data = transform_to_firestore_enterprise(row_dict)
 
-                # Metadata
-                'uploaded_at': firestore.SERVER_TIMESTAMP,
-                'updated_at': firestore.SERVER_TIMESTAMP,
-            }
-
-            # Add coordinates if available
-            if pd.notna(row.get('latitude')) and pd.notna(row.get('longitude')):
-                doc_data['coordinates'] = {
-                    'latitude': float(row['latitude']),
-                    'longitude': float(row['longitude'])
-                }
+            # Add server timestamps (these must be at root level, not nested)
+            doc_data['uploaded_at'] = firestore.SERVER_TIMESTAMP
+            doc_data['updated_at'] = firestore.SERVER_TIMESTAMP
 
             # Set document in batch
             batch.set(doc_ref, doc_data, merge=True)
             uploaded += 1
 
             # Track hash for cleanup
-            if doc_data.get('hash'):
-                current_hashes.add(doc_data['hash'])
+            if doc_data.get('metadata', {}).get('hash'):
+                current_hashes.add(doc_data['metadata']['hash'])
 
             # Commit batch every batch_size documents
             if uploaded % batch_size == 0:

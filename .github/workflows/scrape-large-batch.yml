@@ -209,21 +209,55 @@ jobs:
         env:
           FIREBASE_CREDENTIALS: ${{ secrets.FIREBASE_CREDENTIALS }}
         run: |
+          echo "========================================="
           echo "Uploading consolidated data to Firestore..."
+          echo "========================================="
+
+          # Check if master workbook exists
+          if [ ! -f "exports/cleaned/MASTER_CLEANED_WORKBOOK.xlsx" ]; then
+            echo "❌ ERROR: Master workbook not found!"
+            echo "Consolidation may have failed. Check previous step."
+            exit 1
+          fi
+
+          # Check if Firebase credentials secret is set
+          if [ -z "$FIREBASE_CREDENTIALS" ]; then
+            echo "❌ ERROR: FIREBASE_CREDENTIALS secret not set!"
+            echo "Please add Firebase service account JSON to GitHub Secrets."
+            exit 1
+          fi
 
           # Create temporary credentials file
           echo "$FIREBASE_CREDENTIALS" > firebase-temp-credentials.json
+
+          # Validate credentials file is valid JSON
+          if ! python -c "import json; json.load(open('firebase-temp-credentials.json'))" 2>/dev/null; then
+            echo "❌ ERROR: Invalid Firebase credentials JSON!"
+            rm firebase-temp-credentials.json
+            exit 1
+          fi
+
+          echo "✅ Firebase credentials validated"
 
           # Set environment variable
           export FIREBASE_SERVICE_ACCOUNT=firebase-temp-credentials.json
 
           # Run Firestore upload with cleanup
-          python scripts/upload_to_firestore.py --cleanup --max-age-days 30
+          echo "Running upload script with enterprise schema transformation..."
+          if python scripts/upload_to_firestore.py --cleanup --max-age-days 30; then
+            echo "✅ Firestore upload completed successfully!"
+          else
+            echo "❌ ERROR: Firestore upload failed!"
+            rm firebase-temp-credentials.json
+            exit 1
+          fi
 
           # Clean up credentials
           rm firebase-temp-credentials.json
 
+          echo "========================================="
           echo "Firestore upload complete!"
+          echo "========================================="
 
       - name: Generate consolidated summary
         if: always()
