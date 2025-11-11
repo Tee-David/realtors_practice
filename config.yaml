@@ -90,7 +90,7 @@ sites:
     parser: specials
     url: https://cuddlerealty.com/
   cwlagos:
-    enabled: true
+    enabled: false
     name: CW Real Estate
     parser: specials
     url: https://cwlagos.com/
@@ -161,7 +161,7 @@ sites:
       property_type:
       - .property-type
       - .details dt:contains('Type') + dd
-    enabled: true
+    enabled: false
     name: Jiji Real Estate Section
     parser: specials
     url: https://jiji.ng/real-estate
