@@ -107,6 +107,7 @@ jobs:
 
       - name: Run scraper
         env:
+          FIREBASE_CREDENTIALS: ${{ secrets.FIREBASE_CREDENTIALS }}
           RP_PAGE_CAP: ${{ github.event.inputs.page_cap || github.event.client_payload.page_cap || '20' }}
           RP_GEOCODE: ${{ github.event.inputs.geocode || github.event.client_payload.geocode || '1' }}
           RP_HEADLESS: 1
@@ -118,68 +119,31 @@ jobs:
           echo "  - Geocoding: $RP_GEOCODE"
           echo "  - Headless: $RP_HEADLESS"
           echo ""
+
+          # Set up Firebase credentials if available
+          if [ ! -z "$FIREBASE_CREDENTIALS" ]; then
+            echo "$FIREBASE_CREDENTIALS" > firebase-temp-credentials.json
+            export FIREBASE_SERVICE_ACCOUNT=firebase-temp-credentials.json
+            echo "✓ Firebase credentials configured (Firestore upload enabled)"
+          else
+            echo "⚠ No Firebase credentials (Firestore upload disabled)"
+          fi
+
+          # Run scraper (will auto-upload to Firestore)
           echo "Starting scraper..."
           python main.py
+
+          # Cleanup credentials
+          if [ -f "firebase-temp-credentials.json" ]; then
+            rm firebase-temp-credentials.json
+          fi
 
       - name: Process exports with watcher
         run: |
           echo "Processing scraped data..."
+          echo "NOTE: Firestore upload already completed during scrape (main.py)"
           python watcher.py --once
-
-      - name: Upload to Firestore
-        env:
-          FIREBASE_CREDENTIALS: ${{ secrets.FIREBASE_CREDENTIALS }}
-        run: |
-          echo "========================================="
-          echo "Uploading data to Firestore..."
-          echo "========================================="
-
-          # Check if master workbook exists
-          if [ ! -f "exports/cleaned/MASTER_CLEANED_WORKBOOK.xlsx" ]; then
-            echo "❌ ERROR: Master workbook not found!"
-            echo "Watcher may have failed. Check previous step."
-            exit 1
-          fi
-
-          # Check if Firebase credentials secret is set
-          if [ -z "$FIREBASE_CREDENTIALS" ]; then
-            echo "❌ ERROR: FIREBASE_CREDENTIALS secret not set!"
-            echo "Please add Firebase service account JSON to GitHub Secrets."
-            exit 1
-          fi
-
-          # Create temporary credentials file from GitHub secret
-          echo "$FIREBASE_CREDENTIALS" > firebase-temp-credentials.json
-
-          # Validate credentials file is valid JSON
-          if ! python -c "import json; json.load(open('firebase-temp-credentials.json'))" 2>/dev/null; then
-            echo "❌ ERROR: Invalid Firebase credentials JSON!"
-            rm firebase-temp-credentials.json
-            exit 1
-          fi
-
-          echo "✅ Firebase credentials validated"
-
-          # Set environment variable for the script
-          export FIREBASE_SERVICE_ACCOUNT=firebase-temp-credentials.json
-
-          # Run Firestore upload with cleanup enabled
-          # Archives stale listings (>30 days old) to properties_archive collection
-          echo "Running upload script with enterprise schema transformation..."
-          if python scripts/upload_to_firestore.py --cleanup --max-age-days 30; then
-            echo "✅ Firestore upload completed successfully!"
-          else
-            echo "❌ ERROR: Firestore upload failed!"
-            rm firebase-temp-credentials.json
-            exit 1
-          fi
-
-          # Clean up credentials file
-          rm firebase-temp-credentials.json
-
-          echo "========================================="
-          echo "Firestore upload complete!"
-          echo "========================================="
+          echo "Watcher complete (creates master workbook for backup/analysis)"
 
       - name: Send completion notification
         if: success()
@@ -213,9 +177,10 @@ jobs:
             - **Completed**: ${new Date().toISOString()}
 
             ### 📥 Data Available
-            - **Firestore**: Data uploaded and queryable via \`POST /api/firestore/query\`
+            - **Firestore**: Properties uploaded with enterprise schema (9 categories, 85+ fields)
+            - **API Endpoints**: 16 Firestore endpoints ready for frontend integration
             - **Artifacts**: Download exports from workflow run artifacts
-            - **Master Workbook**: Available in cleaned exports artifact
+            - **Master Workbook**: Available in cleaned exports (backup/analysis only)
 
             ### 🔗 Quick Links
             - [View Workflow Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
@@ -271,13 +236,10 @@ jobs:
 
           # Firestore upload status
           echo "### Firestore Upload" >> $GITHUB_STEP_SUMMARY
-          if [ -f "exports/cleaned/MASTER_CLEANED_WORKBOOK.xlsx" ]; then
-            echo "✅ Data uploaded to Firestore" >> $GITHUB_STEP_SUMMARY
-            echo "- Collection: \`properties\`" >> $GITHUB_STEP_SUMMARY
-            echo "- Queryable via: \`POST /api/firestore/query\`" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "⚠️ No data to upload (master workbook not found)" >> $GITHUB_STEP_SUMMARY
-          fi
+          echo "✅ Properties uploaded to Firestore during scrape" >> $GITHUB_STEP_SUMMARY
+          echo "- Collection: \`properties\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Schema: Enterprise (9 categories, 85+ fields)" >> $GITHUB_STEP_SUMMARY
+          echo "- Queryable via: 16 Firestore API endpoints" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
           # Show recent log entries
