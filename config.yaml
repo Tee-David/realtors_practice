@@ -60,77 +60,77 @@ retry:
   retry_on_zero_results: false
 sites:
   adronhomes:
-    enabled: false
+    enabled: true
     name: Adron Homes
     parser: specials
     url: https://adronhomesproperties.com/
   ashproperties:
-    enabled: false
+    enabled: true
     name: Ash Properties & Constructions
     parser: specials
     url: https://ashpropertiesng.com/
   brokerfield:
-    enabled: false
+    enabled: true
     name: Brokerfield Real Estate Services
     parser: specials
     url: https://brokerfieldrealestate.com/
   buyletlive:
-    enabled: false
+    enabled: true
     name: BuyLetLive
     parser: specials
     url: https://buyletlive.com/
   castles:
-    enabled: false
+    enabled: true
     name: Castles
     parser: specials
     url: http://castles.com.ng/
   cuddlerealty:
-    enabled: false
+    enabled: true
     name: Cuddle Realty
     parser: specials
     url: https://cuddlerealty.com/
   cwlagos:
-    enabled: false
+    enabled: true
     name: CW Real Estate
     parser: specials
     url: https://cwlagos.com/
   edenoasis:
-    enabled: false
+    enabled: true
     name: Eden Oasis
     parser: specials
     url: https://www.edenoasisrealty.com/
   estateintel:
-    enabled: false
+    enabled: true
     name: Estate Intel
     parser: specials
     url: https://estateintel.com/
   facibus:
-    enabled: false
+    enabled: true
     name: Facibus Housing
     parser: specials
     url: https://facibushousing.com
   giddaa:
-    enabled: false
+    enabled: true
     name: Giddaa
     parser: specials
     url: https://giddaa.com/
   gtexthomes:
-    enabled: false
+    enabled: true
     name: Gtext And Associates
     parser: specials
     url: https://gtexthomes.com/
   houseafrica:
-    enabled: false
+    enabled: true
     name: HouseAfrica
     parser: specials
     url: https://www.houseafrica.com.ng
   hutbay:
-    enabled: false
+    enabled: true
     name: Hutbay
     parser: specials
     url: https://www.hutbay.com/
   jaat_properties:
-    enabled: false
+    enabled: true
     name: JAAT Properties & Investment Ltd
     parser: specials
     url: https://takooka.com/jaat-properties.php
@@ -161,12 +161,12 @@ sites:
       property_type:
       - .property-type
       - .details dt:contains('Type') + dd
-    enabled: false
+    enabled: true
     name: Jiji Real Estate Section
     parser: specials
     url: https://jiji.ng/real-estate
   lagosproperty:
-    enabled: false
+    enabled: true
     name: Lagos Property
     parser: specials
     url: https://lagosproperty.net/
@@ -194,52 +194,52 @@ sites:
       - .price
       property_type:
       - .property-type
-    enabled: false
+    enabled: true
     name: Lamudi Nigeria
     parser: specials
     url: https://www.lamudi.com.ng/
   landmall:
-    enabled: false
+    enabled: true
     name: Landmall.ng
     parser: specials
     url: https://www.landmall.ng/
   landng:
-    enabled: false
+    enabled: true
     name: Land.ng
     parser: specials
     url: https://land.ng/
   lodges:
-    enabled: false
+    enabled: true
     name: Lodges.ng
     parser: specials
     url: https://www.lodges.ng/
   myproperty:
-    enabled: false
+    enabled: true
     name: MyProperty.ng
     parser: specials
     url: https://www.myproperty.ng
   naijahouses:
-    enabled: false
+    enabled: true
     name: NaijaHouses
     parser: specials
     url: https://www.naijahouses.com/
   naijalandlord:
-    enabled: false
+    enabled: true
     name: NaijaLandlord
     parser: specials
     url: https://www.naijalandlord.com/
   nazaprimehive:
-    enabled: false
+    enabled: true
     name: Nazaprime Hive
     parser: specials
     url: https://hive.nazaprime.com.ng
   nigerianpropertymarket:
-    enabled: false
+    enabled: true
     name: Nigerian Property Market
     parser: specials
     url: https://nigerianpropertymarket.com/
   nigeriapropertyzone:
-    enabled: false
+    enabled: true
     name: Nigeria Property Zone
     parser: specials
     url: https://nigeriapropertyzone.com.ng/
@@ -329,32 +329,32 @@ sites:
       title: h2, .prop-title, a[title]
     url: https://nigeriapropertycentre.com/
   olist:
-    enabled: false
+    enabled: true
     name: OList Real Estate
     parser: specials
     url: https://www.olist.ng/real-estate
   oparahrealty:
-    enabled: false
+    enabled: true
     name: Oparah Realty
     parser: specials
     url: https://oparahrealty.com/
   ownahome:
-    enabled: false
+    enabled: true
     name: Ownahome
     parser: specials
     url: https://ownahome.ng/
   privateproperty:
-    enabled: false
+    enabled: true
     name: Private Property Nigeria
     parser: specials
     url: https://www.privateproperty.com.ng/
   pwanhomes:
-    enabled: false
+    enabled: true
     name: Pwan Homes
     parser: specials
     url: https://www.pwanhomes.com/
   propertieslinkng:
-    enabled: false
+    enabled: true
     name: Propertylink Real Estate Investment Limited
     parser: specials
     url: https://propertieslinkng.com/
@@ -377,17 +377,17 @@ sites:
       - .price
       property_type:
       - .property-type
-    enabled: false
+    enabled: true
     name: Property24 Nigeria
     parser: specials
     url: https://www.property24.com.ng/
   propertyguru:
-    enabled: false
+    enabled: true
     name: Property Guru
     parser: specials
     url: https://propertyguru.com.ng/
   propertylisthub:
-    enabled: false
+    enabled: true
     name: Property List Hub
     parser: specials
     url: https://propertylisthub.com/
@@ -425,7 +425,7 @@ sites:
       - .type
       toilets:
       - '[class*=''toilet'' i]'
-    enabled: false
+    enabled: true
     lagos_paths:
     - /property-for-sale/lagos
     - /property-for-rent/lagos
@@ -444,67 +444,67 @@ sites:
       title: a h2, .single-room-text h2, h2 > a, .title a
     url: https://propertypro.ng/
   quicktellerhomes:
-    enabled: false
+    enabled: true
     name: Quickteller Homes
     parser: specials
     url: https://homes.quickteller.com/
   ramos:
-    enabled: false
+    enabled: true
     name: Ramos Real Estate
     parser: specials
     url: https://ramosrealestateng.com/
   realestatenigeria:
-    enabled: false
+    enabled: true
     name: Real Estate Nigeria
     parser: specials
     url: https://www.realestatenigeria.com
   realtorintl:
-    enabled: false
+    enabled: true
     name: Realtor.com International Nigeria
     parser: specials
     url: https://www.realtor.com/international/ng/
   realtorng:
-    enabled: false
+    enabled: true
     name: Realtor.ng
     parser: specials
     url: https://www.realtor.ng/
   rentsmallsmall:
-    enabled: false
+    enabled: true
     name: RentSmallSmall
     parser: specials
     url: https://rentsmallsmall.ng/
   spleet:
-    enabled: false
+    enabled: true
     name: Spleet
     parser: specials
     url: https://spleet.africa/
   takooka_props:
-    enabled: false
+    enabled: true
     name: Takooka Properties
     parser: specials
     url: https://properties.takooka.com/
   thinkmint:
-    enabled: false
+    enabled: true
     name: Thinkmint Nigeria
     parser: specials
     url: http://buyrealestate.thinkmint.ng/
   tradebanq:
-    enabled: false
+    enabled: true
     name: TradeBanq
     parser: specials
     url: https://www.tradebanq.com
   trovit:
-    enabled: false
+    enabled: true
     name: Trovit Homes
     parser: specials
     url: https://homes.trovit.ng/
   ubosieleh:
-    enabled: false
+    enabled: true
     name: Ubosi Eleh + Co.
     parser: specials
     url: https://ubosieleh.com/
   vconnect:
-    enabled: false
+    enabled: true
     name: VConnect
     parser: specials
     url: https://www.vconnect.com/
