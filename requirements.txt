@@ -10,6 +10,9 @@ python-dotenv
 # Data processing
 pandas
 
+# Firebase/Firestore (enterprise data store)
+firebase-admin>=6.2.0
+
 # API server (for frontend integration)
 flask
 flask-cors

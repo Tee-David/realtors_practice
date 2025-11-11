@@ -71,7 +71,7 @@ def _serialize_cell(value):
 def _filter_by_quality(
     site: str,
     listings: List[Dict[str, Any]],
-    min_quality_score: float = 40.0
+    min_quality_score: float = 0.0  # Changed from 40.0 to 0.0 - accept all listings
 ) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
     """
     Filter listings by quality score and return stats.
@@ -160,11 +160,11 @@ def export_listings(
 
     # Determine quality threshold
     if min_quality_score is None:
-        # Check site config for override, otherwise use global default
+        # Check site config for override, otherwise use global default (changed to 0 to accept all)
         if site_config:
-            min_quality_score = site_config.get('overrides', {}).get('min_quality_score', 40.0)
+            min_quality_score = site_config.get('overrides', {}).get('min_quality_score', 0.0)
         else:
-            min_quality_score = float(os.getenv('RP_MIN_QUALITY', '40'))
+            min_quality_score = float(os.getenv('RP_MIN_QUALITY', '0'))
 
     # Apply quality filtering
     filtered_listings, quality_stats = _filter_by_quality(site, listings, min_quality_score)
