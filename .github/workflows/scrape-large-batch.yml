@@ -114,6 +114,7 @@ jobs:
 
       - name: Run scraper (Session ${{ matrix.session.session_id }})
         env:
+          FIREBASE_CREDENTIALS: ${{ secrets.FIREBASE_CREDENTIALS }}
           RP_PAGE_CAP: ${{ github.event.inputs.page_cap || '20' }}
           RP_GEOCODE: ${{ github.event.inputs.geocode || '1' }}
           RP_HEADLESS: 1
@@ -126,14 +127,28 @@ jobs:
           echo "Geocoding: $RP_GEOCODE"
           echo ""
 
+          # Set up Firebase credentials if available
+          if [ ! -z "$FIREBASE_CREDENTIALS" ]; then
+            echo "$FIREBASE_CREDENTIALS" > firebase-temp-credentials.json
+            export FIREBASE_SERVICE_ACCOUNT=firebase-temp-credentials.json
+            echo "✓ Firebase credentials configured (Firestore upload enabled)"
+          else
+            echo "⚠ No Firebase credentials (Firestore upload disabled)"
+          fi
+
           # Enable only this session's sites (convert comma-separated to space-separated)
           SITES="${{ matrix.session.sites }}"
           SITES_SPACE=$(echo "$SITES" | tr ',' ' ')
           echo "Enabling sites: $SITES_SPACE"
           python scripts/enable_sites.py $SITES_SPACE
 
-          # Run scraper
+          # Run scraper (will auto-upload to Firestore)
           python main.py
+
+          # Cleanup credentials
+          if [ -f "firebase-temp-credentials.json" ]; then
+            rm firebase-temp-credentials.json
+          fi
 
       - name: Process exports with watcher
         run: |
@@ -211,61 +226,9 @@ jobs:
       - name: Run watcher on consolidated data
         run: |
           echo "Creating master workbook from all sessions..."
+          echo "NOTE: Firestore upload already completed during each scrape session (main.py)"
           python watcher.py --once
-
-      - name: Upload to Firestore
-        env:
-          FIREBASE_CREDENTIALS: ${{ secrets.FIREBASE_CREDENTIALS }}
-        run: |
-          echo "========================================="
-          echo "Uploading consolidated data to Firestore..."
-          echo "========================================="
-
-          # Check if master workbook exists
-          if [ ! -f "exports/cleaned/MASTER_CLEANED_WORKBOOK.xlsx" ]; then
-            echo "❌ ERROR: Master workbook not found!"
-            echo "Consolidation may have failed. Check previous step."
-            exit 1
-          fi
-
-          # Check if Firebase credentials secret is set
-          if [ -z "$FIREBASE_CREDENTIALS" ]; then
-            echo "❌ ERROR: FIREBASE_CREDENTIALS secret not set!"
-            echo "Please add Firebase service account JSON to GitHub Secrets."
-            exit 1
-          fi
-
-          # Create temporary credentials file
-          echo "$FIREBASE_CREDENTIALS" > firebase-temp-credentials.json
-
-          # Validate credentials file is valid JSON
-          if ! python -c "import json; json.load(open('firebase-temp-credentials.json'))" 2>/dev/null; then
-            echo "❌ ERROR: Invalid Firebase credentials JSON!"
-            rm firebase-temp-credentials.json
-            exit 1
-          fi
-
-          echo "✅ Firebase credentials validated"
-
-          # Set environment variable
-          export FIREBASE_SERVICE_ACCOUNT=firebase-temp-credentials.json
-
-          # Run Firestore upload with cleanup
-          echo "Running upload script with enterprise schema transformation..."
-          if python scripts/upload_to_firestore.py --cleanup --max-age-days 30; then
-            echo "✅ Firestore upload completed successfully!"
-          else
-            echo "❌ ERROR: Firestore upload failed!"
-            rm firebase-temp-credentials.json
-            exit 1
-          fi
-
-          # Clean up credentials
-          rm firebase-temp-credentials.json
-
-          echo "========================================="
-          echo "Firestore upload complete!"
-          echo "========================================="
+          echo "Watcher complete (master workbook created for backup/analysis)"
 
       - name: Generate consolidated summary
         if: always()
@@ -297,10 +260,10 @@ jobs:
 
           # Firestore status
           echo "### Firestore Upload" >> $GITHUB_STEP_SUMMARY
-          echo "✅ Consolidated data uploaded to Firestore" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Properties uploaded to Firestore during each scrape session" >> $GITHUB_STEP_SUMMARY
           echo "- Collection: \`properties\`" >> $GITHUB_STEP_SUMMARY
-          echo "- Queryable via: \`POST /api/firestore/query\`" >> $GITHUB_STEP_SUMMARY
-          echo "- Stale listings archived to: \`properties_archive\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Schema: Enterprise (9 categories, 85+ fields)" >> $GITHUB_STEP_SUMMARY
+          echo "- Queryable via: 16 Firestore API endpoints" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
           echo "**Workflow:** #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY

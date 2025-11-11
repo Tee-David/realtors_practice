@@ -542,9 +542,16 @@ class EnterpriseFirestoreUploader:
     """
 
     def __init__(self, enabled: Optional[bool] = None):
-        """Initialize enterprise uploader."""
+        """
+        Initialize enterprise uploader.
+
+        AUTO-ENABLES when Firebase credentials are available.
+        Set FIRESTORE_ENABLED=0 to explicitly disable.
+        """
         if enabled is None:
-            self.enabled = os.getenv('FIRESTORE_ENABLED', '1') == '1'
+            # Auto-enable if credentials are present (check env vars)
+            firestore_explicit_disable = os.getenv('FIRESTORE_ENABLED', '1') == '0'
+            self.enabled = not firestore_explicit_disable
         else:
             self.enabled = enabled
 

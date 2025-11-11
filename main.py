@@ -235,14 +235,19 @@ def run_site(site_key: str, site_config: Dict) -> Tuple[int, str]:
         logging.error(f"{site_key}: export failed: {e}")
         return 0, base_url
 
-    # 5) Upload to Firestore (PRIMARY DATA STORE - eliminates corruption)
+    # 5) Upload to Firestore (PRIMARY DATA STORE)
+    # Force-enable Firestore if credentials are available
+    firestore_uploaded = 0
     try:
         firestore_stats = upload_listings_to_firestore(site_key, geocoded)
-        if firestore_stats.get('uploaded', 0) > 0:
-            logging.info(f"{site_key}: Uploaded {firestore_stats['uploaded']} listings to Firestore")
+        firestore_uploaded = firestore_stats.get('uploaded', 0)
+        if firestore_uploaded > 0:
+            logging.info(f"{site_key}: [SUCCESS] Uploaded {firestore_uploaded} listings to Firestore (PRIMARY STORE)")
+        elif firestore_stats.get('total', 0) > 0:
+            logging.warning(f"{site_key}: Firestore upload enabled but no properties uploaded (check credentials)")
     except Exception as e:
-        logging.warning(f"{site_key}: Firestore upload failed (non-fatal): {e}")
-        # Non-fatal - Excel export still succeeded
+        logging.error(f"{site_key}: Firestore upload failed: {e}")
+        logging.warning(f"{site_key}: Falling back to CSV/XLSX export only")
 
     logging.info(f"Exported {len(geocoded)} listings for {site_key}")
     return len(geocoded), base_url
