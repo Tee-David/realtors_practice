@@ -1,4 +1,4 @@
-name: Production Scraper (Auto-Scaling Multi-Session)
+name: Production Scraper (Intelligent Auto-Batching)
 
 on:
   # Trigger from frontend API
@@ -8,25 +8,31 @@ on:
   # Manual trigger from GitHub Actions UI
   workflow_dispatch:
     inputs:
-      sites_per_session:
-        description: 'Number of sites per session (default: 20)'
-        required: false
-        default: '20'
-      page_cap:
-        description: 'Max pages per site'
+      max_pages:
+        description: 'Max pages per site (default: 20)'
         required: false
         default: '20'
       geocode:
         description: 'Enable geocoding (1=yes, 0=no)'
         required: false
         default: '1'
+      force_sites_per_session:
+        description: 'Force specific sites per session (leave empty for auto-calculation)'
+        required: false
+        default: ''
 
 jobs:
-  prepare:
+  calculate:
+    name: Calculate Intelligent Batching
     runs-on: ubuntu-latest
     outputs:
-      sessions: ${{ steps.split.outputs.sessions }}
-      total_sessions: ${{ steps.split.outputs.total_sessions }}
+      sessions: ${{ steps.batch.outputs.sessions }}
+      total_sessions: ${{ steps.batch.outputs.total_sessions }}
+      sites_per_session: ${{ steps.batch.outputs.sites_per_session }}
+      estimated_minutes: ${{ steps.batch.outputs.estimated_minutes }}
+      estimated_hours: ${{ steps.batch.outputs.estimated_hours }}
+      is_safe: ${{ steps.batch.outputs.is_safe }}
+      recommendation: ${{ steps.batch.outputs.recommendation }}
 
     steps:
       - name: Checkout code
@@ -37,13 +43,13 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install PyYAML
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install pyyaml
 
-      - name: Split sites into sessions
-        id: split
+      - name: Calculate intelligent batching strategy
+        id: batch
         run: |
           python - <<'EOF'
           import yaml
@@ -51,25 +57,68 @@ jobs:
           import os
           import math
 
-          # Load config
+          # Configuration
+          MAX_PAGES = int("${{ github.event.inputs.max_pages || github.event.client_payload.max_pages }}" or "20")
+          GEOCODE = "${{ github.event.inputs.geocode || github.event.client_payload.geocode }}" or "1"
+          FORCE_SITES_PER_SESSION = "${{ github.event.inputs.force_sites_per_session || github.event.client_payload.sites_per_session }}" or ""
+
+          GEOCODE_ENABLED = GEOCODE == "1"
+
+          # Time estimation constants (based on empirical testing)
+          TIME_PER_PAGE = 8  # seconds
+          TIME_PER_SITE_OVERHEAD = 45  # seconds
+          GEOCODE_TIME_PER_PROPERTY = 1.2  # seconds
+          FIRESTORE_UPLOAD_TIME = 0.3  # seconds
+          WATCHER_OVERHEAD = 120  # seconds
+          BUFFER_MULTIPLIER = 1.3  # 30% safety buffer
+
+          # GitHub Actions constraints
+          GITHUB_TIMEOUT_MINUTES = 350  # 6 hours minus 10 min buffer
+          MAX_PARALLEL = 3
+
+          # Load enabled sites
           with open('config.yaml') as f:
               config = yaml.safe_load(f)
 
-          # Get enabled sites
           enabled_sites = [
               site_id for site_id, site_config in config.get('sites', {}).items()
               if site_config.get('enabled', False)
           ]
 
-          # Get sites_per_session from manual input OR frontend API trigger
-          sites_per_session = int("${{ github.event.inputs.sites_per_session || github.event.client_payload.sites_per_session }}" or "20")
-          total_sessions = math.ceil(len(enabled_sites) / sites_per_session)
+          total_sites = len(enabled_sites)
+          print(f"Total enabled sites: {total_sites}")
+          print(f"Max pages per site: {MAX_PAGES}")
+          print(f"Geocoding: {GEOCODE_ENABLED}")
 
-          # Split into batches
+          # Estimate time for single site
+          scrape_time = (MAX_PAGES * TIME_PER_PAGE) + TIME_PER_SITE_OVERHEAD
+          estimated_properties = MAX_PAGES * 15
+          geocode_time = estimated_properties * GEOCODE_TIME_PER_PROPERTY if GEOCODE_ENABLED else 0
+          upload_time = estimated_properties * FIRESTORE_UPLOAD_TIME
+          time_per_site = scrape_time + geocode_time + upload_time
+
+          print(f"Estimated time per site: {time_per_site:.0f}s ({time_per_site/60:.1f} min)")
+
+          # Calculate optimal sites per session
+          if FORCE_SITES_PER_SESSION:
+              sites_per_session = int(FORCE_SITES_PER_SESSION)
+              print(f"Using forced sites_per_session: {sites_per_session}")
+          else:
+              # Auto-calculate to stay under timeout
+              max_sites_per_session = int(
+                  (GITHUB_TIMEOUT_MINUTES * 60) / BUFFER_MULTIPLIER / time_per_site
+              )
+              sites_per_session = max(1, max_sites_per_session)
+              print(f"Auto-calculated sites_per_session: {sites_per_session}")
+
+          # Calculate sessions
+          total_sessions = math.ceil(total_sites / sites_per_session)
+
+          # Create session batches
           sessions = []
           for i in range(total_sessions):
               start = i * sites_per_session
-              end = start + sites_per_session
+              end = min(start + sites_per_session, total_sites)
               batch = enabled_sites[start:end]
               sessions.append({
                   'session_id': i + 1,
@@ -77,25 +126,71 @@ jobs:
                   'site_count': len(batch)
               })
 
-          # Output for matrix
+          # Estimate total time
+          session_time = (time_per_site * sites_per_session + WATCHER_OVERHEAD) * BUFFER_MULTIPLIER
+          total_time_minutes = (session_time / 60) * total_sessions / MAX_PARALLEL
+          total_time_hours = total_time_minutes / 60
+
+          is_safe = total_time_minutes < GITHUB_TIMEOUT_MINUTES
+
+          # Generate recommendation
+          if not is_safe:
+              recommendation = f"WARNING: Estimated {total_time_minutes:.0f}min exceeds {GITHUB_TIMEOUT_MINUTES}min limit. Reduce to {sites_per_session-5} sites/session"
+          elif total_time_minutes > GITHUB_TIMEOUT_MINUTES * 0.9:
+              recommendation = f"CLOSE TO LIMIT: {total_time_minutes:.0f}min. Consider {sites_per_session-5} sites/session for safety"
+          else:
+              recommendation = f"SAFE: {total_time_minutes:.0f}min well within {GITHUB_TIMEOUT_MINUTES}min limit"
+
+          print(f"\nBatching Strategy:")
+          print(f"  Sites per session: {sites_per_session}")
+          print(f"  Total sessions: {total_sessions}")
+          print(f"  Estimated time: {total_time_minutes:.1f} min ({total_time_hours:.2f} hours)")
+          print(f"  Safety status: {recommendation}")
+
+          # Output for next job
           with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
               f.write(f"sessions={json.dumps(sessions)}\n")
               f.write(f"total_sessions={total_sessions}\n")
+              f.write(f"sites_per_session={sites_per_session}\n")
+              f.write(f"estimated_minutes={total_time_minutes:.1f}\n")
+              f.write(f"estimated_hours={total_time_hours:.2f}\n")
+              f.write(f"is_safe={str(is_safe).lower()}\n")
+              f.write(f"recommendation={recommendation}\n")
 
-          print(f"Split {len(enabled_sites)} sites into {total_sessions} sessions")
+          # Summary
+          print("\nSession breakdown:")
           for session in sessions:
               print(f"  Session {session['session_id']}: {session['site_count']} sites")
           EOF
 
+      - name: Display strategy summary
+        run: |
+          echo "## Intelligent Batching Strategy" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Configuration:**" >> $GITHUB_STEP_SUMMARY
+          echo "- Max pages per site: ${{ github.event.inputs.max_pages || github.event.client_payload.max_pages || '20' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Geocoding: ${{ steps.batch.outputs.is_safe == 'true' && '✅ Enabled' || '❌ Disabled' }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Batching:**" >> $GITHUB_STEP_SUMMARY
+          echo "- Sites per session: ${{ steps.batch.outputs.sites_per_session }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Total sessions: ${{ steps.batch.outputs.total_sessions }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Max parallel: 3" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Time Estimate:**" >> $GITHUB_STEP_SUMMARY
+          echo "- Total: ${{ steps.batch.outputs.estimated_minutes }} min (${{ steps.batch.outputs.estimated_hours }} hours)" >> $GITHUB_STEP_SUMMARY
+          echo "- Status: ${{ steps.batch.outputs.is_safe == 'true' && '✅' || '⚠️' }} ${{ steps.batch.outputs.recommendation }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
   scrape:
-    needs: prepare
+    name: Scrape Session ${{ matrix.session.session_id }}
+    needs: calculate
     runs-on: ubuntu-latest
-    timeout-minutes: 180
+    timeout-minutes: 180  # 3 hours per session (with parallel execution)
     strategy:
-      max-parallel: 3  # Run 3 sessions in parallel
-      fail-fast: false  # Don't cancel other sessions if one fails
+      max-parallel: 3
+      fail-fast: false
       matrix:
-        session: ${{ fromJson(needs.prepare.outputs.sessions) }}
+        session: ${{ fromJson(needs.calculate.outputs.sessions) }}
 
     steps:
       - name: Checkout code
@@ -117,50 +212,50 @@ jobs:
           playwright install chromium
           playwright install-deps chromium
 
-      - name: Run scraper (Session ${{ matrix.session.session_id }})
+      - name: Run scraper (Session ${{ matrix.session.session_id }}/${{ needs.calculate.outputs.total_sessions }})
         env:
           FIREBASE_CREDENTIALS: ${{ secrets.FIREBASE_CREDENTIALS }}
-          RP_PAGE_CAP: ${{ github.event.inputs.page_cap || github.event.client_payload.page_cap || '20' }}
+          RP_PAGE_CAP: ${{ github.event.inputs.max_pages || github.event.client_payload.max_pages || '20' }}
           RP_GEOCODE: ${{ github.event.inputs.geocode || github.event.client_payload.geocode || '1' }}
           RP_HEADLESS: 1
           RP_NO_IMAGES: 1
           RP_DEBUG: 0
         run: |
-          echo "=== Session ${{ matrix.session.session_id }} ==="
-          echo "Sites: ${{ matrix.session.site_count }}"
+          echo "=== Session ${{ matrix.session.session_id }}/${{ needs.calculate.outputs.total_sessions }} ==="
+          echo "Sites in this session: ${{ matrix.session.site_count }}"
+          echo "Sites per session (optimal): ${{ needs.calculate.outputs.sites_per_session }}"
           echo "Page cap: $RP_PAGE_CAP"
           echo "Geocoding: $RP_GEOCODE"
+          echo "Estimated session time: ${{ needs.calculate.outputs.estimated_minutes }} min"
           echo ""
 
-          # Set up Firebase credentials if available
+          # Set up Firebase credentials
           if [ ! -z "$FIREBASE_CREDENTIALS" ]; then
             echo "$FIREBASE_CREDENTIALS" > firebase-temp-credentials.json
             export FIREBASE_SERVICE_ACCOUNT=firebase-temp-credentials.json
-            echo "✓ Firebase credentials configured (Firestore upload enabled)"
-          else
-            echo "⚠ No Firebase credentials (Firestore upload disabled)"
+            echo "✓ Firebase credentials configured"
           fi
 
-          # Enable only this session's sites (convert comma-separated to space-separated)
+          # Enable only this session's sites
           SITES="${{ matrix.session.sites }}"
           SITES_SPACE=$(echo "$SITES" | tr ',' ' ')
           echo "Enabling sites: $SITES_SPACE"
           python scripts/enable_sites.py $SITES_SPACE
 
-          # Run scraper (will auto-upload to Firestore)
+          # Run scraper
           python main.py
 
-          # Cleanup credentials
+          # Cleanup
           if [ -f "firebase-temp-credentials.json" ]; then
             rm firebase-temp-credentials.json
           fi
 
-      - name: Process exports with watcher
+      - name: Process exports
         run: |
-          echo "Processing scraped data from session ${{ matrix.session.session_id }}..."
+          echo "Processing scraped data..."
           python watcher.py --once
 
-      - name: Upload session exports as artifacts
+      - name: Upload session artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -169,7 +264,8 @@ jobs:
           retention-days: 7
 
   consolidate:
-    needs: [prepare, scrape]
+    name: Consolidate All Sessions
+    needs: [calculate, scrape]
     runs-on: ubuntu-latest
     timeout-minutes: 60
 
@@ -183,7 +279,7 @@ jobs:
           python-version: '3.11'
           cache: 'pip'
 
-      - name: Install Python dependencies
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
@@ -195,14 +291,11 @@ jobs:
           pattern: session-*-exports
           merge-multiple: false
 
-      - name: Consolidate all sessions
+      - name: Consolidate sessions
         run: |
-          echo "Consolidating ${{ needs.prepare.outputs.total_sessions }} sessions..."
-
-          # Create consolidated exports directory
+          echo "Consolidating ${{ needs.calculate.outputs.total_sessions }} sessions..."
           mkdir -p exports/sites exports/cleaned
 
-          # Merge all session exports
           python - <<'EOF'
           import os
           import shutil
@@ -211,7 +304,6 @@ jobs:
           session_dir = Path('session-exports')
           consolidated_dir = Path('exports/sites')
 
-          # Copy all site exports from each session
           for session_folder in session_dir.glob('session-*-exports'):
               session_sites = session_folder / 'sites'
               if session_sites.exists():
@@ -219,60 +311,55 @@ jobs:
                       if site_folder.is_dir():
                           dest = consolidated_dir / site_folder.name
                           dest.mkdir(exist_ok=True)
-
-                          # Copy all files from this site
                           for file in site_folder.iterdir():
                               shutil.copy2(file, dest / file.name)
                               print(f"Copied: {file.name}")
 
-          print(f"\nConsolidated all sessions into {consolidated_dir}")
+          print(f"\nConsolidated into {consolidated_dir}")
           EOF
 
-      - name: Run watcher on consolidated data
+      - name: Create master workbook
         run: |
-          echo "Creating master workbook from all sessions..."
-          echo "NOTE: Firestore upload already completed during each scrape session (main.py)"
+          echo "Creating master workbook..."
           python watcher.py --once
-          echo "Watcher complete (master workbook created for backup/analysis)"
 
-      - name: Generate consolidated summary
+      - name: Generate final summary
         if: always()
         run: |
-          echo "## Large Batch Scrape Summary" >> $GITHUB_STEP_SUMMARY
+          echo "## Production Scrape Complete" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Sessions:** ${{ needs.prepare.outputs.total_sessions }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Intelligent Batching:**" >> $GITHUB_STEP_SUMMARY
+          echo "- Strategy: ${{ needs.calculate.outputs.recommendation }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Sessions completed: ${{ needs.calculate.outputs.total_sessions }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Sites per session: ${{ needs.calculate.outputs.sites_per_session }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Estimated time: ${{ needs.calculate.outputs.estimated_hours }} hours" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
-          # Count exports
           if [ -d "exports/sites" ]; then
             SITE_COUNT=$(find exports/sites -type d -mindepth 1 -maxdepth 1 | wc -l)
             FILE_COUNT=$(find exports/sites -type f \( -name "*.csv" -o -name "*.xlsx" \) | wc -l)
-            echo "### Consolidated Exports" >> $GITHUB_STEP_SUMMARY
-            echo "- Total sites scraped: $SITE_COUNT" >> $GITHUB_STEP_SUMMARY
-            echo "- Total files: $FILE_COUNT" >> $GITHUB_STEP_SUMMARY
+            echo "**Results:**" >> $GITHUB_STEP_SUMMARY
+            echo "- Sites scraped: $SITE_COUNT" >> $GITHUB_STEP_SUMMARY
+            echo "- Files generated: $FILE_COUNT" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
           fi
 
-          # Master workbook info
           if [ -f "exports/cleaned/MASTER_CLEANED_WORKBOOK.xlsx" ]; then
             SIZE=$(du -h exports/cleaned/MASTER_CLEANED_WORKBOOK.xlsx | cut -f1)
             RECORD_COUNT=$(python -c "import pandas as pd; print(len(pd.read_excel('exports/cleaned/MASTER_CLEANED_WORKBOOK.xlsx')))" 2>/dev/null || echo "Unknown")
-            echo "### Master Workbook" >> $GITHUB_STEP_SUMMARY
+            echo "**Master Workbook:**" >> $GITHUB_STEP_SUMMARY
             echo "- Size: $SIZE" >> $GITHUB_STEP_SUMMARY
-            echo "- Total properties: $RECORD_COUNT" >> $GITHUB_STEP_SUMMARY
+            echo "- Properties: $RECORD_COUNT" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
           fi
 
-          # Firestore status
-          echo "### Firestore Upload" >> $GITHUB_STEP_SUMMARY
-          echo "✅ Properties uploaded to Firestore during each scrape session" >> $GITHUB_STEP_SUMMARY
+          echo "**Firestore:**" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Uploaded to Firestore during scraping" >> $GITHUB_STEP_SUMMARY
           echo "- Collection: \`properties\`" >> $GITHUB_STEP_SUMMARY
-          echo "- Schema: Enterprise (9 categories, 85+ fields)" >> $GITHUB_STEP_SUMMARY
-          echo "- Queryable via: 16 Firestore API endpoints" >> $GITHUB_STEP_SUMMARY
+          echo "- Schema: Enterprise (9 categories)" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-
           echo "**Workflow:** #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
-          echo "**Date:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')\" >> $GITHUB_STEP_SUMMARY
+          echo "**Date:** $(date -u '+%Y-%m-%d %H:%M UTC')" >> $GITHUB_STEP_SUMMARY
 
       - name: Upload consolidated exports
         if: always()
