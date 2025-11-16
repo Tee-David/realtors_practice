@@ -1,684 +1,493 @@
 # Nigerian Real Estate Scraper
 
-Enterprise-grade property aggregation platform with unlimited scalability (currently 82+ data sources configured), intelligent search, price tracking, and complete REST API. Automatically scrapes, cleans, deduplicates, and monitors 1000+ Lagos property listings daily. Add unlimited new sites via config.yaml - no code changes needed.
+Enterprise-grade property aggregation platform that scrapes 51 real estate websites, enriches data with enterprise schema (9 categories, 85+ fields), and provides 84 REST API endpoints for frontend integration. Fully production-ready with GitHub Actions automation and Firestore integration.
+
+## 🎯 Current Status
+
+✅ **PRODUCTION READY** - All systems tested and verified (2025-11-16)
+
+**Key Metrics**:
+- **Sites Configured**: 51 active real estate websites
+- **API Endpoints**: 84 total (68 core + 16 Firestore)
+- **Data Storage**: Firestore (enterprise schema)
+- **Automation**: GitHub Actions (auto-scaling multi-session)
+- **Frontend Ready**: Complete TypeScript integration
+
+**Latest Achievement**: Successfully running large-scale scrape of all 51 sites via GitHub Actions (Run #19408262700)
+
+---
 
 ## 🚀 Quick Start
 
-### 🌐 Live API (Deployed & Ready)
+### For Frontend Developers (START HERE)
 
-**Backend API URL**: `https://realtors-practice-api.onrender.com/api`
-
-**Test it**: [https://realtors-practice-api.onrender.com/api/health](https://realtors-practice-api.onrender.com/api/health)
-
-All 84 (68 original + 16 enterprise Firestore) endpoints are live and accessible. See [frontend/FRONTEND_DEVELOPER_SETUP.md](frontend/FRONTEND_DEVELOPER_SETUP.md) for integration guide.
-
----
-
-### For Frontend Developers (API Integration)
-
-**🎯 Everything you need is in the `frontend/` folder!**
-
-**📖 START HERE**: → [**frontend/FRONTEND_DEVELOPER_SETUP.md**](frontend/FRONTEND_DEVELOPER_SETUP.md) ← **3-step setup guide**
+**📖 Complete Setup Guide**: [frontend/README.md](frontend/README.md)
 
 ```typescript
-// Complete TypeScript integration with React hooks
-import { useProperties } from '@/lib/api/hooks';
+// Install and start using in 3 lines
+import { useProperties } from '@/hooks/useProperties';
 
 export default function PropertiesPage() {
-  const { properties, total, isLoading } = useProperties();
-
-  return <div>{total} Properties Available</div>;
+  const { properties, loading } = useProperties();
+  return <PropertyList properties={properties} />;
 }
 ```
 
-**What's Included in `frontend/` folder**:
-- ✅ **Complete TypeScript types** - Full autocomplete support
-- ✅ **API Client** - All 84 (68 original + 16 enterprise Firestore) endpoints typed and ready
-- ✅ **React Hooks** - Zero-config data fetching with SWR
-- ✅ **Documentation** - Step-by-step guides and examples
-- ✅ **Tested & Verified** - Everything works out of the box
+**What's Included**:
+- ✅ TypeScript types for all 84 endpoints
+- ✅ React hooks with SWR
+- ✅ API client with error handling
+- ✅ Complete documentation
+- ✅ Integration examples
 
-**Quick Links**:
-- 📚 [**frontend/FRONTEND_DEVELOPER_SETUP.md**](frontend/FRONTEND_DEVELOPER_SETUP.md) - **Deployment info & setup**
-- 📋 [**frontend/API_ENDPOINTS_ACTUAL.md**](frontend/API_ENDPOINTS_ACTUAL.md) - All 84 (68 original + 16 enterprise Firestore) endpoints
-- 🔧 [**frontend/types.ts**](frontend/types.ts) - TypeScript definitions
-- 🌐 [**frontend/api-client.ts**](frontend/api-client.ts) - API client
-- ⚛️ [**frontend/hooks.tsx**](frontend/hooks.tsx) - React hooks
+**Frontend Developer Resources**:
+- 📚 [Complete Setup Guide](frontend/README.md) - Step-by-step integration
+- 📋 [All 84 API Endpoints](frontend/API_ENDPOINTS_ACTUAL.md) - Full reference
+- 🔧 [TypeScript Types](frontend/types.ts) - Type definitions
+- 🌐 [API Client](frontend/api-client.ts) - HTTP client
+- ⚛️ [React Hooks](frontend/hooks.tsx) - Data fetching hooks
 
 ---
 
-### For Backend Development (Local)
+### For Backend Developers
 
 ```bash
 # 1. Install dependencies
 pip install -r requirements.txt
-
-# 2. Install browser for Playwright
 playwright install chromium
 
-# 3. Configure sites (optional)
-cp config.example.yaml config.yaml
-
-# 4. Start API server (local testing)
+# 2. Start API server
 python api_server.py
 
-# 5. Or run scraper directly
-python main.py
+# 3. Test scraper (small batch)
+curl -X POST http://localhost:5000/api/scrape/start \
+  -H "Content-Type: application/json" \
+  -d '{"sites": ["npc"], "max_pages": 2, "geocoding": false}'
 
-# 6. Process exports
-python watcher.py --once
+# 4. Monitor progress
+curl http://localhost:5000/api/scrape/status
+
+# 5. Run integration tests
+python test_scraper_integration.py --skip-scrape
 ```
 
-### Quick Test
+---
 
-**Test Live API:**
-```bash
-# Health check
-curl https://realtors-practice-api.onrender.com/api/health
+## 📊 Features
 
-# List sites
-curl https://realtors-practice-api.onrender.com/api/sites
+### Core Functionality
+
+**✅ Web Scraping**
+- 51 real estate websites supported
+- Adaptive scraping (requests → playwright → scraperapi fallback)
+- Detail page enrichment (parallel & sequential modes)
+- Auto-retry on failures with exponential backoff
+
+**✅ Data Processing**
+- Enterprise schema with 9 categories, 85+ fields
+- Quality scoring (0-100%) with configurable threshold
+- Duplicate detection using SHA256 hashing
+- Lagos-only filtering with landmark detection
+
+**✅ Data Storage**
+- **Primary**: Firestore (enterprise schema)
+- **Backup**: CSV/XLSX exports (master workbook)
+- Auto-deduplication across all sources
+- Historical data tracking
+
+**✅ REST API** (84 Endpoints)
+- Scraping Management (5 endpoints)
+- Site Configuration (6 endpoints)
+- Data Access (4 endpoints)
+- Firestore Queries (16 endpoints)
+- GitHub Actions Integration (4 endpoints)
+- Price Intelligence (4 endpoints)
+- Saved Searches (5 endpoints)
+- Email Notifications (5 endpoints)
+- Additional Features (35 endpoints)
+
+**✅ Automation**
+- GitHub Actions workflows (auto-scaling)
+- Scheduled scraping (cron support)
+- Email notifications on completion
+- Artifact management (30-day retention)
+
+---
+
+## 🏗️ Architecture
+
+### Enterprise Data Schema
+
+**9 Categories, 85+ Fields**:
+
+```typescript
+interface Property {
+  basic_info: {
+    title: string;
+    source: string;
+    status: 'for_sale' | 'for_rent' | 'sold';
+    listing_type: 'sale' | 'rent' | 'land';
+  };
+  property_details: {
+    property_type: string;
+    bedrooms: number;
+    bathrooms: number;
+    furnishing: 'furnished' | 'semi-furnished' | 'unfurnished';
+  };
+  financial: {
+    price: number;
+    currency: string;
+    price_per_sqm: number;
+    price_per_bedroom: number;
+  };
+  location: {
+    address: string;
+    area: string;
+    lga: string;
+    state: string;
+    coordinates: GeoPoint;
+    landmarks: string[];
+  };
+  amenities: {
+    features: string[];
+    security: string[];
+    utilities: string[];
+  };
+  media: {
+    images: Image[];
+    videos: string[];
+    virtual_tour: string;
+  };
+  agent_info: {
+    name: string;
+    contact: string;
+    agency: string;
+  };
+  metadata: {
+    quality_score: number;
+    view_count: number;
+    search_keywords: string[];
+  };
+  tags: {
+    premium: boolean;
+    hot_deal: boolean;
+    featured: boolean;
+  };
+}
 ```
 
-**Test Local API:**
-```bash
-# Start API server locally
-python api_server.py
+### API Architecture
 
-# In another terminal, test endpoints:
-curl http://localhost:5000/api/health
-curl http://localhost:5000/api/sites
-curl -X POST http://localhost:5000/api/scrape/start -H "Content-Type: application/json" -d '{"sites": ["npc"], "max_pages": 10}'
-```
+**84 Endpoints Organized by Category**:
+
+1. **Scraping Management** (5 endpoints)
+   - Start, stop, pause, resume, status
+
+2. **Site Configuration** (6 endpoints)
+   - List, get, add, update, delete, toggle sites
+
+3. **Data Access** (4 endpoints)
+   - List files, get site data, master data, search
+
+4. **Firestore Integration** (16 endpoints)
+   - Dashboard, filters, search, site queries
+
+5. **GitHub Actions** (4 endpoints)
+   - Trigger workflows, get runs, artifacts
+
+6. **Price Intelligence** (4 endpoints)
+   - Price trends, history, alerts
+
+7. **Saved Searches** (5 endpoints)
+   - Create, list, execute, update, delete
+
+8. **Email Notifications** (5 endpoints)
+   - Configure, send, subscriptions
+
+**Full API Documentation**: [frontend/API_ENDPOINTS_ACTUAL.md](frontend/API_ENDPOINTS_ACTUAL.md)
+
+---
 
 ## 📁 Project Structure
 
 ```
 realtors_practice/
-├── main.py                    # Main scraper entry point
-├── watcher.py                # Export watcher service
-├── config.yaml               # Configuration file
+├── main.py                      # Scraper entry point
+├── api_server.py                # REST API server (84 endpoints)
+├── watcher.py                   # Export watcher service
+├── config.yaml                  # Site configuration (51 sites)
 │
-├── core/                     # Core modules
-│   ├── config_loader.py     # Configuration management
-│   ├── scraper_engine.py    # Generic scraping engine
-│   ├── dispatcher.py        # Parser dispatch system
-│   ├── cleaner.py          # Data normalization
-│   ├── geo.py              # Geocoding service
-│   ├── exporter.py         # Export to CSV/XLSX
-│   ├── utils.py            # Utility functions
-│   ├── data_cleaner.py     # Advanced data cleaning
-│   ├── master_workbook.py  # Master workbook management
-│   └── email_notifier.py   # SMTP email notifications
+├── core/                        # Core scraping modules
+│   ├── scraper_engine.py        # Adaptive fetching (requests/playwright)
+│   ├── cleaner.py               # Data normalization
+│   ├── geo.py                   # Geocoding with OpenStreetMap
+│   ├── firestore_enterprise.py  # Enterprise schema upload
+│   └── [15+ other modules]
 │
-├── parsers/                  # Site-specific parsers
-│   ├── specials.py         # Config-driven parser (50+ sites)
-│   └── [site].py           # Site-specific modules
+├── parsers/                     # Site-specific parsers
+│   └── specials.py              # Generic config-driven parser
 │
-├── scripts/                  # Utility scripts
-│   ├── enable_sites.py     # Enable multiple sites
-│   ├── enable_one_site.py  # Enable single site
-│   ├── validate_config.py  # Validate configuration
-│   └── status.py           # Site health dashboard
+├── api/helpers/                 # API helper modules
+│   ├── scraper_manager.py       # Intelligent batch management
+│   ├── data_reader.py           # Data access layer
+│   ├── config_manager.py        # Config manipulation
+│   └── stats_generator.py       # Statistics generation
 │
-├── tests/                    # Test suite
-│   ├── test_watcher_integration.py
-│   ├── test_milestone*.py
-│   └── test_*.py
+├── frontend/                    # Frontend integration files
+│   ├── README.md                # Frontend developer guide
+│   ├── API_ENDPOINTS_ACTUAL.md  # Complete API reference
+│   ├── types.ts                 # TypeScript definitions
+│   ├── api-client.ts            # HTTP client
+│   └── hooks.tsx                # React hooks
 │
-├── docs/                     # Documentation
-│   ├── guides/              # User guides
-│   │   ├── QUICKSTART.md
-│   │   ├── MIGRATION_GUIDE.md
-│   │   ├── WATCHER_QUICKSTART.md
-│   │   └── WATCHER_COMPLETE.md
-│   ├── milestones/          # Milestone completion docs
-│   │   └── MILESTONE_*.md
-│   └── planning/            # Planning documents
-│       ├── tasks.md
-│       └── planning.md
+├── docs/                        # Documentation
+│   ├── README.md                # Documentation index
+│   ├── FINAL_SUMMARY_V3.1.md    # Complete project summary
+│   ├── setup-guides/            # Setup and workflow guides
+│   ├── reports/                 # Verification and test reports
+│   └── [architecture, backend-only, frontend folders]
 │
-├── exports/                  # Export data
-│   ├── sites/               # Raw scraper exports
-│   │   ├── npc/
-│   │   ├── propertypro/
-│   │   └── ...
-│   └── cleaned/             # Cleaned & consolidated data
-│       ├── MASTER_CLEANED_WORKBOOK.xlsx
-│       ├── metadata.json
-│       ├── [site]/
-│       │   ├── [site]_cleaned.csv
-│       │   └── [site]_cleaned.parquet
-│       └── ...
+├── .github/workflows/           # GitHub Actions
+│   ├── scrape-production.yml    # Auto-scaling multi-session
+│   └── test-quick-scrape.yml    # Quick testing workflow
 │
-└── logs/                     # Application logs
-    ├── scraper.log
-    ├── geocache.json
-    └── site_metadata.json
+├── scripts/                     # Utility scripts
+│   ├── enable_sites.py          # Enable multiple sites
+│   ├── enable_one_site.py       # Enable single site
+│   └── validate_config.py       # Config validation
+│
+├── tests/                       # Test suites
+│   └── [20+ test files]
+│
+├── exports/                     # Scraped data (gitignored)
+│   ├── sites/                   # Per-site exports
+│   └── cleaned/                 # Master workbook
+│
+└── logs/                        # Logs (gitignored)
+    ├── scraper.log              # Main log file
+    ├── geocache.json            # Geocoding cache
+    └── site_metadata.json       # Site statistics
 ```
-
-## 🎯 Complete Feature Set
-
-### ⭐ Core Scraping (100% Automated & Unlimited Scalability)
-- **Unlimited data sources** - Currently configured: 82+ sites (Nigeria Property Centre, PropertyPro, Jiji, Lamudi, Property24, and 77+ more)
-- **100% config-driven** - Add ANY new real estate site via config.yaml (YAML), zero code changes needed
-- **Lagos-focused filtering** - Automatically filters for Lagos area properties only
-- **Intelligent pagination** - Click next buttons, numbered pages, or URL parameters
-- **Adaptive fetching** - Requests → Playwright fallback for JavaScript-heavy sites
-- **Incremental scraping** - Only scrape new listings (80-90% faster)
-- **Rate limiting** - Respectful scraping with configurable delays per site
-- **Graceful error handling** - One site failure doesn't stop others
-- **No hard-coded parsers** - All site configurations in config.yaml, infinitely scalable
-
-### 🔍 Search & Discovery
-- **Natural Language Search** - "3 bedroom flat in Lekki under 30 million"
-- **Advanced Query Engine** - Complex filters with AND/OR logic, ranges, text matching
-- **Location-aware filtering** - GPS coordinates, proximity search
-- **Smart suggestions** - Auto-complete for searches
-- **Saved searches** - Save criteria, get alerts for new matches
-- **Quality filtering** - Only show high-quality listings with complete data
-
-### 💰 Price Intelligence
-- **Price history tracking** - Track how prices change over time
-- **Price drop alerts** - Get notified when properties reduce prices
-- **Stale listing detection** - Find properties listed for months (negotiation opportunities)
-- **Market trend analysis** - See price trends by location, property type
-- **Price per sqm calculation** - Compare value across properties
-
-### 🧹 Data Quality Management
-- **Duplicate detection** - Advanced fuzzy matching across all configured sites (currently 82+)
-- **Quality scoring** - 0.0-1.0 score based on data completeness
-- **Intelligent normalization** - Standardizes prices, locations, property types
-- **Geocoding** - Converts addresses to GPS coordinates (OpenStreetMap)
-- **Image validation** - Ensures listing images are accessible
-- **Hash-based deduplication** - SHA256 hashing prevents duplicate imports
-
-### 🤖 Automation & Scheduling
-- **Automated scheduler** - Cron-style and interval scheduling
-- **Background processing** - Non-blocking scraping operations
-- **Export watcher service** - Monitors and processes new data automatically
-- **Master workbook consolidation** - Single Excel file with all sites
-- **Metadata tracking** - Last scrape time, success rates, total scrapes
-
-### 📊 Monitoring & Health
-- **Health monitoring dashboard** - Track site performance in real-time
-- **Site status tracking** - Healthy/Warning/Critical status per site
-- **Active alerts** - Get notified when sites fail repeatedly
-- **Top performers** - See which sites yield most listings
-- **Scraping history** - Complete audit trail of all scraping runs
-- **Error logging** - Comprehensive error tracking and reporting
-
-### 🔌 REST API (79 (68 original + 11 new Firestore-optimized) Endpoints)
-- **Scraping management** - Start, stop, monitor scraping via API
-- **Site configuration** - Add, update, delete, toggle sites programmatically
-- **Data query** - Search, filter, paginate property data
-- **Firebase Firestore** - Cloud database storage with advanced querying
-- **GitHub Actions** - Serverless scraping with time estimation & progress tracking
-- **Price history** - Get price changes, drops, trends
-- **Natural language search** - Search API for plain English queries
-- **Saved searches** - Full CRUD operations for user searches
-- **Email notifications** - SMTP configuration, test connection, manage recipients
-- **Health monitoring** - System health, site health, alerts
-- **Duplicates & quality** - Detect duplicates, score quality via API
-- **Logs & statistics** - Access logs, errors, site stats
-- **CORS enabled** - Ready for frontend integration
-
-### 📦 Data Export & Storage
-- **Multiple formats** - CSV, XLSX, Parquet (configurable per site)
-- **Master workbook** - Consolidated MASTER_CLEANED_WORKBOOK.xlsx
-- **Per-site exports** - Cleaned CSV/Parquet for each site
-- **Metadata JSON** - Track file hashes, timestamps, counts
-- **Idempotent processing** - Safe to run multiple times
-- **Persistent caching** - Geocoding cache, seen URLs cache
-
-## 📖 Usage
-
-### API Server (Recommended)
-
-```bash
-# Start API server
-python api_server.py
-
-# Server starts on http://localhost:5000
-# API documentation at http://localhost:5000/api/health
-```
-
-**Key API Endpoints**:
-```bash
-# Start scraping
-POST /api/scrape/start
-Body: {"sites": ["npc", "propertypro"], "max_pages": 20}
-
-# Check status
-GET /api/scrape/status
-
-# Search properties (natural language)
-POST /api/search/natural
-Body: {"query": "3 bedroom flat in Lekki under 30 million"}
-
-# Advanced search
-POST /api/query
-Body: {"filters": {"bedrooms": {"gte": 3}, "price": {"lte": 30000000}}}
-
-# Get price drops
-GET /api/price-drops?min_drop_pct=10&days=30
-
-# Get all properties
-GET /api/data/master?limit=100&offset=0
-```
-
-See [docs/FRONTEND_INTEGRATION_GUIDE.md](docs/FRONTEND_INTEGRATION_GUIDE.md) for complete API documentation.
 
 ---
 
-### Direct Scraping (Without API)
-
-```bash
-# Scrape all enabled sites
-python main.py
-
-# Enable specific sites only
-python scripts/enable_sites.py npc propertypro jiji
-python main.py
-
-# Enable one site for testing
-python scripts/enable_one_site.py npc
-python main.py
-```
+## 🔧 Configuration
 
 ### Environment Variables
 
 ```bash
-# Windows
-set RP_DEBUG=1              # Enable debug logging
-set RP_HEADLESS=0           # Show browser window
-set RP_GEOCODE=1            # Enable geocoding
-set RP_PAGE_CAP=20          # Max pages per site
-set RP_MAX_GEOCODES=200     # Max geocoding requests
+# Scraping
+RP_PAGE_CAP=20              # Max pages per site
+RP_GEOCODE=1                # Enable geocoding (1=yes, 0=no)
+RP_HEADLESS=1               # Headless browser mode
+RP_DEBUG=0                  # Debug logging
 
-# Linux/Mac
-export RP_DEBUG=1
-export RP_HEADLESS=0
-# ... etc
+# Firestore
+FIREBASE_SERVICE_ACCOUNT=path/to/credentials.json
+FIRESTORE_ENABLED=1
+
+# GitHub Actions
+GITHUB_TOKEN=ghp_xxx        # For API integration
+GITHUB_OWNER=your-username
+GITHUB_REPO=your-repo
 ```
 
-### Export Processing
-
-```bash
-# Process all exports once
-python watcher.py --once
-
-# Continuous monitoring (daemon mode)
-python watcher.py --watch
-
-# Preview without writing
-python watcher.py --dry-run --once
-
-# Reset and reprocess all
-python watcher.py --reset-state
-python watcher.py --once
-```
-
-### Validation & Monitoring
-
-```bash
-# Validate configuration
-python scripts/validate_config.py
-
-# Check site health
-python scripts/status.py
-
-# Run tests
-python tests/test_watcher_integration.py
-```
-
-## 🔧 Configuration
-
-### config.yaml Structure
+### Site Configuration (config.yaml)
 
 ```yaml
-global_settings:
-  geocoding:
-    enabled: true
-    max_per_run: 120
-  pagination:
-    max_pages: 30
-    scroll_steps: 12
-  retry:
-    network_retry_seconds: 180
-    retry_on_zero_results: true
-  export:
-    formats: ["csv", "xlsx"]
-  browser:
-    headless: true
-    block_images: true
-
 sites:
   npc:
     name: "Nigeria Property Centre"
     url: "https://nigeriapropertycentre.com"
     enabled: true
     parser: specials
-    selectors:
-      card: "div.listing"
-      title: "h2.title"
-      price: ".price"
-      location: ".location"
-    pagination:
-      next_selectors: ["a.next", "a[rel='next']"]
-      page_param: "page"
     overrides:
-      network_retry_seconds: 300
-      max_pages: 50
+      max_pages: 30  # Site-specific override
+      geocoding: true
 ```
 
-## 📊 Data Schema
+**Adding New Sites**: Just add to config.yaml - no code changes needed!
 
-All listings normalized to canonical schema:
+---
 
-```python
-{
-  'title': str,
-  'price': str,
-  'location': str,
-  'property_type': str,
-  'bedrooms': int,
-  'bathrooms': int,
-  'land_size': str,
-  'description': str,
-  'agent_name': str,
-  'images': List[str],
-  'listing_url': str,
-  'coordinates': Dict[str, float],
-  'source': str,
-  'scrape_timestamp': str,
-  'hash': str,
-  # ... 27 total fields
-}
+## 🚀 Deployment
+
+### GitHub Actions (Recommended for Large Scrapes)
+
+**Trigger Production Scrape**:
+```bash
+# Via GitHub UI
+Go to: Actions → Production Scraper → Run workflow
+
+# Via API
+curl -X POST http://localhost:5000/api/github/trigger-scrape \
+  -H "Content-Type: application/json" \
+  -d '{"sites_per_session": 20, "page_cap": 20}'
 ```
 
-## 🧪 API Testing
+**Features**:
+- Auto-scaling: 3 parallel sessions for 51 sites
+- Estimated time: 1-2 hours (vs 3-4 hours sequential)
+- Automatic Firestore upload
+- Artifact retention: 30 days
 
-### Quick Browser Test (30 Seconds)
+**Setup Guide**: [docs/setup-guides/GITHUB_ACTIONS_SETUP.md](docs/setup-guides/GITHUB_ACTIONS_SETUP.md)
 
-Open your browser console and paste:
+### Local Deployment
 
-```javascript
-// Test 1: Health Check
-fetch('https://us-central1-realtor-s-practice.cloudfunctions.net/api/api/health')
-  .then(res => res.json())
-  .then(data => console.log('✅ API Health:', data));
+```bash
+# Start API server
+python api_server.py
 
-// Test 2: Get All Sites
-fetch('https://us-central1-realtor-s-practice.cloudfunctions.net/api/api/sites')
-  .then(res => res.json())
-  .then(data => console.log('✅ Total Sites:', data.total, 'Sites:', data.sites));
-
-// Test 3: Search Properties
-fetch('https://us-central1-realtor-s-practice.cloudfunctions.net/api/api/search/natural', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ query: '3 bedroom flat in Lekki' })
-})
-  .then(res => res.json())
-  .then(data => console.log('✅ Search Results:', data.count, 'properties found'));
+# Access at: http://localhost:5000
 ```
-
-If you see responses, **your API is working!** ✅
-
-### Postman Testing
-
-**Postman Collection:** [Nigerian_Real_Estate_API.postman_collection.json](docs/Nigerian_Real_Estate_API.postman_collection.json)
-
-Import the collection into Postman to test all 79 (68 original + 11 new Firestore-optimized) API endpoints:
-1. **Import**: File → Import → Select `Nigerian_Real_Estate_API.postman_collection.json`
-2. **Set Base URL**: Update `BASE_URL` variable to `https://us-central1-realtor-s-practice.cloudfunctions.net/api`
-3. **Test**: Run any endpoint to verify API is working
-
-See [POSTMAN_GUIDE.md](docs/POSTMAN_GUIDE.md) for detailed setup instructions.
 
 ---
 
 ## 📚 Documentation
 
-**For Everyone:**
-- **[LAYMAN.md](LAYMAN.md)** - 🌟 **Non-technical explanation** for clients and stakeholders (what it does, how it works, architecture in simple terms)
-- **[USER_GUIDE.md](USER_GUIDE.md)** - Complete user guide for developers
+### For Frontend Developers
+- 📖 [Frontend Setup Guide](frontend/README.md) - Complete integration guide
+- 📋 [API Endpoints Reference](frontend/API_ENDPOINTS_ACTUAL.md) - All 84 endpoints
+- 🎯 [Quick Integration Examples](frontend/README.md#quick-start)
 
-**Getting Started:**
-- **[frontend/FRONTEND_DEVELOPER_SETUP.md](frontend/FRONTEND_DEVELOPER_SETUP.md)** - Frontend integration quick start (3 steps)
-- **[docs/frontend/FRONTEND_INTEGRATION_GUIDE.md](docs/frontend/FRONTEND_INTEGRATION_GUIDE.md)** - Complete API reference (all 79 (68 original + 11 new Firestore-optimized) endpoints)
-- **[docs/frontend/POSTMAN_GUIDE.md](docs/frontend/POSTMAN_GUIDE.md)** - Postman testing guide
-- **[docs/frontend/FRONTEND_AUTH_GUIDE.md](docs/frontend/FRONTEND_AUTH_GUIDE.md)** - Authentication integration
+### For Backend Developers
+- 📖 [Complete Project Summary](docs/FINAL_SUMMARY_V3.1.md) - V3.1 overview
+- 🏗️ [Architecture Documentation](docs/README.md) - System architecture
+- 🔧 [GitHub Actions Setup](docs/setup-guides/GITHUB_ACTIONS_SETUP.md) - Workflow automation
+- 📊 [Enterprise Schema Guide](docs/ENTERPRISE_SCHEMA_EXPLAINED.md) - Data structure
 
-**Architecture & Technical:**
-- **[docs/architecture/ARCHITECTURE.md](docs/architecture/ARCHITECTURE.md)** - System architecture and design
-- **[docs/architecture/QUALITY_FILTERING.md](docs/architecture/QUALITY_FILTERING.md)** - Data quality system
-- **[docs/architecture/GITHUB_ACTIONS_SETUP.md](docs/architecture/GITHUB_ACTIONS_SETUP.md)** - CI/CD workflows
-- **[docs/architecture/FIRESTORE_EXPORT_GUIDE.md](docs/architecture/FIRESTORE_EXPORT_GUIDE.md)** - Firestore integration
-
-## 🔌 Complete API Reference (79 (68 original + 11 new Firestore-optimized) Endpoints)
-
-### **1. Scraping Management** (5 endpoints)
-- `GET /api/health` - Health check
-- `POST /api/scrape/start` - Start scraping
-- `POST /api/scrape/stop` - Stop scraping
-- `GET /api/scrape/status` - Get current status
-- `GET /api/scrape/history` - Get scrape history
-
-### **2. Site Configuration** (6 endpoints)
-- `GET /api/sites` - List all sites
-- `GET /api/sites/<key>` - Get specific site
-- `POST /api/sites` - Add new site
-- `PUT /api/sites/<key>` - Update site config
-- `DELETE /api/sites/<key>` - Delete site
-- `PATCH /api/sites/<key>/toggle` - Enable/disable site
-
-### **3. Data Access** (4 endpoints)
-- `GET /api/properties` - Get all properties
-- `GET /api/search` - Search properties
-- `POST /api/search/natural` - Natural language search
-- `POST /api/query` - Advanced query builder
-
-### **4. Price Intelligence** (4 endpoints)
-- `GET /api/price-history/<id>` - Get price history
-- `GET /api/price-drops` - Get price drops
-- `GET /api/stale-listings` - Get stale listings
-- `GET /api/market-trends` - Market trend analysis
-
-### **5. Saved Searches** (5 endpoints)
-- `GET /api/searches` - List saved searches
-- `POST /api/searches` - Create saved search
-- `GET /api/searches/<id>` - Get saved search
-- `PUT /api/searches/<id>` - Update saved search
-- `DELETE /api/searches/<id>` - Delete saved search
-
-### **6. GitHub Actions Integration** (4 endpoints)
-- `POST /api/github/trigger-scrape` - Trigger workflow
-- `POST /api/github/estimate-time` - Estimate scrape time
-- `GET /api/github/workflow-runs` - List workflow runs
-- `GET /api/github/artifacts` - List artifacts
-
-### **7. Firestore Integration** (14 endpoints)
-
-**Legacy Endpoints (3):**
-- `POST /api/firestore/query` - Query Firestore (legacy)
-- `POST /api/firestore/query-archive` - Query archive (legacy)
-- `POST /api/firestore/export` - Export to Firestore (legacy)
-
-**⭐ NEW: Optimized Query Endpoints (11 - 40-300x faster!):**
-- `GET /api/firestore/dashboard` ✅ - Dashboard statistics
-- `GET /api/firestore/top-deals` ✅ - Top 100 cheapest properties
-- `GET /api/firestore/newest` ✅ - Newest listings
-- `GET /api/firestore/for-sale` ✅ - For sale properties
-- `GET /api/firestore/for-rent` ✅ - For rent properties
-- `GET /api/firestore/land` ✅ - Land-only properties
-- `GET /api/firestore/premium` ✅ - Premium 4+ bedroom properties
-- `POST /api/firestore/search` ✅ - Advanced cross-site search with filters
-- `GET /api/firestore/site/{site_key}` ✅ - Site-specific properties
-- `GET /api/firestore/property/{hash}` ✅ - Individual property by hash
-- `GET /api/firestore/site-stats/{site_key}` ✅ - Site statistics
-
-### **8. Email Notifications** (5 endpoints)
-- `POST /api/email/configure` - Configure SMTP
-- `POST /api/email/test` - Test email connection
-- `POST /api/email/add-recipient` - Add recipient
-- `DELETE /api/email/remove-recipient` - Remove recipient
-- `POST /api/email/send` - Send notification
-
-### **Additional Endpoints** (32 endpoints)
-- Health monitoring, duplicates detection, quality scoring
-- Logs and statistics, site health, performance metrics
-- Data validation, location filtering, export management
-- Advanced filtering, pagination, and search capabilities
-
-See **[FRONTEND_INTEGRATION_GUIDE.md](docs/frontend/FRONTEND_INTEGRATION_GUIDE.md)** for complete documentation of all 79 (68 original + 11 new Firestore-optimized) endpoints.
-
-## ✅ Production Ready Features
-
-### **All Features Implemented (8/8)** ✓
-1. ✅ **Incremental Scraping** - Only scrape new listings (80-90% faster)
-2. ✅ **Duplicate Detection** - Advanced fuzzy matching across 82+ sites
-3. ✅ **Data Quality Scoring** - 0-100% scoring based on data completeness
-4. ✅ **Saved Searches & Alerts** - Save criteria, get alerts for new matches
-5. ✅ **Automated Scheduler** - Cron-style and interval scheduling
-6. ✅ **Health Monitoring** - Track site performance, identify issues
-7. ✅ **Price History Tracking** - Track price changes, alert on drops
-8. ✅ **Natural Language Search** - "3 bedroom flat in Lekki under 30M"
-
-### **Test Coverage: 100%** ✓
-- 100/100 tests passing
-- All features tested
-- Integration tests complete
-
-### **Code Metrics**
-- **Total API Endpoints**: 79 (68 original + 11 new Firestore-optimized)
-- **Core Modules**: 15+
-- **Sites Configured**: 82+ (unlimited scalability)
-- **Lines of Code**: ~25,000+
-- **Test Coverage**: 100%
-
-## 🚀 Deployment
-
-### ✅ Current Deployment Status
-
-**Backend is deployed and running on Render.com!**
-
-```
-API URL: https://realtors-practice-api.onrender.com/api
-Status: ✅ Live and Ready
-Platform: Render.com (Free Tier)
-Runtime: Python 3.11
-```
-
-**For Frontend Developers**:
-- **Quick Start**: [frontend/FRONTEND_DEVELOPER_SETUP.md](frontend/FRONTEND_DEVELOPER_SETUP.md)
-- **Complete API Docs**: [docs/frontend/FRONTEND_INTEGRATION_GUIDE.md](docs/frontend/FRONTEND_INTEGRATION_GUIDE.md)
-- **Postman Collection**: [docs/frontend/POSTMAN_GUIDE.md](docs/frontend/POSTMAN_GUIDE.md)
+### Verification Reports
+- ✅ [Integration Verification](docs/reports/SCRAPER_INTEGRATION_VERIFIED.md) - Full test report
+- ✅ [Verification Complete](docs/reports/VERIFICATION_COMPLETE.md) - Production readiness
+- ✅ [API Test Report](docs/reports/API_ENDPOINT_TEST_REPORT.md) - Endpoint testing
 
 ---
 
-### Render Deployment (Current)
+## 🧪 Testing
 
-**Your API is deployed with**:
-- ✅ **Render.com** - Cloud application hosting
-- ✅ **All 68 API endpoints** - Fully functional
-- ✅ **Auto-scaling** - Handles traffic automatically
-- ✅ **HTTPS** - Secure by default
-- ✅ **Monitoring** - Built-in logs and metrics
+### Quick API Test
+```bash
+# Health check
+curl http://localhost:5000/api/health
 
-**Cost**: $0/month (Free tier)
+# List sites
+curl http://localhost:5000/api/sites
 
-**Note**: Free tier sleeps after 15 minutes of inactivity. First request after sleep takes 30-60 seconds to wake up.
+# Small batch scrape
+curl -X POST http://localhost:5000/api/scrape/start \
+  -H "Content-Type: application/json" \
+  -d '{"sites": ["npc"], "max_pages": 2, "geocoding": false}'
+```
 
-**Management**:
-- **Render Dashboard**: https://dashboard.render.com
-- **View Logs**: Available in Render dashboard
-- **Redeploy**: Automatic on git push, or manual via dashboard
+### Automated Tests
+```bash
+# Run integration tests (API only)
+python test_scraper_integration.py --skip-scrape
+
+# Run small batch test
+python test_scraper_integration.py --small-batch-only
+
+# Run all tests
+pytest tests/
+```
 
 ---
 
-### Alternative FREE Deployment Options
+## 🔍 Monitoring
 
-**🏆 RECOMMENDED**: See **[FREE_DEPLOYMENT.md](FREE_DEPLOYMENT.md)** - Complete guide to FREE deployment
+### Real-time Progress
+```bash
+# Via API
+curl http://localhost:5000/api/scrape/status
 
-**Top FREE Options**:
+# Via monitoring script
+python monitor_workflow.py
+```
 
-1. **⭐ GitHub Actions** (Best for scheduled scraping)
-   - ✅ $0/month - Completely FREE
-   - ✅ 2000 minutes/month free
-   - ✅ No credit card required
-   - ✅ Scheduled scraping (cron)
-   - ✅ 15-minute setup
-   - **Perfect for**: Daily/weekly scraping
+### GitHub Actions Workflow
+- Live logs: https://github.com/Tee-David/realtors_practice/actions
+- Current run: #19408262700 (IN PROGRESS)
+- Expected completion: 1-2 hours
 
-2. **🌐 Oracle Cloud Always Free**
-   - ✅ $0/month - FREE forever
-   - ✅ 1-4 CPUs, 6-24GB RAM free
-   - ✅ Can run 24/7
-   - ⚠️ Requires credit card verification (never charges)
-   - **Perfect for**: 24/7 availability
+---
 
-3. **💻 Local Machine**
-   - ✅ $0/month - Completely FREE
-   - ✅ Full control
-   - ✅ 5-minute setup
-   - ❌ Computer must stay on
-   - **Perfect for**: Testing and development
+## 🎓 Key Features Explained
 
-**See [FREE_DEPLOYMENT.md](FREE_DEPLOYMENT.md) for complete setup guides!**
+### Intelligent Batching
+Automatically splits sites into optimal batches based on count:
+- ≤10 sites: No batching
+- 11-30 sites: 10 per batch
+- 31-50 sites: 15 per batch
+- 51+ sites: 20 per batch
+
+### Quality Filtering
+Scores listings 0-100% based on:
+- Completeness (has price, location, images)
+- Validity (realistic price ranges)
+- Detail richness (description length, features)
+
+Default threshold: 40% (configurable)
+
+### Auto-detection
+Automatically infers from listing text:
+- `listing_type`: sale, rent, or land
+- `furnishing`: furnished, semi-furnished, unfurnished
+- `condition`: new, renovated, or existing
+
+### Firestore Integration
+- **Primary storage**: All scraped data uploaded
+- **Enterprise schema**: 9 categories, 85+ fields
+- **16 query endpoints**: Optimized for frontend
+- **Real-time**: Data available immediately
+
+---
 
 ## 🤝 Contributing
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Run tests: `python tests/test_*.py`
-5. Update documentation
-6. Submit a pull request
+### Adding New Sites
+1. Add to `config.yaml`:
+   ```yaml
+   newsite:
+     name: "New Site"
+     url: "https://example.com"
+     enabled: true
+     parser: specials
+   ```
+2. No code changes needed!
+3. Test: `python scripts/enable_one_site.py newsite && python main.py`
 
-## 📝 License
-
-MIT License - See LICENSE file for details
-
-## 🙏 Acknowledgments
-
-- Built with: Python 3.8+, Playwright, BeautifulSoup4, Pandas, OpenPyXL
-- Geocoding: OpenStreetMap Nominatim
-
-## 🔗 Links
-
-- **GitHub**: [Repository Link]
-- **Documentation**: [docs/](docs/)
-- **Issues**: [GitHub Issues]
+### Reporting Issues
+- GitHub Issues: https://github.com/Tee-David/realtors_practice/issues
+- Include: Site name, error logs, config used
 
 ---
 
----
+## 📄 License
 
-## 🎯 What Can This Scraper Do? (Summary)
-
-This scraper is an **enterprise-grade property aggregation platform** that:
-
-1. **Collects** - Automatically scrapes UNLIMITED real estate websites (currently 82+ configured) for Lagos properties
-2. **Scales Infinitely** - Add any new site via config.yaml without writing code
-3. **Cleans** - Normalizes data, removes duplicates, scores quality
-4. **Searches** - Natural language search ("3BR flat in Lekki under 30M")
-5. **Tracks** - Monitors price changes, alerts on drops, identifies stale listings
-6. **Analyzes** - Market trends, price per sqm, location insights
-7. **Automates** - Scheduled scraping, saved searches, instant alerts
-8. **Monitors** - Site health tracking, error logging, performance metrics
-9. **Exports** - CSV, Excel, Parquet formats with master workbook
-10. **API** - Complete REST API with 68 endpoints for frontend integration
-11. **Firestore** - Cloud database storage with automatic uploads after scraping
-12. **Email Notifications** - SMTP configuration for automatic completion alerts
-
-**For End Users**: Search with plain English, save searches, get price alerts, find deals, receive email notifications
-**For Developers**: Complete REST API, TypeScript types, React hooks, comprehensive docs, Firestore integration
-**For Administrators**: Health monitoring, error tracking, automated scheduling, site management, email notifications
-
-See [USER_GUIDE.md](USER_GUIDE.md) for detailed explanation in simple terms.
+This project is private and proprietary.
 
 ---
 
-**Status**: ✅ Production Ready | **Version**: 2.2 | **Last Updated**: 2025-10-21 | **Tests**: 100/100 Passing
+## 📞 Support
+
+**Documentation**: See `docs/` folder for complete guides
+**API Reference**: See `frontend/API_ENDPOINTS_ACTUAL.md`
+**Setup Help**: See `docs/setup-guides/GITHUB_ACTIONS_SETUP.md`
+
+---
+
+## 🎯 Quick Links
+
+- 🏠 [Frontend Setup](frontend/README.md) - For developers integrating the API
+- 📚 [Complete API Reference](frontend/API_ENDPOINTS_ACTUAL.md) - All 84 endpoints
+- 🔧 [GitHub Actions Guide](docs/setup-guides/GITHUB_ACTIONS_SETUP.md) - Automation setup
+- ✅ [Verification Report](docs/reports/VERIFICATION_COMPLETE.md) - Production readiness
+- 📊 [Project Summary](docs/FINAL_SUMMARY_V3.1.md) - V3.1 overview
+
+---
+
+**Version**: 3.1.0 (Enterprise Firestore)
+**Status**: ✅ Production Ready
+**Last Updated**: 2025-11-16
+**Last Verified**: 2025-11-16 (All systems tested and working)

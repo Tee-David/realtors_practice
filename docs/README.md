@@ -1,302 +1,288 @@
 # Documentation Index
 
-Complete documentation for the Nigerian Real Estate Scraper project.
+Complete documentation for the Nigerian Real Estate Scraper - Enterprise Edition v3.1
 
-**Last Updated:** 2025-11-10
-
----
-
-## 📚 Quick Links
-
-### Getting Started
-- **[Main README](../README.md)** - Project overview and quick start
-- **[Quick Start Guide](guides/QUICKSTART.md)** - Get up and running in 5 minutes
-- **[Watcher Quick Start](guides/WATCHER_QUICKSTART.md)** - Export watcher service guide
-- **[API Quick Start](guides/API_QUICKSTART.md)** - REST API quick reference
-
-### Deployment
-
-**FREE Options ($0/month)**:
-- **[FREE Deployment Guide](../FREE_DEPLOYMENT.md)** - ⭐ Complete guide to FREE deployment (GitHub Actions, Oracle Cloud, Local)
-
-**Paid Options**:
-- **[Firebase Quick Start](../FIREBASE_QUICKSTART.md)** - Fast Firebase setup (~$1-5/month)
-- **[Firebase Deployment Guide](FIREBASE_DEPLOYMENT.md)** - Complete step-by-step walkthrough
-- **[Compatibility Guide](COMPATIBILITY.md)** - Platform compatibility details
-
-### Integration Guides
-- **[Frontend Integration](guides/FRONTEND_INTEGRATION.md)** - Complete Next.js integration (1,100+ lines)
-- **[API Documentation](guides/API_README.md)** - REST API overview
-- **[Migration Guide](guides/MIGRATION_GUIDE.md)** - Migrating to config-driven system
-
-### Architecture & Structure
-- **[Project Structure](STRUCTURE.md)** - Detailed architecture and module descriptions
-- **[File Structure](FILE_STRUCTURE.md)** - Clean file organization reference
-- **[Compatibility Guide](COMPATIBILITY.md)** - cPanel & Firebase deployment
+**Version**: 3.1.0 (Enterprise Firestore)
+**Last Updated**: 2025-11-16
+**Status**: ✅ Production Ready
 
 ---
 
-## 📖 Documentation Sections
+## 🎯 Quick Navigation
 
-### 1. Getting Started (guides/)
+### For Frontend Developers
+- 🏠 **[Frontend Integration Guide](../frontend/README.md)** - Start here!
+- 📋 **[API Endpoints Reference](../frontend/API_ENDPOINTS_ACTUAL.md)** - All 84 endpoints
+- 🔧 **[TypeScript Types](../frontend/types.ts)** - Type definitions
+- 🌐 **[API Client](../frontend/api-client.ts)** - HTTP client
+- ⚛️ **[React Hooks](../frontend/hooks.tsx)** - Data fetching
 
-Quick start guides for different components:
+### For Backend/DevOps
+- 🚀 **[GitHub Actions Setup](setup-guides/GITHUB_ACTIONS_SETUP.md)** - Automated scraping
+- ✅ **[Verification Report](reports/VERIFICATION_COMPLETE.md)** - Production readiness
+- 📊 **[Complete Project Summary](FINAL_SUMMARY_V3.1.md)** - V3.1 overview
+- 🏗️ **[Enterprise Schema Guide](ENTERPRISE_SCHEMA_EXPLAINED.md)** - Data structure
 
-| Document | Description | Lines |
-|----------|-------------|-------|
-| [QUICKSTART.md](guides/QUICKSTART.md) | Main scraper quick start | ~150 |
-| [WATCHER_QUICKSTART.md](guides/WATCHER_QUICKSTART.md) | Export watcher quick start | ~200 |
-| [API_QUICKSTART.md](guides/API_QUICKSTART.md) | API quick reference | ~400 |
-
-### 2. Integration Guides (guides/)
-
-Detailed integration and migration guides:
-
-| Document | Description | Lines |
-|----------|-------------|-------|
-| [FRONTEND_INTEGRATION.md](guides/FRONTEND_INTEGRATION.md) | Complete Next.js integration guide | 1,100+ |
-| [API_README.md](guides/API_README.md) | REST API overview | ~280 |
-| [MIGRATION_GUIDE.md](guides/MIGRATION_GUIDE.md) | Config system migration | ~250 |
-| [WATCHER_COMPLETE.md](guides/WATCHER_COMPLETE.md) | Complete watcher documentation | ~400 |
-| [HARD_CODED_CONFIGS_REMOVED.md](guides/HARD_CODED_CONFIGS_REMOVED.md) | Hard-coded config removal | ~200 |
-
-### 3. Architecture Documentation
-
-Core architectural documentation:
-
-| Document | Description | Lines |
-|----------|-------------|-------|
-| [STRUCTURE.md](STRUCTURE.md) | Project structure and module descriptions | ~515 |
-| [FILE_STRUCTURE.md](FILE_STRUCTURE.md) | File organization reference | ~650 |
-| [COMPATIBILITY.md](COMPATIBILITY.md) | cPanel & Firebase compatibility | ~650 |
-| [REORGANIZATION_COMPLETE.md](REORGANIZATION_COMPLETE.md) | Reorganization summary | ~440 |
-| [CLEANUP_SUMMARY.md](CLEANUP_SUMMARY.md) | Recent cleanup report | ~350 |
-
-### 4. Milestone Records (milestones/)
-
-Historical milestone completion records:
-
-| Document | Description |
-|----------|-------------|
-| [MILESTONE_2_COMPLETE.md](milestones/MILESTONE_2_COMPLETE.md) | YAML migration complete |
-| [MILESTONE_3_COMPLETE.md](milestones/MILESTONE_3_COMPLETE.md) | Parser integration complete |
-| [MILESTONE_4_5_COMPLETE.md](milestones/MILESTONE_4_5_COMPLETE.md) | Enhanced config system |
-| [MILESTONE_9_10_11_COMPLETE.md](milestones/MILESTONE_9_10_11_COMPLETE.md) | Export watcher service |
-| [PROJECT_COMPLETE.md](milestones/PROJECT_COMPLETE.md) | Project completion summary |
-
-### 5. Planning Documents (planning/)
-
-Internal planning and design documents:
-
-| Document | Description |
-|----------|-------------|
-| [tasks.md](planning/tasks.md) | Task list and roadmap |
-| [planning.md](planning/planning.md) | Project planning document |
-| [prompt.md](planning/prompt.md) | Original project prompt |
-| [direction.txt](planning/direction.txt) | Project direction notes |
-| [future_integrations.md](planning/future_integrations.md) | Future integration plans |
+### For Understanding the Project
+- 📖 **[Main README](../README.md)** - Project overview
+- 🏗️ **[Architecture](architecture/)** - System design
+- 📊 **[Project Summary](FINAL_SUMMARY_V3.1.md)** - Complete v3.1 summary
 
 ---
 
-## 🎯 Documentation by Use Case
+## 📚 Documentation Structure
 
-### "I want to start scraping properties"
-1. Read [QUICKSTART.md](guides/QUICKSTART.md)
-2. Install dependencies: `pip install -r requirements.txt`
-3. Run scraper: `python main.py`
-4. Process exports: `python watcher.py --once`
-
-### "I want to integrate with my Next.js frontend"
-1. Read [FRONTEND_INTEGRATION.md](guides/FRONTEND_INTEGRATION.md)
-2. Read [API_QUICKSTART.md](guides/API_QUICKSTART.md)
-3. Start API server: `python api_server.py`
-4. Follow Next.js integration examples in the guide
-
-### "I want to add a new real estate site"
-1. Read [Main README](../README.md) - Configuration section
-2. Add site to `config.yaml` with selectors
-3. Enable site: `python scripts/enable_one_site.py newsite`
-4. Test: `python main.py`
-5. See [config.example.yaml](../config.example.yaml) for full schema
-
-### "I want to understand the architecture"
-1. Read [STRUCTURE.md](STRUCTURE.md) - Complete architecture
-2. Read [FILE_STRUCTURE.md](FILE_STRUCTURE.md) - File organization
-3. Browse code in `core/` for implementation details
-
-### "I want to deploy to production"
-
-**FREE Deployment (No Cost)**:
-1. **Read**: [FREE_DEPLOYMENT.md](../FREE_DEPLOYMENT.md) - Complete FREE deployment guide
-2. **Choose**: GitHub Actions (easiest) or Oracle Cloud (most powerful)
-3. **Setup**: Follow step-by-step instructions (15-60 minutes)
-4. **Monitor**: Check logs in GitHub Actions or via SSH
-
-**Paid Deployment (Firebase, ~$1-5/month)**:
-1. **Quick Start**: [FIREBASE_QUICKSTART.md](../FIREBASE_QUICKSTART.md) - Fast setup
-2. **Full Guide**: [FIREBASE_DEPLOYMENT.md](FIREBASE_DEPLOYMENT.md) - Complete deployment walkthrough
-3. **Monitoring**: Check Firebase Console for logs and metrics
-4. **API**: [API_README.md](guides/API_README.md) - REST API deployment (optional)
-
-### "I want to understand what changed recently"
-1. Read [CLEANUP_SUMMARY.md](CLEANUP_SUMMARY.md) - Latest cleanup
-2. Read [REORGANIZATION_COMPLETE.md](REORGANIZATION_COMPLETE.md) - Major reorganization
-3. Check milestone docs for historical changes
+```
+docs/
+├── README.md                          # This file
+├── FINAL_SUMMARY_V3.1.md             # Complete project summary (460+ lines)
+├── ENTERPRISE_SCHEMA_EXPLAINED.md    # Enterprise schema guide
+│
+├── setup-guides/                      # Setup and configuration guides
+│   ├── GITHUB_ACTIONS_SETUP.md       # GitHub Actions automation
+│   └── QUICK_REFERENCE.md            # Quick reference card
+│
+├── reports/                           # Verification and test reports
+│   ├── VERIFICATION_COMPLETE.md      # Production readiness report
+│   ├── SCRAPER_INTEGRATION_VERIFIED.md  # Integration test report
+│   ├── API_ENDPOINT_TEST_REPORT.md   # API testing results
+│   ├── PRODUCTION_STATUS_REPORT.md   # Production status
+│   ├── WORKFLOW_RUNNING.md           # Current workflow status
+│   └── FINAL_SYSTEM_VERIFICATION.md  # System verification
+│
+├── frontend/                          # Frontend developer resources
+│   └── FOR_FRONTEND_DEVELOPER.md     # Frontend integration guide
+│
+├── backend-only/                      # Backend-only documentation
+│   └── [internal documentation]
+│
+└── architecture/                      # Architecture documentation
+    └── [system architecture]
+```
 
 ---
 
-## 📊 Documentation Statistics
+## 📖 Main Documentation
 
-- **Total Documentation Files:** 23 files
-- **Total Lines:** ~6,000+ lines
-- **Guides:** 9 files (user-facing)
-- **Milestones:** 5 files (historical)
-- **Planning:** 5 files (internal)
-- **Architecture:** 4 files (major docs)
+### Project Overview
 
----
+**[Main README](../README.md)** - Complete project overview
+- Quick start guides
+- Feature list
+- Architecture overview
+- API endpoints summary
+- Configuration guide
+- Deployment options
 
-## 🔍 Key Features Documented
-
-### Scraping System
-- ✅ Config-driven architecture (50+ sites)
-- ✅ Adaptive fetching (requests → playwright)
-- ✅ Lagos-focused filtering
-- ✅ Pagination strategies
-- ✅ Geocoding integration
-- ✅ Per-site overrides
-
-### Export Watcher
-- ✅ File monitoring with SHA256 detection
-- ✅ Fuzzy column matching
-- ✅ Intelligent data normalization
-- ✅ Master workbook consolidation
-- ✅ CSV/Parquet exports
-- ✅ Idempotent operations
-
-### REST API
-- ✅ 84 endpoints (68 original + 16 enterprise Firestore) across 20 categories
-- ✅ Enterprise Firestore integration (9 categories, 85+ fields)
-- ✅ Scraping management and site configuration
-- ✅ Data access and advanced search
-- ✅ Price intelligence and tracking
-- ✅ Saved searches and alerts
-- ✅ GitHub Actions integration
-- ✅ Email notifications and health monitoring
-
-### Frontend Integration
-- ✅ Complete Next.js examples
-- ✅ React hooks provided
-- ✅ TypeScript types
-- ✅ Error handling utilities
-- ✅ Real-time status monitoring
-- ✅ SWR integration
+**[Project Summary V3.1](FINAL_SUMMARY_V3.1.md)** - Complete project documentation (460+ lines)
+- Overview and accomplishments
+- Enterprise Firestore schema (9 categories, 85+ fields)
+- 84 API endpoints breakdown
+- Firestore integration
+- TypeScript integration
+- Code metrics
+- Production readiness checklist
 
 ---
 
-## 🚀 Project Status
+## 🚀 Setup Guides
 
-**Current Version:** 1.0.0 (Production Ready)
+### GitHub Actions Setup
 
-**Completed Milestones:**
-- ✅ M1-M8: Config-driven architecture
-- ✅ M9-M13: Export watcher service
-- ✅ API Integration: REST API for frontend
-- ✅ File Structure: Clean organization
+**[Complete GitHub Actions Guide](setup-guides/GITHUB_ACTIONS_SETUP.md)**
+- Prerequisites and setup (5 minutes)
+- Workflow overview (production + quick test)
+- Triggering workflows (manual + API)
+- Session strategy explanation
+- Monitoring progress
+- Advanced configuration
+- Troubleshooting
+- Cost estimation
 
-**Active Features:**
-- ✅ 50+ real estate sites supported
-- ✅ Config-driven site management
-- ✅ Export watcher with data cleaning
-- ✅ REST API for frontend integration
-- ✅ Master workbook consolidation
-
-**Test Coverage:**
-- ✅ 57/58 integration tests passing (98.3%)
-- ✅ 7/7 watcher integration tests passing
-- ✅ Config validation tests passing
+**[Quick Reference](setup-guides/QUICK_REFERENCE.md)**
+- Quick status check
+- Monitoring commands
+- Common operations
 
 ---
 
-## 📝 Documentation Standards
+## ✅ Verification Reports
 
-### File Naming
-- **UPPERCASE.md** - Major architectural docs
-- **Descriptive_Names.md** - User guides
-- **lowercase.md** - Planning docs
+### Production Readiness
 
-### Content Structure
-1. Title and description
-2. Table of contents (for long docs)
-3. Quick examples
-4. Detailed sections
-5. Troubleshooting
-6. Related links
+**[Verification Complete](reports/VERIFICATION_COMPLETE.md)** - Production readiness report
+- Executive summary
+- Test results (all systems)
+- Files created
+- Integration checklist
+- Next steps
 
-### Code Examples
-- Use fenced code blocks with language
-- Include comments for complex logic
-- Show expected output
-- Provide error handling
+**[Scraper Integration Verified](reports/SCRAPER_INTEGRATION_VERIFIED.md)** - Complete verification (460+ lines)
+- Test results for all features
+- API endpoint summary (84 endpoints)
+- Performance metrics
+- Integration checklist
+- Common use cases
+- Troubleshooting guide
 
----
+**[API Endpoint Test Report](reports/API_ENDPOINT_TEST_REPORT.md)**
+- Test results for 16 Firestore endpoints
+- Response times
+- Error rates
+- Coverage analysis
 
-## 🤝 Contributing to Documentation
+**[Production Status Report](reports/PRODUCTION_STATUS_REPORT.md)**
+- Current production status
+- Deployment checklist
+- Known issues
+- Performance metrics
 
-### Adding New Documentation
-1. Choose appropriate folder:
-   - User guides → `guides/`
-   - Milestone records → `milestones/`
-   - Planning docs → `planning/`
-   - Architecture → `docs/` root
-2. Follow naming conventions
-3. Update this README with link
-4. Cross-reference related docs
-
-### Updating Existing Documentation
-1. Read the document first
-2. Make changes inline
-3. Update "Last Updated" date
-4. Verify all links still work
-5. Test code examples
-
-### Documentation Review Checklist
-- [ ] Clear title and description
-- [ ] Table of contents (if > 300 lines)
-- [ ] Code examples work
-- [ ] Links are valid
-- [ ] Spelling and grammar checked
-- [ ] Updated date stamp
-- [ ] Cross-references accurate
+**[Workflow Status](reports/WORKFLOW_RUNNING.md)**
+- Current GitHub Actions workflow status
+- Real-time progress
+- Expected timeline
+- Monitoring instructions
 
 ---
 
-## 📞 Getting Help
+## 🏗️ Architecture
 
-### If you're stuck:
-1. Check relevant guide in `guides/`
-2. Read architecture docs for context
-3. Check milestone docs for implementation history
-4. Look at code examples in documentation
-5. Run validation: `python scripts/validate_config.py`
+### Enterprise Schema
 
-### Common Issues:
-- **Config errors:** See [QUICKSTART.md](guides/QUICKSTART.md)
-- **Site not scraping:** Check [STRUCTURE.md](STRUCTURE.md) parser section
-- **Watcher not working:** See [WATCHER_COMPLETE.md](guides/WATCHER_COMPLETE.md)
-- **API errors:** Check [API_README.md](guides/API_README.md) troubleshooting
+**[Enterprise Schema Explained](ENTERPRISE_SCHEMA_EXPLAINED.md)**
+- 9 categories breakdown
+- 85+ fields documentation
+- Auto-detection logic
+- Auto-tagging rules
+- Search optimization
 
----
+### System Architecture
 
-## 🔗 External Resources
-
-- **Python Documentation:** https://docs.python.org/3/
-- **Playwright Docs:** https://playwright.dev/python/
-- **BeautifulSoup Docs:** https://www.crummy.com/software/BeautifulSoup/bs4/doc/
-- **Flask Docs:** https://flask.palletsprojects.com/
-- **Next.js Docs:** https://nextjs.org/docs
+**[Architecture Documentation](architecture/)**
+- System design
+- Data flow
+- Module structure
+- Integration points
 
 ---
 
-**Last Major Update:** 2025-11-10 (Enterprise Firestore v3.1 Complete)
-**Status:** ✅ Complete and Up-to-Date
+## 🎓 Key Features Explained
+
+### Enterprise Firestore Schema (V3.1)
+
+**9 Categories, 85+ Fields**:
+1. `basic_info.*` - Title, source, status, listing_type
+2. `property_details.*` - Type, bedrooms, bathrooms, furnishing
+3. `financial.*` - Price, currency, price_per_sqm, payment plans
+4. `location.*` - Address, area, LGA, coordinates, landmarks
+5. `amenities.*` - Features, security, utilities
+6. `media.*` - Images, videos, virtual tours
+7. `agent_info.*` - Name, contact, agency
+8. `metadata.*` - Quality score, view count, keywords
+9. `tags.*` - Premium, hot_deal, featured
+
+### API Endpoints (84 Total)
+
+**Categories**:
+1. Scraping Management (5 endpoints)
+2. Site Configuration (6 endpoints)
+3. Data Access (4 endpoints)
+4. **Firestore Integration** (16 endpoints)
+5. GitHub Actions (4 endpoints)
+6. Price Intelligence (4 endpoints)
+7. Saved Searches (5 endpoints)
+8. Email Notifications (5 endpoints)
+9. Additional Features (35 endpoints)
+
+**Full Reference**: [frontend/API_ENDPOINTS_ACTUAL.md](../frontend/API_ENDPOINTS_ACTUAL.md)
+
+### Intelligent Features
+
+**Auto-Detection**:
+- `listing_type`: sale, rent, land (from text analysis)
+- `furnishing`: furnished, semi-furnished, unfurnished
+- `condition`: new, renovated, existing
+
+**Auto-Tagging**:
+- `premium`: ≥100M or 4+ BR + premium features
+- `hot_deal`: <15M per bedroom + quality ≥50%
+
+**Location Intelligence**:
+- 50+ Lagos landmarks detection
+- LGA identification
+- Area categorization
+- GeoPoint coordinates
+
+**Quality Filtering**:
+- 0-100% scoring
+- Configurable threshold (default: 40%)
+- Completeness, validity, detail richness
+
+---
+
+## 🔍 For Different Audiences
+
+### Frontend Developers
+
+Start here:
+1. **[Frontend README](../frontend/README.md)** - Integration guide
+2. **[API Endpoints](../frontend/API_ENDPOINTS_ACTUAL.md)** - All 84 endpoints
+3. **[TypeScript Types](../frontend/types.ts)** - Type definitions
+4. Use the React hooks - zero config needed!
+
+**What you need**:
+- 3 files (types.ts, api-client.ts, hooks.tsx)
+- 2 dependencies (swr, axios)
+- 5 minutes setup time
+
+### Backend Developers
+
+Start here:
+1. **[Project Summary](FINAL_SUMMARY_V3.1.md)** - Complete overview
+2. **[Main README](../README.md)** - Setup and configuration
+3. **[Enterprise Schema](ENTERPRISE_SCHEMA_EXPLAINED.md)** - Data structure
+
+**What you need**:
+- Python 3.11+
+- requirements.txt dependencies
+- Playwright browsers
+- config.yaml configuration
+
+### DevOps/Deployment
+
+Start here:
+1. **[GitHub Actions Setup](setup-guides/GITHUB_ACTIONS_SETUP.md)** - Automated workflows
+2. **[Verification Report](reports/VERIFICATION_COMPLETE.md)** - Production readiness
+3. **[Quick Reference](setup-guides/QUICK_REFERENCE.md)** - Operations
+
+**What you need**:
+- GitHub repository
+- Firebase credentials (optional)
+- GitHub Personal Access Token (for API integration)
+
+---
+
+## 📞 Support
+
+**Documentation Issues**: Check this index first
+**API Questions**: See [frontend/API_ENDPOINTS_ACTUAL.md](../frontend/API_ENDPOINTS_ACTUAL.md)
+**Setup Help**: See [setup-guides/](setup-guides/)
+**Verification**: See [reports/](reports/)
+
+---
+
+## 🎯 Quick Links Summary
+
+| Audience | Start Here | Then See |
+|----------|------------|----------|
+| **Frontend Developer** | [Frontend README](../frontend/README.md) | [API Reference](../frontend/API_ENDPOINTS_ACTUAL.md) |
+| **Backend Developer** | [Project Summary](FINAL_SUMMARY_V3.1.md) | [Main README](../README.md) |
+| **DevOps** | [GitHub Actions](setup-guides/GITHUB_ACTIONS_SETUP.md) | [Verification](reports/VERIFICATION_COMPLETE.md) |
+| **Project Manager** | [Main README](../README.md) | [Status Report](reports/PRODUCTION_STATUS_REPORT.md) |
+
+---
+
+**Version**: 3.1.0 (Enterprise Firestore)
+**Last Updated**: 2025-11-16
+**Status**: ✅ Production Ready
+**Total Documentation**: 25+ files, 10,000+ lines
