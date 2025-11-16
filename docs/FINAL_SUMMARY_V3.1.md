@@ -24,7 +24,7 @@ Successfully transformed the Nigerian Real Estate Scraper into an **enterprise-g
 - **Search keywords** auto-generated for full-text search
 
 ### 2. API Integration ✅ COMPLETE
-- **84 total endpoints** (68 original + 16 Firestore enterprise)
+- **90 total endpoints** (68 original + 16 Firestore enterprise)
 - **16 Firestore endpoints** all tested (100% pass rate)
 - **7 brand new enterprise endpoints** added
 - **9 existing endpoints** updated for nested schema
@@ -213,7 +213,7 @@ Property Document (85+ fields across 9 categories)
 
 ### Key Documents
 - **`frontend/README_FOR_DEVELOPER.md`** - START HERE! Complete setup and examples
-- **`frontend/API_ENDPOINTS_ACTUAL.md`** - Full API reference (all 84 endpoints)
+- **`frontend/API_ENDPOINTS_ACTUAL.md`** - Full API reference (all 90 endpoints)
 - **`frontend/FRONTEND_DEVELOPER_SETUP.md`** - Detailed setup guide
 - **`frontend/types.ts`** - TypeScript type definitions
 - **`frontend/hooks.tsx`** - Ready-to-use React hooks

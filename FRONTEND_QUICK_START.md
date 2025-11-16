@@ -58,7 +58,7 @@ export default function PropertiesPage() {
 }
 ```
 
-**That's it!** You now have access to 84 API endpoints and 500+ properties from Firestore.
+**That's it!** You now have access to 90 API endpoints and 500+ properties from Firestore.
 
 ---
 
@@ -98,7 +98,7 @@ const { status, isRunning } = useScraperStatus();
 ### TypeScript Support
 
 Full autocomplete for:
-- All 84 API endpoints
+- All 90 API endpoints
 - Enterprise schema (9 categories, 85+ fields)
 - All request/response types
 - Error handling

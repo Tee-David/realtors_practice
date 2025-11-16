@@ -8,7 +8,7 @@
 ## Executive Summary
 
 ✅ **Scraper**: Fully functional, running production scrape (Run #19262883814)
-✅ **API**: 84 endpoints operational (68 original + 16 Firestore)
+✅ **API**: 90 endpoints operational (68 original + 16 Firestore)
 ✅ **Firestore**: Enterprise schema deployed, awaiting data from running scrape
 ✅ **Workflows**: Simplified to 2 clean workflows (production + test)
 ✅ **Frontend Integration**: Complete TypeScript/React package ready
@@ -205,7 +205,7 @@ Frontend → API → GitHub Actions → Scraper → Firestore → Frontend
 
 ### Core System Files ✅
 - ✅ `main.py` - Scraper entry point
-- ✅ `api_server.py` - REST API (84 endpoints)
+- ✅ `api_server.py` - REST API (90 endpoints)
 - ✅ `config.yaml` - Site configuration
 - ✅ `requirements.txt` - Python dependencies
 - ✅ `core/exporter.py` - Quality filter (40%)
@@ -272,7 +272,7 @@ export default function PropertiesPage() {
 ```
 
 ### Key Features Available
-- ✅ 84 API endpoints (all documented)
+- ✅ 90 API endpoints (all documented)
 - ✅ 16 Firestore specialized endpoints
 - ✅ Real-time property data
 - ✅ Advanced filtering (location, price, features)
@@ -309,7 +309,7 @@ export default function PropertiesPage() {
 ## Production Readiness Checklist
 
 ### Backend ✅
-- [x] API server operational (84 endpoints)
+- [x] API server operational (90 endpoints)
 - [x] Firestore configured (enterprise schema)
 - [x] Firebase credentials in GitHub secrets
 - [x] Quality filter at 40%

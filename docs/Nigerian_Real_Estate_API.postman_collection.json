@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "Nigerian Real Estate Scraper API - Complete Collection",
-    "description": "Complete collection of all 93 API endpoints for the Nigerian Real Estate Scraper v3.1. Includes scraping management, site configuration, data access, Firestore queries (18 endpoints), GitHub Actions, price intelligence, search features, scheduling, and email notifications.",
+    "description": "Complete collection of all 90 API endpoints for the Nigerian Real Estate Scraper v3.1. Includes scraping management, site configuration, data access, Firestore queries (18 endpoints), GitHub Actions, price intelligence, search features, scheduling, and email notifications.",
     "version": "3.1.0",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },

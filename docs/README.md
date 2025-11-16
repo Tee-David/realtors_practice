@@ -12,7 +12,7 @@ Complete documentation for the Nigerian Real Estate Scraper - Enterprise Edition
 
 ### For Frontend Developers
 - 🏠 **[Frontend Integration Guide](../frontend/README.md)** - Start here!
-- 📋 **[API Endpoints Reference](../frontend/API_ENDPOINTS_ACTUAL.md)** - All 84 endpoints
+- 📋 **[API Endpoints Reference](../frontend/API_ENDPOINTS_ACTUAL.md)** - All 90 endpoints
 - 🔧 **[TypeScript Types](../frontend/types.ts)** - Type definitions
 - 🌐 **[API Client](../frontend/api-client.ts)** - HTTP client
 - ⚛️ **[React Hooks](../frontend/hooks.tsx)** - Data fetching
@@ -77,7 +77,7 @@ docs/
 **[Project Summary V3.1](FINAL_SUMMARY_V3.1.md)** - Complete project documentation (460+ lines)
 - Overview and accomplishments
 - Enterprise Firestore schema (9 categories, 85+ fields)
-- 84 API endpoints breakdown
+- 90 API endpoints breakdown
 - Firestore integration
 - TypeScript integration
 - Code metrics
@@ -119,7 +119,7 @@ docs/
 
 **[Scraper Integration Verified](reports/SCRAPER_INTEGRATION_VERIFIED.md)** - Complete verification (460+ lines)
 - Test results for all features
-- API endpoint summary (84 endpoints)
+- API endpoint summary (90 endpoints)
 - Performance metrics
 - Integration checklist
 - Common use cases
@@ -226,7 +226,7 @@ docs/
 
 Start here:
 1. **[Frontend README](../frontend/README.md)** - Integration guide
-2. **[API Endpoints](../frontend/API_ENDPOINTS_ACTUAL.md)** - All 84 endpoints
+2. **[API Endpoints](../frontend/API_ENDPOINTS_ACTUAL.md)** - All 90 endpoints
 3. **[TypeScript Types](../frontend/types.ts)** - Type definitions
 4. Use the React hooks - zero config needed!
 

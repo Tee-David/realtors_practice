@@ -1,6 +1,6 @@
 # Frontend Developer Guide
 
-Complete guide for integrating the Nigerian Real Estate API into your frontend application. All 84 endpoints are production-ready with full TypeScript support.
+Complete guide for integrating the Nigerian Real Estate API into your frontend application. All 90 endpoints are production-ready with full TypeScript support.
 
 ## 🎯 Quick Start
 
@@ -53,11 +53,11 @@ That's it! You're ready to build.
 
 ### TypeScript Types ([types.ts](types.ts))
 
-Complete type definitions for all 84 endpoints with enterprise schema (9 categories, 85+ fields).
+Complete type definitions for all 90 endpoints with enterprise schema (9 categories, 85+ fields).
 
 ### API Client ([api-client.ts](api-client.ts))
 
-HTTP client with error handling for all 84 endpoints organized by category.
+HTTP client with error handling for all 90 endpoints organized by category.
 
 ### React Hooks ([hooks.tsx](hooks.tsx))
 
@@ -69,7 +69,7 @@ SWR-powered hooks for automatic data fetching with real-time updates.
 
 **Base URL**: `https://realtors-practice-api.onrender.com/api` (Production)
 
-**Total**: 84 endpoints across 9 categories
+**Total**: 90 endpoints across 17 categories
 
 **Full Reference**: [API_ENDPOINTS_ACTUAL.md](API_ENDPOINTS_ACTUAL.md)
 

@@ -1,6 +1,6 @@
 # Nigerian Real Estate Scraper
 
-Enterprise-grade property aggregation platform that scrapes 51 real estate websites, enriches data with enterprise schema (9 categories, 85+ fields), and provides 84 REST API endpoints for frontend integration. Fully production-ready with GitHub Actions automation and Firestore integration.
+Enterprise-grade property aggregation platform that scrapes 51 real estate websites, enriches data with enterprise schema (9 categories, 85+ fields), and provides 90 REST API endpoints for frontend integration. Fully production-ready with GitHub Actions automation and Firestore integration.
 
 ## 🎯 Current Status
 
@@ -8,7 +8,7 @@ Enterprise-grade property aggregation platform that scrapes 51 real estate websi
 
 **Key Metrics**:
 - **Sites Configured**: 51 active real estate websites
-- **API Endpoints**: 84 total (68 core + 16 Firestore)
+- **API Endpoints**: 90 total (18 Firestore + 72 core features)
 - **Data Storage**: Firestore (enterprise schema)
 - **Automation**: GitHub Actions (auto-scaling multi-session)
 - **Frontend Ready**: Complete TypeScript integration
@@ -34,7 +34,7 @@ export default function PropertiesPage() {
 ```
 
 **What's Included**:
-- ✅ TypeScript types for all 84 endpoints
+- ✅ TypeScript types for all 90 endpoints
 - ✅ React hooks with SWR
 - ✅ API client with error handling
 - ✅ Complete documentation
@@ -42,7 +42,7 @@ export default function PropertiesPage() {
 
 **Frontend Developer Resources**:
 - 📚 [Complete Setup Guide](frontend/README.md) - Step-by-step integration
-- 📋 [All 84 API Endpoints](frontend/API_ENDPOINTS_ACTUAL.md) - Full reference
+- 📋 [All 90 API Endpoints](frontend/API_ENDPOINTS_ACTUAL.md) - Full reference
 - 🔧 [TypeScript Types](frontend/types.ts) - Type definitions
 - 🌐 [API Client](frontend/api-client.ts) - HTTP client
 - ⚛️ [React Hooks](frontend/hooks.tsx) - Data fetching hooks
@@ -95,16 +95,24 @@ python test_scraper_integration.py --skip-scrape
 - Auto-deduplication across all sources
 - Historical data tracking
 
-**✅ REST API** (84 Endpoints)
-- Scraping Management (5 endpoints)
-- Site Configuration (6 endpoints)
-- Data Access (4 endpoints)
-- Firestore Queries (16 endpoints)
-- GitHub Actions Integration (4 endpoints)
+**✅ REST API** (90 Endpoints)
+- Scraping Management (7 endpoints)
+- Site Configuration (10 endpoints)
+- Logs & Monitoring (3 endpoints)
+- Data Access (2 endpoints)
+- Statistics (4 endpoints)
+- Advanced Query & Filtering (11 endpoints)
+- Rate Limiting (2 endpoints)
 - Price Intelligence (4 endpoints)
-- Saved Searches (5 endpoints)
+- Natural Language Search (3 endpoints)
+- Saved Searches (2 endpoints)
+- Health Monitoring (4 endpoints)
+- Quality & Duplicates (2 endpoints)
+- Firestore Integration (18 endpoints)
+- Export & Download (3 endpoints)
+- GitHub Actions (7 endpoints)
+- Scheduling (3 endpoints)
 - Email Notifications (5 endpoints)
-- Additional Features (35 endpoints)
 
 **✅ Automation**
 - GitHub Actions workflows (auto-scaling)
@@ -178,31 +186,58 @@ interface Property {
 
 ### API Architecture
 
-**84 Endpoints Organized by Category**:
+**90 Endpoints Organized by 17 Categories**:
 
-1. **Scraping Management** (5 endpoints)
-   - Start, stop, pause, resume, status
+1. **Scraping Management** (7 endpoints)
+   - Start, stop, pause, resume, status, history, health check
 
-2. **Site Configuration** (6 endpoints)
-   - List, get, add, update, delete, toggle sites
+2. **Site Configuration** (10 endpoints)
+   - List, get, create, update, delete, toggle sites (multiple HTTP methods)
 
-3. **Data Access** (4 endpoints)
-   - List files, get site data, master data, search
+3. **Logs & Monitoring** (3 endpoints)
+   - All logs, errors only, site-specific logs
 
-4. **Firestore Integration** (16 endpoints)
-   - Dashboard, filters, search, site queries
+4. **Data Access** (2 endpoints)
+   - List files, get site data with pagination
 
-5. **GitHub Actions** (4 endpoints)
-   - Trigger workflows, get runs, artifacts
+5. **Statistics** (4 endpoints)
+   - Overview stats, site-level stats, trends, master data
 
-6. **Price Intelligence** (4 endpoints)
-   - Price trends, history, alerts
+6. **Advanced Query & Filtering** (11 endpoints)
+   - Complex queries, validation, location filters, config management
 
-7. **Saved Searches** (5 endpoints)
-   - Create, list, execute, update, delete
+7. **Rate Limiting** (2 endpoints)
+   - Status check, service-specific limits
 
-8. **Email Notifications** (5 endpoints)
-   - Configure, send, subscriptions
+8. **Price Intelligence** (4 endpoints)
+   - Price history, drops, stale listings, market trends
+
+9. **Natural Language Search** (3 endpoints)
+   - NL query, suggestions, search
+
+10. **Saved Searches** (2 endpoints)
+    - Create, list, execute, update, delete, stats
+
+11. **Health Monitoring** (4 endpoints)
+    - Overall health, site health, alerts, top performers
+
+12. **Quality & Duplicates** (2 endpoints)
+    - Detect duplicates, calculate quality score
+
+13. **Firestore Integration** (18 endpoints)
+    - Dashboard, filters, search, site queries, enterprise features
+
+14. **Export & Download** (3 endpoints)
+    - Generate exports, download, list formats
+
+15. **GitHub Actions** (7 endpoints)
+    - Trigger workflows, estimate time, status, runs, artifacts
+
+16. **Scheduling** (3 endpoints)
+    - Schedule scrapes, list jobs, cancel jobs
+
+17. **Email Notifications** (5 endpoints)
+    - Configure, test, recipients management
 
 **Full API Documentation**: [frontend/API_ENDPOINTS_ACTUAL.md](frontend/API_ENDPOINTS_ACTUAL.md)
 
