@@ -99,6 +99,13 @@ docs/
 - Troubleshooting
 - Cost estimation
 
+**[Intelligent Batching Guide](INTELLIGENT_BATCHING.md)** ⭐ NEW
+- Automatic timeout prevention system
+- Time estimation and batch calculation
+- Usage examples (auto mode, manual override)
+- Configuration tuning
+- Troubleshooting timeout issues
+
 **[Quick Reference](setup-guides/QUICK_REFERENCE.md)**
 - Quick status check
 - Monitoring commands

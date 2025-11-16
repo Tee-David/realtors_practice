@@ -13,7 +13,7 @@ Enterprise-grade property aggregation platform that scrapes 51 real estate websi
 - **Automation**: GitHub Actions (auto-scaling multi-session)
 - **Frontend Ready**: Complete TypeScript integration
 
-**Latest Achievement**: Successfully running large-scale scrape of all 51 sites via GitHub Actions (Run #19408262700)
+**Latest Achievement**: Intelligent auto-batching system prevents GitHub Actions timeouts - automatically calculates optimal batch sizes based on configuration
 
 ---
 
@@ -115,10 +115,12 @@ python test_scraper_integration.py --skip-scrape
 - Email Notifications (5 endpoints)
 
 **✅ Automation**
-- GitHub Actions workflows (auto-scaling)
+- GitHub Actions workflows with **intelligent auto-batching**
+- Automatically calculates optimal batch sizes to prevent timeouts
 - Scheduled scraping (cron support)
 - Email notifications on completion
 - Artifact management (30-day retention)
+- Time estimation before execution (see [Intelligent Batching Guide](docs/INTELLIGENT_BATCHING.md))
 
 ---
 
