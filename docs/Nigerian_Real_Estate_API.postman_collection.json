@@ -1,7 +1,7 @@
 {
   "info": {
-    "name": "Nigerian Real Estate Scraper API",
-    "description": "Complete collection of all 84 API endpoints (68 original + 16 Firestore enterprise endpoints). Default BASE_URL is set to Firebase. For local testing, change BASE_URL to {{LOCAL_URL}}.",
+    "name": "Nigerian Real Estate Scraper API - Complete Collection",
+    "description": "Complete collection of all 93 API endpoints for the Nigerian Real Estate Scraper v3.1. Includes scraping management, site configuration, data access, Firestore queries (18 endpoints), GitHub Actions, price intelligence, search features, scheduling, and email notifications.",
     "version": "3.1.0",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
@@ -23,12 +23,12 @@
   "variable": [
     {
       "key": "BASE_URL",
-      "value": "https://us-central1-realtor-s-practice.cloudfunctions.net/api",
+      "value": "https://realtors-practice-api.onrender.com/api",
       "type": "string"
     },
     {
       "key": "LOCAL_URL",
-      "value": "http://localhost:5000",
+      "value": "http://localhost:5000/api",
       "type": "string"
     },
     {
@@ -39,7 +39,7 @@
   ],
   "item": [
     {
-      "name": "1. Core Operations",
+      "name": "1. Scraping Management (7 endpoints)",
       "item": [
         {
           "name": "Health Check",
@@ -47,42 +47,28 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{BASE_URL}}/api/health",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "health"
-              ]
-            }
+              "raw": "{{BASE_URL}}/health",
+              "host": ["{{BASE_URL}}"],
+              "path": ["health"]
+            },
+            "description": "Check API server health status"
           }
         },
         {
           "name": "Start Scraping",
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "header": [{"key": "Content-Type", "value": "application/json"}],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"sites\": [\"npc\", \"propertypro\"],\n  \"max_pages\": 10\n}"
+              "raw": "{\n  \"sites\": [\"npc\", \"propertypro\"],\n  \"max_pages\": 10,\n  \"geocoding\": false\n}"
             },
             "url": {
-              "raw": "{{BASE_URL}}/api/scrape/start",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "scrape",
-                "start"
-              ]
-            }
+              "raw": "{{BASE_URL}}/scrape/start",
+              "host": ["{{BASE_URL}}"],
+              "path": ["scrape", "start"]
+            },
+            "description": "Start scraping with specified sites and configuration"
           }
         },
         {
@@ -91,16 +77,11 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{BASE_URL}}/api/scrape/status",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "scrape",
-                "status"
-              ]
-            }
+              "raw": "{{BASE_URL}}/scrape/status",
+              "host": ["{{BASE_URL}}"],
+              "path": ["scrape", "status"]
+            },
+            "description": "Get current scraping status with batch information and timing"
           }
         },
         {
@@ -109,16 +90,37 @@
             "method": "POST",
             "header": [],
             "url": {
-              "raw": "{{BASE_URL}}/api/scrape/stop",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "scrape",
-                "stop"
-              ]
-            }
+              "raw": "{{BASE_URL}}/scrape/stop",
+              "host": ["{{BASE_URL}}"],
+              "path": ["scrape", "stop"]
+            },
+            "description": "Stop the current scraping process"
+          }
+        },
+        {
+          "name": "Pause Scraping",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/scrape/pause",
+              "host": ["{{BASE_URL}}"],
+              "path": ["scrape", "pause"]
+            },
+            "description": "Pause the current scraping process"
+          }
+        },
+        {
+          "name": "Resume Scraping",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/scrape/resume",
+              "host": ["{{BASE_URL}}"],
+              "path": ["scrape", "resume"]
+            },
+            "description": "Resume a paused scraping process"
           }
         },
         {
@@ -127,22 +129,17 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{BASE_URL}}/api/scrape/history",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "scrape",
-                "history"
-              ]
-            }
+              "raw": "{{BASE_URL}}/scrape/history",
+              "host": ["{{BASE_URL}}"],
+              "path": ["scrape", "history"]
+            },
+            "description": "Get history of all scraping runs"
           }
         }
       ]
     },
     {
-      "name": "2. Site Management",
+      "name": "2. Site Configuration (6 endpoints)",
       "item": [
         {
           "name": "List All Sites",
@@ -150,15 +147,11 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{BASE_URL}}/api/sites",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "sites"
-              ]
-            }
+              "raw": "{{BASE_URL}}/sites",
+              "host": ["{{BASE_URL}}"],
+              "path": ["sites"]
+            },
+            "description": "Get list of all configured sites (51 sites)"
           }
         },
         {
@@ -167,69 +160,45 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{BASE_URL}}/api/sites/npc",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "sites",
-                "npc"
-              ]
-            }
+              "raw": "{{BASE_URL}}/sites/npc",
+              "host": ["{{BASE_URL}}"],
+              "path": ["sites", "npc"]
+            },
+            "description": "Get configuration for a specific site"
           }
         },
         {
           "name": "Create New Site",
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "header": [{"key": "Content-Type", "value": "application/json"}],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"key\": \"new_site\",\n  \"config\": {\n    \"name\": \"New Site\",\n    \"url\": \"https://example.com\",\n    \"enabled\": false,\n    \"parser\": \"specials\"\n  }\n}"
             },
             "url": {
-              "raw": "{{BASE_URL}}/api/sites",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "sites"
-              ]
-            }
+              "raw": "{{BASE_URL}}/sites",
+              "host": ["{{BASE_URL}}"],
+              "path": ["sites"]
+            },
+            "description": "Add a new site to configuration"
           }
         },
         {
           "name": "Update Site",
           "request": {
             "method": "PUT",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "header": [{"key": "Content-Type", "value": "application/json"}],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"config\": {\n    \"enabled\": true\n  }\n}"
+              "raw": "{\n  \"config\": {\n    \"enabled\": true,\n    \"overrides\": {\n      \"max_pages\": 30\n    }\n  }\n}"
             },
             "url": {
-              "raw": "{{BASE_URL}}/api/sites/npc",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "sites",
-                "npc"
-              ]
-            }
+              "raw": "{{BASE_URL}}/sites/npc",
+              "host": ["{{BASE_URL}}"],
+              "path": ["sites", "npc"]
+            },
+            "description": "Update site configuration"
           }
         },
         {
@@ -238,16 +207,11 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "{{BASE_URL}}/api/sites/old_site",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "sites",
-                "old_site"
-              ]
-            }
+              "raw": "{{BASE_URL}}/sites/old_site",
+              "host": ["{{BASE_URL}}"],
+              "path": ["sites", "old_site"]
+            },
+            "description": "Remove a site from configuration"
           }
         },
         {
@@ -256,137 +220,346 @@
             "method": "PATCH",
             "header": [],
             "url": {
-              "raw": "{{BASE_URL}}/api/sites/npc/toggle",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "sites",
-                "npc",
-                "toggle"
-              ]
-            }
+              "raw": "{{BASE_URL}}/sites/npc/toggle",
+              "host": ["{{BASE_URL}}"],
+              "path": ["sites", "npc", "toggle"]
+            },
+            "description": "Toggle site enabled/disabled status"
           }
         }
       ]
     },
     {
-      "name": "3. Data Access",
+      "name": "3. Logs & Monitoring (3 endpoints)",
       "item": [
         {
-          "name": "Get All Properties (Master)",
+          "name": "Get All Logs",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{BASE_URL}}/api/data/master?limit=20&offset=0",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "data",
-                "master"
-              ],
+              "raw": "{{BASE_URL}}/logs?limit=100",
+              "host": ["{{BASE_URL}}"],
+              "path": ["logs"],
               "query": [
-                {
-                  "key": "limit",
-                  "value": "20"
-                },
-                {
-                  "key": "offset",
-                  "value": "0"
-                }
+                {"key": "limit", "value": "100"},
+                {"key": "level", "value": "ERROR", "disabled": true}
               ]
-            }
-          }
-        },
-        {
-          "name": "Search Properties",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{BASE_URL}}/api/data/search?q=lekki&limit=50",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "data",
-                "search"
-              ],
-              "query": [
-                {
-                  "key": "q",
-                  "value": "lekki"
-                },
-                {
-                  "key": "limit",
-                  "value": "50"
-                }
-              ]
-            }
-          }
-        },
-        {
-          "name": "Natural Language Search",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"query\": \"3 bedroom flat in Lekki under 30 million\"\n}"
             },
-            "url": {
-              "raw": "{{BASE_URL}}/api/search/natural",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "search",
-                "natural"
-              ]
-            }
+            "description": "Get scraper logs with optional filtering by level"
           }
         },
+        {
+          "name": "Get Error Logs Only",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/logs/errors",
+              "host": ["{{BASE_URL}}"],
+              "path": ["logs", "errors"]
+            },
+            "description": "Get only ERROR level logs"
+          }
+        },
+        {
+          "name": "Get Site-Specific Logs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/logs/site/npc",
+              "host": ["{{BASE_URL}}"],
+              "path": ["logs", "site", "npc"]
+            },
+            "description": "Get logs for a specific site"
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Data Access (4 endpoints)",
+      "item": [
+        {
+          "name": "List Available Files",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/data/sites",
+              "host": ["{{BASE_URL}}"],
+              "path": ["data", "sites"]
+            },
+            "description": "List all available data files from exports folder"
+          }
+        },
+        {
+          "name": "Get Site Data",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/data/sites/npc?limit=50&offset=0",
+              "host": ["{{BASE_URL}}"],
+              "path": ["data", "sites", "npc"],
+              "query": [
+                {"key": "limit", "value": "50"},
+                {"key": "offset", "value": "0"}
+              ]
+            },
+            "description": "Get property data from a specific site with pagination"
+          }
+        },
+        {
+          "name": "Get Master Data",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/data/master?limit=100&offset=0",
+              "host": ["{{BASE_URL}}"],
+              "path": ["data", "master"],
+              "query": [
+                {"key": "limit", "value": "100"},
+                {"key": "offset", "value": "0"}
+              ]
+            },
+            "description": "Get consolidated master workbook data"
+          }
+        },
+        {
+          "name": "Search Data",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/data/search?q=lekki&limit=100",
+              "host": ["{{BASE_URL}}"],
+              "path": ["data", "search"],
+              "query": [
+                {"key": "q", "value": "lekki"},
+                {"key": "limit", "value": "100"}
+              ]
+            },
+            "description": "Search across all properties in master data"
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Statistics (3 endpoints)",
+      "item": [
+        {
+          "name": "Get Overview Stats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/stats/overview",
+              "host": ["{{BASE_URL}}"],
+              "path": ["stats", "overview"]
+            },
+            "description": "Get aggregate statistics across all sites"
+          }
+        },
+        {
+          "name": "Get Site-Level Stats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/stats/sites",
+              "host": ["{{BASE_URL}}"],
+              "path": ["stats", "sites"]
+            },
+            "description": "Get per-site statistics breakdown"
+          }
+        },
+        {
+          "name": "Get Trend Analysis",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/stats/trends",
+              "host": ["{{BASE_URL}}"],
+              "path": ["stats", "trends"]
+            },
+            "description": "Get historical trend analysis"
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Advanced Query & Filtering (8 endpoints)",
+      "item": [
         {
           "name": "Advanced Query",
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "header": [{"key": "Content-Type", "value": "application/json"}],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"filters\": {\n    \"bedrooms\": {\"gte\": 3},\n    \"price\": {\"lte\": 30000000},\n    \"location\": {\"contains\": \"Lekki\"}\n  },\n  \"limit\": 100\n}"
+              "raw": "{\n  \"filters\": {\n    \"bedrooms\": {\"gte\": 3, \"lte\": 4},\n    \"price\": {\"lte\": 30000000},\n    \"location\": {\"contains\": \"Lekki\"}\n  },\n  \"sort_by\": \"price\",\n  \"sort_desc\": false,\n  \"limit\": 100,\n  \"offset\": 0\n}"
             },
             "url": {
-              "raw": "{{BASE_URL}}/api/query",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "query"
-              ]
-            }
+              "raw": "{{BASE_URL}}/query",
+              "host": ["{{BASE_URL}}"],
+              "path": ["query"]
+            },
+            "description": "Advanced multi-criteria property search"
+          }
+        },
+        {
+          "name": "Query Summary",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"filters\": {\n    \"price\": {\"lte\": 50000000}\n  }\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/query/summary",
+              "host": ["{{BASE_URL}}"],
+              "path": ["query", "summary"]
+            },
+            "description": "Get summary statistics for a filtered query"
+          }
+        },
+        {
+          "name": "Validate URL",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"url\": \"https://nigeriapropertycentre.com/for-sale/houses/lagos/lekki\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/validate/url",
+              "host": ["{{BASE_URL}}"],
+              "path": ["validate", "url"]
+            },
+            "description": "Validate a single property URL"
+          }
+        },
+        {
+          "name": "Validate Multiple URLs",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"urls\": [\n    \"https://nigeriapropertycentre.com/for-sale/1\",\n    \"https://propertypro.ng/property/2\"\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/validate/urls",
+              "host": ["{{BASE_URL}}"],
+              "path": ["validate", "urls"]
+            },
+            "description": "Validate multiple property URLs"
+          }
+        },
+        {
+          "name": "Filter by Location",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"locations\": [\"Lekki\", \"Victoria Island\", \"Ikoyi\"]\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/filter/location",
+              "host": ["{{BASE_URL}}"],
+              "path": ["filter", "location"]
+            },
+            "description": "Filter properties by specific locations"
+          }
+        },
+        {
+          "name": "Get Filter Stats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/filter/stats",
+              "host": ["{{BASE_URL}}"],
+              "path": ["filter", "stats"]
+            },
+            "description": "Get statistics about location filtering"
+          }
+        },
+        {
+          "name": "Get Location Config",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/config/locations",
+              "host": ["{{BASE_URL}}"],
+              "path": ["config", "locations"]
+            },
+            "description": "Get current location filter configuration"
+          }
+        },
+        {
+          "name": "Update Location Config",
+          "request": {
+            "method": "PUT",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"locations\": [\"Lekki\", \"Ajah\", \"Victoria Island\"],\n  \"enabled\": true\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/config/locations",
+              "host": ["{{BASE_URL}}"],
+              "path": ["config", "locations"]
+            },
+            "description": "Update location filter configuration"
           }
         }
       ]
     },
     {
-      "name": "4. Price Intelligence",
+      "name": "7. Rate Limiting (2 endpoints)",
+      "item": [
+        {
+          "name": "Check Rate Limit Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/rate-limit/status",
+              "host": ["{{BASE_URL}}"],
+              "path": ["rate-limit", "status"]
+            },
+            "description": "Get current rate limit status for geocoding and external APIs"
+          }
+        },
+        {
+          "name": "Check Rate Limit for Service",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"service\": \"geocoding\",\n  \"requests\": 10\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/rate-limit/check",
+              "host": ["{{BASE_URL}}"],
+              "path": ["rate-limit", "check"]
+            },
+            "description": "Check if specific number of requests can be made"
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. Price Intelligence (4 endpoints)",
       "item": [
         {
           "name": "Get Price History",
@@ -394,16 +567,11 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{BASE_URL}}/api/price-history/property_123",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "price-history",
-                "property_123"
-              ]
-            }
+              "raw": "{{BASE_URL}}/price-history/property_123",
+              "host": ["{{BASE_URL}}"],
+              "path": ["price-history", "property_123"]
+            },
+            "description": "Get price history for a specific property"
           }
         },
         {
@@ -412,25 +580,15 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{BASE_URL}}/api/price-drops?min_drop_pct=10&days=30",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "price-drops"
-              ],
+              "raw": "{{BASE_URL}}/price-drops?min_drop_pct=10&days=30",
+              "host": ["{{BASE_URL}}"],
+              "path": ["price-drops"],
               "query": [
-                {
-                  "key": "min_drop_pct",
-                  "value": "10"
-                },
-                {
-                  "key": "days",
-                  "value": "30"
-                }
+                {"key": "min_drop_pct", "value": "10"},
+                {"key": "days", "value": "30"}
               ]
-            }
+            },
+            "description": "Find properties with significant price drops"
           }
         },
         {
@@ -439,21 +597,12 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{BASE_URL}}/api/stale-listings?days=60",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "stale-listings"
-              ],
-              "query": [
-                {
-                  "key": "days",
-                  "value": "60"
-                }
-              ]
-            }
+              "raw": "{{BASE_URL}}/stale-listings?days=60",
+              "host": ["{{BASE_URL}}"],
+              "path": ["stale-listings"],
+              "query": [{"key": "days", "value": "60"}]
+            },
+            "description": "Find properties that haven't been updated in X days"
           }
         },
         {
@@ -462,21 +611,53 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{BASE_URL}}/api/market-trends",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "market-trends"
-              ]
-            }
+              "raw": "{{BASE_URL}}/market-trends",
+              "host": ["{{BASE_URL}}"],
+              "path": ["market-trends"]
+            },
+            "description": "Get market trend analysis"
           }
         }
       ]
     },
     {
-      "name": "5. Saved Searches",
+      "name": "9. Natural Language Search (2 endpoints)",
+      "item": [
+        {
+          "name": "Natural Language Query",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"3 bedroom flat in Lekki under 30 million naira\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/search/natural",
+              "host": ["{{BASE_URL}}"],
+              "path": ["search", "natural"]
+            },
+            "description": "Search properties using natural language"
+          }
+        },
+        {
+          "name": "Get Search Suggestions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/search/suggestions?q=lek",
+              "host": ["{{BASE_URL}}"],
+              "path": ["search", "suggestions"],
+              "query": [{"key": "q", "value": "lek"}]
+            },
+            "description": "Get autocomplete suggestions for search"
+          }
+        }
+      ]
+    },
+    {
+      "name": "10. Saved Searches (5 endpoints)",
       "item": [
         {
           "name": "List Saved Searches",
@@ -484,41 +665,28 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{BASE_URL}}/api/searches",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "searches"
-              ]
-            }
+              "raw": "{{BASE_URL}}/searches",
+              "host": ["{{BASE_URL}}"],
+              "path": ["searches"]
+            },
+            "description": "Get all saved searches"
           }
         },
         {
           "name": "Create Saved Search",
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "header": [{"key": "Content-Type", "value": "application/json"}],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"My Dream Home\",\n  \"criteria\": {\n    \"bedrooms\": {\"gte\": 3},\n    \"location\": {\"contains\": \"Lekki\"}\n  }\n}"
+              "raw": "{\n  \"name\": \"My Dream Home\",\n  \"criteria\": {\n    \"bedrooms\": {\"gte\": 3},\n    \"price\": {\"lte\": 30000000},\n    \"location\": {\"contains\": \"Lekki\"}\n  },\n  \"notify\": true\n}"
             },
             "url": {
-              "raw": "{{BASE_URL}}/api/searches",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "searches"
-              ]
-            }
+              "raw": "{{BASE_URL}}/searches",
+              "host": ["{{BASE_URL}}"],
+              "path": ["searches"]
+            },
+            "description": "Create a new saved search with optional notifications"
           }
         },
         {
@@ -527,43 +695,28 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{BASE_URL}}/api/searches/search_123",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "searches",
-                "search_123"
-              ]
-            }
+              "raw": "{{BASE_URL}}/searches/search_123",
+              "host": ["{{BASE_URL}}"],
+              "path": ["searches", "search_123"]
+            },
+            "description": "Execute a saved search and get results"
           }
         },
         {
           "name": "Update Saved Search",
           "request": {
             "method": "PUT",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "header": [{"key": "Content-Type", "value": "application/json"}],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Updated Search Name\"\n}"
+              "raw": "{\n  \"name\": \"Updated Search Name\",\n  \"notify\": false\n}"
             },
             "url": {
-              "raw": "{{BASE_URL}}/api/searches/search_123",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "searches",
-                "search_123"
-              ]
-            }
+              "raw": "{{BASE_URL}}/searches/search_123",
+              "host": ["{{BASE_URL}}"],
+              "path": ["searches", "search_123"]
+            },
+            "description": "Update a saved search"
           }
         },
         {
@@ -572,512 +725,300 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "{{BASE_URL}}/api/searches/search_123",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "searches",
-                "search_123"
-              ]
-            }
+              "raw": "{{BASE_URL}}/searches/search_123",
+              "host": ["{{BASE_URL}}"],
+              "path": ["searches", "search_123"]
+            },
+            "description": "Delete a saved search"
+          }
+        },
+        {
+          "name": "Get Search Stats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/searches/search_123/stats",
+              "host": ["{{BASE_URL}}"],
+              "path": ["searches", "search_123", "stats"]
+            },
+            "description": "Get statistics for a saved search"
           }
         }
       ]
     },
     {
-      "name": "6. GitHub Actions",
+      "name": "11. Health Monitoring (4 endpoints)",
       "item": [
         {
-          "name": "Trigger Scrape Workflow",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"sites\": [\"npc\", \"propertypro\"],\n  \"page_cap\": 20\n}"
-            },
-            "url": {
-              "raw": "{{BASE_URL}}/api/github/trigger-scrape",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "github",
-                "trigger-scrape"
-              ]
-            }
-          }
-        },
-        {
-          "name": "Estimate Scrape Time",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"sites\": [\"npc\", \"propertypro\", \"jiji\"]\n}"
-            },
-            "url": {
-              "raw": "{{BASE_URL}}/api/github/estimate-scrape-time",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "github",
-                "estimate-scrape-time"
-              ]
-            }
-          }
-        },
-        {
-          "name": "Get Workflow Runs",
+          "name": "Overall Health",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{BASE_URL}}/api/github/workflow-runs",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "github",
-                "workflow-runs"
-              ]
-            }
+              "raw": "{{BASE_URL}}/health/overall",
+              "host": ["{{BASE_URL}}"],
+              "path": ["health", "overall"]
+            },
+            "description": "Get overall system health status"
           }
         },
         {
-          "name": "Get Artifacts",
+          "name": "Site Health Check",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{BASE_URL}}/api/github/artifacts",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "github",
-                "artifacts"
-              ]
-            }
+              "raw": "{{BASE_URL}}/health/sites/npc",
+              "host": ["{{BASE_URL}}"],
+              "path": ["health", "sites", "npc"]
+            },
+            "description": "Check health status of a specific site"
+          }
+        },
+        {
+          "name": "Get Health Alerts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/health/alerts",
+              "host": ["{{BASE_URL}}"],
+              "path": ["health", "alerts"]
+            },
+            "description": "Get active health alerts and warnings"
+          }
+        },
+        {
+          "name": "Get Top Performers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/health/top-performers",
+              "host": ["{{BASE_URL}}"],
+              "path": ["health", "top-performers"]
+            },
+            "description": "Get best performing sites"
           }
         }
       ]
     },
     {
-      "name": "7. Firestore (16 Enterprise Endpoints)",
+      "name": "12. Quality & Duplicates (2 endpoints)",
       "item": [
         {
-          "name": "Query Firestore (Legacy)",
+          "name": "Detect Duplicates",
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "header": [{"key": "Content-Type", "value": "application/json"}],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"filters\": {\"location\": \"Lekki\"},\n  \"limit\": 10\n}"
+              "raw": "{\n  \"properties\": [\n    {\"title\": \"3 Bedroom Flat\", \"price\": 25000000, \"location\": \"Lekki\"},\n    {\"title\": \"3 BR Flat\", \"price\": 25000000, \"location\": \"Lekki Phase 1\"}\n  ]\n}"
             },
             "url": {
-              "raw": "{{BASE_URL}}/api/firestore/query",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "firestore",
-                "query"
-              ]
-            }
+              "raw": "{{BASE_URL}}/duplicates/detect",
+              "host": ["{{BASE_URL}}"],
+              "path": ["duplicates", "detect"]
+            },
+            "description": "Detect duplicate properties using fuzzy matching"
           }
         },
         {
-          "name": "Query Archive (Legacy)",
+          "name": "Calculate Quality Score",
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "header": [{"key": "Content-Type", "value": "application/json"}],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"filters\": {},\n  \"limit\": 10\n}"
+              "raw": "{\n  \"property\": {\n    \"title\": \"5 Bedroom Detached Duplex\",\n    \"price\": 85000000,\n    \"location\": \"Lekki Phase 1\",\n    \"bedrooms\": 5,\n    \"images\": [\"url1\", \"url2\"]\n  }\n}"
             },
             "url": {
-              "raw": "{{BASE_URL}}/api/firestore/query-archive",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "firestore",
-                "query-archive"
-              ]
-            }
+              "raw": "{{BASE_URL}}/quality/score",
+              "host": ["{{BASE_URL}}"],
+              "path": ["quality", "score"]
+            },
+            "description": "Calculate quality score for a property (0-100%)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "13. Firestore Integration (18 endpoints)",
+      "item": [
+        {
+          "name": "1. Dashboard Statistics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/firestore/dashboard",
+              "host": ["{{BASE_URL}}"],
+              "path": ["firestore", "dashboard"]
+            },
+            "description": "Get dashboard stats: total properties, sites, price ranges, property types"
           }
         },
         {
-          "name": "Export to Firestore (Legacy)",
+          "name": "2. Top Deals (Cheapest)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/firestore/top-deals?limit=100&min_quality=0.4",
+              "host": ["{{BASE_URL}}"],
+              "path": ["firestore", "top-deals"],
+              "query": [
+                {"key": "limit", "value": "100"},
+                {"key": "min_quality", "value": "0.4"}
+              ]
+            },
+            "description": "Get cheapest properties sorted by price"
+          }
+        },
+        {
+          "name": "3. Newest Listings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/firestore/newest?limit=50&days_back=30",
+              "host": ["{{BASE_URL}}"],
+              "path": ["firestore", "newest"],
+              "query": [
+                {"key": "limit", "value": "50"},
+                {"key": "days_back", "value": "30"}
+              ]
+            },
+            "description": "Get newest properties added in the last X days"
+          }
+        },
+        {
+          "name": "4. For Sale Properties",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/firestore/for-sale?limit=50&offset=0",
+              "host": ["{{BASE_URL}}"],
+              "path": ["firestore", "for-sale"],
+              "query": [
+                {"key": "limit", "value": "50"},
+                {"key": "offset", "value": "0"}
+              ]
+            },
+            "description": "Get properties with status='for_sale'"
+          }
+        },
+        {
+          "name": "5. For Rent Properties",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/firestore/for-rent?limit=50&offset=0",
+              "host": ["{{BASE_URL}}"],
+              "path": ["firestore", "for-rent"],
+              "query": [
+                {"key": "limit", "value": "50"},
+                {"key": "offset", "value": "0"}
+              ]
+            },
+            "description": "Get properties with status='for_rent'"
+          }
+        },
+        {
+          "name": "6. Land Only",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/firestore/land?limit=50&offset=0",
+              "host": ["{{BASE_URL}}"],
+              "path": ["firestore", "land"],
+              "query": [
+                {"key": "limit", "value": "50"},
+                {"key": "offset", "value": "0"}
+              ]
+            },
+            "description": "Get land-only properties (listing_type='land')"
+          }
+        },
+        {
+          "name": "7. Premium Properties",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/firestore/premium?min_bedrooms=4&limit=50",
+              "host": ["{{BASE_URL}}"],
+              "path": ["firestore", "premium"],
+              "query": [
+                {"key": "min_bedrooms", "value": "4"},
+                {"key": "limit", "value": "50"}
+              ]
+            },
+            "description": "Get premium properties (tags.premium=true or 4+ bedrooms)"
+          }
+        },
+        {
+          "name": "8. Advanced Search",
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "header": [{"key": "Content-Type", "value": "application/json"}],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"collection\": \"properties\"\n}"
+              "raw": "{\n  \"filters\": {\n    \"price_min\": 10000000,\n    \"price_max\": 50000000,\n    \"bedrooms_min\": 3,\n    \"bedrooms_max\": 4,\n    \"location\": \"Lekki\",\n    \"property_type\": \"Flat\",\n    \"furnishing\": \"furnished\"\n  },\n  \"sort_by\": \"price\",\n  \"sort_desc\": false,\n  \"limit\": 50\n}"
             },
             "url": {
-              "raw": "{{BASE_URL}}/api/firestore/export",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "firestore",
-                "export"
-              ]
-            }
+              "raw": "{{BASE_URL}}/firestore/search",
+              "host": ["{{BASE_URL}}"],
+              "path": ["firestore", "search"]
+            },
+            "description": "Advanced multi-criteria search across all Firestore properties"
           }
         },
         {
-          "name": "Dashboard Statistics",
+          "name": "9. Site-Specific Properties",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{BASE_URL}}/api/firestore/dashboard",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "firestore",
-                "dashboard"
-              ]
-            },
-            "description": "Get aggregate dashboard statistics including total properties, sites, price ranges, and property type breakdown. Replaces _Dashboard Excel sheet."
-          }
-        },
-        {
-          "name": "Top Deals (Cheapest Properties)",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{BASE_URL}}/api/firestore/top-deals?limit=100&min_quality=0.7",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "firestore",
-                "top-deals"
-              ],
+              "raw": "{{BASE_URL}}/firestore/site/npc?limit=50&sort_by=price",
+              "host": ["{{BASE_URL}}"],
+              "path": ["firestore", "site", "npc"],
               "query": [
-                {
-                  "key": "limit",
-                  "value": "100",
-                  "description": "Maximum number of results (default: 100)"
-                },
-                {
-                  "key": "min_quality",
-                  "value": "0.7",
-                  "description": "Minimum quality score (0.0-1.0)"
-                }
+                {"key": "limit", "value": "50"},
+                {"key": "sort_by", "value": "price"}
               ]
             },
-            "description": "Get cheapest properties across all sites. Replaces _Top_100_Cheapest Excel sheet."
+            "description": "Get all properties from a specific site"
           }
         },
         {
-          "name": "Newest Listings",
+          "name": "10. Get Property by Hash",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{BASE_URL}}/api/firestore/newest?limit=50&days_back=30",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "firestore",
-                "newest"
-              ],
-              "query": [
-                {
-                  "key": "limit",
-                  "value": "50",
-                  "description": "Maximum number of results (default: 50)"
-                },
-                {
-                  "key": "days_back",
-                  "value": "30",
-                  "description": "Look back this many days (default: 30)"
-                }
-              ]
+              "raw": "{{BASE_URL}}/firestore/property/abc123hash",
+              "host": ["{{BASE_URL}}"],
+              "path": ["firestore", "property", "abc123hash"]
             },
-            "description": "Get newest property listings. Replaces _Newest_Listings Excel sheet."
+            "description": "Get single property by unique hash ID"
           }
         },
         {
-          "name": "For Sale Properties",
+          "name": "11. Site Statistics",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{BASE_URL}}/api/firestore/for-sale?limit=50&offset=0",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "firestore",
-                "for-sale"
-              ],
-              "query": [
-                {
-                  "key": "limit",
-                  "value": "50",
-                  "description": "Maximum number of results (default: 50)"
-                },
-                {
-                  "key": "offset",
-                  "value": "0",
-                  "description": "Pagination offset (default: 0)"
-                }
-              ]
+              "raw": "{{BASE_URL}}/firestore/site-stats/npc",
+              "host": ["{{BASE_URL}}"],
+              "path": ["firestore", "site-stats", "npc"]
             },
-            "description": "Get properties listed for sale. Replaces _For_Sale Excel sheet."
-          }
-        },
-        {
-          "name": "For Rent Properties",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{BASE_URL}}/api/firestore/for-rent?limit=50&offset=0",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "firestore",
-                "for-rent"
-              ],
-              "query": [
-                {
-                  "key": "limit",
-                  "value": "50",
-                  "description": "Maximum number of results (default: 50)"
-                },
-                {
-                  "key": "offset",
-                  "value": "0",
-                  "description": "Pagination offset (default: 0)"
-                }
-              ]
-            },
-            "description": "Get properties listed for rent. Replaces _For_Rent Excel sheet."
-          }
-        },
-        {
-          "name": "Land Only Properties",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{BASE_URL}}/api/firestore/land?limit=50&offset=0",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "firestore",
-                "land"
-              ],
-              "query": [
-                {
-                  "key": "limit",
-                  "value": "50",
-                  "description": "Maximum number of results (default: 50)"
-                },
-                {
-                  "key": "offset",
-                  "value": "0",
-                  "description": "Pagination offset (default: 0)"
-                }
-              ]
-            },
-            "description": "Get land-only properties. Replaces _Land_Only Excel sheet."
-          }
-        },
-        {
-          "name": "Premium Properties (4+ Bedrooms)",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{BASE_URL}}/api/firestore/premium?min_bedrooms=4&limit=50&offset=0",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "firestore",
-                "premium"
-              ],
-              "query": [
-                {
-                  "key": "min_bedrooms",
-                  "value": "4",
-                  "description": "Minimum bedrooms (default: 4)"
-                },
-                {
-                  "key": "limit",
-                  "value": "50",
-                  "description": "Maximum number of results (default: 50)"
-                },
-                {
-                  "key": "offset",
-                  "value": "0",
-                  "description": "Pagination offset (default: 0)"
-                }
-              ]
-            },
-            "description": "Get premium properties with 4+ bedrooms. Replaces _4BR_Plus Excel sheet."
-          }
-        },
-        {
-          "name": "Advanced Search",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"filters\": {\n    \"price_min\": 10000000,\n    \"price_max\": 50000000,\n    \"bedrooms_min\": 3,\n    \"bedrooms_max\": 4,\n    \"location\": \"Lekki\",\n    \"property_type\": \"Flat\"\n  },\n  \"sort_by\": \"price\",\n  \"sort_desc\": false,\n  \"limit\": 50,\n  \"offset\": 0\n}"
-            },
-            "url": {
-              "raw": "{{BASE_URL}}/api/firestore/search",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "firestore",
-                "search"
-              ]
-            },
-            "description": "Advanced cross-site property search with multiple filters. Supports price range, bedrooms, bathrooms, location, property type, quality score, and date range filtering."
-          }
-        },
-        {
-          "name": "Site-Specific Properties",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{BASE_URL}}/api/firestore/site/npc?limit=50&offset=0&sort_by=price",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "firestore",
-                "site",
-                "npc"
-              ],
-              "query": [
-                {
-                  "key": "limit",
-                  "value": "50",
-                  "description": "Maximum number of results (default: 50)"
-                },
-                {
-                  "key": "offset",
-                  "value": "0",
-                  "description": "Pagination offset (default: 0)"
-                },
-                {
-                  "key": "sort_by",
-                  "value": "price",
-                  "description": "Sort field: price, scrape_timestamp, quality_score"
-                }
-              ]
-            },
-            "description": "Get properties from a specific site. Replaces per-site Excel sheets (e.g., npc, propertypro)."
-          }
-        },
-        {
-          "name": "Get Property by Hash",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{BASE_URL}}/api/firestore/property/abc123hash",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "firestore",
-                "property",
-                "abc123hash"
-              ]
-            },
-            "description": "Get a single property by its unique hash ID."
-          }
-        },
-        {
-          "name": "Site Statistics",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{BASE_URL}}/api/firestore/site-stats/npc",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "firestore",
-                "site-stats",
-                "npc"
-              ]
-            },
-            "description": "Get statistics for a specific site including total properties, price ranges, and property type breakdown."
+            "description": "Get statistics for a specific site"
           }
         },
         {
@@ -1086,28 +1027,15 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{BASE_URL}}/api/firestore/properties/furnished?furnishing=furnished&limit=50",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "firestore",
-                "properties",
-                "furnished"
-              ],
+              "raw": "{{BASE_URL}}/firestore/properties/furnished?furnishing=furnished&limit=50",
+              "host": ["{{BASE_URL}}"],
+              "path": ["firestore", "properties", "furnished"],
               "query": [
-                {
-                  "key": "furnishing",
-                  "value": "furnished"
-                },
-                {
-                  "key": "limit",
-                  "value": "50"
-                }
+                {"key": "furnishing", "value": "furnished"},
+                {"key": "limit", "value": "50"}
               ]
             },
-            "description": "Get properties filtered by furnishing status (furnished, semi-furnished, unfurnished)"
+            "description": "Filter by furnishing: furnished, semi-furnished, unfurnished"
           }
         },
         {
@@ -1116,24 +1044,12 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{BASE_URL}}/api/firestore/properties/verified?limit=100",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "firestore",
-                "properties",
-                "verified"
-              ],
-              "query": [
-                {
-                  "key": "limit",
-                  "value": "100"
-                }
-              ]
+              "raw": "{{BASE_URL}}/firestore/properties/verified?limit=100",
+              "host": ["{{BASE_URL}}"],
+              "path": ["firestore", "properties", "verified"],
+              "query": [{"key": "limit", "value": "100"}]
             },
-            "description": "Get only verified properties (verification_status = 'verified')"
+            "description": "Get only verified properties"
           }
         },
         {
@@ -1142,54 +1058,29 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{BASE_URL}}/api/firestore/properties/trending?min_views=10&limit=50",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "firestore",
-                "properties",
-                "trending"
-              ],
+              "raw": "{{BASE_URL}}/firestore/properties/trending?min_views=10&limit=50",
+              "host": ["{{BASE_URL}}"],
+              "path": ["firestore", "properties", "trending"],
               "query": [
-                {
-                  "key": "min_views",
-                  "value": "10"
-                },
-                {
-                  "key": "limit",
-                  "value": "50"
-                }
+                {"key": "min_views", "value": "10"},
+                {"key": "limit", "value": "50"}
               ]
             },
-            "description": "Get trending properties sorted by view count"
+            "description": "Get properties sorted by view count"
           }
         },
         {
-          "name": "15. Get Hot Deals (Auto-Tagged)",
+          "name": "15. Get Hot Deals",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{BASE_URL}}/api/firestore/properties/hot-deals?limit=100",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "firestore",
-                "properties",
-                "hot-deals"
-              ],
-              "query": [
-                {
-                  "key": "limit",
-                  "value": "100"
-                }
-              ]
+              "raw": "{{BASE_URL}}/firestore/properties/hot-deals?limit=100",
+              "host": ["{{BASE_URL}}"],
+              "path": ["firestore", "properties", "hot-deals"],
+              "query": [{"key": "limit", "value": "100"}]
             },
-            "description": "Get auto-tagged hot deal properties (<15M per bedroom)"
+            "description": "Get auto-tagged hot deals (<15M per bedroom)"
           }
         },
         {
@@ -1198,25 +1089,12 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{BASE_URL}}/api/firestore/properties/by-lga/Eti-Osa?limit=100",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "firestore",
-                "properties",
-                "by-lga",
-                "Eti-Osa"
-              ],
-              "query": [
-                {
-                  "key": "limit",
-                  "value": "100"
-                }
-              ]
+              "raw": "{{BASE_URL}}/firestore/properties/by-lga/Eti-Osa?limit=100",
+              "host": ["{{BASE_URL}}"],
+              "path": ["firestore", "properties", "by-lga", "Eti-Osa"],
+              "query": [{"key": "limit", "value": "100"}]
             },
-            "description": "Get properties filtered by Local Government Area (LGA)"
+            "description": "Filter by Local Government Area"
           }
         },
         {
@@ -1225,25 +1103,12 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{BASE_URL}}/api/firestore/properties/by-area/Lekki?limit=100",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "firestore",
-                "properties",
-                "by-area",
-                "Lekki"
-              ],
-              "query": [
-                {
-                  "key": "limit",
-                  "value": "100"
-                }
-              ]
+              "raw": "{{BASE_URL}}/firestore/properties/by-area/Lekki?limit=100",
+              "host": ["{{BASE_URL}}"],
+              "path": ["firestore", "properties", "by-area", "Lekki"],
+              "query": [{"key": "limit", "value": "100"}]
             },
-            "description": "Get properties filtered by specific area (e.g., Lekki, VI, Ikoyi)"
+            "description": "Filter by specific area (Lekki, VI, Ikoyi, etc.)"
           }
         },
         {
@@ -1252,60 +1117,311 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{BASE_URL}}/api/firestore/properties/new-on-market?max_days=7&limit=50",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "firestore",
-                "properties",
-                "new-on-market"
-              ],
+              "raw": "{{BASE_URL}}/firestore/properties/new-on-market?max_days=7&limit=50",
+              "host": ["{{BASE_URL}}"],
+              "path": ["firestore", "properties", "new-on-market"],
               "query": [
-                {
-                  "key": "max_days",
-                  "value": "7"
-                },
-                {
-                  "key": "limit",
-                  "value": "50"
-                }
+                {"key": "max_days", "value": "7"},
+                {"key": "limit", "value": "50"}
               ]
             },
-            "description": "Get recently listed properties (within specified days on market)"
+            "description": "Get recently listed properties (within X days)"
           }
         }
       ]
     },
     {
-      "name": "8. Email Notifications",
+      "name": "14. Firestore Legacy (3 endpoints)",
       "item": [
         {
-          "name": "Configure Email",
+          "name": "Query Firestore (Legacy)",
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"filters\": {\"location\": \"Lekki\"},\n  \"limit\": 10\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/firestore/query",
+              "host": ["{{BASE_URL}}"],
+              "path": ["firestore", "query"]
+            },
+            "description": "Legacy Firestore query endpoint"
+          }
+        },
+        {
+          "name": "Query Archive (Legacy)",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"filters\": {},\n  \"limit\": 10\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/firestore/query-archive",
+              "host": ["{{BASE_URL}}"],
+              "path": ["firestore", "query-archive"]
+            },
+            "description": "Legacy archive query endpoint"
+          }
+        },
+        {
+          "name": "Export to Firestore (Legacy)",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"collection\": \"properties\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/firestore/export",
+              "host": ["{{BASE_URL}}"],
+              "path": ["firestore", "export"]
+            },
+            "description": "Legacy Firestore export endpoint"
+          }
+        }
+      ]
+    },
+    {
+      "name": "15. Export & Download (3 endpoints)",
+      "item": [
+        {
+          "name": "Generate Export",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"format\": \"csv\",\n  \"filters\": {\n    \"price\": {\"lte\": 50000000}\n  }\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/export/generate",
+              "host": ["{{BASE_URL}}"],
+              "path": ["export", "generate"]
+            },
+            "description": "Generate custom export file (CSV, JSON, Excel)"
+          }
+        },
+        {
+          "name": "Download Export",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/export/download/export_123.csv",
+              "host": ["{{BASE_URL}}"],
+              "path": ["export", "download", "export_123.csv"]
+            },
+            "description": "Download a generated export file"
+          }
+        },
+        {
+          "name": "List Export Formats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/export/formats",
+              "host": ["{{BASE_URL}}"],
+              "path": ["export", "formats"]
+            },
+            "description": "Get list of supported export formats"
+          }
+        }
+      ]
+    },
+    {
+      "name": "16. GitHub Actions (6 endpoints)",
+      "item": [
+        {
+          "name": "Trigger Scrape Workflow",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sites_per_session\": 20,\n  \"page_cap\": 20,\n  \"geocode\": 1\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/github/trigger-scrape",
+              "host": ["{{BASE_URL}}"],
+              "path": ["github", "trigger-scrape"]
+            },
+            "description": "Trigger GitHub Actions scraping workflow (51 sites in parallel)"
+          }
+        },
+        {
+          "name": "Estimate Scrape Time",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sites\": [\"npc\", \"propertypro\", \"jiji\"],\n  \"pages_per_site\": 20\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/github/estimate-scrape-time",
+              "host": ["{{BASE_URL}}"],
+              "path": ["github", "estimate-scrape-time"]
+            },
+            "description": "Estimate time required for scraping"
+          }
+        },
+        {
+          "name": "Subscribe to Workflow Notifications",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"events\": [\"completed\", \"failed\"]\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/notifications/subscribe",
+              "host": ["{{BASE_URL}}"],
+              "path": ["notifications", "subscribe"]
+            },
+            "description": "Subscribe to workflow completion notifications"
+          }
+        },
+        {
+          "name": "Get Workflow Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/notifications/workflow-status/19408262700",
+              "host": ["{{BASE_URL}}"],
+              "path": ["notifications", "workflow-status", "19408262700"]
+            },
+            "description": "Get status of a specific workflow run"
+          }
+        },
+        {
+          "name": "List Workflow Runs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/github/workflow-runs?limit=10",
+              "host": ["{{BASE_URL}}"],
+              "path": ["github", "workflow-runs"],
+              "query": [{"key": "limit", "value": "10"}]
+            },
+            "description": "List recent GitHub Actions workflow runs"
+          }
+        },
+        {
+          "name": "List Artifacts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/github/artifacts",
+              "host": ["{{BASE_URL}}"],
+              "path": ["github", "artifacts"]
+            },
+            "description": "List workflow artifacts (exports, logs)"
+          }
+        },
+        {
+          "name": "Download Artifact",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/github/artifact/12345/download",
+              "host": ["{{BASE_URL}}"],
+              "path": ["github", "artifact", "12345", "download"]
+            },
+            "description": "Download a specific workflow artifact"
+          }
+        }
+      ]
+    },
+    {
+      "name": "17. Scheduling (4 endpoints)",
+      "item": [
+        {
+          "name": "Schedule Scrape",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cron\": \"0 2 * * *\",\n  \"sites\": [\"npc\", \"propertypro\"],\n  \"max_pages\": 30,\n  \"enabled\": true\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/schedule/scrape",
+              "host": ["{{BASE_URL}}"],
+              "path": ["schedule", "scrape"]
+            },
+            "description": "Schedule recurring scrape jobs (cron format)"
+          }
+        },
+        {
+          "name": "List Scheduled Jobs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/schedule/jobs",
+              "host": ["{{BASE_URL}}"],
+              "path": ["schedule", "jobs"]
+            },
+            "description": "Get all scheduled scrape jobs"
+          }
+        },
+        {
+          "name": "Get Job Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/schedule/jobs/1",
+              "host": ["{{BASE_URL}}"],
+              "path": ["schedule", "jobs", "1"]
+            },
+            "description": "Get details of a specific scheduled job"
+          }
+        },
+        {
+          "name": "Cancel Scheduled Job",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/schedule/jobs/1/cancel",
+              "host": ["{{BASE_URL}}"],
+              "path": ["schedule", "jobs", "1", "cancel"]
+            },
+            "description": "Cancel a scheduled job"
+          }
+        }
+      ]
+    },
+    {
+      "name": "18. Email Notifications (7 endpoints)",
+      "item": [
+        {
+          "name": "Configure Email Settings",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"smtp_host\": \"smtp.gmail.com\",\n  \"smtp_port\": 587,\n  \"smtp_username\": \"your-email@gmail.com\",\n  \"smtp_password\": \"your-app-password\",\n  \"from_email\": \"your-email@gmail.com\"\n}"
             },
             "url": {
-              "raw": "{{BASE_URL}}/api/email/configure",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "email",
-                "configure"
-              ]
-            }
+              "raw": "{{BASE_URL}}/email/configure",
+              "host": ["{{BASE_URL}}"],
+              "path": ["email", "configure"]
+            },
+            "description": "Configure SMTP email settings"
           }
         },
         {
@@ -1314,16 +1430,11 @@
             "method": "POST",
             "header": [],
             "url": {
-              "raw": "{{BASE_URL}}/api/email/test-connection",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "email",
-                "test-connection"
-              ]
-            }
+              "raw": "{{BASE_URL}}/email/test-connection",
+              "host": ["{{BASE_URL}}"],
+              "path": ["email", "test-connection"]
+            },
+            "description": "Test SMTP connection"
           }
         },
         {
@@ -1332,70 +1443,71 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{BASE_URL}}/api/email/config",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "email",
-                "config"
-              ]
-            }
+              "raw": "{{BASE_URL}}/email/config",
+              "host": ["{{BASE_URL}}"],
+              "path": ["email", "config"]
+            },
+            "description": "Get current email configuration (password masked)"
+          }
+        },
+        {
+          "name": "List Recipients",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/email/recipients",
+              "host": ["{{BASE_URL}}"],
+              "path": ["email", "recipients"]
+            },
+            "description": "Get list of notification recipients"
           }
         },
         {
           "name": "Add Recipient",
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "header": [{"key": "Content-Type", "value": "application/json"}],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"email\": \"recipient@example.com\",\n  \"name\": \"John Doe\"\n}"
             },
             "url": {
-              "raw": "{{BASE_URL}}/api/email/recipients",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "email",
-                "recipients"
-              ]
-            }
+              "raw": "{{BASE_URL}}/email/recipients",
+              "host": ["{{BASE_URL}}"],
+              "path": ["email", "recipients"]
+            },
+            "description": "Add a new notification recipient"
+          }
+        },
+        {
+          "name": "Remove Recipient",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/email/recipients/user@example.com",
+              "host": ["{{BASE_URL}}"],
+              "path": ["email", "recipients", "user@example.com"]
+            },
+            "description": "Remove a notification recipient"
           }
         },
         {
           "name": "Send Test Email",
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "header": [{"key": "Content-Type", "value": "application/json"}],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"recipient\": \"test@example.com\"\n}"
             },
             "url": {
-              "raw": "{{BASE_URL}}/api/email/send-test",
-              "host": [
-                "{{BASE_URL}}"
-              ],
-              "path": [
-                "api",
-                "email",
-                "send-test"
-              ]
-            }
+              "raw": "{{BASE_URL}}/email/send-test",
+              "host": ["{{BASE_URL}}"],
+              "path": ["email", "send-test"]
+            },
+            "description": "Send a test email to verify configuration"
           }
         }
       ]
