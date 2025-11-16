@@ -58,9 +58,14 @@ jobs:
           import math
 
           # Configuration
-          MAX_PAGES = int("${{ github.event.inputs.max_pages || github.event.client_payload.max_pages }}" or "20")
-          GEOCODE = "${{ github.event.inputs.geocode || github.event.client_payload.geocode }}" or "1"
-          FORCE_SITES_PER_SESSION = "${{ github.event.inputs.force_sites_per_session || github.event.client_payload.sites_per_session }}" or ""
+          MAX_PAGES_STR = "${{ github.event.inputs.max_pages || github.event.client_payload.max_pages || '20' }}"
+          MAX_PAGES = int(MAX_PAGES_STR) if MAX_PAGES_STR else 20
+
+          GEOCODE_STR = "${{ github.event.inputs.geocode || github.event.client_payload.geocode || '1' }}"
+          GEOCODE = GEOCODE_STR if GEOCODE_STR else "1"
+
+          FORCE_STR = "${{ github.event.inputs.force_sites_per_session || github.event.client_payload.sites_per_session || '' }}"
+          FORCE_SITES_PER_SESSION = FORCE_STR if FORCE_STR else ""
 
           GEOCODE_ENABLED = GEOCODE == "1"
 
