@@ -220,6 +220,7 @@ jobs:
       - name: Run scraper (Session ${{ matrix.session.session_id }}/${{ needs.calculate.outputs.total_sessions }})
         env:
           FIREBASE_CREDENTIALS: ${{ secrets.FIREBASE_CREDENTIALS }}
+          FIRESTORE_ENABLED: "1"
           RP_PAGE_CAP: ${{ github.event.inputs.max_pages || github.event.client_payload.max_pages || '20' }}
           RP_GEOCODE: ${{ github.event.inputs.geocode || github.event.client_payload.geocode || '1' }}
           RP_HEADLESS: 1

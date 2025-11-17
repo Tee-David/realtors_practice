@@ -19,6 +19,7 @@ Schema Structure:
 
 import os
 import logging
+import time
 from typing import Dict, Any, List, Optional
 from datetime import datetime, timedelta
 import hashlib
@@ -562,6 +563,43 @@ class EnterpriseFirestoreUploader:
                 self.enabled = False
                 logger.warning("Enterprise Firestore upload disabled (initialization failed)")
 
+    def _upload_single_property_with_retry(
+        self,
+        site_key: str,
+        doc_ref,
+        doc_data: Dict[str, Any],
+        max_retries: int = 3
+    ) -> bool:
+        """
+        Upload a single property with exponential backoff retry.
+
+        Args:
+            site_key: Site identifier
+            doc_ref: Firestore document reference
+            doc_data: Document data to upload
+            max_retries: Maximum retry attempts
+
+        Returns:
+            True if successful, False otherwise
+        """
+        retry_count = 0
+        while retry_count < max_retries:
+            try:
+                doc_ref.set(doc_data, merge=True)
+                return True
+            except Exception as e:
+                retry_count += 1
+                if retry_count >= max_retries:
+                    logger.error(f"{site_key}: Failed after {max_retries} retries: {e}")
+                    return False
+
+                # Exponential backoff: 1s, 2s, 4s
+                wait_time = 2 ** (retry_count - 1)
+                logger.warning(f"{site_key}: Upload failed (attempt {retry_count}/{max_retries}), retrying in {wait_time}s: {e}")
+                time.sleep(wait_time)
+
+        return False
+
     def upload_listings_batch(
         self,
         site_key: str,
@@ -569,12 +607,19 @@ class EnterpriseFirestoreUploader:
         batch_size: int = 500
     ) -> Dict[str, Any]:
         """
-        Upload listings to Firestore with enterprise schema.
+        Upload listings to Firestore with enterprise schema using streaming approach.
+
+        **STREAMING ARCHITECTURE:**
+        - Uploads properties one-by-one as they're scraped
+        - Individual document uploads (no batch commits)
+        - Exponential backoff retry for each property (1s, 2s, 4s)
+        - Progress saved incrementally (no all-or-nothing)
+        - Network failures don't lose all data
 
         Args:
             site_key: Site identifier
             listings: List of cleaned listings
-            batch_size: Firestore batch limit (max 500)
+            batch_size: DEPRECATED (kept for API compatibility)
 
         Returns:
             Upload statistics dict
@@ -587,56 +632,48 @@ class EnterpriseFirestoreUploader:
             logger.info(f"{site_key}: No listings to upload")
             return {'uploaded': 0, 'errors': 0, 'skipped': 0, 'total': 0}
 
-        logger.info(f"{site_key}: Uploading {len(listings)} listings with enterprise schema...")
+        logger.info(f"{site_key}: Streaming upload of {len(listings)} listings (individual uploads with retry)...")
 
         collection_ref = self.db.collection('properties')
         uploaded = 0
         errors = 0
         skipped = 0
 
-        # Process in batches
-        for i in range(0, len(listings), batch_size):
-            batch_listings = listings[i:i + batch_size]
-            batch = self.db.batch()
-            batch_ops = 0
+        # Stream upload: process each property individually
+        for idx, listing in enumerate(listings, 1):
+            try:
+                # Get hash for document ID
+                doc_hash = listing.get('hash')
+                if not doc_hash:
+                    logger.warning(f"{site_key}: Listing {idx}/{len(listings)} missing hash, skipping")
+                    skipped += 1
+                    continue
 
-            for listing in batch_listings:
-                try:
-                    # Get hash for document ID
-                    doc_hash = listing.get('hash')
-                    if not doc_hash:
-                        logger.warning(f"{site_key}: Listing missing hash, skipping")
-                        skipped += 1
-                        continue
+                # Add site_key to listing if not present
+                if 'site_key' not in listing:
+                    listing['site_key'] = site_key
 
-                    # Add site_key to listing if not present
-                    if 'site_key' not in listing:
-                        listing['site_key'] = site_key
+                # Transform to enterprise schema
+                doc_data = transform_to_enterprise_schema(listing)
 
-                    # Transform to enterprise schema
-                    doc_data = transform_to_enterprise_schema(listing)
+                # Upload with retry logic
+                doc_ref = collection_ref.document(doc_hash)
+                success = self._upload_single_property_with_retry(site_key, doc_ref, doc_data, max_retries=3)
 
-                    # Set document
-                    doc_ref = collection_ref.document(doc_hash)
-                    batch.set(doc_ref, doc_data, merge=True)
-                    batch_ops += 1
-
-                except Exception as e:
-                    logger.error(f"{site_key}: Error preparing listing: {e}")
+                if success:
+                    uploaded += 1
+                    # Log progress every 10 properties
+                    if idx % 10 == 0 or idx == len(listings):
+                        logger.info(f"{site_key}: Progress: {uploaded}/{idx} uploaded ({errors} errors, {skipped} skipped)")
+                else:
                     errors += 1
 
-            # Commit batch
-            if batch_ops > 0:
-                try:
-                    batch.commit()
-                    uploaded += batch_ops
-                    logger.info(f"{site_key}: Uploaded batch {i//batch_size + 1} ({batch_ops} listings)")
-                except Exception as e:
-                    logger.error(f"{site_key}: Batch commit failed: {e}")
-                    errors += batch_ops
+            except Exception as e:
+                logger.error(f"{site_key}: Error processing listing {idx}: {e}")
+                errors += 1
 
         total = len(listings)
-        logger.info(f"{site_key}: Enterprise upload complete - {uploaded}/{total} uploaded, {errors} errors, {skipped} skipped")
+        logger.info(f"{site_key}: Streaming upload complete - {uploaded}/{total} uploaded, {errors} errors, {skipped} skipped")
 
         # Update site metadata
         try:
