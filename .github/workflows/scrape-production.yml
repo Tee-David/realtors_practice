@@ -79,7 +79,10 @@ jobs:
 
           # GitHub Actions constraints
           GITHUB_TIMEOUT_MINUTES = 350  # 6 hours minus 10 min buffer
-          MAX_PARALLEL = 3
+          MAX_PARALLEL = 10  # More parallel sessions for smaller batches
+
+          # Force small batches for reliability (5 sites per session)
+          FORCED_SITES_PER_SESSION = 5
 
           # Load enabled sites
           with open('config.yaml') as f:
@@ -105,9 +108,13 @@ jobs:
           print(f"Estimated time per site: {time_per_site:.0f}s ({time_per_site/60:.1f} min)")
 
           # Calculate optimal sites per session
-          if FORCE_SITES_PER_SESSION:
-              sites_per_session = int(FORCE_SITES_PER_SESSION)
-              print(f"Using forced sites_per_session: {sites_per_session}")
+          # Priority: User input > Forced default > Auto-calculate
+          if FORCE_STR:
+              sites_per_session = int(FORCE_STR)
+              print(f"Using user-specified sites_per_session: {sites_per_session}")
+          elif FORCED_SITES_PER_SESSION:
+              sites_per_session = FORCED_SITES_PER_SESSION
+              print(f"Using fixed sites_per_session for reliability: {sites_per_session}")
           else:
               # Auto-calculate to stay under timeout
               max_sites_per_session = int(
@@ -179,7 +186,7 @@ jobs:
           echo "**Batching:**" >> $GITHUB_STEP_SUMMARY
           echo "- Sites per session: ${{ steps.batch.outputs.sites_per_session }}" >> $GITHUB_STEP_SUMMARY
           echo "- Total sessions: ${{ steps.batch.outputs.total_sessions }}" >> $GITHUB_STEP_SUMMARY
-          echo "- Max parallel: 3" >> $GITHUB_STEP_SUMMARY
+          echo "- Max parallel: 10" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Time Estimate:**" >> $GITHUB_STEP_SUMMARY
           echo "- Total: ${{ steps.batch.outputs.estimated_minutes }} min (${{ steps.batch.outputs.estimated_hours }} hours)" >> $GITHUB_STEP_SUMMARY
@@ -190,9 +197,9 @@ jobs:
     name: Scrape Session ${{ matrix.session.session_id }}
     needs: calculate
     runs-on: ubuntu-latest
-    timeout-minutes: 180  # 3 hours per session (with parallel execution)
+    timeout-minutes: 60  # 1 hour per session (5 sites = ~30-40 min max)
     strategy:
-      max-parallel: 3
+      max-parallel: 10  # Run more sessions in parallel
       fail-fast: false
       matrix:
         session: ${{ fromJson(needs.calculate.outputs.sessions) }}
