@@ -240,8 +240,69 @@ Make sure all three files (types.ts, api-client.ts, hooks.tsx) are copied and de
 
 ---
 
-**Version**: 3.1.0 (Enterprise Schema)
-**Last Updated**: 2025-11-16
+**Version**: 3.2.0 (GitHub Actions + Streaming Firestore)
+**Last Updated**: 2025-11-17
 **Status**: ✅ Production Ready
+
+---
+
+## 🎬 Trigger Scraping from Frontend
+
+### Option 1: Direct API Call (Recommended)
+
+Start a scrape directly from your frontend:
+
+```typescript
+import { apiClient } from '@/lib/api/client';
+
+// Start scrape with all 51 sites
+const startFullScrape = async () => {
+  const response = await apiClient.startScrape({
+    max_pages: 20,
+    geocode: true,
+    enable_all_sites: true
+  });
+
+  return response.data; // { message, sites_count, max_pages }
+};
+```
+
+### Option 2: GitHub Actions (Cloud-Based)
+
+Trigger GitHub Actions workflow via API:
+
+```typescript
+const triggerGitHubScrape = async () => {
+  const response = await fetch(
+    'https://api.github.com/repos/Tee-David/realtors_practice/actions/workflows/scrape-production.yml/dispatches',
+    {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/vnd.github+json',
+        'Authorization': `Bearer ${GITHUB_TOKEN}`,
+      },
+      body: JSON.stringify({
+        ref: 'main',
+        inputs: {
+          max_pages: '20',
+          geocode: '1'
+        }
+      })
+    }
+  );
+
+  // Monitor at: https://github.com/Tee-David/realtors_practice/actions
+};
+```
+
+**Key Features**:
+- ✅ Scrapes all 51 real estate sites
+- ✅ Uploads to Firestore in real-time (streaming architecture)
+- ✅ 20 pages per site (configurable)
+- ✅ Geocoding enabled
+- ✅ Runs for 5-6 hours (intelligent batching)
+- ✅ Properties available immediately via API
+
+---
 
 **Need more help?** See [../README.md](../README.md) for complete project documentation.
