@@ -16,6 +16,10 @@ on:
         description: 'Enable geocoding (1=yes, 0=no)'
         required: false
         default: '1'
+      sites:
+        description: 'Specific sites to scrape (JSON array, e.g., ["npc","propertypro"]. Leave empty for all enabled sites)'
+        required: false
+        default: ''
       force_sites_per_session:
         description: 'Force specific sites per session (leave empty for auto-calculation)'
         required: false
@@ -58,14 +62,18 @@ jobs:
           import math
 
           # Configuration
-          MAX_PAGES_STR = "${{ github.event.inputs.max_pages || github.event.client_payload.max_pages || '20' }}"
-          MAX_PAGES = int(MAX_PAGES_STR) if MAX_PAGES_STR else 20
+          MAX_PAGES_STR = "${{ github.event.inputs.max_pages || github.event.client_payload.max_pages || '15' }}"
+          MAX_PAGES = int(MAX_PAGES_STR) if MAX_PAGES_STR else 15
 
           GEOCODE_STR = "${{ github.event.inputs.geocode || github.event.client_payload.geocode || '1' }}"
           GEOCODE = GEOCODE_STR if GEOCODE_STR else "1"
 
           FORCE_STR = "${{ github.event.inputs.force_sites_per_session || github.event.client_payload.sites_per_session || '' }}"
           FORCE_SITES_PER_SESSION = FORCE_STR if FORCE_STR else ""
+
+          # Custom sites from frontend/manual trigger
+          CUSTOM_SITES_STR = '${{ toJSON(github.event.client_payload.sites) }}'
+          CUSTOM_SITES_INPUT = '${{ toJSON(github.event.inputs.sites) }}'
 
           GEOCODE_ENABLED = GEOCODE == "1"
 
@@ -84,17 +92,61 @@ jobs:
           # Force small batches for reliability (3 sites per session - conservative)
           FORCED_SITES_PER_SESSION = 3
 
-          # Load enabled sites
+          # Load config.yaml
           with open('config.yaml') as f:
               config = yaml.safe_load(f)
 
-          enabled_sites = [
-              site_id for site_id, site_config in config.get('sites', {}).items()
-              if site_config.get('enabled', False)
-          ]
+          # Determine which sites to scrape
+          # Priority: Custom sites from frontend/input > All enabled sites from config
+          custom_sites = []
+
+          # Try client_payload.sites first (from API trigger)
+          if CUSTOM_SITES_STR and CUSTOM_SITES_STR not in ['null', '', '[]']:
+              try:
+                  custom_sites = json.loads(CUSTOM_SITES_STR)
+                  if custom_sites:
+                      print(f"Using custom sites from API/frontend: {custom_sites}")
+              except:
+                  pass
+
+          # Try inputs.sites second (from manual workflow_dispatch)
+          if not custom_sites and CUSTOM_SITES_INPUT and CUSTOM_SITES_INPUT not in ['null', '', '[]']:
+              try:
+                  custom_sites = json.loads(CUSTOM_SITES_INPUT)
+                  if custom_sites:
+                      print(f"Using custom sites from manual input: {custom_sites}")
+              except:
+                  pass
+
+          # Validate custom sites exist in config
+          if custom_sites:
+              all_sites = list(config.get('sites', {}).keys())
+              valid_sites = [s for s in custom_sites if s in all_sites]
+              invalid_sites = [s for s in custom_sites if s not in all_sites]
+
+              if invalid_sites:
+                  print(f"WARNING: Invalid sites (not in config): {invalid_sites}")
+
+              if valid_sites:
+                  enabled_sites = valid_sites
+                  print(f"✓ Validated {len(valid_sites)} custom sites")
+              else:
+                  print(f"ERROR: No valid sites found in custom list. Using all enabled sites.")
+                  enabled_sites = [
+                      site_id for site_id, site_config in config.get('sites', {}).items()
+                      if site_config.get('enabled', False)
+                  ]
+          else:
+              # No custom sites - use all enabled from config
+              enabled_sites = [
+                  site_id for site_id, site_config in config.get('sites', {}).items()
+                  if site_config.get('enabled', False)
+              ]
+              print(f"Using all enabled sites from config.yaml")
 
           total_sites = len(enabled_sites)
-          print(f"Total enabled sites: {total_sites}")
+          print(f"Total sites to scrape: {total_sites}")
+          print(f"Sites: {enabled_sites}")
           print(f"Max pages per site: {MAX_PAGES}")
           print(f"Geocoding: {GEOCODE_ENABLED}")
 

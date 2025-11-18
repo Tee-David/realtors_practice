@@ -1718,9 +1718,9 @@ def trigger_github_scrape():
 
         # Get request body
         data = request.get_json() or {}
-        page_cap = data.get('page_cap', 20)
+        page_cap = data.get('page_cap', 15)  # Updated default to match workflow
         geocode = data.get('geocode', 1)
-        sites = data.get('sites', [])
+        sites = data.get('sites', [])  # Can be empty list for all sites
 
         # Prepare GitHub API request
         url = f'https://api.github.com/repos/{github_owner}/{github_repo}/dispatches'
