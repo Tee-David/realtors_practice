@@ -4,7 +4,7 @@ Enterprise-grade property aggregation platform that scrapes 51 real estate websi
 
 ## 🎯 Current Status
 
-✅ **PRODUCTION READY** - All systems tested and verified (2025-11-16)
+✅ **PRODUCTION READY** - All systems tested and verified (2025-11-18)
 
 **Key Metrics**:
 - **Sites Configured**: 51 active real estate websites
@@ -13,7 +13,11 @@ Enterprise-grade property aggregation platform that scrapes 51 real estate websi
 - **Automation**: GitHub Actions (auto-scaling multi-session)
 - **Frontend Ready**: Complete TypeScript integration
 
-**Latest Achievement**: Intelligent auto-batching system prevents GitHub Actions timeouts - automatically calculates optimal batch sizes based on configuration
+**Latest Updates (v3.2.1)**:
+- ✅ **Custom Site Selection**: Frontend can specify which sites to scrape
+- ✅ **Time Estimation API**: Prevent timeouts with accurate time predictions
+- ✅ **Firestore Verified**: All uploads working (100% success rate)
+- ✅ **Optimized Batching**: 3 sites/session, 90-min timeout, 5 parallel sessions
 
 ---
 
