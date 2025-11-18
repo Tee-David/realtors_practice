@@ -1774,29 +1774,36 @@ def trigger_github_scrape():
 @app.route('/api/github/estimate-scrape-time', methods=['POST'])
 def estimate_scrape_time():
     """
-    Estimate time required for a scrape session
+    Estimate time required for a scrape session with timeout warnings
 
     Body: {
-        "page_cap": 20,          # Pages per site
+        "page_cap": 15,          # Pages per site (default: 15)
         "geocode": 1,            # 0 or 1
         "sites": ["npc", ...]    # Optional: specific sites (empty = all enabled)
     }
 
     Returns: {
-        "estimated_duration_minutes": 45,
-        "estimated_duration_text": "~45 minutes",
-        "site_count": 5,
-        "batch_type": "small",    # "small" or "large" (multi-session)
-        "sessions": 1,
-        "breakdown": {...}
+        "estimated_duration_minutes": 180,
+        "estimated_duration_hours": 3.0,
+        "estimated_duration_text": "~3h 0m",
+        "site_count": 51,
+        "batch_type": "multi-session",
+        "sessions": 17,
+        "sites_per_session": 3,
+        "max_parallel_sessions": 5,
+        "timeout_risk": "safe",  # "safe", "warning", "danger"
+        "timeout_message": null,
+        "breakdown": {...},
+        "recommendations": [...]
     }
     """
     try:
         import yaml
+        import math
 
         # Get request body
         data = request.get_json() or {}
-        page_cap = data.get('page_cap', 20)
+        page_cap = data.get('page_cap', 15)  # Updated default to match workflow
         geocode = data.get('geocode', 1)
         sites_param = data.get('sites', [])
 
@@ -1809,34 +1816,62 @@ def estimate_scrape_time():
         else:
             site_count = sum(1 for site_config in config.get('sites', {}).values() if site_config.get('enabled', False))
 
-        # Estimation formula (based on historical data)
-        # Average: 2 minutes per page, with parallel scraping
-        minutes_per_page = 2
-        parallel_workers = 5  # From config
-        geocode_overhead = 0.5 if geocode == 1 else 0  # 30 seconds per site with geocoding
+        # UPDATED ESTIMATION FORMULA (matches workflow constants)
+        # Based on actual workflow time estimation (lines 72-78 in scrape-production.yml)
+        TIME_PER_PAGE = 8  # seconds
+        TIME_PER_SITE_OVERHEAD = 45  # seconds
+        GEOCODE_TIME_PER_PROPERTY = 1.2  # seconds
+        FIRESTORE_UPLOAD_TIME = 0.3  # seconds
+        WATCHER_OVERHEAD = 120  # seconds
+        BUFFER_MULTIPLIER = 1.3  # 30% safety buffer
 
-        # Calculate base time
-        total_pages = site_count * page_cap
-        scrape_time = (total_pages * minutes_per_page) / parallel_workers
-        processing_time = site_count * 2  # 2 min per site for watcher processing
-        geocode_time = site_count * geocode_overhead if geocode == 1 else 0
+        # Workflow settings (conservative strategy)
+        SITES_PER_SESSION = 3
+        MAX_PARALLEL_SESSIONS = 5
+        SESSION_TIMEOUT_MINUTES = 90
+        GITHUB_TIMEOUT_MINUTES = 350  # 6 hours minus 10 min buffer
 
-        total_minutes = scrape_time + processing_time + geocode_time + 5  # +5 for setup
+        # Estimate properties per page
+        estimated_properties_per_page = 15
+        estimated_properties = page_cap * estimated_properties_per_page
 
-        # Determine batch type and adjust
-        is_large_batch = site_count > 30
-        sessions = 1
-        batch_type = "small"
+        # Calculate time per site (in seconds)
+        scrape_time = (page_cap * TIME_PER_PAGE) + TIME_PER_SITE_OVERHEAD
+        geocode_time = (estimated_properties * GEOCODE_TIME_PER_PROPERTY) if geocode == 1 else 0
+        upload_time = estimated_properties * FIRESTORE_UPLOAD_TIME
+        time_per_site = scrape_time + geocode_time + upload_time
 
-        if is_large_batch:
-            # Multi-session: split into sessions of 20, run 3 in parallel
-            batch_type = "large"
-            sessions = (site_count + 19) // 20  # Ceiling division
-            parallel_sessions = min(sessions, 3)
+        # Calculate session time (in minutes)
+        sites_in_session = min(site_count, SITES_PER_SESSION)
+        session_time_seconds = (time_per_site * sites_in_session + WATCHER_OVERHEAD) * BUFFER_MULTIPLIER
+        session_time_minutes = session_time_seconds / 60
 
-            # Time for parallel sessions + consolidation
-            time_per_session = total_minutes / site_count * 20  # Time for 20 sites
-            total_minutes = (sessions / parallel_sessions) * time_per_session + 10  # +10 for consolidation
+        # Calculate total sessions
+        total_sessions = math.ceil(site_count / SITES_PER_SESSION)
+
+        # Calculate total time (accounting for parallel execution)
+        parallel_batches = math.ceil(total_sessions / MAX_PARALLEL_SESSIONS)
+        total_minutes = parallel_batches * session_time_minutes
+
+        # Determine timeout risk
+        timeout_risk = "safe"
+        timeout_message = None
+        recommendations = []
+
+        if total_minutes > GITHUB_TIMEOUT_MINUTES:
+            timeout_risk = "danger"
+            timeout_message = f"⛔ CRITICAL: Estimated time ({total_minutes:.0f} min) exceeds GitHub Actions limit ({GITHUB_TIMEOUT_MINUTES} min). Scrape WILL timeout!"
+            recommendations.append(f"Reduce sites or pages. Try max {int(GITHUB_TIMEOUT_MINUTES / session_time_minutes * SITES_PER_SESSION)} sites or {int(page_cap * 0.5)} pages.")
+        elif total_minutes > 240:  # 4 hours
+            timeout_risk = "warning"
+            timeout_message = f"⚠️ WARNING: Estimated time ({total_minutes:.0f} min / {total_minutes/60:.1f}h) is high. Risk of timeout."
+            recommendations.append("Consider reducing pages or running in smaller batches.")
+        elif session_time_minutes > SESSION_TIMEOUT_MINUTES:
+            timeout_risk = "warning"
+            timeout_message = f"⚠️ WARNING: Session time ({session_time_minutes:.0f} min) exceeds session timeout ({SESSION_TIMEOUT_MINUTES} min)."
+            recommendations.append(f"Reduce pages to {int(page_cap * SESSION_TIMEOUT_MINUTES / session_time_minutes)} or fewer per site.")
+        else:
+            recommendations.append("✅ Estimated time is within safe limits.")
 
         # Format duration text
         if total_minutes < 60:
@@ -1844,21 +1879,42 @@ def estimate_scrape_time():
         else:
             hours = int(total_minutes // 60)
             mins = int(total_minutes % 60)
-            duration_text = f"~{hours}h {mins}m"
+            duration_text = f"~{hours}h {mins}m" if mins > 0 else f"~{hours}h"
+
+        # Determine batch type
+        if site_count <= SITES_PER_SESSION:
+            batch_type = "single-session"
+        else:
+            batch_type = "multi-session"
 
         return jsonify({
             'estimated_duration_minutes': round(total_minutes, 1),
+            'estimated_duration_hours': round(total_minutes / 60, 2),
             'estimated_duration_text': duration_text,
             'site_count': site_count,
             'batch_type': batch_type,
-            'sessions': sessions,
+            'sessions': total_sessions,
+            'sites_per_session': SITES_PER_SESSION,
+            'max_parallel_sessions': MAX_PARALLEL_SESSIONS,
+            'session_time_minutes': round(session_time_minutes, 1),
+            'session_timeout_limit': SESSION_TIMEOUT_MINUTES,
+            'total_timeout_limit': GITHUB_TIMEOUT_MINUTES,
+            'timeout_risk': timeout_risk,
+            'timeout_message': timeout_message,
             'breakdown': {
-                'scraping': round(scrape_time, 1),
-                'processing': round(processing_time, 1),
-                'geocoding': round(geocode_time, 1),
-                'overhead': 5
+                'scraping_per_site': round(scrape_time / 60, 1),
+                'geocoding_per_site': round(geocode_time / 60, 1),
+                'upload_per_site': round(upload_time / 60, 1),
+                'watcher_overhead': round(WATCHER_OVERHEAD / 60, 1),
+                'buffer_multiplier': BUFFER_MULTIPLIER
             },
-            'note': 'This is an estimate based on average performance. Actual time may vary.'
+            'recommendations': recommendations,
+            'configuration': {
+                'page_cap': page_cap,
+                'geocode_enabled': geocode == 1,
+                'estimated_properties_per_site': estimated_properties
+            },
+            'note': 'Estimates based on workflow time constants. Actual time may vary by ±20%.'
         }), 200
 
     except Exception as e:
