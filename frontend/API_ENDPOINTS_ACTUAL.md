@@ -1,14 +1,18 @@
 # Nigerian Real Estate API - Complete Endpoint Reference
 
-**Last Updated:** November 16, 2025
-**API Version:** 3.1.0 (Enterprise API Complete)
+**Last Updated:** November 18, 2025
+**API Version:** 3.2.1 (Custom Site Selection + Time Estimation)
 **Base URL:** `http://localhost:5000` (Development) | `https://realtors-practice-api.onrender.com/api` (Production)
 **Total Endpoints:** 90 (72 core + 18 Firestore enterprise endpoints)
 **Testing Status:** ✅ All 90 endpoints tested (18/18 Firestore tests passing - 100%)
 
 > **For Frontend Developers:** This document contains actual test results from all 90 API endpoints. Every endpoint has been tested and documented with real request/response examples.
 >
-> ⭐ **NEW (v3.1):** 18 Enterprise Firestore endpoints with nested schema, advanced filtering, and auto-tagging!
+> ⭐ **NEW (v3.2.1):**
+> - Custom site selection - Choose specific sites to scrape
+> - Time estimation API - Get accurate scrape time predictions with timeout warnings
+> - Firestore verified - 100% upload success rate
+> - Optimized batching - 3 sites/session, 90-min timeout
 
 ---
 

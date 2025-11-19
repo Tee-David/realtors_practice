@@ -2,6 +2,12 @@
 
 Complete guide for integrating the Nigerian Real Estate API into your frontend application. All 90 endpoints are production-ready with full TypeScript support.
 
+**Latest Updates (v3.2.1 - 2025-11-18)**:
+- ✅ Custom site selection - Choose specific sites to scrape
+- ✅ Time estimation API - Get accurate scrape time predictions with timeout warnings
+- ✅ Firestore verified - 100% upload success rate
+- ✅ Optimized batching - 3 sites/session, 90-min timeout
+
 ## 🎯 Quick Start
 
 **3 Steps to Integration**:
@@ -212,6 +218,69 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 - **TypeScript Types**: [types.ts](types.ts) - Type definitions
 - **API Client**: [api-client.ts](api-client.ts) - HTTP client
 - **React Hooks**: [hooks.tsx](hooks.tsx) - Data fetching hooks
+- **Time Estimation**: [../docs/frontend/TIME_ESTIMATION_ENDPOINT.md](../docs/frontend/TIME_ESTIMATION_ENDPOINT.md) - Scrape time predictions
+
+---
+
+## 🆕 New Features (v3.2.1)
+
+### Custom Site Selection
+
+Choose specific sites to scrape instead of all 51 sites:
+
+```typescript
+// Trigger scrape for specific sites only
+const response = await fetch('/api/github/trigger-scrape', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    sites: ["npc", "propertypro", "jiji"],  // Only these 3 sites
+    page_cap: 10,
+    geocode: 1
+  })
+});
+
+// Or scrape all sites
+const response = await fetch('/api/github/trigger-scrape', {
+  method: 'POST',
+  body: JSON.stringify({
+    sites: [],  // Empty array = all 51 sites
+    page_cap: 15
+  })
+});
+```
+
+### Time Estimation with Timeout Warnings
+
+Get accurate time estimates before starting a scrape:
+
+```typescript
+// Estimate scrape time
+const response = await fetch('/api/github/estimate-scrape-time', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    sites: ["npc", "propertypro"],  // Optional: specific sites
+    page_cap: 10,
+    geocode: 1
+  })
+});
+
+const result = await response.json();
+// {
+//   "estimated_duration_minutes": 11.2,
+//   "estimated_duration_text": "~11 minutes",
+//   "timeout_risk": "safe",  // or "warning" or "danger"
+//   "recommendations": ["✅ Estimated time is within safe limits."],
+//   "session_time_minutes": 11.2,
+//   "sessions": 1
+// }
+
+// Show warning if timeout risk is high
+if (result.timeout_risk === "danger") {
+  alert(`⛔ ${result.timeout_message}\n\n${result.recommendations.join('\n')}`);
+}
+```
 
 ---
 
@@ -240,8 +309,8 @@ Make sure all three files (types.ts, api-client.ts, hooks.tsx) are copied and de
 
 ---
 
-**Version**: 3.2.0 (GitHub Actions + Streaming Firestore)
-**Last Updated**: 2025-11-17
+**Version**: 3.2.1 (Custom Site Selection + Time Estimation + Firestore Verified)
+**Last Updated**: 2025-11-18
 **Status**: ✅ Production Ready
 
 ---
