@@ -1459,71 +1459,98 @@ def generate_export():
                 'valid_formats': valid_formats
             }), 400
 
-        # Query Firestore with filters
+        # Query Firestore with filters using enterprise schema
         try:
-            import firebase_admin
-            from firebase_admin import firestore
+            from core.firestore_queries_enterprise import search_properties_advanced
 
-            if not firebase_admin._apps:
-                cred_json = os.getenv('FIREBASE_CREDENTIALS')
-                cred_path = os.getenv('FIREBASE_SERVICE_ACCOUNT')
+            # Convert filters to enterprise format (nested schema fields)
+            enterprise_filters = {}
 
-                if cred_json:
-                    from firebase_admin import credentials
-                    cred = credentials.Certificate(json.loads(cred_json))
-                    firebase_admin.initialize_app(cred)
-                elif cred_path and Path(cred_path).exists():
-                    from firebase_admin import credentials
-                    cred = credentials.Certificate(cred_path)
-                    firebase_admin.initialize_app(cred)
-
-            db = firestore.client()
-            query = db.collection('properties')
-
-            # Apply filters (same as query endpoint)
             if 'location' in filters:
-                query = query.where('location', '==', filters['location'])
+                enterprise_filters['location'] = filters['location']
             if 'price_min' in filters:
-                query = query.where('price', '>=', filters['price_min'])
+                enterprise_filters['price_min'] = filters['price_min']
             if 'price_max' in filters:
-                query = query.where('price', '<=', filters['price_max'])
+                enterprise_filters['price_max'] = filters['price_max']
             if 'bedrooms_min' in filters:
-                query = query.where('bedrooms', '>=', filters['bedrooms_min'])
+                enterprise_filters['bedrooms_min'] = filters['bedrooms_min']
             if 'bathrooms_min' in filters:
-                query = query.where('bathrooms', '>=', filters['bathrooms_min'])
+                enterprise_filters['bathrooms_min'] = filters['bathrooms_min']
             if 'property_type' in filters:
-                query = query.where('property_type', '==', filters['property_type'])
+                enterprise_filters['property_type'] = filters['property_type']
             if 'source' in filters:
-                query = query.where('source', '==', filters['source'])
+                # Note: 'source' in frontend maps to 'site_key' in enterprise schema
+                enterprise_filters['site_key'] = filters['source']
 
-            # Get all results (for export, we want everything matching filters)
-            results = query.stream()
-            properties = [doc.to_dict() for doc in results]
+            # Use enterprise query function (handles nested schema correctly)
+            # This returns unlimited results for export purposes
+            properties = search_properties_advanced(enterprise_filters)
 
-        except ImportError:
-            # Fallback to local master workbook if Firestore not available
-            workbook_path = 'exports/cleaned/MASTER_CLEANED_WORKBOOK.xlsx'
-            if not Path(workbook_path).exists():
-                return jsonify({
-                    'error': 'No data available',
-                    'details': 'Firestore not configured and local master workbook not found'
-                }), 404
+            # Flatten enterprise schema for export (CSV/Excel need flat structure)
+            flattened_properties = []
+            for prop in properties:
+                flat = {}
+                # Flatten basic_info
+                if 'basic_info' in prop:
+                    for k, v in prop['basic_info'].items():
+                        flat[f'basic_{k}'] = v
+                # Flatten property_details
+                if 'property_details' in prop:
+                    for k, v in prop['property_details'].items():
+                        flat[f'property_{k}'] = v
+                # Flatten financial
+                if 'financial' in prop:
+                    for k, v in prop['financial'].items():
+                        flat[f'financial_{k}'] = v
+                # Flatten location
+                if 'location' in prop:
+                    for k, v in prop['location'].items():
+                        if k != 'coordinates':  # Skip GeoPoint (not exportable)
+                            flat[f'location_{k}'] = v
+                # Flatten amenities (convert arrays to comma-separated)
+                if 'amenities' in prop:
+                    for k, v in prop['amenities'].items():
+                        if isinstance(v, list):
+                            flat[f'amenities_{k}'] = ', '.join(str(x) for x in v)
+                        else:
+                            flat[f'amenities_{k}'] = v
+                # Flatten agent_info
+                if 'agent_info' in prop:
+                    for k, v in prop['agent_info'].items():
+                        flat[f'agent_{k}'] = v
+                # Flatten metadata
+                if 'metadata' in prop:
+                    for k, v in prop['metadata'].items():
+                        if k not in ['search_keywords']:  # Skip arrays
+                            flat[f'metadata_{k}'] = v
+                # Flatten tags
+                if 'tags' in prop:
+                    for k, v in prop['tags'].items():
+                        if not isinstance(v, list):
+                            flat[f'tags_{k}'] = v
+                        else:
+                            flat[f'tags_{k}'] = ', '.join(str(x) for x in v)
+                # Handle media (just URLs, not full arrays)
+                if 'media' in prop:
+                    flat['media_image_count'] = len(prop['media'].get('images', []))
+                    flat['media_virtual_tour'] = prop['media'].get('virtual_tour_url')
 
-            df = pd.read_excel(workbook_path)
+                flattened_properties.append(flat)
 
-            # Apply filters to DataFrame
-            if 'location' in filters:
-                df = df[df['location'].str.contains(filters['location'], case=False, na=False)]
-            if 'price_min' in filters:
-                df = df[df['price'] >= filters['price_min']]
-            if 'price_max' in filters:
-                df = df[df['price'] <= filters['price_max']]
-            if 'bedrooms_min' in filters:
-                df = df[df['bedrooms'] >= filters['bedrooms_min']]
-            if 'property_type' in filters:
-                df = df[df['property_type'] == filters['property_type']]
+            properties = flattened_properties
 
-            properties = df.to_dict('records')
+        except ImportError as e:
+            # Firestore is required - no fallback to local files
+            return jsonify({
+                'error': 'Firestore not available',
+                'details': 'Export requires Firestore. Ensure FIRESTORE_ENABLED=1 and credentials are configured.',
+                'import_error': str(e)
+            }), 500
+        except Exception as e:
+            return jsonify({
+                'error': 'Export query failed',
+                'details': str(e)
+            }), 500
 
         if not properties:
             return jsonify({
@@ -1718,7 +1745,7 @@ def trigger_github_scrape():
 
         # Get request body
         data = request.get_json() or {}
-        page_cap = data.get('page_cap', 15)  # Updated default to match workflow
+        max_pages = data.get('max_pages', 15)  # Matches workflow parameter name
         geocode = data.get('geocode', 1)
         sites = data.get('sites', [])  # Can be empty list for all sites
 
@@ -1732,7 +1759,7 @@ def trigger_github_scrape():
         payload = {
             'event_type': 'trigger-scrape',
             'client_payload': {
-                'page_cap': page_cap,
+                'max_pages': max_pages,
                 'geocode': geocode,
                 'sites': sites,
                 'triggered_by': 'api',
@@ -1749,7 +1776,7 @@ def trigger_github_scrape():
                 'message': 'Scraper workflow triggered successfully',
                 'run_url': f'https://github.com/{github_owner}/{github_repo}/actions',
                 'parameters': {
-                    'page_cap': page_cap,
+                    'max_pages': max_pages,
                     'geocode': geocode,
                     'sites': sites if sites else 'all enabled sites'
                 }

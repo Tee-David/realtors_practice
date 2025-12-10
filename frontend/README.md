@@ -235,7 +235,7 @@ const response = await fetch('/api/github/trigger-scrape', {
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
     sites: ["npc", "propertypro", "jiji"],  // Only these 3 sites
-    page_cap: 10,
+    max_pages: 10,
     geocode: 1
   })
 });
@@ -245,7 +245,7 @@ const response = await fetch('/api/github/trigger-scrape', {
   method: 'POST',
   body: JSON.stringify({
     sites: [],  // Empty array = all 51 sites
-    page_cap: 15
+    max_pages: 15
   })
 });
 ```
@@ -261,7 +261,7 @@ const response = await fetch('/api/github/estimate-scrape-time', {
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
     sites: ["npc", "propertypro"],  // Optional: specific sites
-    page_cap: 10,
+    max_pages: 10,
     geocode: 1
   })
 });

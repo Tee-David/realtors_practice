@@ -32,9 +32,9 @@ Content-Type: application/json
 
 ```json
 {
-  "page_cap": 15,           // Pages per site (default: 15)
+  "max_pages": 15,          // Pages per site (default: 15)
   "geocode": 1,             // Enable geocoding: 1 or 0 (default: 1)
-  "sites": ["npc", "...]    // Optional: specific sites (empty = all enabled)
+  "sites": ["npc", "..."]   // Optional: specific sites (empty = all enabled)
 }
 ```
 
@@ -66,7 +66,7 @@ Content-Type: application/json
     "✅ Estimated time is within safe limits."
   ],
   "configuration": {
-    "page_cap": 15,
+    "max_pages": 15,
     "geocode_enabled": true,
     "estimated_properties_per_site": 225
   },
@@ -170,7 +170,7 @@ const response = await fetch('http://localhost:5000/api/github/estimate-scrape-t
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
-    page_cap: 15,
+    max_pages: 15,
     geocode: 1
   })
 });
@@ -187,7 +187,7 @@ const response = await fetch('http://localhost:5000/api/github/estimate-scrape-t
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
-    page_cap: 2,
+    max_pages: 2,
     geocode: 0,
     sites: ["npc", "propertypro"]
   })
@@ -226,7 +226,7 @@ export function useTimeEstimation() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          page_cap: pageCap,
+          max_pages: pageCap,
           geocode: geocode ? 1 : 0,
           sites: sites || []
         })
@@ -293,8 +293,8 @@ BUFFER_MULTIPLIER = 1.3 (30% safety margin)
 ### Per-Site Time
 
 ```
-Properties = page_cap × 15 (estimated properties per page)
-Scrape Time = (page_cap × 8) + 45 seconds
+Properties = max_pages × 15 (estimated properties per page)
+Scrape Time = (max_pages × 8) + 45 seconds
 Geocode Time = Properties × 1.2 seconds (if enabled)
 Upload Time = Properties × 0.3 seconds
 Total Per Site = Scrape + Geocode + Upload
@@ -369,7 +369,7 @@ if (estimate.timeout_risk === 'warning') {
 try {
   const response = await fetch('/api/github/estimate-scrape-time', {
     method: 'POST',
-    body: JSON.stringify({ page_cap: 15 })
+    body: JSON.stringify({ max_pages: 15 })
   });
 
   if (!response.ok) {
@@ -399,17 +399,17 @@ try {
 # Safe: 2 sites, 2 pages
 curl -X POST http://localhost:5000/api/github/estimate-scrape-time \
   -H "Content-Type: application/json" \
-  -d '{"page_cap": 2, "geocode": 0}'
+  -d '{"max_pages": 2, "geocode": 0}'
 
 # Warning: All sites, 30 pages
 curl -X POST http://localhost:5000/api/github/estimate-scrape-time \
   -H "Content-Type": application/json" \
-  -d '{"page_cap": 30, "geocode": 1}'
+  -d '{"max_pages": 30, "geocode": 1}'
 
 # Danger: All sites, 50 pages
 curl -X POST http://localhost:5000/api/github/estimate-scrape-time \
   -H "Content-Type: application/json" \
-  -d '{"page_cap": 50, "geocode": 1}'
+  -d '{"max_pages": 50, "geocode": 1}'
 ```
 
 ---
