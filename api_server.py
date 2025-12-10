@@ -14,6 +14,10 @@ from typing import Dict, List, Optional
 from flask import Flask, jsonify, request, send_file, Response
 from flask_cors import CORS
 import logging
+from dotenv import load_dotenv
+
+# Load environment variables from .env file (override system env vars)
+load_dotenv(override=True)
 
 # Import core modules
 from core.config_loader import load_config, ConfigValidationError
@@ -1736,6 +1740,9 @@ def trigger_github_scrape():
         github_token = os.getenv('GITHUB_TOKEN')
         github_owner = os.getenv('GITHUB_OWNER')
         github_repo = os.getenv('GITHUB_REPO')
+
+        # Debug logging
+        logger.info(f"GitHub Token loaded: {github_token[:10] if github_token else 'NONE'}... (length: {len(github_token) if github_token else 0})")
 
         if not all([github_token, github_owner, github_repo]):
             return jsonify({
