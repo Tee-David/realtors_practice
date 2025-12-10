@@ -331,6 +331,7 @@ jobs:
   consolidate:
     name: Consolidate All Sessions
     needs: [calculate, scrape]
+    if: ${{ always() }}  # Run even if some scrape sessions timeout/fail - prevents data loss
     runs-on: ubuntu-latest
     timeout-minutes: 60
 
