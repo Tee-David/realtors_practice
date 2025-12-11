@@ -312,7 +312,7 @@ curl http://localhost:5000/api/firestore/properties
 **Core Scraping:** ✅ Working
 **Firestore:** ✅ Working (timezone issues fixed)
 **GitHub Actions:** ✅ Working (scrape-production.yml)
-**Frontend Integration:** ✅ Ready (all 90 endpoints documented)
+**Frontend Integration:** ✅ Ready (all 91 endpoints documented)
 
 ---
 

@@ -377,7 +377,7 @@ python api_server.py
 **Main Documentation:**
 - `docs/ENV_MANAGEMENT_GUIDE.md` - Complete environment management guide
 - `docs/FOR_FRONTEND_DEVELOPER.md` - Frontend integration (update pending)
-- `frontend/API_ENDPOINTS_ACTUAL.md` - All 90 endpoints (update pending for #91)
+- `frontend/API_ENDPOINTS_ACTUAL.md` - All 91 endpoints (updated)
 
 **Git Repository:**
 - https://github.com/Tee-David/realtors_practice

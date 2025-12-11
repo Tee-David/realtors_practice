@@ -1,6 +1,6 @@
 # Nigerian Real Estate Scraper
 
-Enterprise-grade property aggregation platform that scrapes 51 real estate websites, enriches data with enterprise schema (9 categories, 85+ fields), and provides 90 REST API endpoints for frontend integration. Fully production-ready with GitHub Actions automation and Firestore integration.
+Enterprise-grade property aggregation platform that scrapes 51 real estate websites, enriches data with enterprise schema (9 categories, 85+ fields), and provides 91 REST API endpoints for frontend integration. Fully production-ready with GitHub Actions automation and Firestore integration.
 
 ## 🎯 Current Status
 
@@ -8,7 +8,7 @@ Enterprise-grade property aggregation platform that scrapes 51 real estate websi
 
 **Key Metrics**:
 - **Sites Configured**: 51 active real estate websites
-- **API Endpoints**: 90 total (18 Firestore + 72 core features)
+- **API Endpoints**: 91 total (18 Firestore + 73 core features)
 - **Data Storage**: Firestore (enterprise schema)
 - **Automation**: GitHub Actions (auto-scaling multi-session)
 - **Frontend Ready**: Complete TypeScript integration
@@ -38,7 +38,7 @@ export default function PropertiesPage() {
 ```
 
 **What's Included**:
-- ✅ TypeScript types for all 90 endpoints
+- ✅ TypeScript types for all 91 endpoints
 - ✅ React hooks with SWR
 - ✅ API client with error handling
 - ✅ Complete documentation
@@ -46,7 +46,7 @@ export default function PropertiesPage() {
 
 **Frontend Developer Resources**:
 - 📚 [Complete Setup Guide](frontend/README.md) - Step-by-step integration
-- 📋 [All 90 API Endpoints](frontend/API_ENDPOINTS_ACTUAL.md) - Full reference
+- 📋 [All 91 API Endpoints](frontend/API_ENDPOINTS_ACTUAL.md) - Full reference
 - 🔧 [TypeScript Types](frontend/types.ts) - Type definitions
 - 🌐 [API Client](frontend/api-client.ts) - HTTP client
 - ⚛️ [React Hooks](frontend/hooks.tsx) - Data fetching hooks
@@ -99,7 +99,7 @@ python test_scraper_integration.py --skip-scrape
 - Auto-deduplication across all sources
 - Historical data tracking
 
-**✅ REST API** (90 Endpoints)
+**✅ REST API** (91 Endpoints)
 - Scraping Management (7 endpoints)
 - Site Configuration (10 endpoints)
 - Logs & Monitoring (3 endpoints)
@@ -192,7 +192,7 @@ interface Property {
 
 ### API Architecture
 
-**90 Endpoints Organized by 17 Categories**:
+**91 Endpoints Organized by 17 Categories**:
 
 1. **Scraping Management** (7 endpoints)
    - Start, stop, pause, resume, status, history, health check

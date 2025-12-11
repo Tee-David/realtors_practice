@@ -448,7 +448,7 @@ export default function ScrapeTrigger() {
 ### Main Files (Start Here)
 
 1. **`frontend/README.md`** - Complete integration guide with all examples
-2. **`frontend/API_ENDPOINTS_ACTUAL.md`** - All 90 endpoints documented
+2. **`frontend/API_ENDPOINTS_ACTUAL.md`** - All 91 endpoints documented
 3. **`frontend/types.ts`** - TypeScript type definitions
 4. **`frontend/api-client.ts`** - HTTP client implementation
 5. **`frontend/hooks.tsx`** - React hooks with SWR
@@ -472,8 +472,8 @@ If you see references to `scrape-production.yml` in old documentation, it's outd
 
 ### API Endpoint Count
 
-**Total:** 90 endpoints
-- 72 core endpoints (scraping, sites, data, exports, etc.)
+**Total:** 91 endpoints
+- 73 core endpoints (scraping, sites, data, exports, etc.)
 - 18 Firestore enterprise endpoints (queries, filters, search)
 
 ### Firestore Schema Version
@@ -547,7 +547,7 @@ if (estimate.timeout_risk !== 'safe') {
 **Need Help?**
 
 - Check `frontend/README.md` for detailed examples
-- Check `frontend/API_ENDPOINTS_ACTUAL.md` for all 90 endpoints
+- Check `frontend/API_ENDPOINTS_ACTUAL.md` for all 91 endpoints
 - All TypeScript types are in `frontend/types.ts`
 
 **Everything is tested and production-ready. Just copy, paste, and build!** 🚀

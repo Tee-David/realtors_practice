@@ -98,7 +98,7 @@ Enhanced scrape time estimation endpoint with timeout warnings, verified Firesto
 - Timeout prevention logic
 
 ### Code Metrics (v3.2)
-- **Total API Endpoints**: 90 (1 enhanced)
+- **Total API Endpoints**: 91 (1 new hot reload endpoint)
 - **Firestore Upload Status**: ✅ Working (16/16 success rate)
 - **Timeout Prevention**: ✅ Proactive warnings implemented
 - **Documentation Files**: 27+ files (2 new), 11,000+ lines
@@ -116,7 +116,7 @@ Enhanced scrape time estimation endpoint with timeout warnings, verified Firesto
 - ✅ Conservative workflow strategy (99% reliability)
 - ✅ Proactive timeout prevention for frontend
 - ✅ Comprehensive frontend documentation
-- ✅ All 90 API endpoints operational
+- ✅ All 91 API endpoints operational
 
 ---
 
@@ -188,7 +188,7 @@ Complete enterprise-grade Firestore implementation with 9-category nested schema
 - `frontend/README_FOR_DEVELOPER.md` - Complete rewrite with quick start
 
 **Files Updated:**
-- `frontend/API_ENDPOINTS_ACTUAL.md` - Updated to v3.1, all 90 endpoints documented
+- `frontend/API_ENDPOINTS_ACTUAL.md` - Updated to v3.2.2, all 91 endpoints documented
 - `docs/README.md` - Updated endpoint count and features
 - `docs/FOR_FRONTEND_DEVELOPER.md` - Added enterprise schema documentation
 - `docs/Nigerian_Real_Estate_API.postman_collection.json` - Updated to v3.1.0

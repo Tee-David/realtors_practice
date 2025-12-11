@@ -260,7 +260,7 @@ def reload_env():
 - ✅ Firestore: Connected and operational
 - ✅ GitHub Actions: Working (scrape-production.yml)
 - ✅ API Server: Code ready (restart required to load)
-- ✅ Frontend Integration: All 90 endpoints documented
+- ✅ Frontend Integration: All 91 endpoints documented
 
 ---
 

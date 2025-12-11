@@ -32,7 +32,7 @@
 
 **What Works:**
 - Health check endpoint
-- All original 90 endpoints
+- All 91 endpoints (including new hot reload endpoint)
 - Server responds to requests
 
 **What Needs Fix:**

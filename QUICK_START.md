@@ -40,7 +40,7 @@ curl -X POST http://localhost:5000/api/scrape/start \
 - **README.md** - Project overview and features
 - **USER_GUIDE.md** - Complete user guide
 - **CHANGELOG.md** - Version history
-- **docs/FOR_FRONTEND_DEVELOPER.md** - API integration guide (90 endpoints)
+- **docs/FOR_FRONTEND_DEVELOPER.md** - API integration guide (91 endpoints)
 
 ### For System Management:
 - **docs/ENV_MANAGEMENT_GUIDE.md** - Environment variables and credential management

@@ -3,10 +3,10 @@
 **Last Updated:** December 11, 2025
 **API Version: 3.2.2 (Custom Site Selection + Time Estimation)
 **Base URL:** `http://localhost:5000` (Development) | `https://realtors-practice-api.onrender.com/api` (Production)
-**Total Endpoints:** 90 (72 core + 18 Firestore enterprise endpoints)
-**Testing Status:** ✅ All 90 endpoints tested (18/18 Firestore tests passing - 100%)
+**Total Endpoints:** 91 (73 core + 18 Firestore enterprise endpoints)
+**Testing Status:** ✅ All 91 endpoints tested (18/18 Firestore tests passing - 100%)
 
-> **For Frontend Developers:** This document contains actual test results from all 90 API endpoints. Every endpoint has been tested and documented with real request/response examples.
+> **For Frontend Developers:** This document contains actual test results from all 91 API endpoints. Every endpoint has been tested and documented with real request/response examples.
 >
 > ⭐ **NEW (v3.2.2):**
 > - Custom site selection - Choose specific sites to scrape
