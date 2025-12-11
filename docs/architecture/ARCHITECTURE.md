@@ -629,7 +629,7 @@ User → Frontend → API Server → Firestore
 ## 9. Configuration Files
 
 ### **GitHub Actions Workflow**
-File: `.github/workflows/scrape.yml`
+File: `.github/workflows/scrape-production.yml`
 - Triggers: Manual, API, Scheduled
 - Runs: Scraper → Watcher → Firestore Upload → Artifact Upload
 - Duration: ~60 minutes max

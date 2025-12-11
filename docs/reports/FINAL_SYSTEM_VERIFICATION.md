@@ -141,7 +141,7 @@
 ```
 .github/workflows/
 ├── scrape-production.yml   ← Production (handles 1-1000+ sites)
-└── test-quick-scrape.yml   ← Testing only (5-10 min)
+└── test-quick-scrape-production.yml   ← Testing only (5-10 min)
 ```
 
 **Verification**: Old workflows deleted (commit 8fdecf8), new structure deployed
@@ -214,8 +214,8 @@ Frontend → API → GitHub Actions → Scraper → Firestore → Frontend
 
 ### Workflow Files ✅
 - ✅ `.github/workflows/scrape-production.yml` - Production workflow
-- ✅ `.github/workflows/test-quick-scrape.yml` - Test workflow
-- ❌ `.github/workflows/scrape.yml` - DELETED (delegation logic removed)
+- ✅ `.github/workflows/test-quick-scrape-production.yml` - Test workflow
+- ❌ `.github/workflows/scrape-production.yml` - DELETED (delegation logic removed)
 - ❌ `.github/workflows/scrape-large-batch.yml` - DELETED (renamed to production)
 - ❌ `.github/workflows/upload-only.yml` - DELETED (redundant)
 

@@ -136,7 +136,7 @@ else:
 
 #### Quick Test Scraper
 
-**File**: `.github/workflows/test-quick-scrape.yml`
+**File**: `.github/workflows/test-quick-scrape-production.yml`
 
 **Features Verified**:
 - ✅ Single site scraping (configurable)

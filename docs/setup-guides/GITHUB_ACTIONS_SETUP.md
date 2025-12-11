@@ -129,7 +129,7 @@ curl -X POST https://api.github.com/repos/YOUR_ORG/YOUR_REPO/dispatches \
 
 ### 2. Quick Test Scrape
 
-**File**: `.github/workflows/test-quick-scrape.yml`
+**File**: `.github/workflows/test-quick-scrape-production.yml`
 
 **Purpose**: Quick test of single site for development/testing
 
@@ -389,7 +389,7 @@ sites_per_session = int("${{ ... }}" or "10")  # Instead of 20
 
 ### For Testing
 
-1. **Start with Quick Test**: Use `test-quick-scrape.yml` for single site
+1. **Start with Quick Test**: Use `test-quick-scrape-production.yml` for single site
 2. **Test Single Session**: Set `sites_per_session=51` for one large session
 3. **Verify Firestore Upload**: Check Firestore console after test
 4. **Check Artifacts**: Download and verify exports

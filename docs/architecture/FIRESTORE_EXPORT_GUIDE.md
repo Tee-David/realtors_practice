@@ -425,7 +425,7 @@ export default function PropertySearch() {
 
 ## 🛠️ **GitHub Actions Integration**
 
-Update `.github/workflows/scrape.yml`:
+Update `.github/workflows/scrape-production.yml`:
 
 ```yaml
 name: Scraper Workflow

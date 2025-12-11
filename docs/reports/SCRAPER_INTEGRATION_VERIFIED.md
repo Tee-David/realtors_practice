@@ -321,7 +321,7 @@ Session 3: Sites 41-51  (runs in parallel)
 
 #### 2. Quick Test Scrape
 
-**File**: `.github/workflows/test-quick-scrape.yml`
+**File**: `.github/workflows/test-quick-scrape-production.yml`
 
 **Trigger**: Manual (workflow_dispatch)
 

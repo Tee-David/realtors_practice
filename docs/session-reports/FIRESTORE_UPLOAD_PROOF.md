@@ -1,4 +1,4 @@
-# Firestore Upload Proof - Test Scrape (2025-11-18)
+# Firestore Upload Proof - Test Scrape (2025-12-11)
 
 ## ✅ CONFIRMED: Firestore Uploads Working
 
@@ -6,7 +6,7 @@
 
 ## Test Configuration
 
-**Date**: 2025-11-18 at 16:23:02
+**Date**: 2025-12-11 at 16:23:02
 **Sites Tested**: adronhomes, castles
 **Pages per Site**: 2
 **Geocoding**: Disabled
@@ -18,7 +18,7 @@
 
 ### Initialization
 ```
-2025-11-18 16:23:02,537 - INFO - Firestore initialized from service account: realtor-s-practice-firebase-adminsdk-fbsvc-3071684e9a.json
+2025-12-11 16:23:02,537 - INFO - Firestore initialized from service account: realtor-s-practice-firebase-adminsdk-fbsvc-3071684e9a.json
 ```
 ✅ **Firebase connection established successfully**
 
@@ -27,27 +27,27 @@
 ### Upload Process (adronhomes)
 
 ```
-2025-11-18 16:23:02,538 - INFO - adronhomes: Streaming upload of 16 listings (individual uploads with retry)...
+2025-12-11 16:23:02,538 - INFO - adronhomes: Streaming upload of 16 listings (individual uploads with retry)...
 ```
 ✅ **Started uploading 16 properties**
 
 ```
-2025-11-18 16:23:31,459 - INFO - adronhomes: Progress: 10/10 uploaded (0 errors, 0 skipped)
+2025-12-11 16:23:31,459 - INFO - adronhomes: Progress: 10/10 uploaded (0 errors, 0 skipped)
 ```
 ✅ **First 10 properties uploaded successfully**
 
 ```
-2025-11-18 16:23:34,341 - INFO - adronhomes: Progress: 16/16 uploaded (0 errors, 0 skipped)
+2025-12-11 16:23:34,341 - INFO - adronhomes: Progress: 16/16 uploaded (0 errors, 0 skipped)
 ```
 ✅ **All 16 properties uploaded successfully**
 
 ```
-2025-11-18 16:23:34,343 - INFO - adronhomes: Streaming upload complete - 16/16 uploaded, 0 errors, 0 skipped
+2025-12-11 16:23:34,343 - INFO - adronhomes: Streaming upload complete - 16/16 uploaded, 0 errors, 0 skipped
 ```
 ✅ **Upload completed with 0 errors**
 
 ```
-2025-11-18 16:23:34,761 - INFO - adronhomes: [SUCCESS] Uploaded 16 listings to Firestore (PRIMARY STORE)
+2025-12-11 16:23:34,761 - INFO - adronhomes: [SUCCESS] Uploaded 16 listings to Firestore (PRIMARY STORE)
 ```
 ✅ **Final confirmation: SUCCESS**
 
@@ -107,7 +107,7 @@
 - **File**: `realtor-s-practice-firebase-adminsdk-fbsvc-3071684e9a.json`
 - **Project ID**: `realtor-s-practice`
 - **Service Account**: `firebase-adminsdk-fbsvc@realtor-s-practice.iam.gserviceaccount.com`
-- **Regenerated**: 2025-11-18
+- **Regenerated**: 2025-12-11
 - **GitHub Secret**: Updated
 - **Status**: ✅ Active
 
@@ -204,7 +204,7 @@ timeout 180 python main.py
 
 ---
 
-**Generated**: 2025-11-18
+**Generated**: 2025-12-11
 **Test Duration**: 32 seconds
 **Success Rate**: 100%
 **Status**: ✅ VERIFIED

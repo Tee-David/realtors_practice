@@ -381,7 +381,7 @@ const scheduleScrape = async () => {
 Before running your first GitHub Actions scrape:
 
 - [ ] Firebase credentials added to GitHub Secrets (`FIREBASE_CREDENTIALS`)
-- [ ] Workflow file updated (`.github/workflows/scrape.yml`)
+- [ ] Workflow file updated (`.github/workflows/scrape-production.yml`)
 - [ ] Firestore database created in Firebase Console
 - [ ] API server running locally for testing (`python api_server.py`)
 - [ ] Test Firestore query endpoint works (`POST /api/firestore/query`)

@@ -1,7 +1,7 @@
 # Time Estimation Endpoint Documentation
 
 **Version**: 1.0
-**Last Updated**: 2025-11-18
+**Last Updated**: 2025-12-11
 **Endpoint**: `POST /api/github/estimate-scrape-time`
 
 ---
@@ -416,7 +416,7 @@ curl -X POST http://localhost:5000/api/github/estimate-scrape-time \
 
 ## Changelog
 
-### Version 1.0 (2025-11-18)
+### Version 1.0 (2025-12-11)
 - Initial release
 - Accurate estimation matching workflow constants
 - Timeout risk assessment (safe/warning/danger)

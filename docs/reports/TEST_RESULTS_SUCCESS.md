@@ -2,7 +2,7 @@
 
 ## Test Completed Successfully
 
-**Workflow**: `test-quick-scrape.yml`
+**Workflow**: `test-quick-scrape-production.yml`
 **Run ID**: 19262801127
 **Status**: ✅ **SUCCESS**
 **Duration**: 81 seconds
@@ -30,7 +30,7 @@
 - Verified in Firestore: 7+ documents with enterprise schema
 
 ### 2. GitHub Actions Environment ✅
-- Triggered test-quick-scrape.yml workflow
+- Triggered test-quick-scrape-production.yml workflow
 - Duration: 81 seconds
 - Status: SUCCESS
 - Site: NPC, Pages: 5

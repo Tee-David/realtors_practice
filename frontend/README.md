@@ -2,7 +2,7 @@
 
 Complete guide for integrating the Nigerian Real Estate API into your frontend application. All 90 endpoints are production-ready with full TypeScript support.
 
-**Latest Updates (v3.2.1 - 2025-11-18)**:
+**Latest Updates (v3.2.2 - 2025-12-11)**:
 - ✅ Custom site selection - Choose specific sites to scrape
 - ✅ Time estimation API - Get accurate scrape time predictions with timeout warnings
 - ✅ Firestore verified - 100% upload success rate
@@ -222,7 +222,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
 ---
 
-## 🆕 New Features (v3.2.1)
+## 🆕 New Features (v3.2.2)
 
 ### Custom Site Selection
 
@@ -309,8 +309,8 @@ Make sure all three files (types.ts, api-client.ts, hooks.tsx) are copied and de
 
 ---
 
-**Version**: 3.2.1 (Custom Site Selection + Time Estimation + Firestore Verified)
-**Last Updated**: 2025-11-18
+**Version: 3.2.2 (Custom Site Selection + Time Estimation + Firestore Verified)
+**Last Updated**: 2025-12-11
 **Status**: ✅ Production Ready
 
 ---

@@ -1,7 +1,7 @@
 # Custom Site Selection Fix - Complete Implementation
 
-**Date**: 2025-11-18
-**Version**: 3.2.1
+**Date**: 2025-12-11
+**Version: 3.2.2
 **Status**: ✅ FIXED
 
 ---
@@ -409,13 +409,13 @@ function ScrapeControl() {
 
 ## Version History
 
-**v3.2.1** (2025-11-18):
+**v3.2.2** (2025-12-11):
 - ✅ Fixed custom site selection
 - ✅ Added site validation
 - ✅ Updated defaults (15 pages)
 - ✅ Added manual workflow site input
 
-**v3.2.0** (2025-11-18):
+**v3.2.0** (2025-12-11):
 - Time estimation with timeout warnings
 - Firestore upload verification
 
