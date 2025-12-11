@@ -77,9 +77,74 @@ def health_check():
     """Health check endpoint"""
     return jsonify({
         'status': 'healthy',
-        'timestamp': datetime.now().isoformat(),
+        'timestamp': datetime.now(timezone.utc).isoformat(),
         'version': '1.0.0'
     })
+
+
+@app.route('/api/admin/reload-env', methods=['POST'])
+def reload_env():
+    """
+    Reload environment variables from .env file without restarting server.
+
+    This endpoint allows you to update credentials (GitHub token, Firebase credentials, etc.)
+    by editing the .env file and then calling this endpoint to reload the values.
+
+    **Why This is Important:**
+    - No server downtime when updating credentials
+    - GitHub tokens expire periodically and need rotation
+    - Firebase credentials may need updates for security
+    - Instant application of new environment values
+
+    **Usage:**
+    1. Edit .env file with new credentials
+    2. POST to this endpoint
+    3. New values are immediately active
+
+    **Security:** Consider adding authentication to this endpoint in production.
+
+    Returns:
+        {
+            "success": true,
+            "message": "Environment variables reloaded successfully",
+            "github_token_present": true,
+            "firebase_account_present": true,
+            "firestore_enabled": true,
+            "timestamp": "2025-12-11T13:30:00Z"
+        }
+    """
+    try:
+        from dotenv import load_dotenv
+
+        # Force reload environment variables from .env file
+        load_dotenv(override=True)
+
+        # Verify critical variables are loaded
+        github_token = os.getenv('GITHUB_TOKEN')
+        firebase_account = os.getenv('FIREBASE_SERVICE_ACCOUNT')
+        firebase_credentials = os.getenv('FIREBASE_CREDENTIALS')
+        firestore_enabled = os.getenv('FIRESTORE_ENABLED', '0')
+
+        logger.info("Environment variables reloaded successfully")
+
+        return jsonify({
+            'success': True,
+            'message': 'Environment variables reloaded successfully',
+            'github_token_present': bool(github_token and len(github_token) > 0),
+            'firebase_account_present': bool(firebase_account and len(firebase_account) > 0),
+            'firebase_credentials_present': bool(firebase_credentials and len(firebase_credentials) > 0),
+            'firestore_enabled': firestore_enabled == '1',
+            'timestamp': datetime.now(timezone.utc).isoformat()
+        }), 200
+
+    except Exception as e:
+        logger.error(f"Error reloading environment variables: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e),
+            'message': 'Failed to reload environment variables'
+        }), 500
+
 
 # ============================================================================
 # SCRAPING MANAGEMENT ENDPOINTS
@@ -2348,6 +2413,9 @@ def schedule_scrape():
             # Try ISO format first
             if isinstance(scheduled_time_str, str):
                 scheduled_time = datetime.fromisoformat(scheduled_time_str.replace('Z', '+00:00'))
+                # Ensure timezone-aware (assume UTC if naive)
+                if scheduled_time.tzinfo is None:
+                    scheduled_time = scheduled_time.replace(tzinfo=timezone.utc)
             else:
                 # Unix timestamp
                 scheduled_time = datetime.fromtimestamp(scheduled_time_str, tz=timezone.utc)
@@ -2369,6 +2437,7 @@ def schedule_scrape():
         delay_seconds = (scheduled_time - now).total_seconds()
 
         # Create job
+        global job_id_counter
         job_id = job_id_counter
         job_id_counter += 1
 
