@@ -9,20 +9,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [3.2.2] - 2025-12-11
 
+### Added
+- **Hot Reload Endpoint** (`POST /api/admin/reload-env`): Update environment variables (GitHub token, Firebase credentials) without server restart - zero downtime credential updates
+- ENV_MANAGEMENT_GUIDE.md (2,300+ lines): Comprehensive guide for environment variable management, credential rotation, and security best practices
+- Session documentation system: `docs/sessions/2025-12-11/SESSION_REPORT.md` with complete session details
+- Maintenance scripts: `scripts/maintenance/quick_restart.py` and `force_restart_server.py` for server management
+- QUICK_START.md: Simple getting started guide for common tasks
+
 ### Fixed
-- **Critical Data Loss Bug**: Added `if: ${{ always() }}` to consolidation job in `.github/workflows/scrape-production.yml` (line 334) to prevent data loss when sessions timeout. This ensures successful sessions are always consolidated even if some sessions fail.
+- **Critical**: Added missing `timezone` import to api_server.py (line 11) - required for hot reload endpoint
+- **Timezone Errors**: Updated all datetime operations to use `datetime.now(timezone.utc)` for consistency
+- Scheduling endpoint: Added timezone awareness for naive datetime inputs (lines 2350-2353)
+- Global job counter: Added `global job_id_counter` declaration (line 2375)
+- Health check endpoint: Now returns timezone-aware timestamps
+- **Critical Data Loss Bug**: Added `if: ${{ always() }}` to consolidation job in `.github/workflows/scrape-production.yml` (line 334)
 
 ### Changed
 - Updated all documentation references from `scrape.yml` to `scrape-production.yml` (21 files)
 - Improved FOR_FRONTEND_DEVELOPER.md with clearer production URL configuration instructions
+- Consolidated session documentation into organized structure (`docs/sessions/`)
+- Moved maintenance scripts to `scripts/maintenance/` directory
 - Updated .env.example to reference current Firebase credentials file
 - Updated USER_GUIDE.md to v3.2.2
 
-### Added
-- CHANGELOG.md for version tracking
-
 ### Removed
-- 17 temporary and duplicate documentation files from root directory for better organization
+- 17 temporary and duplicate documentation files from root directory
+- Redundant session files (consolidated into SESSION_REPORT.md)
 
 ---
 
