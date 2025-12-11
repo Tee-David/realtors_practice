@@ -167,6 +167,20 @@
           "order": "ASCENDING"
         },
         {
+          "fieldPath": "metadata.scrape_timestamp",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "properties",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "basic_info.status",
+          "order": "ASCENDING"
+        },
+        {
           "fieldPath": "property_details.property_type",
           "order": "ASCENDING"
         },

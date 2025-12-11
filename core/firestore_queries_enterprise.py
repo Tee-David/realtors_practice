@@ -8,7 +8,7 @@ All functions support the new schema structure with nested categories.
 import os
 import logging
 from typing import Dict, Any, List, Optional
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 logger = logging.getLogger(__name__)
 
@@ -637,7 +637,11 @@ def get_dashboard_stats() -> Dict[str, Any]:
             if data.get('updated_at'):
                 cache_time = data['updated_at']
                 if isinstance(cache_time, datetime):
-                    age = datetime.now() - cache_time
+                    # Make both datetimes timezone-aware for comparison
+                    now = datetime.now(timezone.utc)
+                    if cache_time.tzinfo is None:
+                        cache_time = cache_time.replace(tzinfo=timezone.utc)
+                    age = now - cache_time
                     if age.total_seconds() < 3600:  # 1 hour
                         logger.info("Returning cached dashboard stats")
                         return data
@@ -651,7 +655,7 @@ def get_dashboard_stats() -> Dict[str, Any]:
         if not all_props:
             return {
                 'total_properties': 0,
-                'updated_at': datetime.now()
+                'updated_at': datetime.now(timezone.utc)
             }
 
         # Calculate stats
@@ -701,7 +705,7 @@ def get_dashboard_stats() -> Dict[str, Any]:
             'by_property_type': by_type,
             'by_listing_type': by_listing_type,
             'top_areas': dict(sorted(by_area.items(), key=lambda x: x[1], reverse=True)[:10]),
-            'updated_at': datetime.now()
+            'updated_at': datetime.now(timezone.utc)
         }
 
         # Cache the stats
