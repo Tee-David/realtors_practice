@@ -62,19 +62,34 @@ export default function PropertiesPage() {
 
 ---
 
-## 📡 API Base URL
+## 📡 API Base URL Configuration
 
-**Development:**
-```
-http://localhost:5000
+⚠️ **IMPORTANT: Change this when deploying to production!**
+
+The `api-client.ts` file has `http://localhost:5000/api` hardcoded on **line 62**.
+
+**For Development (default):**
+```typescript
+// api-client.ts line 62
+this.baseUrl = config.baseUrl || 'http://localhost:5000/api';
 ```
 
-**Production (when backend is deployed):**
-```
-https://your-backend-url.com
+**For Production - Change to:**
+```typescript
+// api-client.ts line 62
+this.baseUrl = config.baseUrl || 'https://your-production-api.com/api';
 ```
 
-Update the base URL in `api-client.ts` (line 4).
+**Or use environment variables (recommended):**
+```typescript
+// api-client.ts line 62
+this.baseUrl = config.baseUrl || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+```
+
+Then in your `.env.local`:
+```bash
+NEXT_PUBLIC_API_URL=https://your-production-api.com/api
+```
 
 ---
 
