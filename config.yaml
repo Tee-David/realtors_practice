@@ -60,7 +60,7 @@ retry:
   retry_on_zero_results: false
 sites:
   adronhomes:
-    enabled: true
+    enabled: false
     name: Adron Homes
     parser: specials
     url: https://adronhomesproperties.com/
@@ -80,7 +80,7 @@ sites:
     parser: specials
     url: https://buyletlive.com/
   castles:
-    enabled: false
+    enabled: true
     name: Castles
     parser: specials
     url: http://castles.com.ng/
@@ -285,7 +285,7 @@ sites:
       toilets:
       - .toilets .value
       - '[class*=''toilet'' i]'
-    enabled: false
+    enabled: true
     list_paths:
     - ''
     location_discovery:
@@ -425,7 +425,7 @@ sites:
       - .type
       toilets:
       - '[class*=''toilet'' i]'
-    enabled: false
+    enabled: true
     lagos_paths:
     - /property-for-sale/lagos
     - /property-for-rent/lagos
