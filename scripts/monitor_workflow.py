@@ -9,10 +9,10 @@ from datetime import datetime
 if sys.platform == 'win32':
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
-# GitHub details
-GITHUB_TOKEN = "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"
-GITHUB_OWNER = "Tee-David"
-GITHUB_REPO = "realtors_practice"
+# GitHub details - prioritize environment variables, fallback to defaults for local use
+GITHUB_TOKEN = os.getenv('GITHUB_TOKEN', "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")
+GITHUB_OWNER = os.getenv('GITHUB_OWNER', "Tee-David")
+GITHUB_REPO = os.getenv('GITHUB_REPO', "realtors_practice")
 
 def get_latest_workflow_run():
     """Get the most recent workflow run"""
