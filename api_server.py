@@ -1397,10 +1397,21 @@ def export_firestore_data():
                 'error': f'Invalid format. Valid: {valid_formats}'
             }), 400
 
-        # Initialize Firebase
+        # Initialize Firebase if not already done
         if not firebase_admin._apps:
-            cred_path = os.getenv('FIREBASE_SERVICE_ACCOUNT', 'realtor-s-practice-firebase-adminsdk-fbsvc-c8563eb2f2.json')
-            cred = credentials.Certificate(cred_path)
+            cred_json = os.getenv('FIREBASE_CREDENTIALS')
+            cred_path = os.getenv('FIREBASE_SERVICE_ACCOUNT')
+
+            if cred_json:
+                cred = credentials.Certificate(json.loads(cred_json))
+            elif cred_path and Path(cred_path).exists():
+                cred = credentials.Certificate(cred_path)
+            else:
+                return jsonify({
+                    'error': 'Firebase not configured',
+                    'details': 'Set FIREBASE_CREDENTIALS or FIREBASE_SERVICE_ACCOUNT environment variable'
+                }), 500
+
             firebase_admin.initialize_app(cred)
 
         db = firestore.client()

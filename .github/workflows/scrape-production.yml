@@ -402,6 +402,77 @@ jobs:
           echo "Creating master workbook..."
           python watcher.py --once
 
+      - name: Upload to Firestore
+        env:
+          FIREBASE_CREDENTIALS: ${{ secrets.FIREBASE_CREDENTIALS }}
+        run: |
+          echo "========================================="
+          echo "Uploading to Firestore (Enterprise Schema v3.1)"
+          echo "========================================="
+
+          # Check if master workbook exists
+          if [ ! -f "exports/cleaned/MASTER_CLEANED_WORKBOOK.xlsx" ]; then
+            echo "⚠️ WARNING: Master workbook not found!"
+            echo "Watcher may have failed. Skipping Firestore upload."
+            exit 0
+          fi
+
+          # Check if Firebase credentials secret is set
+          if [ -z "$FIREBASE_CREDENTIALS" ]; then
+            echo "⚠️ WARNING: FIREBASE_CREDENTIALS secret not set!"
+            echo "Skipping Firestore upload. Set secret to enable uploads."
+            exit 0
+          fi
+
+          # Create temporary credentials file
+          echo "$FIREBASE_CREDENTIALS" > firebase-temp-credentials.json
+
+          # Validate credentials file is valid JSON
+          if ! python -c "import json; json.load(open('firebase-temp-credentials.json'))" 2>/dev/null; then
+            echo "❌ ERROR: Invalid Firebase credentials JSON!"
+            rm firebase-temp-credentials.json
+            exit 0
+          fi
+
+          echo "✅ Firebase credentials validated"
+
+          # Set environment variable
+          export FIREBASE_SERVICE_ACCOUNT=firebase-temp-credentials.json
+
+          # Run upload script with enterprise schema transformation
+          echo "Uploading with enterprise schema (9 categories, 85+ fields)..."
+          echo "- Auto-detection: listing_type, furnishing, condition"
+          echo "- Auto-tagging: premium, hot_deal"
+          echo "- Location intelligence: 50+ Lagos landmarks"
+          echo ""
+
+          if python scripts/upload_to_firestore.py --cleanup --max-age-days 30; then
+            echo ""
+            echo "✅ Firestore upload completed successfully!"
+
+            # Count uploaded properties
+            PROPERTY_COUNT=$(python -c "
+import pandas as pd
+try:
+    df = pd.read_excel('exports/cleaned/MASTER_CLEANED_WORKBOOK.xlsx')
+    print(len(df))
+except:
+    print('Unknown')
+" 2>/dev/null || echo "Unknown")
+
+            echo "📊 Total properties uploaded: $PROPERTY_COUNT"
+          else
+            echo "⚠️ WARNING: Firestore upload encountered errors"
+            echo "Check logs above for details"
+          fi
+
+          # Clean up credentials
+          rm -f firebase-temp-credentials.json
+
+          echo "========================================="
+          echo "Firestore upload step complete!"
+          echo "========================================="
+
       - name: Generate final summary
         if: always()
         run: |
@@ -432,10 +503,25 @@ jobs:
             echo "" >> $GITHUB_STEP_SUMMARY
           fi
 
+          # Firestore upload status
+          FIRESTORE_COUNT=$(python -c "
+import pandas as pd
+try:
+    df = pd.read_excel('exports/cleaned/MASTER_CLEANED_WORKBOOK.xlsx')
+    print(len(df))
+except:
+    print(0)
+" 2>/dev/null || echo "0")
+
           echo "**Firestore:**" >> $GITHUB_STEP_SUMMARY
-          echo "✅ Uploaded to Firestore during scraping" >> $GITHUB_STEP_SUMMARY
+          if [ "$FIRESTORE_COUNT" -gt 0 ]; then
+            echo "✅ Uploaded $FIRESTORE_COUNT properties successfully" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ No properties uploaded (check logs)" >> $GITHUB_STEP_SUMMARY
+          fi
           echo "- Collection: \`properties\`" >> $GITHUB_STEP_SUMMARY
-          echo "- Schema: Enterprise (9 categories)" >> $GITHUB_STEP_SUMMARY
+          echo "- Schema: Enterprise v3.1 (9 categories, 85+ fields)" >> $GITHUB_STEP_SUMMARY
+          echo "- Location: Lagos area only" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Workflow:** #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
           echo "**Date:** $(date -u '+%Y-%m-%d %H:%M UTC')" >> $GITHUB_STEP_SUMMARY
