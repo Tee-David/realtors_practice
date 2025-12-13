@@ -1831,8 +1831,8 @@ def trigger_github_scrape():
         payload = {
             'event_type': 'trigger-scrape',
             'client_payload': {
-                'max_pages': max_pages,
-                'geocode': geocode,
+                'max_pages': str(max_pages),  # Convert to string for GitHub Actions
+                'geocode': str(geocode),      # Convert to string to avoid falsy 0 bug
                 'sites': sites,
                 'triggered_by': 'api',
                 'timestamp': datetime.now().isoformat()
@@ -2480,8 +2480,8 @@ def schedule_scrape():
                     payload = {
                         'event_type': 'trigger-scrape',
                         'client_payload': {
-                            'page_cap': scheduled_jobs[job_id]['page_cap'],
-                            'geocode': scheduled_jobs[job_id]['geocode'],
+                            'max_pages': str(scheduled_jobs[job_id]['page_cap']),  # Convert to string
+                            'geocode': str(scheduled_jobs[job_id]['geocode']),     # Convert to string
                             'sites': scheduled_jobs[job_id]['sites']
                         }
                     }

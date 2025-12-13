@@ -61,12 +61,15 @@ jobs:
           import os
           import math
 
-          # Configuration
+          # Configuration - API sends strings, manual inputs are also strings
           MAX_PAGES_STR = "${{ github.event.inputs.max_pages || github.event.client_payload.max_pages || '15' }}"
           MAX_PAGES = int(MAX_PAGES_STR) if MAX_PAGES_STR else 15
 
-          GEOCODE_STR = "${{ github.event.inputs.geocode || github.event.client_payload.geocode || '1' }}"
-          GEOCODE = GEOCODE_STR if GEOCODE_STR else "1"
+          # Fix: Use explicit default instead of || to avoid falsy 0 bug
+          GEOCODE_INPUT = "${{ github.event.inputs.geocode }}"
+          GEOCODE_PAYLOAD = "${{ github.event.client_payload.geocode }}"
+          GEOCODE_STR = GEOCODE_INPUT if GEOCODE_INPUT else (GEOCODE_PAYLOAD if GEOCODE_PAYLOAD else "1")
+          GEOCODE = GEOCODE_STR
 
           FORCE_STR = "${{ github.event.inputs.force_sites_per_session || github.event.client_payload.sites_per_session || '' }}"
           FORCE_SITES_PER_SESSION = FORCE_STR if FORCE_STR else ""
@@ -76,6 +79,14 @@ jobs:
           CUSTOM_SITES_INPUT = '${{ toJSON(github.event.inputs.sites) }}'
 
           GEOCODE_ENABLED = GEOCODE == "1"
+
+          # Log trigger source for debugging
+          print("=== Workflow Trigger Info ===")
+          print(f"Triggered by: ${{ github.event_name }}")
+          print(f"Event action: ${{ github.event.action }}")
+          print(f"Max pages: {MAX_PAGES}")
+          print(f"Geocode: {GEOCODE} (enabled: {GEOCODE_ENABLED})")
+          print(f"============================\n")
 
           # Time estimation constants (based on empirical testing)
           TIME_PER_PAGE = 8  # seconds
@@ -106,8 +117,9 @@ jobs:
                   custom_sites = json.loads(CUSTOM_SITES_STR)
                   if custom_sites:
                       print(f"Using custom sites from API/frontend: {custom_sites}")
-              except:
-                  pass
+              except Exception as e:
+                  print(f"WARNING: Failed to parse client_payload.sites: {e}")
+                  print(f"Raw value: {CUSTOM_SITES_STR}")
 
           # Try inputs.sites second (from manual workflow_dispatch)
           if not custom_sites and CUSTOM_SITES_INPUT and CUSTOM_SITES_INPUT not in ['null', '', '[]']:
@@ -115,8 +127,9 @@ jobs:
                   custom_sites = json.loads(CUSTOM_SITES_INPUT)
                   if custom_sites:
                       print(f"Using custom sites from manual input: {custom_sites}")
-              except:
-                  pass
+              except Exception as e:
+                  print(f"WARNING: Failed to parse inputs.sites: {e}")
+                  print(f"Raw value: {CUSTOM_SITES_INPUT}")
 
           # Validate custom sites exist in config
           if custom_sites:
