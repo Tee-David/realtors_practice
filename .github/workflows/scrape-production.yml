@@ -454,16 +454,7 @@ jobs:
             echo "SUCCESS: Firestore upload completed successfully!"
 
             # Count uploaded properties
-            PROPERTY_COUNT=$(python -c "
-import pandas as pd
-try:
-    df = pd.read_excel('exports/cleaned/MASTER_CLEANED_WORKBOOK.xlsx')
-    print(len(df))
-except:
-    print('Unknown')
-" 2>/dev/null || echo "Unknown")
-
-            echo " Total properties uploaded: $PROPERTY_COUNT"
+            echo "SUCCESS: Firestore upload completed!"
           else
             echo "WARNING: Firestore upload encountered errors"
             echo "Check logs above for details"
@@ -507,14 +498,7 @@ except:
           fi
 
           # Firestore upload status
-          FIRESTORE_COUNT=$(python -c "
-import pandas as pd
-try:
-    df = pd.read_excel('exports/cleaned/MASTER_CLEANED_WORKBOOK.xlsx')
-    print(len(df))
-except:
-    print(0)
-" 2>/dev/null || echo "0")
+          FIRESTORE_COUNT=$(grep -c "uploaded successfully" firestore_upload.log 2>/dev/null || echo "0")
 
           echo "**Firestore:**" >> $GITHUB_STEP_SUMMARY
           if [ "$FIRESTORE_COUNT" -gt 0 ]; then
