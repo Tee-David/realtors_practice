@@ -1839,12 +1839,15 @@ def trigger_github_scrape():
             'Authorization': f'Bearer {github_token}',
             'X-GitHub-Api-Version': '2022-11-28'
         }
+        # Convert sites array to comma-separated string for GitHub Actions
+        sites_str = ','.join(sites) if sites else ''
+
         payload = {
             'event_type': 'trigger-scrape',
             'client_payload': {
                 'max_pages': str(max_pages),  # Convert to string for GitHub Actions
                 'geocode': str(geocode),      # Convert to string to avoid falsy 0 bug
-                'sites': sites,
+                'sites': sites_str,           # Comma-separated string instead of array
                 'triggered_by': 'api',
                 'timestamp': datetime.now().isoformat()
             }

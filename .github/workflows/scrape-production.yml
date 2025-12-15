@@ -75,8 +75,9 @@ jobs:
           FORCE_SITES_PER_SESSION = FORCE_STR if FORCE_STR else ""
 
           # Custom sites from frontend/manual trigger
-          CUSTOM_SITES_STR = '${{ toJSON(github.event.client_payload.sites) }}'
-          CUSTOM_SITES_INPUT = '${{ toJSON(github.event.inputs.sites) }}'
+          # API sends sites as comma-separated string (e.g., "site1,site2,site3")
+          CUSTOM_SITES_STR = "${{ github.event.client_payload.sites }}"
+          CUSTOM_SITES_INPUT = "${{ github.event.inputs.sites }}"
 
           GEOCODE_ENABLED = GEOCODE == "1"
 
@@ -86,15 +87,9 @@ jobs:
           print(f"Event action: ${{ github.event.action }}")
           print(f"Max pages: {MAX_PAGES}")
           print(f"Geocode: {GEOCODE} (enabled: {GEOCODE_ENABLED})")
+          print(f"Sites param (payload): '{CUSTOM_SITES_STR}'")
+          print(f"Sites param (input): '{CUSTOM_SITES_INPUT}'")
           print(f"============================\n")
-
-          # DEBUG: Log raw sites parameter values
-          print("=== DEBUG: Sites Parameter ===")
-          print(f"CUSTOM_SITES_STR (from client_payload): '{CUSTOM_SITES_STR}'")
-          print(f"CUSTOM_SITES_STR type: {type(CUSTOM_SITES_STR)}")
-          print(f"CUSTOM_SITES_STR repr: {repr(CUSTOM_SITES_STR)}")
-          print(f"CUSTOM_SITES_INPUT (from inputs): '{CUSTOM_SITES_INPUT}'")
-          print(f"===============================\n")
 
           # Time estimation constants (based on empirical testing)
           TIME_PER_PAGE = 8  # seconds
@@ -119,82 +114,57 @@ jobs:
           # Priority: Custom sites from frontend/input > All enabled sites from config
           custom_sites = []
 
-          # Try client_payload.sites first (from API trigger)
-          print("DEBUG: Checking client_payload.sites...")
-          print(f"  Value: {CUSTOM_SITES_STR}")
-          print(f"  Is not empty: {bool(CUSTOM_SITES_STR)}")
-          print(f"  Is not 'null': {CUSTOM_SITES_STR != 'null'}")
-          print(f"  Is not '[]': {CUSTOM_SITES_STR != '[]'}")
-
+          # Try client_payload.sites first (from API trigger - comma-separated string)
           if CUSTOM_SITES_STR and CUSTOM_SITES_STR not in ['null', '', '[]', 'None']:
-              try:
-                  custom_sites = json.loads(CUSTOM_SITES_STR)
-                  print(f"DEBUG: Parsed client_payload.sites: {custom_sites}")
-                  print(f"DEBUG: custom_sites is list: {isinstance(custom_sites, list)}")
-                  print(f"DEBUG: custom_sites length: {len(custom_sites) if isinstance(custom_sites, list) else 'N/A'}")
-                  if custom_sites and isinstance(custom_sites, list):
-                      print(f"✅ Using custom sites from API/frontend: {custom_sites}")
-                  else:
-                      print(f"⚠️ Parsed but empty or invalid: {custom_sites}")
-                      custom_sites = []
-              except Exception as e:
-                  print(f"❌ WARNING: Failed to parse client_payload.sites: {e}")
-                  print(f"   Raw value: {CUSTOM_SITES_STR}")
-                  print(f"   Exception type: {type(e).__name__}")
-                  custom_sites = []
-          else:
-              print(f"DEBUG: Skipping client_payload.sites (empty or null)")
+              sites_list = [s.strip() for s in CUSTOM_SITES_STR.split(',') if s.strip()]
+              if sites_list:
+                  custom_sites = sites_list
+                  print(f"Using custom sites from API ({len(custom_sites)} sites): {custom_sites}")
 
-          # Try inputs.sites second (from manual workflow_dispatch)
+          # Try inputs.sites second (from manual workflow_dispatch - JSON array or comma-separated)
           if not custom_sites and CUSTOM_SITES_INPUT and CUSTOM_SITES_INPUT not in ['null', '', '[]', 'None']:
-              print("DEBUG: Checking inputs.sites...")
               try:
-                  custom_sites = json.loads(CUSTOM_SITES_INPUT)
-                  if custom_sites and isinstance(custom_sites, list):
-                      print(f"✅ Using custom sites from manual input: {custom_sites}")
-                  else:
-                      custom_sites = []
-              except Exception as e:
-                  print(f"❌ WARNING: Failed to parse inputs.sites: {e}")
-                  print(f"   Raw value: {CUSTOM_SITES_INPUT}")
-                  custom_sites = []
+                  # Try parsing as JSON first (for manual triggers that use array)
+                  parsed = json.loads(CUSTOM_SITES_INPUT)
+                  if isinstance(parsed, list) and parsed:
+                      custom_sites = parsed
+                      print(f"Using custom sites from manual input (JSON array): {custom_sites}")
+              except (json.JSONDecodeError, ValueError):
+                  # Fall back to comma-separated string
+                  sites_list = [s.strip() for s in CUSTOM_SITES_INPUT.split(',') if s.strip()]
+                  if sites_list:
+                      custom_sites = sites_list
+                      print(f"Using custom sites from manual input (CSV): {custom_sites}")
 
           # Validate custom sites exist in config
-          print("\n=== Site Selection Decision ===")
           if custom_sites:
-              print(f"Custom sites received: {custom_sites}")
               all_sites = list(config.get('sites', {}).keys())
               valid_sites = [s for s in custom_sites if s in all_sites]
               invalid_sites = [s for s in custom_sites if s not in all_sites]
 
               if invalid_sites:
-                  print(f"⚠️ WARNING: Invalid sites (not in config): {invalid_sites}")
+                  print(f"WARNING: Invalid sites (not in config): {invalid_sites}")
 
               if valid_sites:
                   enabled_sites = valid_sites
-                  print(f"✅ DECISION: Using {len(valid_sites)} CUSTOM sites")
-                  print(f"   Sites: {valid_sites}")
+                  print(f"✓ Validated {len(valid_sites)} custom sites")
               else:
-                  print(f"❌ ERROR: No valid sites found in custom list. Using all enabled sites.")
+                  print(f"ERROR: No valid sites found in custom list. Using all enabled sites.")
                   enabled_sites = [
                       site_id for site_id, site_config in config.get('sites', {}).items()
                       if site_config.get('enabled', False)
                   ]
-                  print(f"   Fallback to {len(enabled_sites)} enabled sites")
           else:
               # No custom sites - use all enabled from config
               enabled_sites = [
                   site_id for site_id, site_config in config.get('sites', {}).items()
                   if site_config.get('enabled', False)
               ]
-              print(f"⚠️ DECISION: No custom sites provided")
-              print(f"   Using ALL {len(enabled_sites)} enabled sites from config.yaml")
+              print(f"Using all enabled sites from config.yaml")
 
           total_sites = len(enabled_sites)
-          print(f"\n📊 FINAL SELECTION:")
-          print(f"   Total sites to scrape: {total_sites}")
-          print(f"   Sites: {enabled_sites}")
-          print(f"================================\n")
+          print(f"Total sites to scrape: {total_sites}")
+          print(f"Sites: {enabled_sites}")
           print(f"Max pages per site: {MAX_PAGES}")
           print(f"Geocoding: {GEOCODE_ENABLED}")
 
