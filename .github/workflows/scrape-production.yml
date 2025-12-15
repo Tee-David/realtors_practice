@@ -75,9 +75,8 @@ jobs:
           FORCE_SITES_PER_SESSION = FORCE_STR if FORCE_STR else ""
 
           # Custom sites from frontend/manual trigger
-          # API sends sites as comma-separated string (e.g., "site1,site2,site3")
-          CUSTOM_SITES_STR = "${{ github.event.client_payload.sites }}"
-          CUSTOM_SITES_INPUT = "${{ github.event.inputs.sites }}"
+          CUSTOM_SITES_STR = '${{ toJSON(github.event.client_payload.sites) }}'
+          CUSTOM_SITES_INPUT = '${{ toJSON(github.event.inputs.sites) }}'
 
           GEOCODE_ENABLED = GEOCODE == "1"
 
@@ -87,8 +86,6 @@ jobs:
           print(f"Event action: ${{ github.event.action }}")
           print(f"Max pages: {MAX_PAGES}")
           print(f"Geocode: {GEOCODE} (enabled: {GEOCODE_ENABLED})")
-          print(f"Sites param (payload): '{CUSTOM_SITES_STR}'")
-          print(f"Sites param (input): '{CUSTOM_SITES_INPUT}'")
           print(f"============================\n")
 
           # Time estimation constants (based on empirical testing)
@@ -114,27 +111,25 @@ jobs:
           # Priority: Custom sites from frontend/input > All enabled sites from config
           custom_sites = []
 
-          # Try client_payload.sites first (from API trigger - comma-separated string)
-          if CUSTOM_SITES_STR and CUSTOM_SITES_STR not in ['null', '', '[]', 'None']:
-              sites_list = [s.strip() for s in CUSTOM_SITES_STR.split(',') if s.strip()]
-              if sites_list:
-                  custom_sites = sites_list
-                  print(f"Using custom sites from API ({len(custom_sites)} sites): {custom_sites}")
-
-          # Try inputs.sites second (from manual workflow_dispatch - JSON array or comma-separated)
-          if not custom_sites and CUSTOM_SITES_INPUT and CUSTOM_SITES_INPUT not in ['null', '', '[]', 'None']:
+          # Try client_payload.sites first (from API trigger)
+          if CUSTOM_SITES_STR and CUSTOM_SITES_STR not in ['null', '', '[]']:
               try:
-                  # Try parsing as JSON first (for manual triggers that use array)
-                  parsed = json.loads(CUSTOM_SITES_INPUT)
-                  if isinstance(parsed, list) and parsed:
-                      custom_sites = parsed
-                      print(f"Using custom sites from manual input (JSON array): {custom_sites}")
-              except (json.JSONDecodeError, ValueError):
-                  # Fall back to comma-separated string
-                  sites_list = [s.strip() for s in CUSTOM_SITES_INPUT.split(',') if s.strip()]
-                  if sites_list:
-                      custom_sites = sites_list
-                      print(f"Using custom sites from manual input (CSV): {custom_sites}")
+                  custom_sites = json.loads(CUSTOM_SITES_STR)
+                  if custom_sites:
+                      print(f"Using custom sites from API/frontend: {custom_sites}")
+              except Exception as e:
+                  print(f"WARNING: Failed to parse client_payload.sites: {e}")
+                  print(f"Raw value: {CUSTOM_SITES_STR}")
+
+          # Try inputs.sites second (from manual workflow_dispatch)
+          if not custom_sites and CUSTOM_SITES_INPUT and CUSTOM_SITES_INPUT not in ['null', '', '[]']:
+              try:
+                  custom_sites = json.loads(CUSTOM_SITES_INPUT)
+                  if custom_sites:
+                      print(f"Using custom sites from manual input: {custom_sites}")
+              except Exception as e:
+                  print(f"WARNING: Failed to parse inputs.sites: {e}")
+                  print(f"Raw value: {CUSTOM_SITES_INPUT}")
 
           # Validate custom sites exist in config
           if custom_sites:
@@ -251,7 +246,7 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Configuration:**" >> $GITHUB_STEP_SUMMARY
           echo "- Max pages per site: ${{ github.event.inputs.max_pages || github.event.client_payload.max_pages || '15' }}" >> $GITHUB_STEP_SUMMARY
-          echo "- Geocoding: ${{ steps.batch.outputs.is_safe == 'true' && 'SUCCESS: Enabled' || 'ERROR: Disabled' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Geocoding: ${{ steps.batch.outputs.is_safe == 'true' && '✅ Enabled' || '❌ Disabled' }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Batching:**" >> $GITHUB_STEP_SUMMARY
           echo "- Sites per session: ${{ steps.batch.outputs.sites_per_session }}" >> $GITHUB_STEP_SUMMARY
@@ -260,7 +255,7 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Time Estimate:**" >> $GITHUB_STEP_SUMMARY
           echo "- Total: ${{ steps.batch.outputs.estimated_minutes }} min (${{ steps.batch.outputs.estimated_hours }} hours)" >> $GITHUB_STEP_SUMMARY
-          echo "- Status: ${{ steps.batch.outputs.is_safe == 'true' && 'SUCCESS:' || 'WARNING:' }} ${{ steps.batch.outputs.recommendation }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Status: ${{ steps.batch.outputs.is_safe == 'true' && '✅' || '⚠️' }} ${{ steps.batch.outputs.recommendation }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
   scrape:
@@ -417,14 +412,14 @@ jobs:
 
           # Check if master workbook exists
           if [ ! -f "exports/cleaned/MASTER_CLEANED_WORKBOOK.xlsx" ]; then
-            echo "WARNING: Master workbook not found!"
+            echo "⚠️ WARNING: Master workbook not found!"
             echo "Watcher may have failed. Skipping Firestore upload."
             exit 0
           fi
 
           # Check if Firebase credentials secret is set
           if [ -z "$FIREBASE_CREDENTIALS" ]; then
-            echo "WARNING: FIREBASE_CREDENTIALS secret not set!"
+            echo "⚠️ WARNING: FIREBASE_CREDENTIALS secret not set!"
             echo "Skipping Firestore upload. Set secret to enable uploads."
             exit 0
           fi
@@ -434,12 +429,12 @@ jobs:
 
           # Validate credentials file is valid JSON
           if ! python -c "import json; json.load(open('firebase-temp-credentials.json'))" 2>/dev/null; then
-            echo "ERROR: Invalid Firebase credentials JSON!"
+            echo "❌ ERROR: Invalid Firebase credentials JSON!"
             rm firebase-temp-credentials.json
             exit 0
           fi
 
-          echo "SUCCESS: Firebase credentials validated"
+          echo "✅ Firebase credentials validated"
 
           # Set environment variable
           export FIREBASE_SERVICE_ACCOUNT=firebase-temp-credentials.json
@@ -453,7 +448,7 @@ jobs:
 
           if python scripts/upload_to_firestore.py --cleanup --max-age-days 30; then
             echo ""
-            echo "SUCCESS: Firestore upload completed successfully!"
+            echo "✅ Firestore upload completed successfully!"
 
             # Count uploaded properties
             PROPERTY_COUNT=$(python -c "
@@ -465,9 +460,9 @@ except:
     print('Unknown')
 " 2>/dev/null || echo "Unknown")
 
-            echo " Total properties uploaded: $PROPERTY_COUNT"
+            echo "📊 Total properties uploaded: $PROPERTY_COUNT"
           else
-            echo "WARNING: Firestore upload encountered errors"
+            echo "⚠️ WARNING: Firestore upload encountered errors"
             echo "Check logs above for details"
           fi
 
@@ -520,9 +515,9 @@ except:
 
           echo "**Firestore:**" >> $GITHUB_STEP_SUMMARY
           if [ "$FIRESTORE_COUNT" -gt 0 ]; then
-            echo "SUCCESS: Uploaded $FIRESTORE_COUNT properties successfully" >> $GITHUB_STEP_SUMMARY
+            echo "✅ Uploaded $FIRESTORE_COUNT properties successfully" >> $GITHUB_STEP_SUMMARY
           else
-            echo "WARNING: No properties uploaded (check logs)" >> $GITHUB_STEP_SUMMARY
+            echo "⚠️ No properties uploaded (check logs)" >> $GITHUB_STEP_SUMMARY
           fi
           echo "- Collection: \`properties\`" >> $GITHUB_STEP_SUMMARY
           echo "- Schema: Enterprise v3.1 (9 categories, 85+ fields)" >> $GITHUB_STEP_SUMMARY
