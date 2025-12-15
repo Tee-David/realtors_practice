@@ -145,7 +145,7 @@ jobs:
 
               if valid_sites:
                   enabled_sites = valid_sites
-                  print(f"✓ Validated {len(valid_sites)} custom sites")
+                  print(f"SUCCESS: Validated {len(valid_sites)} custom sites")
               else:
                   print(f"ERROR: No valid sites found in custom list. Using all enabled sites.")
                   enabled_sites = [
@@ -249,7 +249,7 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Configuration:**" >> $GITHUB_STEP_SUMMARY
           echo "- Max pages per site: ${{ github.event.inputs.max_pages || github.event.client_payload.max_pages || '15' }}" >> $GITHUB_STEP_SUMMARY
-          echo "- Geocoding: ${{ steps.batch.outputs.is_safe == 'true' && '✅ Enabled' || '❌ Disabled' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Geocoding: ${{ steps.batch.outputs.is_safe == 'true' && 'SUCCESS: Enabled' || 'ERROR: Disabled' }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Batching:**" >> $GITHUB_STEP_SUMMARY
           echo "- Sites per session: ${{ steps.batch.outputs.sites_per_session }}" >> $GITHUB_STEP_SUMMARY
@@ -258,7 +258,7 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Time Estimate:**" >> $GITHUB_STEP_SUMMARY
           echo "- Total: ${{ steps.batch.outputs.estimated_minutes }} min (${{ steps.batch.outputs.estimated_hours }} hours)" >> $GITHUB_STEP_SUMMARY
-          echo "- Status: ${{ steps.batch.outputs.is_safe == 'true' && '✅' || '⚠️' }} ${{ steps.batch.outputs.recommendation }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Status: ${{ steps.batch.outputs.is_safe == 'true' && 'SUCCESS:' || 'WARNING:' }} ${{ steps.batch.outputs.recommendation }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
   scrape:
@@ -314,7 +314,7 @@ jobs:
           if [ ! -z "$FIREBASE_CREDENTIALS" ]; then
             echo "$FIREBASE_CREDENTIALS" > firebase-temp-credentials.json
             export FIREBASE_SERVICE_ACCOUNT=firebase-temp-credentials.json
-            echo "✓ Firebase credentials configured"
+            echo "SUCCESS: Firebase credentials configured"
           fi
 
           # Enable only this session's sites
@@ -415,14 +415,14 @@ jobs:
 
           # Check if master workbook exists
           if [ ! -f "exports/cleaned/MASTER_CLEANED_WORKBOOK.xlsx" ]; then
-            echo "⚠️ WARNING: Master workbook not found!"
+            echo "WARNING: Master workbook not found!"
             echo "Watcher may have failed. Skipping Firestore upload."
             exit 0
           fi
 
           # Check if Firebase credentials secret is set
           if [ -z "$FIREBASE_CREDENTIALS" ]; then
-            echo "⚠️ WARNING: FIREBASE_CREDENTIALS secret not set!"
+            echo "WARNING: FIREBASE_CREDENTIALS secret not set!"
             echo "Skipping Firestore upload. Set secret to enable uploads."
             exit 0
           fi
@@ -432,12 +432,12 @@ jobs:
 
           # Validate credentials file is valid JSON
           if ! python -c "import json; json.load(open('firebase-temp-credentials.json'))" 2>/dev/null; then
-            echo "❌ ERROR: Invalid Firebase credentials JSON!"
+            echo "ERROR: Invalid Firebase credentials JSON!"
             rm firebase-temp-credentials.json
             exit 0
           fi
 
-          echo "✅ Firebase credentials validated"
+          echo "SUCCESS: Firebase credentials validated"
 
           # Set environment variable
           export FIREBASE_SERVICE_ACCOUNT=firebase-temp-credentials.json
@@ -451,7 +451,7 @@ jobs:
 
           if python scripts/upload_to_firestore.py --cleanup --max-age-days 30; then
             echo ""
-            echo "✅ Firestore upload completed successfully!"
+            echo "SUCCESS: Firestore upload completed successfully!"
 
             # Count uploaded properties
             PROPERTY_COUNT=$(python -c "
@@ -463,9 +463,9 @@ except:
     print('Unknown')
 " 2>/dev/null || echo "Unknown")
 
-            echo "📊 Total properties uploaded: $PROPERTY_COUNT"
+            echo " Total properties uploaded: $PROPERTY_COUNT"
           else
-            echo "⚠️ WARNING: Firestore upload encountered errors"
+            echo "WARNING: Firestore upload encountered errors"
             echo "Check logs above for details"
           fi
 
@@ -518,9 +518,9 @@ except:
 
           echo "**Firestore:**" >> $GITHUB_STEP_SUMMARY
           if [ "$FIRESTORE_COUNT" -gt 0 ]; then
-            echo "✅ Uploaded $FIRESTORE_COUNT properties successfully" >> $GITHUB_STEP_SUMMARY
+            echo "SUCCESS: Uploaded $FIRESTORE_COUNT properties successfully" >> $GITHUB_STEP_SUMMARY
           else
-            echo "⚠️ No properties uploaded (check logs)" >> $GITHUB_STEP_SUMMARY
+            echo "WARNING: No properties uploaded (check logs)" >> $GITHUB_STEP_SUMMARY
           fi
           echo "- Collection: \`properties\`" >> $GITHUB_STEP_SUMMARY
           echo "- Schema: Enterprise v3.1 (9 categories, 85+ fields)" >> $GITHUB_STEP_SUMMARY
