@@ -310,8 +310,8 @@ def scrape_property_details_with_browser(
     try:
         page = browser_manager.new_page()
 
-        # Navigate to detail page
-        page.goto(property_url, wait_until="domcontentloaded", timeout=30000)
+        # Navigate to detail page (60s timeout for slow sites with detail scraping)
+        page.goto(property_url, wait_until="domcontentloaded", timeout=60000)
 
         # Wait for main container
         wait_selector = detail_config.get("main_container", ".property-details, .listing-details, main")

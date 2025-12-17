@@ -9,9 +9,9 @@ on:
   workflow_dispatch:
     inputs:
       max_pages:
-        description: 'Max pages per site (default: 10)'
+        description: 'Max pages per site (default: 8)'
         required: false
-        default: '10'
+        default: '8'
       geocode:
         description: 'Enable geocoding (1=yes, 0=no)'
         required: false
@@ -99,10 +99,10 @@ jobs:
 
           # GitHub Actions constraints
           GITHUB_TIMEOUT_MINUTES = 350  # 6 hours minus 10 min buffer
-          MAX_PARALLEL = 5  # Conservative: prevent resource contention
+          MAX_PARALLEL = 10  # Increased for detail scraping to fit within 6-hour limit
 
-          # Force small batches for reliability (2 sites per session - ultra-conservative for detail scraping)
-          FORCED_SITES_PER_SESSION = 2
+          # Force small batches for reliability (1 site per session - necessary for detail scraping)
+          FORCED_SITES_PER_SESSION = 1
 
           # Load config.yaml
           with open('config.yaml') as f:
@@ -248,13 +248,13 @@ jobs:
           echo "## Intelligent Batching Strategy" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Configuration:**" >> $GITHUB_STEP_SUMMARY
-          echo "- Max pages per site: ${{ github.event.inputs.max_pages || github.event.client_payload.max_pages || '10' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Max pages per site: ${{ github.event.inputs.max_pages || github.event.client_payload.max_pages || '8' }}" >> $GITHUB_STEP_SUMMARY
           echo "- Geocoding: ${{ steps.batch.outputs.is_safe == 'true' && 'SUCCESS: Enabled' || 'ERROR: Disabled' }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Batching:**" >> $GITHUB_STEP_SUMMARY
           echo "- Sites per session: ${{ steps.batch.outputs.sites_per_session }}" >> $GITHUB_STEP_SUMMARY
           echo "- Total sessions: ${{ steps.batch.outputs.total_sessions }}" >> $GITHUB_STEP_SUMMARY
-          echo "- Max parallel: 5" >> $GITHUB_STEP_SUMMARY
+          echo "- Max parallel: 10" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Time Estimate:**" >> $GITHUB_STEP_SUMMARY
           echo "- Total: ${{ steps.batch.outputs.estimated_minutes }} min (${{ steps.batch.outputs.estimated_hours }} hours)" >> $GITHUB_STEP_SUMMARY
@@ -265,9 +265,9 @@ jobs:
     name: Scrape Session ${{ matrix.session.session_id }}
     needs: calculate
     runs-on: ubuntu-latest
-    timeout-minutes: 90  # 1.5 hours per session (3 sites = ~47 min estimated)
+    timeout-minutes: 120  # 2 hours per session (1 site with detail scraping = ~80 min estimated)
     strategy:
-      max-parallel: 5  # Conservative: prevent resource contention
+      max-parallel: 10  # Increased for detail scraping to fit within 6-hour limit
       fail-fast: false
       matrix:
         session: ${{ fromJson(needs.calculate.outputs.sessions) }}
@@ -296,12 +296,11 @@ jobs:
         env:
           FIREBASE_CREDENTIALS: ${{ secrets.FIREBASE_CREDENTIALS }}
           FIRESTORE_ENABLED: "1"
-          RP_PAGE_CAP: ${{ github.event.inputs.max_pages || github.event.client_payload.max_pages || '10' }}
+          RP_PAGE_CAP: ${{ github.event.inputs.max_pages || github.event.client_payload.max_pages || '8' }}
           RP_GEOCODE: ${{ github.event.inputs.geocode || github.event.client_payload.geocode || '1' }}
           RP_HEADLESS: 1
           RP_NO_IMAGES: 1
           RP_DEBUG: 0
-          RP_DETAIL_CAP: 0
         run: |
           echo "=== Session ${{ matrix.session.session_id }}/${{ needs.calculate.outputs.total_sessions }} ==="
           echo "Sites in this session: ${{ matrix.session.site_count }}"
