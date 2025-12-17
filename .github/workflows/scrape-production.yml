@@ -9,9 +9,9 @@ on:
   workflow_dispatch:
     inputs:
       max_pages:
-        description: 'Max pages per site (default: 15)'
+        description: 'Max pages per site (default: 10)'
         required: false
-        default: '15'
+        default: '10'
       geocode:
         description: 'Enable geocoding (1=yes, 0=no)'
         required: false
@@ -101,8 +101,8 @@ jobs:
           GITHUB_TIMEOUT_MINUTES = 350  # 6 hours minus 10 min buffer
           MAX_PARALLEL = 5  # Conservative: prevent resource contention
 
-          # Force small batches for reliability (3 sites per session - conservative)
-          FORCED_SITES_PER_SESSION = 3
+          # Force small batches for reliability (2 sites per session - ultra-conservative for detail scraping)
+          FORCED_SITES_PER_SESSION = 2
 
           # Load config.yaml
           with open('config.yaml') as f:
@@ -248,7 +248,7 @@ jobs:
           echo "## Intelligent Batching Strategy" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Configuration:**" >> $GITHUB_STEP_SUMMARY
-          echo "- Max pages per site: ${{ github.event.inputs.max_pages || github.event.client_payload.max_pages || '15' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Max pages per site: ${{ github.event.inputs.max_pages || github.event.client_payload.max_pages || '10' }}" >> $GITHUB_STEP_SUMMARY
           echo "- Geocoding: ${{ steps.batch.outputs.is_safe == 'true' && 'SUCCESS: Enabled' || 'ERROR: Disabled' }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Batching:**" >> $GITHUB_STEP_SUMMARY
@@ -296,11 +296,12 @@ jobs:
         env:
           FIREBASE_CREDENTIALS: ${{ secrets.FIREBASE_CREDENTIALS }}
           FIRESTORE_ENABLED: "1"
-          RP_PAGE_CAP: ${{ github.event.inputs.max_pages || github.event.client_payload.max_pages || '15' }}
+          RP_PAGE_CAP: ${{ github.event.inputs.max_pages || github.event.client_payload.max_pages || '10' }}
           RP_GEOCODE: ${{ github.event.inputs.geocode || github.event.client_payload.geocode || '1' }}
           RP_HEADLESS: 1
           RP_NO_IMAGES: 1
           RP_DEBUG: 0
+          RP_DETAIL_CAP: 0
         run: |
           echo "=== Session ${{ matrix.session.session_id }}/${{ needs.calculate.outputs.total_sessions }} ==="
           echo "Sites in this session: ${{ matrix.session.site_count }}"
@@ -400,64 +401,77 @@ jobs:
           print(f"\nConsolidated into {consolidated_dir}")
           EOF
 
-      - name: Create master workbook
+      - name: Create master workbook (OPTIONAL - DISABLED BY DEFAULT)
+        if: env.MASTER_WORKBOOK_ENABLED == '1'
         run: |
           echo "Creating master workbook..."
+          echo "NOTE: Master workbook is optional - Firestore is primary data store"
           python watcher.py --once
 
-      - name: Upload to Firestore
+      - name: Upload to Firestore (Direct from Sessions)
         env:
           FIREBASE_CREDENTIALS: ${{ secrets.FIREBASE_CREDENTIALS }}
         run: |
           echo "========================================="
           echo "Uploading to Firestore (Enterprise Schema v3.1)"
+          echo "Direct upload from session exports (no master workbook required)"
           echo "========================================="
 
-          # Check if master workbook exists
-          if [ ! -f "exports/cleaned/MASTER_CLEANED_WORKBOOK.xlsx" ]; then
-            echo "WARNING: Master workbook not found!"
-            echo "Watcher may have failed. Skipping Firestore upload."
-            exit 0
-          fi
-
-          # Check if Firebase credentials secret is set
+          # Check if Firebase credentials secret is set (HARD FAIL if not)
           if [ -z "$FIREBASE_CREDENTIALS" ]; then
-            echo "WARNING: FIREBASE_CREDENTIALS secret not set!"
-            echo "Skipping Firestore upload. Set secret to enable uploads."
-            exit 0
+            echo "ERROR: FIREBASE_CREDENTIALS secret not set!"
+            echo "Go to: Settings → Secrets and variables → Actions"
+            echo "Add secret 'FIREBASE_CREDENTIALS' with Firebase service account JSON"
+            exit 1
           fi
 
           # Create temporary credentials file
           echo "$FIREBASE_CREDENTIALS" > firebase-temp-credentials.json
 
-          # Validate credentials file is valid JSON
+          # Validate credentials file is valid JSON (HARD FAIL if invalid)
           if ! python -c "import json; json.load(open('firebase-temp-credentials.json'))" 2>/dev/null; then
             echo "ERROR: Invalid Firebase credentials JSON!"
+            echo "Check that FIREBASE_CREDENTIALS secret contains valid JSON"
             rm firebase-temp-credentials.json
-            exit 0
+            exit 1
           fi
 
           echo "SUCCESS: Firebase credentials validated"
 
-          # Set environment variable
+          # Set environment variables
           export FIREBASE_SERVICE_ACCOUNT=firebase-temp-credentials.json
+          export FIRESTORE_ENABLED=1
 
-          # Run upload script with enterprise schema transformation
+          # Count session export files
+          echo ""
+          echo "Counting session export files..."
+          csv_count=$(find exports/sites -name "*.csv" 2>/dev/null | wc -l)
+          xlsx_count=$(find exports/sites -name "*.xlsx" 2>/dev/null | wc -l)
+          total_files=$((csv_count + xlsx_count))
+          echo "Found $total_files export files ($csv_count CSV + $xlsx_count XLSX)"
+
+          if [ $total_files -eq 0 ]; then
+            echo "WARNING: No export files found!"
+            echo "Scraping may have failed. Check scrape session logs."
+            exit 1
+          fi
+
+          # Run NEW upload script (uploads directly from session exports)
+          echo ""
           echo "Uploading with enterprise schema (9 categories, 85+ fields)..."
           echo "- Auto-detection: listing_type, furnishing, condition"
           echo "- Auto-tagging: premium, hot_deal"
           echo "- Location intelligence: 50+ Lagos landmarks"
           echo ""
 
-          if python scripts/upload_to_firestore.py --cleanup --max-age-days 30; then
+          if python scripts/upload_sessions_to_firestore.py; then
             echo ""
             echo "SUCCESS: Firestore upload completed successfully!"
-
-            # Count uploaded properties
-            echo "SUCCESS: Firestore upload completed!"
           else
-            echo "WARNING: Firestore upload encountered errors"
+            echo "ERROR: Firestore upload failed!"
             echo "Check logs above for details"
+            rm -f firebase-temp-credentials.json
+            exit 1
           fi
 
           # Clean up credentials
@@ -466,6 +480,27 @@ jobs:
           echo "========================================="
           echo "Firestore upload step complete!"
           echo "========================================="
+
+      - name: Verify Firestore Upload
+        env:
+          FIREBASE_CREDENTIALS: ${{ secrets.FIREBASE_CREDENTIALS }}
+        run: |
+          echo "Verifying Firestore upload..."
+
+          # Recreate credentials file for verification
+          echo "$FIREBASE_CREDENTIALS" > firebase-temp-credentials.json
+          export FIREBASE_SERVICE_ACCOUNT=firebase-temp-credentials.json
+
+          # Run verification script
+          if python scripts/verify_firestore_upload.py; then
+            echo "[SUCCESS] Firestore upload verified!"
+          else
+            echo "[WARNING] Verification failed - check Firebase Console manually"
+            echo "Workflow will continue (verification is non-blocking)"
+          fi
+
+          # Clean up
+          rm -f firebase-temp-credentials.json
 
       - name: Generate final summary
         if: always()
