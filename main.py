@@ -241,13 +241,28 @@ def run_site(site_key: str, site_config: Dict) -> Tuple[int, str]:
     try:
         firestore_stats = upload_listings_to_firestore(site_key, geocoded)
         firestore_uploaded = firestore_stats.get('uploaded', 0)
-        if firestore_uploaded > 0:
-            logging.info(f"{site_key}: [SUCCESS] Uploaded {firestore_uploaded} listings to Firestore (PRIMARY STORE)")
-        elif firestore_stats.get('total', 0) > 0:
-            logging.warning(f"{site_key}: Firestore upload enabled but no properties uploaded (check credentials)")
+        firestore_errors = firestore_stats.get('errors', 0)
+        firestore_status = firestore_stats.get('status', 'unknown')
+
+        # Check upload status and log appropriately
+        if firestore_status == 'failed':
+            logging.error(f"{site_key}: [FAILURE] Firestore upload failed - {firestore_errors} errors out of {len(geocoded)} listings")
+            logging.error(f"{site_key}: Check Firebase credentials: FIREBASE_SERVICE_ACCOUNT or FIREBASE_CREDENTIALS must be set")
+            logging.error(f"{site_key}: Verify credentials are valid JSON and have Firestore write permissions")
+        elif firestore_uploaded > 0:
+            logging.info(f"{site_key}: [SUCCESS] Uploaded {firestore_uploaded}/{len(geocoded)} listings to Firestore (PRIMARY STORE)")
+            if firestore_errors > 0:
+                logging.warning(f"{site_key}: {firestore_errors} listings failed to upload (network or validation errors)")
+        elif firestore_status == 'disabled':
+            logging.info(f"{site_key}: Firestore upload disabled (FIRESTORE_ENABLED=0)")
+        else:
+            logging.warning(f"{site_key}: Firestore upload enabled but 0 properties uploaded (check logs above)")
+
     except Exception as e:
-        logging.error(f"{site_key}: Firestore upload failed: {e}")
-        logging.warning(f"{site_key}: Falling back to CSV/XLSX export only")
+        logging.error(f"{site_key}: Firestore upload exception: {type(e).__name__}: {e}")
+        logging.error(f"{site_key}: Falling back to CSV/XLSX export only")
+        import traceback
+        logging.debug(f"{site_key}: Traceback: {traceback.format_exc()}")
 
     logging.info(f"Exported {len(geocoded)} listings for {site_key}")
     return len(geocoded), base_url

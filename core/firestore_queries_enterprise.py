@@ -36,20 +36,25 @@ def _get_firestore_client():
         import firebase_admin
         from firebase_admin import credentials, firestore
 
-        # Initialize Firebase Admin SDK
-        if service_account_path and os.path.exists(service_account_path):
-            cred = credentials.Certificate(service_account_path)
-            firebase_admin.initialize_app(cred)
-            logger.info(f"Firestore initialized from: {service_account_path}")
-        elif credentials_json:
-            import json
-            cred_dict = json.loads(credentials_json)
-            cred = credentials.Certificate(cred_dict)
-            firebase_admin.initialize_app(cred)
-            logger.info("Firestore initialized from environment variable")
+        # Check if Firebase is already initialized (by another module)
+        if not firebase_admin._apps:
+            # Initialize Firebase Admin SDK
+            if service_account_path and os.path.exists(service_account_path):
+                cred = credentials.Certificate(service_account_path)
+                firebase_admin.initialize_app(cred)
+                logger.info(f"Firestore initialized from: {service_account_path}")
+            elif credentials_json:
+                import json
+                cred_dict = json.loads(credentials_json)
+                cred = credentials.Certificate(cred_dict)
+                firebase_admin.initialize_app(cred)
+                logger.info("Firestore initialized from environment variable")
+            else:
+                logger.error("Firebase credentials configured but file not found")
+                return None
         else:
-            logger.error("Firebase credentials configured but file not found")
-            return None
+            # Firebase already initialized, just log it
+            logger.info("Firestore already initialized, reusing existing app")
 
         _firestore_client = firestore.client()
         _firebase_initialized = True
