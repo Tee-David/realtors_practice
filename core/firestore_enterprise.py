@@ -191,7 +191,13 @@ def _infer_condition(listing: Dict[str, Any]) -> Optional[str]:
     new_keywords = ['new', 'newly built', 'brand new', 'new build', 'under construction']
     renovated_keywords = ['renovated', 'refurbished', 'remodeled', 'upgraded']
 
-    promo_str = ' '.join(promo_tags).lower() if promo_tags else ''
+    # Handle promo_tags - might be string, list, or NaN from pandas
+    if isinstance(promo_tags, str):
+        promo_str = promo_tags.lower()
+    elif isinstance(promo_tags, list):
+        promo_str = ' '.join(str(tag) for tag in promo_tags).lower()
+    else:
+        promo_str = ''
 
     if any(kw in title or kw in desc or kw in promo_str for kw in new_keywords):
         return 'new'
