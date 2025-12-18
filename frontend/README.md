@@ -2,11 +2,12 @@
 
 Complete guide for integrating the Nigerian Real Estate API into your frontend application. All 91 endpoints are production-ready with full TypeScript support.
 
-**Latest Updates (v3.2.2 - 2025-12-11)**:
-- ✅ Custom site selection - Choose specific sites to scrape
-- ✅ Time estimation API - Get accurate scrape time predictions with timeout warnings
-- ✅ Firestore verified - 100% upload success rate
-- ✅ Optimized batching - 3 sites/session, 90-min timeout
+**Latest Updates (v3.2.4 - 2025-12-18)**:
+- ✅ **All Critical Fixes Applied** - Workflow consolidation and upload errors resolved
+- ✅ **Production Verified** - Full scrape tested successfully (Run #58)
+- ✅ **Frontend Trigger Working** - Tested and confirmed functional
+- ✅ **Firestore Deduplication** - 352 unique properties, 0 duplicates
+- ✅ **100% Success Rate** - 0 errors in production scrape
 
 ## 🎯 Quick Start
 

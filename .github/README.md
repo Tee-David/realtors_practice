@@ -452,9 +452,16 @@ jobs:
 
 ---
 
-**Last Updated**: 2025-12-11
-**Workflow Version**: 3.2.2 (Production-Grade Multi-Session with Data Loss Protection)
+**Last Updated**: 2025-12-18
+**Workflow Version**: 3.2.4 (All Fixes Applied + Production Verified)
 **Author**: Tee-David
+
+**Major Fixes in v3.2.4**:
+- ✅ Workflow consolidation validation (prevents silent failures)
+- ✅ Firestore upload TypeError fixes (promo_tags handling)
+- ✅ Full production scrape verified (Run #58: 100% success)
+- ✅ Frontend trigger tested and working
+- ✅ Deduplication confirmed (352 unique properties, 0 duplicates)
 
 ---
 

@@ -1,7 +1,7 @@
 # Documentation - Nigerian Real Estate Scraper
 
-**Version:** 3.2.2
-**Last Updated:** December 11, 2025
+**Version:** 3.2.4
+**Last Updated:** December 18, 2025
 
 ---
 
@@ -40,5 +40,5 @@ docs/
 
 ---
 
-**Total API Endpoints:** 91 across 8 categories
-**New in v3.2.2:** Hot reload endpoint, timezone fixes, docs consolidation
+**Total API Endpoints:** 91 across 17 categories
+**New in v3.2.4:** Workflow consolidation fixes, promo_tags TypeError fixes, full production scrape verified
