@@ -273,8 +273,15 @@ def _extract_features(description: str, promo_tags: List[str] = None) -> List[st
             features.append(feature)
 
     # Add promo tags as features
+    # Handle promo_tags - could be string, list, float/NaN, or None
     if promo_tags:
-        features.extend([tag for tag in promo_tags if tag not in features])
+        if isinstance(promo_tags, str):
+            # Split by comma if it's a string
+            tags = [tag.strip() for tag in promo_tags.split(',') if tag.strip()]
+            features.extend([tag for tag in tags if tag not in features])
+        elif isinstance(promo_tags, list):
+            features.extend([tag for tag in promo_tags if tag not in features])
+        # If it's float/NaN or other type, skip it
 
     return list(set(features))[:20]  # Max 20 features
 
