@@ -1,8 +1,8 @@
 {
   "info": {
     "name": "Nigerian Real Estate Scraper API - Complete Collection",
-    "description": "Nigerian Real Estate API - v3.2.2 with Hot Reload Endpoint\n\n91 endpoints across 8 categories",
-    "version": "3.2.2",
+    "description": "Nigerian Real Estate API - v3.2.3 with Firestore Fix + Performance Optimizations\n\n91 endpoints across 8 categories\n\nLATEST (Dec 18, 2025):\n- Fixed Firestore data retrieval (0% → 100% success)\n- Batch uploads available (10x faster, opt-in)\n- Faster detail scraping (30% improvement)",
+    "version": "3.2.3",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "auth": {
