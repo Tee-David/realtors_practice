@@ -17,6 +17,66 @@ _firebase_initialized = False
 _firestore_client = None
 
 
+def _safe_get(dictionary: Dict, *keys, default='N/A'):
+    """
+    Safely get nested dictionary values with None handling.
+
+    Args:
+        dictionary: The dictionary to search
+        *keys: Path of keys to follow (e.g., 'basic_info', 'title')
+        default: Default value if key is missing or None
+
+    Returns:
+        Value or default
+
+    Example:
+        >>> _safe_get(doc, 'basic_info', 'title', default='Untitled')
+    """
+    value = dictionary
+    for key in keys:
+        if isinstance(value, dict):
+            value = value.get(key)
+            if value is None:
+                return default
+        else:
+            return default
+    return value if value is not None else default
+
+
+def _clean_property_dict(prop: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Clean a property dictionary to ensure all critical fields are present.
+
+    Adds user-friendly defaults for missing or None values.
+
+    Args:
+        prop: Property dictionary from Firestore
+
+    Returns:
+        Cleaned property dictionary with guaranteed fields
+    """
+    # Ensure basic_info has required fields
+    if 'basic_info' in prop and prop['basic_info']:
+        basic_info = prop['basic_info']
+        if basic_info.get('title') is None or basic_info.get('title') == '':
+            # Try to generate title from other fields
+            prop_type = _safe_get(prop, 'property_details', 'property_type', default='Property')
+            bedrooms = _safe_get(prop, 'property_details', 'bedrooms', default=None)
+            location = _safe_get(prop, 'location', 'area', default='Lagos')
+
+            if bedrooms and bedrooms != 'N/A':
+                basic_info['title'] = f"{bedrooms}BR {prop_type} in {location}"
+            else:
+                basic_info['title'] = f"{prop_type} in {location}"
+
+    # Ensure price is present
+    if 'financial' in prop and prop['financial']:
+        if prop['financial'].get('price') is None:
+            prop['financial']['price'] = 0
+
+    return prop
+
+
 def _get_firestore_client():
     """Get Firestore client with lazy initialization."""
     global _firebase_initialized, _firestore_client
@@ -93,7 +153,7 @@ def get_properties_by_status(
         if offset > 0:
             query = query.offset(offset)
 
-        results = [doc.to_dict() for doc in query.stream()]
+        results = [_clean_property_dict(doc.to_dict()) for doc in query.stream()]
         logger.info(f"Retrieved {len(results)} properties with status: {status}")
         return results
 
@@ -137,7 +197,7 @@ def get_properties_by_listing_type(
 
         query = query.order_by('financial.price').limit(limit)
 
-        results = [doc.to_dict() for doc in query.stream()]
+        results = [_clean_property_dict(doc.to_dict()) for doc in query.stream()]
         logger.info(f"Retrieved {len(results)} {listing_type} properties")
         return results
 
@@ -176,7 +236,7 @@ def get_furnished_properties(
 
         query = query.order_by('financial.price').limit(limit)
 
-        results = [doc.to_dict() for doc in query.stream()]
+        results = [_clean_property_dict(doc.to_dict()) for doc in query.stream()]
         logger.info(f"Retrieved {len(results)} {furnishing} properties")
         return results
 
@@ -213,7 +273,7 @@ def get_premium_properties(
 
         query = query.order_by('financial.price').limit(limit)
 
-        results = [doc.to_dict() for doc in query.stream()]
+        results = [_clean_property_dict(doc.to_dict()) for doc in query.stream()]
         logger.info(f"Retrieved {len(results)} premium properties")
         return results
 
@@ -243,7 +303,7 @@ def get_hot_deals(limit: int = 50) -> List[Dict[str, Any]]:
                              .order_by('financial.price') \
                              .limit(limit)
 
-        results = [doc.to_dict() for doc in query.stream()]
+        results = [_clean_property_dict(doc.to_dict()) for doc in query.stream()]
         logger.info(f"Retrieved {len(results)} hot deal properties")
         return results
 
@@ -285,7 +345,7 @@ def get_verified_properties(
 
         query = query.order_by('financial.price').limit(limit)
 
-        results = [doc.to_dict() for doc in query.stream()]
+        results = [_clean_property_dict(doc.to_dict()) for doc in query.stream()]
         logger.info(f"Retrieved {len(results)} verified properties")
         return results
 
@@ -314,7 +374,7 @@ def get_trending_properties(limit: int = 50) -> List[Dict[str, Any]]:
                              .order_by('metadata.view_count', direction='DESCENDING') \
                              .limit(limit)
 
-        results = [doc.to_dict() for doc in query.stream()]
+        results = [_clean_property_dict(doc.to_dict()) for doc in query.stream()]
         logger.info(f"Retrieved {len(results)} trending properties")
         return results
 
@@ -358,7 +418,7 @@ def get_properties_by_lga(
 
         query = query.order_by('financial.price').limit(limit)
 
-        results = [doc.to_dict() for doc in query.stream()]
+        results = [_clean_property_dict(doc.to_dict()) for doc in query.stream()]
         logger.info(f"Retrieved {len(results)} properties in {lga}")
         return results
 
@@ -397,7 +457,7 @@ def get_properties_by_area(
 
         query = query.order_by('financial.price').limit(limit)
 
-        results = [doc.to_dict() for doc in query.stream()]
+        results = [_clean_property_dict(doc.to_dict()) for doc in query.stream()]
         logger.info(f"Retrieved {len(results)} properties in {area}")
         return results
 
@@ -428,7 +488,7 @@ def get_new_on_market(days: int = 7, limit: int = 100) -> List[Dict[str, Any]]:
                              .order_by('metadata.days_on_market') \
                              .limit(limit)
 
-        results = [doc.to_dict() for doc in query.stream()]
+        results = [_clean_property_dict(doc.to_dict()) for doc in query.stream()]
         logger.info(f"Retrieved {len(results)} properties new in last {days} days")
         return results
 
@@ -469,7 +529,7 @@ def get_cheapest_properties(
 
         query = query.order_by('financial.price').limit(limit)
 
-        results = [doc.to_dict() for doc in query.stream()]
+        results = [_clean_property_dict(doc.to_dict()) for doc in query.stream()]
         logger.info(f"Retrieved {len(results)} cheapest properties")
         return results
 
@@ -512,7 +572,7 @@ def get_newest_listings(
         query = query.order_by('metadata.scrape_timestamp', direction='DESCENDING') \
                     .limit(limit)
 
-        results = [doc.to_dict() for doc in query.stream()]
+        results = [_clean_property_dict(doc.to_dict()) for doc in query.stream()]
         logger.info(f"Retrieved {len(results)} newest listings")
         return results
 
@@ -582,7 +642,7 @@ def search_properties_advanced(filters: Dict[str, Any]) -> List[Dict[str, Any]]:
         limit = filters.get('limit', 100)
         query = query.limit(limit)
 
-        results = [doc.to_dict() for doc in query.stream()]
+        results = [_clean_property_dict(doc.to_dict()) for doc in query.stream()]
         logger.info(f"Advanced search returned {len(results)} properties")
         return results
 
@@ -610,7 +670,7 @@ def get_property_by_hash(property_hash: str) -> Optional[Dict[str, Any]]:
         doc = doc_ref.get()
 
         if doc.exists:
-            return doc.to_dict()
+            return _clean_property_dict(doc.to_dict())
         else:
             logger.warning(f"Property not found: {property_hash}")
             return None
@@ -755,7 +815,7 @@ def get_site_properties(
         if offset > 0:
             query = query.offset(offset)
 
-        results = [doc.to_dict() for doc in query.stream()]
+        results = [_clean_property_dict(doc.to_dict()) for doc in query.stream()]
         logger.info(f"Retrieved {len(results)} properties from {site_key}")
         return results
 
