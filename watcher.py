@@ -2,9 +2,8 @@
 """
 Export Watcher Service
 
-Monitors exports/ folder for new CSV/XLSX files, processes them through
-cleaning pipeline, and maintains MASTER_CLEANED_WORKBOOK.xlsx with
-per-site sheets in append-only fashion.
+Monitors exports/ folder for new CSV/XLSX files and processes them through
+cleaning pipeline. Cleaned data is exported to individual site folders.
 
 Usage:
     python watcher.py --once              # Process all files once
@@ -29,7 +28,6 @@ import argparse
 STATE_FILE = Path("exports/cleaned/.watcher_state.json")
 EXPORTS_DIR = Path("exports/sites")  # Site exports are in exports/sites/
 CLEANED_DIR = Path("exports/cleaned")
-MASTER_WORKBOOK = CLEANED_DIR / "MASTER_CLEANED_WORKBOOK.xlsx"
 
 # Ensure cleaned directory exists for logging
 CLEANED_DIR.mkdir(parents=True, exist_ok=True)
@@ -213,7 +211,6 @@ def process_file(file_path: Path, state: WatcherState, dry_run: bool = False, er
 
     # Import processing modules
     from core.data_cleaner import clean_and_normalize
-    from core.master_workbook import append_to_master
 
     try:
         # Step 1: Read and clean data
@@ -233,18 +230,19 @@ def process_file(file_path: Path, state: WatcherState, dry_run: bool = False, er
         # Step 2: Determine site from file path
         site_key = file_path.parent.name
 
-        # Step 3: Append to master workbook (optional - check MASTER_WORKBOOK_ENABLED)
-        master_workbook_enabled = os.getenv('MASTER_WORKBOOK_ENABLED', '1') == '1'
+        # Step 3: Export cleaned data to individual site folder
+        site_cleaned_dir = CLEANED_DIR / site_key
+        site_cleaned_dir.mkdir(parents=True, exist_ok=True)
 
-        if not dry_run and master_workbook_enabled:
-            new_count = append_to_master(site_key, cleaned_records, MASTER_WORKBOOK)
-            logging.info(f"  Added {new_count} new records to {site_key} sheet")
-        elif not dry_run and not master_workbook_enabled:
-            new_count = len(cleaned_records)
-            logging.info(f"  Master workbook generation disabled (MASTER_WORKBOOK_ENABLED=0)")
+        output_file = site_cleaned_dir / f"{site_key}_cleaned.csv"
+
+        if not dry_run:
+            import pandas as pd
+            df = pd.DataFrame(cleaned_records)
+            df.to_csv(output_file, index=False)
+            logging.info(f"  Exported {len(cleaned_records)} records to {output_file}")
         else:
-            new_count = len(cleaned_records)
-            logging.info(f"  [DRY RUN] Would add {new_count} records to {site_key}")
+            logging.info(f"  [DRY RUN] Would export {len(cleaned_records)} records to {output_file}")
 
         # Step 4: Mark file as processed
         if not dry_run:
@@ -252,7 +250,7 @@ def process_file(file_path: Path, state: WatcherState, dry_run: bool = False, er
             state.mark_processed(file_path, file_hash, len(cleaned_records))
             state.save()
 
-        return new_count
+        return len(cleaned_records)
 
     except Exception as e:
         logging.error(f"Failed to process {file_path}: {e}", exc_info=True)

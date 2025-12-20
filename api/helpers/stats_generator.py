@@ -54,11 +54,6 @@ class StatsGenerator:
                     if site_dir.is_dir():
                         cleaned_files += len(list(site_dir.glob("*.*")))
 
-            # Check master workbook
-            master_file = self.cleaned_dir / "MASTER_CLEANED_WORKBOOK.xlsx"
-            master_exists = master_file.exists()
-            master_size = master_file.stat().st_size if master_exists else 0
-
             # Get latest scrape time
             latest_scrape = None
             for site_meta in metadata.values():
@@ -75,9 +70,7 @@ class StatsGenerator:
                 },
                 'files': {
                     'raw_files': raw_files,
-                    'cleaned_files': cleaned_files,
-                    'master_workbook_exists': master_exists,
-                    'master_workbook_size_mb': round(master_size / (1024 * 1024), 2)
+                    'cleaned_files': cleaned_files
                 }
             }
 

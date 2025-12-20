@@ -75,8 +75,7 @@ class DataReader:
         """List all available data files"""
         result = {
             'raw_sites': [],
-            'cleaned_sites': [],
-            'master_workbook_exists': False
+            'cleaned_sites': []
         }
 
         # Check raw site exports
@@ -104,13 +103,6 @@ class DataReader:
                             'file': str(csv_file.relative_to(self.exports_dir)),
                             'last_updated': csv_file.stat().st_mtime
                         })
-
-        # Check master workbook
-        master_file = self.cleaned_dir / "MASTER_CLEANED_WORKBOOK.xlsx"
-        if master_file.exists():
-            result['master_workbook_exists'] = True
-            result['master_workbook_path'] = str(master_file.relative_to(self.exports_dir))
-            result['master_workbook_updated'] = master_file.stat().st_mtime
 
         return result
 
