@@ -1019,29 +1019,67 @@ def query_firestore():
         # Build query
         query = db.collection('properties')
 
-        # Apply filters
-        if 'location' in filters:
-            query = query.where('location', '==', filters['location'])
-        if 'price_min' in filters:
-            query = query.where('price', '>=', filters['price_min'])
-        if 'price_max' in filters:
-            query = query.where('price', '<=', filters['price_max'])
-        if 'bedrooms_min' in filters:
-            query = query.where('bedrooms', '>=', filters['bedrooms_min'])
-        if 'bathrooms_min' in filters:
-            query = query.where('bathrooms', '>=', filters['bathrooms_min'])
-        if 'property_type' in filters:
-            query = query.where('property_type', '==', filters['property_type'])
-        if 'source' in filters:
-            query = query.where('source', '==', filters['source'])
-        if 'quality_score_min' in filters:
-            query = query.where('quality_score', '>=', filters['quality_score_min'])
+        # Apply filters (using nested field paths from enterprise schema)
+        if 'location.state' in filters:
+            query = query.where('location.state', '==', filters['location.state'])
+        if 'location.lga' in filters:
+            query = query.where('location.lga', '==', filters['location.lga'])
+        if 'location.area' in filters:
+            query = query.where('location.area', '==', filters['location.area'])
 
-        # Apply sorting
-        sort_by = data.get('sort_by', 'scrape_timestamp')
+        # Price range filtering (FIXED: using correct nested path)
+        if 'price_min' in filters:
+            query = query.where('financial.price', '>=', filters['price_min'])
+        if 'price_max' in filters:
+            query = query.where('financial.price', '<=', filters['price_max'])
+
+        # Property details filtering
+        if 'bedrooms_min' in filters:
+            query = query.where('property_details.bedrooms', '>=', filters['bedrooms_min'])
+        if 'bedrooms' in filters:
+            query = query.where('property_details.bedrooms', '==', filters['bedrooms'])
+        if 'bathrooms_min' in filters:
+            query = query.where('property_details.bathrooms', '>=', filters['bathrooms_min'])
+        if 'bathrooms' in filters:
+            query = query.where('property_details.bathrooms', '==', filters['bathrooms'])
+        if 'property_type' in filters:
+            query = query.where('property_details.property_type', '==', filters['property_type'])
+        if 'furnishing' in filters:
+            query = query.where('property_details.furnishing', '==', filters['furnishing'])
+
+        # Basic info filtering
+        if 'source' in filters:
+            query = query.where('basic_info.source', '==', filters['source'])
+        if 'site_key' in filters:
+            query = query.where('basic_info.site_key', '==', filters['site_key'])
+        if 'status' in filters:
+            query = query.where('basic_info.status', '==', filters['status'])
+        if 'listing_type' in filters:
+            query = query.where('basic_info.listing_type', '==', filters['listing_type'])
+
+        # Metadata filtering
+        if 'quality_score_min' in filters:
+            query = query.where('metadata.quality_score', '>=', filters['quality_score_min'])
+
+        # Apply sorting (with nested path mapping)
+        sort_by = data.get('sort_by', 'uploaded_at')
         sort_desc = data.get('sort_desc', True)
+
+        # Map common sort fields to nested paths
+        sort_field_mapping = {
+            'price': 'financial.price',
+            'bedrooms': 'property_details.bedrooms',
+            'bathrooms': 'property_details.bathrooms',
+            'quality_score': 'metadata.quality_score',
+            'uploaded_at': 'uploaded_at',  # Root level field
+            'updated_at': 'updated_at',    # Root level field
+            'scrape_timestamp': 'uploaded_at'  # Legacy field, map to uploaded_at
+        }
+
+        # Use mapped field or original field
+        sort_field = sort_field_mapping.get(sort_by, sort_by)
         direction = firestore.Query.DESCENDING if sort_desc else firestore.Query.ASCENDING
-        query = query.order_by(sort_by, direction=direction)
+        query = query.order_by(sort_field, direction=direction)
 
         # Apply pagination
         limit = min(data.get('limit', 50), 1000)  # Max 1000 results
@@ -1113,21 +1151,27 @@ def query_firestore_archive():
         # Build query on ARCHIVE collection
         query = db.collection('properties_archive')
 
-        # Apply filters (same as active properties)
-        if 'location' in filters:
-            query = query.where('location', '==', filters['location'])
+        # Apply filters (same nested paths as active properties)
+        if 'location.state' in filters:
+            query = query.where('location.state', '==', filters['location.state'])
+        if 'location.lga' in filters:
+            query = query.where('location.lga', '==', filters['location.lga'])
+        if 'location.area' in filters:
+            query = query.where('location.area', '==', filters['location.area'])
         if 'price_min' in filters:
-            query = query.where('price', '>=', filters['price_min'])
+            query = query.where('financial.price', '>=', filters['price_min'])
         if 'price_max' in filters:
-            query = query.where('price', '<=', filters['price_max'])
+            query = query.where('financial.price', '<=', filters['price_max'])
         if 'bedrooms_min' in filters:
-            query = query.where('bedrooms', '>=', filters['bedrooms_min'])
+            query = query.where('property_details.bedrooms', '>=', filters['bedrooms_min'])
         if 'bathrooms_min' in filters:
-            query = query.where('bathrooms', '>=', filters['bathrooms_min'])
+            query = query.where('property_details.bathrooms', '>=', filters['bathrooms_min'])
         if 'property_type' in filters:
-            query = query.where('property_type', '==', filters['property_type'])
+            query = query.where('property_details.property_type', '==', filters['property_type'])
         if 'source' in filters:
-            query = query.where('source', '==', filters['source'])
+            query = query.where('basic_info.source', '==', filters['source'])
+        if 'site_key' in filters:
+            query = query.where('basic_info.site_key', '==', filters['site_key'])
 
         # Apply sorting
         sort_by = data.get('sort_by', 'archived_at')
@@ -1208,15 +1252,21 @@ def export_firestore_data():
         db = firestore.client()
         query = db.collection(collection_name)
 
-        # Apply filters (same logic as query endpoint)
-        if filters.get('location'):
-            query = query.where('location', '==', filters['location'])
+        # Apply filters (using nested paths for enterprise schema)
+        if filters.get('location.area'):
+            query = query.where('location.area', '==', filters['location.area'])
+        if filters.get('location.lga'):
+            query = query.where('location.lga', '==', filters['location.lga'])
         if filters.get('property_type'):
-            query = query.where('property_type', '==', filters['property_type'])
+            query = query.where('property_details.property_type', '==', filters['property_type'])
         if filters.get('price_min'):
-            query = query.where('price', '>=', filters['price_min'])
+            query = query.where('financial.price', '>=', filters['price_min'])
         if filters.get('price_max'):
-            query = query.where('price', '<=', filters['price_max'])
+            query = query.where('financial.price', '<=', filters['price_max'])
+        if filters.get('source'):
+            query = query.where('basic_info.source', '==', filters['source'])
+        if filters.get('site_key'):
+            query = query.where('basic_info.site_key', '==', filters['site_key'])
 
         # Execute query
         query = query.limit(limit)
