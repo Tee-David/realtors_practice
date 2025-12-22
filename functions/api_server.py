@@ -15,6 +15,19 @@ from flask import Flask, jsonify, request, send_file, Response
 from flask_cors import CORS
 import logging
 
+# Load environment variables from .env file
+try:
+    from dotenv import load_dotenv
+    # Load from parent directory (root) if running from functions/
+    env_path = Path(__file__).parent.parent / '.env'
+    if env_path.exists():
+        load_dotenv(env_path)
+        logging.info(f"Loaded .env from {env_path}")
+    else:
+        load_dotenv()  # Try current directory
+except ImportError:
+    logging.warning("python-dotenv not installed, skipping .env loading")
+
 # Import core modules
 from core.config_loader import load_config, ConfigValidationError
 from core.url_validator import URLValidator
@@ -998,12 +1011,27 @@ def query_firestore():
         # Initialize Firebase if not already done
         if not firebase_admin._apps:
             cred_json = os.getenv('FIREBASE_CREDENTIALS')
-            cred_path = os.getenv('FIREBASE_SERVICE_ACCOUNT')
+            cred_path_env = os.getenv('FIREBASE_SERVICE_ACCOUNT')
 
             if cred_json:
                 cred = credentials.Certificate(json.loads(cred_json))
-            elif cred_path and Path(cred_path).exists():
-                cred = credentials.Certificate(cred_path)
+            elif cred_path_env:
+                # Try multiple locations for credential file
+                cred_path = Path(cred_path_env)
+                if not cred_path.exists():
+                    # Try parent directory (for when running from functions/)
+                    cred_path = Path('..') / cred_path_env
+                if not cred_path.exists():
+                    # Try absolute path from project root
+                    cred_path = Path(__file__).parent.parent / cred_path_env
+
+                if cred_path.exists():
+                    cred = credentials.Certificate(str(cred_path))
+                else:
+                    return jsonify({
+                        'error': 'Firebase credentials file not found',
+                        'details': f'Looked for {cred_path_env} in multiple locations'
+                    }), 500
             else:
                 return jsonify({
                     'error': 'Firebase not configured',
@@ -1130,12 +1158,27 @@ def query_firestore_archive():
         # Initialize Firebase if not already done
         if not firebase_admin._apps:
             cred_json = os.getenv('FIREBASE_CREDENTIALS')
-            cred_path = os.getenv('FIREBASE_SERVICE_ACCOUNT')
+            cred_path_env = os.getenv('FIREBASE_SERVICE_ACCOUNT')
 
             if cred_json:
                 cred = credentials.Certificate(json.loads(cred_json))
-            elif cred_path and Path(cred_path).exists():
-                cred = credentials.Certificate(cred_path)
+            elif cred_path_env:
+                # Try multiple locations for credential file
+                cred_path = Path(cred_path_env)
+                if not cred_path.exists():
+                    # Try parent directory (for when running from functions/)
+                    cred_path = Path('..') / cred_path_env
+                if not cred_path.exists():
+                    # Try absolute path from project root
+                    cred_path = Path(__file__).parent.parent / cred_path_env
+
+                if cred_path.exists():
+                    cred = credentials.Certificate(str(cred_path))
+                else:
+                    return jsonify({
+                        'error': 'Firebase credentials file not found',
+                        'details': f'Looked for {cred_path_env} in multiple locations'
+                    }), 500
             else:
                 return jsonify({
                     'error': 'Firebase not configured',
