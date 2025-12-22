@@ -192,6 +192,29 @@ function InfiniteList() {
 }
 ```
 
+### 4. Export Hook (CSV/JSON)
+
+```tsx
+import { useFirestoreExport } from './frontend/useFirestoreExport';
+
+function ExportButton() {
+  const { exportData, isExporting } = useFirestoreExport();
+
+  const handleExport = async () => {
+    await exportData({
+      format: 'csv',  // or 'json'
+      limit: 1000
+    });
+  };
+
+  return (
+    <button onClick={handleExport} disabled={isExporting}>
+      {isExporting ? 'Exporting...' : 'Export to CSV'}
+    </button>
+  );
+}
+```
+
 ---
 
 ## Complete Examples

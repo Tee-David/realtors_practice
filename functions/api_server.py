@@ -1325,11 +1325,18 @@ def export_firestore_data():
         query = query.limit(limit)
         docs = query.stream()
 
-        # Convert to list
+        # Convert to list and handle datetimes
         properties = []
         for doc in docs:
             prop = doc.to_dict()
             prop['id'] = doc.id
+
+            # Convert any datetime objects to timezone-naive strings for Excel compatibility
+            for key, value in prop.items():
+                if hasattr(value, 'tzinfo') and value.tzinfo is not None:
+                    # Remove timezone info
+                    prop[key] = value.replace(tzinfo=None)
+
             properties.append(prop)
 
         if not properties:
@@ -1433,6 +1440,9 @@ def generate_export():
                 'valid_formats': valid_formats
             }), 400
 
+        # Import pandas for DataFrame operations
+        import pandas as pd
+
         # Query Firestore with filters
         try:
             import firebase_admin
@@ -1470,34 +1480,21 @@ def generate_export():
             if 'source' in filters:
                 query = query.where('source', '==', filters['source'])
 
+            # Apply limit if specified
+            limit = data.get('limit', 1000)
+            if limit:
+                query = query.limit(limit)
+
             # Get all results (for export, we want everything matching filters)
             results = query.stream()
             properties = [doc.to_dict() for doc in results]
 
-        except ImportError:
-            # Fallback to local master workbook if Firestore not available
-            workbook_path = 'exports/cleaned/MASTER_CLEANED_WORKBOOK.xlsx'
-            if not Path(workbook_path).exists():
-                return jsonify({
-                    'error': 'No data available',
-                    'details': 'Firestore not configured and local master workbook not found'
-                }), 404
-
-            df = pd.read_excel(workbook_path)
-
-            # Apply filters to DataFrame
-            if 'location' in filters:
-                df = df[df['location'].str.contains(filters['location'], case=False, na=False)]
-            if 'price_min' in filters:
-                df = df[df['price'] >= filters['price_min']]
-            if 'price_max' in filters:
-                df = df[df['price'] <= filters['price_max']]
-            if 'bedrooms_min' in filters:
-                df = df[df['bedrooms'] >= filters['bedrooms_min']]
-            if 'property_type' in filters:
-                df = df[df['property_type'] == filters['property_type']]
-
-            properties = df.to_dict('records')
+        except Exception as e:
+            logger.error(f"Error querying Firestore for export: {e}")
+            return jsonify({
+                'error': 'Failed to query Firestore',
+                'details': str(e)
+            }), 500
 
         if not properties:
             return jsonify({
