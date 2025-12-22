@@ -811,7 +811,7 @@ sites:
 - **exporter.py**: Exports to CSV/XLSX with per-site format preferences
 - **utils.py**: Common utilities - Lagos location filter, Naira parsing, timestamp/hash generation
 - **data_cleaner.py**: Advanced data cleaning with fuzzy matching and normalization
-- **master_workbook.py**: Master workbook consolidation management
+- **master_workbook.py**: [DEPRECATED] Legacy workbook consolidation (Firestore is now primary data store)
 - **email_notifier.py**: SMTP email notifications
 
 #### parsers/
@@ -870,10 +870,11 @@ All listings normalized to canonical schema:
   - `logs/scraper.log` - Main scraper log
   - `logs/geocache.json` - Geocoding cache (persistent)
   - `logs/site_metadata.json` - Site scraping history and statistics
-- **Exports**:
-  - `exports/sites/<site>/<timestamp>_<site>.csv` and `.xlsx` - Raw exports
-  - `exports/cleaned/MASTER_CLEANED_WORKBOOK.xlsx` - Consolidated master workbook
-  - `exports/cleaned/<site>/` - Per-site cleaned CSV/Parquet files
+- **Data Storage**:
+  - **Firestore** (`properties` collection) - Primary data store (auto-uploaded during scrape)
+  - `exports/sites/<site>/<timestamp>_<site>.csv` and `.xlsx` - Raw exports (backup)
+  - `exports/cleaned/MASTER_CLEANED_WORKBOOK.xlsx` - [OPTIONAL] Consolidated workbook (disabled by default)
+  - `exports/cleaned/<site>/` - Per-site cleaned CSV/Parquet files (backup)
 
 ---
 

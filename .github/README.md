@@ -178,7 +178,16 @@ INFO - Exported 43 listings for cwlagos (avg quality: 77.2%)
 
 ## Artifacts
 
-Each successful run produces 3 artifacts:
+Each successful run produces artifacts and uploads to Firestore:
+
+**Primary Data Store:**
+- **Firestore** (properties collection)
+  - Real-time data access for frontend
+  - Enterprise schema v3.1 (9 categories, 85+ fields)
+  - Auto-uploaded during scrape workflow
+  - No manual consolidation needed
+
+**Artifacts (for backup/analysis):**
 
 1. **scraper-exports-raw-XXX** (30-day retention)
    - Contains raw CSV/XLSX files per site
@@ -187,7 +196,7 @@ Each successful run produces 3 artifacts:
 
 2. **scraper-exports-cleaned-XXX** (30-day retention)
    - Contains cleaned/normalized data
-   - Includes `MASTER_CLEANED_WORKBOOK.xlsx`
+   - Optional `MASTER_CLEANED_WORKBOOK.xlsx` (disabled by default)
    - Deduplicated and quality-filtered
    - Directory structure: `exports/cleaned/`
 

@@ -197,19 +197,50 @@ class DataReader:
 
     def get_master_data(self, limit: int = 100, site_filter: Optional[str] = None) -> Dict:
         """
-        Get consolidated master workbook data
+        Get consolidated data from Firestore (or Excel fallback)
 
         Args:
             limit: Number of records per site
             site_filter: Optional filter by site key
         """
+        # Try Firestore first
+        db = _get_firestore()
+        if db:
+            try:
+                query = db.collection('properties')
+
+                # Apply site filter if provided
+                if site_filter:
+                    query = query.where('basic_info.site_key', '==', site_filter)
+
+                # Apply limit
+                query = query.limit(limit)
+
+                # Get results
+                docs = query.stream()
+                properties = [doc.to_dict() for doc in docs]
+
+                return {
+                    'source': 'firestore',
+                    'total_records': len(properties),
+                    'properties': properties
+                }
+            except Exception as e:
+                logger.warning(f"Firestore query failed, falling back to Excel: {e}")
+
+        # Fallback to Excel (deprecated)
         master_file = self.cleaned_dir / "MASTER_CLEANED_WORKBOOK.xlsx"
         if not master_file.exists():
-            raise FileNotFoundError("Master workbook not found")
+            return {
+                'error': 'No data available',
+                'message': 'Firestore not configured and Excel workbook not found',
+                'source': 'none'
+            }
 
-        # Read all sheets
+        # Read all sheets (old method)
         excel_file = pd.ExcelFile(master_file)
         result = {
+            'source': 'excel',
             'total_sheets': len(excel_file.sheet_names),
             'sheets': []
         }

@@ -94,12 +94,13 @@ jobs:
 
           echo "Scrape complete!"
 
-      - name: Process exports with watcher
+      - name: Process exports with watcher (OPTIONAL - Firestore is primary)
+        if: env.MASTER_WORKBOOK_ENABLED == '1'
         run: |
-          echo "Processing scraped data..."
-          echo "NOTE: Firestore upload already completed during scrape (main.py)"
+          echo "Creating master workbook for backup/analysis..."
+          echo "NOTE: This is optional - Firestore upload already completed during scrape"
           python watcher.py --once
-          echo "Watcher complete (creates master workbook for backup/analysis)"
+          echo "Workbook created (optional backup)"
 
       - name: Check system resources (AFTER)
         if: always()

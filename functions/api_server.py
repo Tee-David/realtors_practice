@@ -19,7 +19,6 @@ import logging
 from core.config_loader import load_config, ConfigValidationError
 from core.url_validator import URLValidator
 from core.location_filter import LocationFilter, get_location_filter
-from core.query_engine import PropertyQuery
 from core.rate_limiter import get_rate_limiter
 from core.price_history import get_price_history_tracker
 from core.natural_language_search import get_nl_search_parser
@@ -572,117 +571,15 @@ def update_target_locations():
         return jsonify({'error': str(e)}), 500
 
 # ============================================================================
-# QUERY ENGINE ENDPOINTS
+# LEGACY QUERY ENGINE ENDPOINTS - REMOVED
 # ============================================================================
-
-@app.route('/api/query', methods=['POST'])
-def query_properties():
-    """
-    Query properties with filters
-    Body: {
-        "file": "exports/cleaned/MASTER_CLEANED_WORKBOOK.xlsx",  # Optional
-        "filters": {
-            "price_min": 5000000,
-            "price_max": 50000000,
-            "bedrooms": 3,
-            "location": "Lekki",
-            "property_type": "Flat"
-        },
-        "search": "luxury apartment",  # Optional text search
-        "sort_by": "price",            # Optional
-        "sort_desc": false,            # Optional
-        "limit": 50,                   # Optional
-        "offset": 0                    # Optional
-    }
-    """
-    try:
-        data = request.get_json() or {}
-        file_path = data.get('file', 'exports/cleaned/MASTER_CLEANED_WORKBOOK.xlsx')
-
-        # Check if file exists
-        if not Path(file_path).exists():
-            return jsonify({
-                'error': f'File not found: {file_path}',
-                'hint': 'Run scraper first to generate data'
-            }), 404
-
-        # Load data
-        if file_path.endswith('.csv'):
-            query = PropertyQuery.from_csv(file_path)
-        else:
-            query = PropertyQuery.from_excel(file_path)
-
-        # Apply filters
-        filters = data.get('filters', {})
-        if filters:
-            query.filter(**filters)
-
-        # Apply search
-        if 'search' in data:
-            query.search(data['search'])
-
-        # Apply sorting
-        if 'sort_by' in data:
-            query.sort_by(
-                data['sort_by'],
-                ascending=not data.get('sort_desc', False)
-            )
-
-        # Apply pagination
-        if 'limit' in data:
-            query.limit(data['limit'], offset=data.get('offset', 0))
-
-        # Execute query
-        results = query.execute()
-
-        return jsonify({
-            'results': results,
-            'count': len(results),
-            'filters_applied': filters,
-            'file': file_path
-        }), 200
-    except Exception as e:
-        logger.error(f"Error querying properties: {e}")
-        return jsonify({'error': str(e)}), 500
-
-@app.route('/api/query/summary', methods=['POST'])
-def query_summary():
-    """
-    Get summary statistics for a query
-    Body: same as /api/query but returns summary instead of results
-    """
-    try:
-        data = request.get_json() or {}
-        file_path = data.get('file', 'exports/cleaned/MASTER_CLEANED_WORKBOOK.xlsx')
-
-        # Check if file exists
-        if not Path(file_path).exists():
-            return jsonify({
-                'error': f'File not found: {file_path}'
-            }), 404
-
-        # Load data
-        if file_path.endswith('.csv'):
-            query = PropertyQuery.from_csv(file_path)
-        else:
-            query = PropertyQuery.from_excel(file_path)
-
-        # Apply filters
-        filters = data.get('filters', {})
-        if filters:
-            query.filter(**filters)
-
-        # Apply search
-        if 'search' in data:
-            query.search(data['search'])
-
-        # Get summary
-        summary = query.get_summary()
-
-        return jsonify(summary), 200
-    except Exception as e:
-        logger.error(f"Error getting query summary: {e}")
-        return jsonify({'error': str(e)}), 500
+# The following endpoints have been removed as part of workbook deprecation:
+# - POST /api/query - Use POST /api/firestore/query instead
+# - POST /api/query/summary - Use POST /api/firestore/query with aggregations
+#
+# All querying now happens directly through Firestore endpoints.
+# See /api/firestore/query for modern query capabilities.
+# ============================================================================
 
 # ============================================================================
 # RATE LIMITER ENDPOINTS

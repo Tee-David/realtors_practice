@@ -654,18 +654,20 @@ const fetchSiteProperties = async (siteKey, limit = 20) => {
 
 ---
 
-### 3.3 GET `/api/data/master` ⚠️
+### 3.3 GET `/api/data/master` - DEPRECATED ⛔
 
-**Description:** Get data from master consolidated workbook (all sites combined and deduplicated).
+**Status:** This endpoint now queries Firestore directly (no workbook needed).
 
-**Use Case:** Clean, deduplicated property data. Best for main listings.
+**RECOMMENDED:** Use `POST /api/firestore/query` instead for better performance and real-time data.
+
+**Description:** Get consolidated property data (now served from Firestore, not workbook).
 
 **Request:**
 ```bash
 GET http://localhost:5000/api/data/master?limit=10
 ```
 
-**Note:** Returns 500 error if master workbook doesn't exist. Run watcher service to generate.
+**Note:** Returns data from Firestore if available, error if Firestore not configured.
 
 ---
 
@@ -871,9 +873,10 @@ Due to length, here's a summary of remaining categories:
 - `GET /api/filter/stats` - Get filter statistics
 - `GET /api/config/locations` - Location configuration
 
-### 8. Advanced Query (2 endpoints) ⚠️
-- `POST /api/query` - Complex multi-filter queries (needs implementation)
-- `POST /api/query/summary` - Query summary stats (needs implementation)
+### 8. Advanced Query - DEPRECATED ⛔
+**These endpoints have been removed. Use Firestore endpoints instead:**
+- Use `POST /api/firestore/query` for complex multi-filter queries
+- Use `POST /api/firestore/aggregate` for query summary stats
 
 ### 9. Rate Limiting (2 endpoints) ✅
 - `GET /api/rate-limit/status` - Current rate limit status

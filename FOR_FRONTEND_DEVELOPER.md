@@ -1,6 +1,21 @@
 # Complete Frontend Developer Guide
-**Last Updated:** 2025-12-22
+**Last Updated:** 2025-12-22 (v3.3.0)
 **Status:** VERIFIED & PRODUCTION READY
+
+## 🚨 Recent Updates (v3.3.0)
+
+**Breaking Changes:**
+- ✅ **Firestore is now the ONLY data source** (Excel workbooks deprecated)
+- ⛔ **Removed endpoints:** `/api/query` and `/api/query/summary` (use `/api/firestore/query` instead)
+- ✅ **All workflows updated** to Firestore-first (workbook creation optional, disabled by default)
+
+**What This Means for You:**
+- **No changes needed** - All React hooks already use Firestore endpoints
+- **Better performance** - Direct Firestore queries (no file I/O)
+- **Real-time data** - Always fresh from the database
+- **Simpler infrastructure** - No workbook consolidation steps
+
+---
 
 ## TL;DR - Start Here
 
