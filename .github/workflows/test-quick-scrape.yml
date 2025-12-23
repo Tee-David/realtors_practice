@@ -36,7 +36,7 @@ jobs:
         run: |
           echo "Installing Python packages..."
           pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install -r backend/requirements.txt
           echo "Done!"
 
       - name: Install Playwright browsers
@@ -58,7 +58,7 @@ jobs:
       - name: Enable test site
         run: |
           echo "Enabling site: ${{ github.event.inputs.site || 'cwlagos' }}"
-          python scripts/enable_one_site.py ${{ github.event.inputs.site || 'cwlagos' }}
+          python backend/scripts/enable_one_site.py ${{ github.event.inputs.site || 'cwlagos' }}
 
       - name: Run test scrape
         env:
@@ -85,7 +85,7 @@ jobs:
           fi
 
           # Run scraper (will auto-upload to Firestore)
-          python main.py
+          python backend/main.py
 
           # Cleanup credentials
           if [ -f "firebase-temp-credentials.json" ]; then
@@ -99,7 +99,7 @@ jobs:
         run: |
           echo "Creating master workbook for backup/analysis..."
           echo "NOTE: This is optional - Firestore upload already completed during scrape"
-          python watcher.py --once
+          python backend/watcher.py --once
           echo "Workbook created (optional backup)"
 
       - name: Check system resources (AFTER)

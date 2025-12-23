@@ -1,0 +1,510 @@
+browser:
+  block_images: false
+  headless: true
+  user_data_dir: null
+deduplication:
+  cross_site: false
+  enabled: true
+  fields:
+  - title
+  - price
+  - location
+export:
+  formats:
+  - csv
+  - xlsx
+  output_dir: exports
+  timestamp_format: '%Y-%m-%d_%H-%M-%S'
+fallback_order:
+- requests
+- playwright
+geocoding:
+  cache_path: logs/geocache.json
+  enabled: true
+  max_per_run: 120
+  user_agent: 'RealtorsPractice/1.0 (+contact: you@example.com)'
+location_filters:
+  enabled: true
+  include_keywords:
+  - lagos
+  - lekki
+  - ikeja
+  - ajah
+  - ikoyi
+  - victoria island
+  - vi
+logging:
+  console: true
+  file: logs/scraper.log
+  level: INFO
+notifications:
+  email: null
+  enabled: false
+  on_failure: true
+  on_success: false
+  slack_webhook: null
+pagination:
+  max_pages: 30
+  page_timeout_ms: 45000
+  scroll_steps: 12
+quality:
+  enabled: true
+  min_quality_score: 30
+  export_quality_report: true
+rate_limiting:
+  delay_between_sites_seconds: 2
+  enabled: false
+  requests_per_minute: 60
+retry:
+  network_retry_seconds: 180
+  retry_on_zero_results: false
+sites:
+  adronhomes:
+    enabled: false
+    name: Adron Homes
+    parser: specials
+    url: https://adronhomesproperties.com/
+  ashproperties:
+    enabled: false
+    name: Ash Properties & Constructions
+    parser: specials
+    url: https://ashpropertiesng.com/
+  brokerfield:
+    enabled: false
+    name: Brokerfield Real Estate Services
+    parser: specials
+    url: https://brokerfieldrealestate.com/
+  buyletlive:
+    enabled: false
+    name: BuyLetLive
+    parser: specials
+    url: https://buyletlive.com/
+  castles:
+    enabled: false
+    name: Castles
+    parser: specials
+    url: http://castles.com.ng/
+  cuddlerealty:
+    enabled: false
+    name: Cuddle Realty
+    parser: specials
+    url: https://cuddlerealty.com/
+  cwlagos:
+    enabled: true
+    name: CW Real Estate
+    parser: specials
+    url: https://cwlagos.com/
+  edenoasis:
+    enabled: false
+    name: Eden Oasis
+    parser: specials
+    url: https://www.edenoasisrealty.com/
+  estateintel:
+    enabled: false
+    name: Estate Intel
+    parser: specials
+    url: https://estateintel.com/
+  facibus:
+    enabled: false
+    name: Facibus Housing
+    parser: specials
+    url: https://facibushousing.com
+  giddaa:
+    enabled: false
+    name: Giddaa
+    parser: specials
+    url: https://giddaa.com/
+  gtexthomes:
+    enabled: false
+    name: Gtext And Associates
+    parser: specials
+    url: https://gtexthomes.com/
+  houseafrica:
+    enabled: false
+    name: HouseAfrica
+    parser: specials
+    url: https://www.houseafrica.com.ng
+  hutbay:
+    enabled: false
+    name: Hutbay
+    parser: specials
+    url: https://www.hutbay.com/
+  jaat_properties:
+    enabled: false
+    name: JAAT Properties & Investment Ltd
+    parser: specials
+    url: https://takooka.com/jaat-properties.php
+  jiji:
+    detail_selectors:
+      agent_name:
+      - .seller-name
+      bathrooms:
+      - '[class*=''bathroom'' i]'
+      - li:contains('Bathroom')
+      bedrooms:
+      - '[class*=''bedroom'' i]'
+      - li:contains('Bedroom')
+      contact_info:
+      - .phone-number
+      description:
+      - .description
+      - .ad-description
+      images:
+      - .gallery img
+      - .photos img
+      land_size:
+      - '[class*=''size'' i]'
+      main_container: .ad-details, .details
+      price:
+      - .price
+      - .price-details
+      property_type:
+      - .property-type
+      - .details dt:contains('Type') + dd
+    enabled: false
+    name: Jiji Real Estate Section
+    parser: specials
+    url: https://jiji.ng/real-estate
+  lagosproperty:
+    enabled: false
+    name: Lagos Property
+    parser: specials
+    url: https://lagosproperty.net/
+  lamudi:
+    detail_selectors:
+      agent_name:
+      - .agent-name
+      bathrooms:
+      - '[class*=''bathroom'' i]'
+      - span:contains('Bathroom')
+      bedrooms:
+      - '[class*=''bedroom'' i]'
+      - span:contains('Bedroom')
+      contact_info:
+      - '[href^=''tel:'']'
+      description:
+      - .description
+      - .details
+      images:
+      - .gallery img
+      land_size:
+      - '[class*=''size'' i]'
+      main_container: .property-details, main
+      price:
+      - .price
+      property_type:
+      - .property-type
+    enabled: false
+    name: Lamudi Nigeria
+    parser: specials
+    url: https://www.lamudi.com.ng/
+  landmall:
+    enabled: false
+    name: Landmall.ng
+    parser: specials
+    url: https://www.landmall.ng/
+  landng:
+    enabled: false
+    name: Land.ng
+    parser: specials
+    url: https://land.ng/
+  lodges:
+    enabled: false
+    name: Lodges.ng
+    parser: specials
+    url: https://www.lodges.ng/
+  myproperty:
+    enabled: false
+    name: MyProperty.ng
+    parser: specials
+    url: https://www.myproperty.ng
+  naijahouses:
+    enabled: false
+    name: NaijaHouses
+    parser: specials
+    url: https://www.naijahouses.com/
+  naijalandlord:
+    enabled: false
+    name: NaijaLandlord
+    parser: specials
+    url: https://www.naijalandlord.com/
+  nazaprimehive:
+    enabled: false
+    name: Nazaprime Hive
+    parser: specials
+    url: https://hive.nazaprime.com.ng
+  nigerianpropertymarket:
+    enabled: false
+    name: Nigerian Property Market
+    parser: specials
+    url: https://nigerianpropertymarket.com/
+  nigeriapropertyzone:
+    enabled: false
+    name: Nigeria Property Zone
+    parser: specials
+    url: https://nigeriapropertyzone.com.ng/
+  npc:
+    detail_selectors:
+      agent_name:
+      - .agent-name
+      - .advertiser-name
+      bathrooms:
+      - .bathrooms .value
+      - '[class*=''bathroom'' i]'
+      - span:contains('Bathroom')
+      bedrooms:
+      - .bedrooms .value
+      - '[class*=''bedroom'' i]'
+      - span:contains('Bedroom')
+      contact_info:
+      - .phone-number
+      - .contact-number
+      - '[href^=''tel:'']'
+      description:
+      - .property-description
+      - .description
+      - '[class*=''description'' i]'
+      - .details p
+      images:
+      - .property-gallery img
+      - .slider img
+      - .images img
+      land_size:
+      - .plot-area
+      - .land-size
+      - '[class*=''size'' i]:contains(''sqm'')'
+      main_container: .property-details, main, .content
+      price:
+      - .property-price
+      - .price
+      - '[class*=''price'' i]'
+      property_type:
+      - .property-type
+      - '[class*=''type'' i]'
+      - .category
+      toilets:
+      - .toilets .value
+      - '[class*=''toilet'' i]'
+    enabled: false
+    list_paths:
+    - ''
+    location_discovery:
+      enabled: false
+      location_link_selectors:
+      - a[href*='/lagos/']
+      - .location-link
+      - .area-link
+      max_locations: 10
+      skip_locations:
+      - /lagos/?$
+      - /nigeria/?$
+    metadata:
+      category: aggregator
+      last_successful_scrape: null
+      notes: Major property aggregator in Nigeria
+      priority: 1
+    name: Nigeria Property Centre
+    overrides:
+      export_formats:
+      - csv
+      - xlsx
+      geocode: true
+      max_pages: 40
+      retry_seconds: 240
+      scroll_steps: 15
+    pagination:
+      next_selectors:
+      - a[rel='next']
+      - li.next a
+      - a[aria-label*='Next']
+      page_param: page
+    parser: specials
+    search_param: null
+    selectors:
+      card: li.property-list, .property-list, .property, article
+      description: .description, .prop-description
+      image: img
+      location: .location, .prop-location
+      price: .price, .prop-price, .price-text
+      title: h2, .prop-title, a[title]
+    url: https://nigeriapropertycentre.com/
+  olist:
+    enabled: false
+    name: OList Real Estate
+    parser: specials
+    url: https://www.olist.ng/real-estate
+  oparahrealty:
+    enabled: false
+    name: Oparah Realty
+    parser: specials
+    url: https://oparahrealty.com/
+  ownahome:
+    enabled: false
+    name: Ownahome
+    parser: specials
+    url: https://ownahome.ng/
+  privateproperty:
+    enabled: false
+    name: Private Property Nigeria
+    parser: specials
+    url: https://www.privateproperty.com.ng/
+  pwanhomes:
+    enabled: false
+    name: Pwan Homes
+    parser: specials
+    url: https://www.pwanhomes.com/
+  propertieslinkng:
+    enabled: false
+    name: Propertylink Real Estate Investment Limited
+    parser: specials
+    url: https://propertieslinkng.com/
+  property24:
+    detail_selectors:
+      bathrooms:
+      - '[class*=''bathroom'' i]'
+      - li:contains('Bathroom')
+      bedrooms:
+      - '[class*=''bedroom'' i]'
+      - li:contains('Bedroom')
+      description:
+      - .description
+      images:
+      - .gallery img
+      land_size:
+      - '[class*=''size'' i]'
+      main_container: .property-details, main
+      price:
+      - .price
+      property_type:
+      - .property-type
+    enabled: false
+    name: Property24 Nigeria
+    parser: specials
+    url: https://www.property24.com.ng/
+  propertyguru:
+    enabled: false
+    name: Property Guru
+    parser: specials
+    url: https://propertyguru.com.ng/
+  propertylisthub:
+    enabled: false
+    name: Property List Hub
+    parser: specials
+    url: https://propertylisthub.com/
+  propertypro:
+    detail_selectors:
+      agent_name:
+      - .agent-name
+      bathrooms:
+      - .bathrooms
+      - '[class*=''bathroom'' i]'
+      - li:contains('Bathroom')
+      bedrooms:
+      - .bedrooms
+      - '[class*=''bedroom'' i]'
+      - li:contains('Bedroom')
+      contact_info:
+      - .phone
+      - '[href^=''tel:'']'
+      description:
+      - .property-description
+      - .description
+      - .details
+      images:
+      - .gallery img
+      - .property-images img
+      land_size:
+      - .plot-area
+      - '[class*=''size'' i]'
+      main_container: .property-details, .listing-details, main
+      price:
+      - .property-price
+      - .price
+      property_type:
+      - .property-type
+      - .type
+      toilets:
+      - '[class*=''toilet'' i]'
+    enabled: false
+    lagos_paths:
+    - /property-for-sale/lagos
+    - /property-for-rent/lagos
+    name: PropertyPro Nigeria
+    pagination:
+      next_selectors:
+      - a[rel='next']
+      - li.next a
+      page_param: page
+    parser: specials
+    search_param: q
+    selectors:
+      card: div.single-room-text, article.property, li.property
+      location: .location, .listings-location, .single-room-location
+      price: span.propery-price, .price, .listings-price
+      title: a h2, .single-room-text h2, h2 > a, .title a
+    url: https://propertypro.ng/
+  quicktellerhomes:
+    enabled: false
+    name: Quickteller Homes
+    parser: specials
+    url: https://homes.quickteller.com/
+  ramos:
+    enabled: false
+    name: Ramos Real Estate
+    parser: specials
+    url: https://ramosrealestateng.com/
+  realestatenigeria:
+    enabled: false
+    name: Real Estate Nigeria
+    parser: specials
+    url: https://www.realestatenigeria.com
+  realtorintl:
+    enabled: false
+    name: Realtor.com International Nigeria
+    parser: specials
+    url: https://www.realtor.com/international/ng/
+  realtorng:
+    enabled: false
+    name: Realtor.ng
+    parser: specials
+    url: https://www.realtor.ng/
+  rentsmallsmall:
+    enabled: false
+    name: RentSmallSmall
+    parser: specials
+    url: https://rentsmallsmall.ng/
+  spleet:
+    enabled: false
+    name: Spleet
+    parser: specials
+    url: https://spleet.africa/
+  takooka_props:
+    enabled: false
+    name: Takooka Properties
+    parser: specials
+    url: https://properties.takooka.com/
+  thinkmint:
+    enabled: false
+    name: Thinkmint Nigeria
+    parser: specials
+    url: http://buyrealestate.thinkmint.ng/
+  tradebanq:
+    enabled: false
+    name: TradeBanq
+    parser: specials
+    url: https://www.tradebanq.com
+  trovit:
+    enabled: false
+    name: Trovit Homes
+    parser: specials
+    url: https://homes.trovit.ng/
+  ubosieleh:
+    enabled: false
+    name: Ubosi Eleh + Co.
+    parser: specials
+    url: https://ubosieleh.com/
+  vconnect:
+    enabled: false
+    name: VConnect
+    parser: specials
+    url: https://www.vconnect.com/

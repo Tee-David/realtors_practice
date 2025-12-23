@@ -1,3 +1,10 @@
+# =================================================================
+# MONOREPO .gitignore
+# Covers both Backend (Python/Scraper/API) and Frontend (Next.js)
+# =================================================================
+
+# ============= BACKEND (Python) =============
+
 # Python
 __pycache__/
 *.py[cod]
@@ -30,29 +37,13 @@ ENV/
 env.bak/
 venv.bak/
 
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-.DS_Store
-
-# Project specific
-logs/
-*.log
-exports/
-config.yaml
-*.backup
-debug_screenshots/  # Intelligent scraper screenshots
-
-# Temporary files
-nul
-new_tasks.txt
-github_runs.json
-.workbook.lock
-scraper_state.json
-batch_progress.json
+# Backend specific
+backend/logs/
+backend/exports/
+backend/config.yaml
+backend/debug_screenshots/
+backend/venv/
+backend/__pycache__/
 
 # Playwright
 .playwright/
@@ -65,54 +56,16 @@ test_report_*.json
 test_output.txt
 *.test.log
 
-# Environment variables
-.env
-.env.local
-
 # Temporary files
+nul
+new_tasks.txt
+github_runs.json
+.workbook.lock
+scraper_state.json
+batch_progress.json
 *.tmp
 *.temp
 .cache/
-
-# OS files
-Thumbs.db
-.DS_Store
-
-# AI Context (internal use only - not for GitHub)
-AI_CONTEXT.md
-claude.md
-
-# Deployment docs (backend already deployed - keep local only)
-DEPLOYMENT_STATUS.md
-DEPLOY_BACKEND.md
-FOR_HAMEEDAH_FRONTEND_SETUP.md
-MESSAGE_FOR_HAMEEDAH.md
-QUICKSTART_DEPLOY.md
-START_HERE.md
-YOUR_TODO_DEPLOY.md
-WHAT_I_DID.md
-for_hameedah.md
-
-# Backend-only documentation (keep local)
-HOW_TO_GET_API_KEY.md
-docs/backend-only/
-
-# Claude AI
-.claude/
-
-# Safepoint backups (local only)
-safepoint_backups/
-
-# Archived documentation (local only)
-archived_docs/
-
-# Session summaries are now kept in version control for historical reference
-# (Uncomment below to make sessions local-only)
-# docs/sessions/
-
-# Local summaries and reports (not for GitHub)
-COMPREHENSIVE_TESTING_SUMMARY.md
-*_SUMMARY.md
 
 # Firebase credentials (NEVER commit these!)
 realtor-s-practice-firebase-adminsdk-fbsvc-c8563eb2f2.json
@@ -124,24 +77,99 @@ serviceAccountKey.json
 # API Keys (NEVER commit these!)
 api_keys.json
 
-# Backend-only files (sensitive - keep local only)
-HOW_TO_GET_API_KEY.md
-docs/API_KEY_MANAGEMENT.md
-docs/SECURITY_IMPLEMENTATION.md
-docs/SECURITY_ANALYSIS.md
-docs/TESTING_GUIDE.md
-scripts/manage_api_keys.py
-
-# Test files (backend only - keep local)
-tests/test_api_comprehensive.py
-tests/test_security_comprehensive.py
-tests/test_firestore_integration.py
-tests/run_all_comprehensive_tests.py
-
 # Firebase Functions
 functions/venv/
 functions/__pycache__/
 functions/**/__pycache__/
 functions/.firebase/
 functions/firebase-debug.log
+
+# Backend documentation (local only)
+HOW_TO_GET_API_KEY.md
+docs/backend-only/
+docs/API_KEY_MANAGEMENT.md
+docs/SECURITY_IMPLEMENTATION.md
+docs/SECURITY_ANALYSIS.md
+DEPLOYMENT_STATUS.md
+DEPLOY_BACKEND.md
+FOR_HAMEEDAH_FRONTEND_SETUP.md
+MESSAGE_FOR_HAMEEDAH.md
+QUICKSTART_DEPLOY.md
+START_HERE.md
+YOUR_TODO_DEPLOY.md
+WHAT_I_DID.md
+for_hameedah.md
 GITHUB_SECRET_UPDATE_REMINDER.md
+COMPREHENSIVE_TESTING_SUMMARY.md
+*_SUMMARY.md
+
+# Archived documentation
+archived_docs/
+safepoint_backups/
+
+
+# ============= FRONTEND (Next.js) =============
+
+# Dependencies
+frontend/node_modules/
+frontend/.pnp
+frontend/.pnp.*
+frontend/.yarn/*
+!frontend/.yarn/patches
+!frontend/.yarn/plugins
+!frontend/.yarn/releases
+!frontend/.yarn/versions
+
+# Testing
+frontend/coverage/
+
+# Next.js
+frontend/.next/
+frontend/out/
+frontend/build/
+
+# Production
+frontend/build/
+
+# Debug
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/.pnpm-debug.log*
+
+# Vercel
+frontend/.vercel
+
+# TypeScript
+frontend/*.tsbuildinfo
+frontend/next-env.d.ts
+
+
+# ============= SHARED (Both Backend & Frontend) =============
+
+# Environment variables
+.env
+.env.local
+.env*.local
+*.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Claude AI
+.claude/
+
+# AI Context files (internal use only)
+AI_CONTEXT.md
+claude.md
+
+# Logs (general)
+*.log

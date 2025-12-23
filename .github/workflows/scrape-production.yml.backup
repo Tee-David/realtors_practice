@@ -9,9 +9,9 @@ on:
   workflow_dispatch:
     inputs:
       max_pages:
-        description: 'Max pages per site (default: 8)'
+        description: 'Max pages per site (default: 15)'
         required: false
-        default: '8'
+        default: '15'
       geocode:
         description: 'Enable geocoding (1=yes, 0=no)'
         required: false
@@ -75,7 +75,7 @@ jobs:
           FORCE_SITES_PER_SESSION = FORCE_STR if FORCE_STR else ""
 
           # Custom sites from frontend/manual trigger
-          # API sends comma-separated string (e.g., "site1,site2,site3")
+          # API sends sites as comma-separated string (e.g., "site1,site2,site3")
           CUSTOM_SITES_STR = "${{ github.event.client_payload.sites }}"
           CUSTOM_SITES_INPUT = "${{ github.event.inputs.sites }}"
 
@@ -87,6 +87,8 @@ jobs:
           print(f"Event action: ${{ github.event.action }}")
           print(f"Max pages: {MAX_PAGES}")
           print(f"Geocode: {GEOCODE} (enabled: {GEOCODE_ENABLED})")
+          print(f"Sites param (payload): '{CUSTOM_SITES_STR}'")
+          print(f"Sites param (input): '{CUSTOM_SITES_INPUT}'")
           print(f"============================\n")
 
           # Time estimation constants (based on empirical testing)
@@ -99,13 +101,13 @@ jobs:
 
           # GitHub Actions constraints
           GITHUB_TIMEOUT_MINUTES = 350  # 6 hours minus 10 min buffer
-          MAX_PARALLEL = 10  # Increased for detail scraping to fit within 6-hour limit
+          MAX_PARALLEL = 5  # Conservative: prevent resource contention
 
-          # Force small batches for reliability (1 site per session - necessary for detail scraping)
-          FORCED_SITES_PER_SESSION = 1
+          # Force small batches for reliability (3 sites per session - conservative)
+          FORCED_SITES_PER_SESSION = 3
 
           # Load config.yaml
-          with open('backend/config.yaml') as f:
+          with open('config.yaml') as f:
               config = yaml.safe_load(f)
 
           # Determine which sites to scrape
@@ -113,26 +115,26 @@ jobs:
           custom_sites = []
 
           # Try client_payload.sites first (from API trigger - comma-separated string)
-          if CUSTOM_SITES_STR and CUSTOM_SITES_STR not in ['null', '', 'None']:
+          if CUSTOM_SITES_STR and CUSTOM_SITES_STR not in ['null', '', '[]', 'None']:
               sites_list = [s.strip() for s in CUSTOM_SITES_STR.split(',') if s.strip()]
               if sites_list:
                   custom_sites = sites_list
-                  print(f"Using {len(custom_sites)} custom sites from API: {custom_sites}")
+                  print(f"Using custom sites from API ({len(custom_sites)} sites): {custom_sites}")
 
-          # Try inputs.sites second (from manual workflow_dispatch)
-          if not custom_sites and CUSTOM_SITES_INPUT and CUSTOM_SITES_INPUT not in ['null', '', 'None']:
+          # Try inputs.sites second (from manual workflow_dispatch - JSON array or comma-separated)
+          if not custom_sites and CUSTOM_SITES_INPUT and CUSTOM_SITES_INPUT not in ['null', '', '[]', 'None']:
               try:
-                  # Try parsing as JSON first (for manual triggers)
+                  # Try parsing as JSON first (for manual triggers that use array)
                   parsed = json.loads(CUSTOM_SITES_INPUT)
                   if isinstance(parsed, list) and parsed:
                       custom_sites = parsed
-                      print(f"Using custom sites from manual input: {custom_sites}")
-              except:
-                  # Fall back to comma-separated
+                      print(f"Using custom sites from manual input (JSON array): {custom_sites}")
+              except (json.JSONDecodeError, ValueError):
+                  # Fall back to comma-separated string
                   sites_list = [s.strip() for s in CUSTOM_SITES_INPUT.split(',') if s.strip()]
                   if sites_list:
                       custom_sites = sites_list
-                      print(f"Using custom sites (CSV): {custom_sites}")
+                      print(f"Using custom sites from manual input (CSV): {custom_sites}")
 
           # Validate custom sites exist in config
           if custom_sites:
@@ -145,7 +147,7 @@ jobs:
 
               if valid_sites:
                   enabled_sites = valid_sites
-                  print(f"SUCCESS: Validated {len(valid_sites)} custom sites")
+                  print(f"✓ Validated {len(valid_sites)} custom sites")
               else:
                   print(f"ERROR: No valid sites found in custom list. Using all enabled sites.")
                   enabled_sites = [
@@ -248,26 +250,26 @@ jobs:
           echo "## Intelligent Batching Strategy" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Configuration:**" >> $GITHUB_STEP_SUMMARY
-          echo "- Max pages per site: ${{ github.event.inputs.max_pages || github.event.client_payload.max_pages || '8' }}" >> $GITHUB_STEP_SUMMARY
-          echo "- Geocoding: ${{ steps.batch.outputs.is_safe == 'true' && 'SUCCESS: Enabled' || 'ERROR: Disabled' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Max pages per site: ${{ github.event.inputs.max_pages || github.event.client_payload.max_pages || '15' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Geocoding: ${{ steps.batch.outputs.is_safe == 'true' && '✅ Enabled' || '❌ Disabled' }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Batching:**" >> $GITHUB_STEP_SUMMARY
           echo "- Sites per session: ${{ steps.batch.outputs.sites_per_session }}" >> $GITHUB_STEP_SUMMARY
           echo "- Total sessions: ${{ steps.batch.outputs.total_sessions }}" >> $GITHUB_STEP_SUMMARY
-          echo "- Max parallel: 10" >> $GITHUB_STEP_SUMMARY
+          echo "- Max parallel: 5" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Time Estimate:**" >> $GITHUB_STEP_SUMMARY
           echo "- Total: ${{ steps.batch.outputs.estimated_minutes }} min (${{ steps.batch.outputs.estimated_hours }} hours)" >> $GITHUB_STEP_SUMMARY
-          echo "- Status: ${{ steps.batch.outputs.is_safe == 'true' && 'SUCCESS:' || 'WARNING:' }} ${{ steps.batch.outputs.recommendation }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Status: ${{ steps.batch.outputs.is_safe == 'true' && '✅' || '⚠️' }} ${{ steps.batch.outputs.recommendation }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
   scrape:
     name: Scrape Session ${{ matrix.session.session_id }}
     needs: calculate
     runs-on: ubuntu-latest
-    timeout-minutes: 120  # 2 hours per session (1 site with detail scraping = ~80 min estimated)
+    timeout-minutes: 90  # 1.5 hours per session (3 sites = ~47 min estimated)
     strategy:
-      max-parallel: 10  # Increased for detail scraping to fit within 6-hour limit
+      max-parallel: 5  # Conservative: prevent resource contention
       fail-fast: false
       matrix:
         session: ${{ fromJson(needs.calculate.outputs.sessions) }}
@@ -285,7 +287,7 @@ jobs:
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r backend/requirements.txt
+          pip install -r requirements.txt
 
       - name: Install Playwright and browsers
         run: |
@@ -296,7 +298,7 @@ jobs:
         env:
           FIREBASE_CREDENTIALS: ${{ secrets.FIREBASE_CREDENTIALS }}
           FIRESTORE_ENABLED: "1"
-          RP_PAGE_CAP: ${{ github.event.inputs.max_pages || github.event.client_payload.max_pages || '8' }}
+          RP_PAGE_CAP: ${{ github.event.inputs.max_pages || github.event.client_payload.max_pages || '15' }}
           RP_GEOCODE: ${{ github.event.inputs.geocode || github.event.client_payload.geocode || '1' }}
           RP_HEADLESS: 1
           RP_NO_IMAGES: 1
@@ -314,17 +316,17 @@ jobs:
           if [ ! -z "$FIREBASE_CREDENTIALS" ]; then
             echo "$FIREBASE_CREDENTIALS" > firebase-temp-credentials.json
             export FIREBASE_SERVICE_ACCOUNT=firebase-temp-credentials.json
-            echo "SUCCESS: Firebase credentials configured"
+            echo "✓ Firebase credentials configured"
           fi
 
           # Enable only this session's sites
           SITES="${{ matrix.session.sites }}"
           SITES_SPACE=$(echo "$SITES" | tr ',' ' ')
           echo "Enabling sites: $SITES_SPACE"
-          python backend/scripts/enable_sites.py $SITES_SPACE
+          python scripts/enable_sites.py $SITES_SPACE
 
           # Run scraper
-          python backend/main.py
+          python main.py
 
           # Cleanup
           if [ -f "firebase-temp-credentials.json" ]; then
@@ -334,7 +336,7 @@ jobs:
       - name: Process exports
         run: |
           echo "Processing scraped data..."
-          python backend/watcher.py --once
+          python watcher.py --once
 
       - name: Upload session artifacts
         if: always()
@@ -364,7 +366,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r backend/requirements.txt
+          pip install -r requirements.txt
 
       - name: Download all session exports
         uses: actions/download-artifact@v4
@@ -372,7 +374,6 @@ jobs:
           path: session-exports/
           pattern: session-*-exports
           merge-multiple: false
-        continue-on-error: true  # Don't fail if no artifacts (all scrape sessions might have failed)
 
       - name: Consolidate sessions
         run: |
@@ -381,33 +382,13 @@ jobs:
 
           python - <<'EOF'
           import os
-          import sys
           import shutil
           from pathlib import Path
 
           session_dir = Path('session-exports')
           consolidated_dir = Path('exports/sites')
 
-          # Check if session-exports directory exists and has content
-          if not session_dir.exists():
-              print("ERROR: session-exports directory not found!")
-              print("This means no artifacts were downloaded (all scrape sessions may have failed)")
-              sys.exit(1)
-
-          # Count artifacts
-          session_folders = list(session_dir.glob('session-*-exports'))
-          if not session_folders:
-              print("ERROR: No session artifact folders found!")
-              print(f"Checked pattern: session-*-exports in {session_dir}")
-              print(f"Directory contents:")
-              for item in session_dir.iterdir():
-                  print(f"  - {item.name}")
-              sys.exit(1)
-
-          print(f"Found {len(session_folders)} session artifact folders")
-
-          files_copied = 0
-          for session_folder in session_folders:
+          for session_folder in session_dir.glob('session-*-exports'):
               session_sites = session_folder / 'sites'
               if session_sites.exists():
                   for site_folder in session_sites.iterdir():
@@ -416,110 +397,78 @@ jobs:
                           dest.mkdir(exist_ok=True)
                           for file in site_folder.iterdir():
                               shutil.copy2(file, dest / file.name)
-                              files_copied += 1
                               print(f"Copied: {file.name}")
-              else:
-                  print(f"WARNING: No 'sites' folder in {session_folder.name}")
 
-          print(f"\nConsolidation complete!")
-          print(f"Total files copied: {files_copied}")
-          print(f"Destination: {consolidated_dir}")
-
-          if files_copied == 0:
-              print("ERROR: No files were consolidated!")
-              print("This means scraping sessions produced no export files")
-              sys.exit(1)
+          print(f"\nConsolidated into {consolidated_dir}")
           EOF
 
-      - name: Create master workbook (OPTIONAL - DISABLED BY DEFAULT)
-        if: env.MASTER_WORKBOOK_ENABLED == '1'
+      - name: Create master workbook
         run: |
           echo "Creating master workbook..."
-          echo "NOTE: Master workbook is optional - Firestore is primary data store"
-          python backend/watcher.py --once
+          python watcher.py --once
 
-      - name: Upload to Firestore (Direct from Sessions)
+      - name: Upload to Firestore
         env:
           FIREBASE_CREDENTIALS: ${{ secrets.FIREBASE_CREDENTIALS }}
         run: |
           echo "========================================="
           echo "Uploading to Firestore (Enterprise Schema v3.1)"
-          echo "Direct upload from session exports (no master workbook required)"
           echo "========================================="
 
-          # Check if Firebase credentials secret is set (HARD FAIL if not)
+          # Check if master workbook exists
+          if [ ! -f "exports/cleaned/MASTER_CLEANED_WORKBOOK.xlsx" ]; then
+            echo "⚠️ WARNING: Master workbook not found!"
+            echo "Watcher may have failed. Skipping Firestore upload."
+            exit 0
+          fi
+
+          # Check if Firebase credentials secret is set
           if [ -z "$FIREBASE_CREDENTIALS" ]; then
-            echo "ERROR: FIREBASE_CREDENTIALS secret not set!"
-            echo "Go to: Settings → Secrets and variables → Actions"
-            echo "Add secret 'FIREBASE_CREDENTIALS' with Firebase service account JSON"
-            exit 1
+            echo "⚠️ WARNING: FIREBASE_CREDENTIALS secret not set!"
+            echo "Skipping Firestore upload. Set secret to enable uploads."
+            exit 0
           fi
 
           # Create temporary credentials file
           echo "$FIREBASE_CREDENTIALS" > firebase-temp-credentials.json
 
-          # Validate credentials file is valid JSON (HARD FAIL if invalid)
+          # Validate credentials file is valid JSON
           if ! python -c "import json; json.load(open('firebase-temp-credentials.json'))" 2>/dev/null; then
-            echo "ERROR: Invalid Firebase credentials JSON!"
-            echo "Check that FIREBASE_CREDENTIALS secret contains valid JSON"
+            echo "❌ ERROR: Invalid Firebase credentials JSON!"
             rm firebase-temp-credentials.json
-            exit 1
+            exit 0
           fi
 
-          echo "SUCCESS: Firebase credentials validated"
+          echo "✅ Firebase credentials validated"
 
-          # Set environment variables
+          # Set environment variable
           export FIREBASE_SERVICE_ACCOUNT=firebase-temp-credentials.json
-          export FIRESTORE_ENABLED=1
 
-          # Verify exports/sites directory exists
-          if [ ! -d "exports/sites" ]; then
-            echo "ERROR: exports/sites directory does not exist!"
-            echo "Consolidation step may have failed. Check logs above."
-            rm -f firebase-temp-credentials.json
-            exit 1
-          fi
-
-          # Count session export files
-          echo ""
-          echo "Counting session export files..."
-          csv_count=$(find exports/sites -name "*.csv" 2>/dev/null | wc -l)
-          xlsx_count=$(find exports/sites -name "*.xlsx" 2>/dev/null | wc -l)
-          total_files=$((csv_count + xlsx_count))
-          echo "Found $total_files export files ($csv_count CSV + $xlsx_count XLSX)"
-
-          if [ $total_files -eq 0 ]; then
-            echo "ERROR: No export files found in exports/sites!"
-            echo "Consolidation step may have completed but produced no files."
-            echo ""
-            echo "Directory structure:"
-            ls -la exports/ 2>/dev/null || echo "exports/ does not exist"
-            ls -la exports/sites/ 2>/dev/null || echo "exports/sites/ does not exist"
-            echo ""
-            echo "Possible causes:"
-            echo "  1. All scrape sessions failed or timed out"
-            echo "  2. Scraping succeeded but produced no data"
-            echo "  3. Consolidation script failed to copy files"
-            rm -f firebase-temp-credentials.json
-            exit 1
-          fi
-
-          # Run NEW upload script (uploads directly from session exports)
-          echo ""
+          # Run upload script with enterprise schema transformation
           echo "Uploading with enterprise schema (9 categories, 85+ fields)..."
           echo "- Auto-detection: listing_type, furnishing, condition"
           echo "- Auto-tagging: premium, hot_deal"
           echo "- Location intelligence: 50+ Lagos landmarks"
           echo ""
 
-          if python backend/scripts/upload_sessions_to_firestore.py; then
+          if python scripts/upload_to_firestore.py --cleanup --max-age-days 30; then
             echo ""
-            echo "SUCCESS: Firestore upload completed successfully!"
+            echo "✅ Firestore upload completed successfully!"
+
+            # Count uploaded properties
+            PROPERTY_COUNT=$(python -c "
+import pandas as pd
+try:
+    df = pd.read_excel('exports/cleaned/MASTER_CLEANED_WORKBOOK.xlsx')
+    print(len(df))
+except:
+    print('Unknown')
+" 2>/dev/null || echo "Unknown")
+
+            echo "📊 Total properties uploaded: $PROPERTY_COUNT"
           else
-            echo "ERROR: Firestore upload failed!"
+            echo "⚠️ WARNING: Firestore upload encountered errors"
             echo "Check logs above for details"
-            rm -f firebase-temp-credentials.json
-            exit 1
           fi
 
           # Clean up credentials
@@ -528,27 +477,6 @@ jobs:
           echo "========================================="
           echo "Firestore upload step complete!"
           echo "========================================="
-
-      - name: Verify Firestore Upload
-        env:
-          FIREBASE_CREDENTIALS: ${{ secrets.FIREBASE_CREDENTIALS }}
-        run: |
-          echo "Verifying Firestore upload..."
-
-          # Recreate credentials file for verification
-          echo "$FIREBASE_CREDENTIALS" > firebase-temp-credentials.json
-          export FIREBASE_SERVICE_ACCOUNT=firebase-temp-credentials.json
-
-          # Run verification script
-          if python backend/scripts/verify_firestore_upload.py; then
-            echo "[SUCCESS] Firestore upload verified!"
-          else
-            echo "[WARNING] Verification failed - check Firebase Console manually"
-            echo "Workflow will continue (verification is non-blocking)"
-          fi
-
-          # Clean up
-          rm -f firebase-temp-credentials.json
 
       - name: Generate final summary
         if: always()
@@ -581,13 +509,20 @@ jobs:
           fi
 
           # Firestore upload status
-          FIRESTORE_COUNT=$(grep -c "uploaded successfully" firestore_upload.log 2>/dev/null || echo "0")
+          FIRESTORE_COUNT=$(python -c "
+import pandas as pd
+try:
+    df = pd.read_excel('exports/cleaned/MASTER_CLEANED_WORKBOOK.xlsx')
+    print(len(df))
+except:
+    print(0)
+" 2>/dev/null || echo "0")
 
           echo "**Firestore:**" >> $GITHUB_STEP_SUMMARY
           if [ "$FIRESTORE_COUNT" -gt 0 ]; then
-            echo "SUCCESS: Uploaded $FIRESTORE_COUNT properties successfully" >> $GITHUB_STEP_SUMMARY
+            echo "✅ Uploaded $FIRESTORE_COUNT properties successfully" >> $GITHUB_STEP_SUMMARY
           else
-            echo "WARNING: No properties uploaded (check logs)" >> $GITHUB_STEP_SUMMARY
+            echo "⚠️ No properties uploaded (check logs)" >> $GITHUB_STEP_SUMMARY
           fi
           echo "- Collection: \`properties\`" >> $GITHUB_STEP_SUMMARY
           echo "- Schema: Enterprise v3.1 (9 categories, 85+ fields)" >> $GITHUB_STEP_SUMMARY

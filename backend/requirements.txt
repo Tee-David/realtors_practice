@@ -1,0 +1,27 @@
+# Core dependencies
+requests
+beautifulsoup4
+lxml
+playwright
+pyyaml
+openpyxl
+python-dotenv
+
+# Data processing
+pandas
+
+# Firebase/Firestore (enterprise data store)
+firebase-admin>=6.2.0
+
+# API server (for frontend integration)
+flask
+flask-cors
+gunicorn
+
+# Performance & monitoring (optional but recommended)
+tqdm>=4.66.0          # Progress bars for parallel processing
+psutil>=5.9.0         # Resource monitoring (CPU, memory)
+
+# Scheduling & WebSocket support
+apscheduler>=3.10.0   # Job scheduling (cron-style and interval)
+flask-socketio>=5.3.0 # WebSocket support for real-time updates
