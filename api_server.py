@@ -1,6 +1,6 @@
 """
 Root-level shim to maintain compatibility with Render deployment.
-Imports the Flask app from backend/functions/api_server.py
+Imports the Flask app from backend/api_server.py
 """
 
 import sys
@@ -14,7 +14,7 @@ if backend_path not in sys.path:
 # Change to backend directory for file operations
 os.chdir(backend_path)
 
-# Now import the app (using the backend's import structure)
-from functions.api_server import app
+# Now import the app from backend
+from api_server import app
 
 __all__ = ['app']
