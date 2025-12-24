@@ -167,7 +167,7 @@ def get_properties_by_listing_type(
     limit: int = 100,
     price_min: Optional[float] = None,
     price_max: Optional[float] = None,
-    min_quality_score: int = 50
+    min_quality_score: int = 0
 ) -> List[Dict[str, Any]]:
     """
     Get properties by listing type (sale, rent, lease, shortlet).
@@ -177,7 +177,7 @@ def get_properties_by_listing_type(
         limit: Maximum number of results
         price_min: Minimum price filter
         price_max: Maximum price filter
-        min_quality_score: Minimum quality score (default 50, prevents poor quality data)
+        min_quality_score: Minimum quality score (default 0, show all properties)
 
     Returns:
         List of property dictionaries
@@ -187,27 +187,47 @@ def get_properties_by_listing_type(
         return []
 
     try:
+        import firebase_admin.firestore as firestore
         properties_ref = db.collection('properties')
-        query = properties_ref.where('basic_info.listing_type', '==', listing_type) \
-                             .where('basic_info.status', '==', 'available') \
-                             .where('financial.price', '>', 0)
 
-        # Add price filters if provided
-        if price_min is not None and price_min > 0:
-            query = query.where('financial.price', '>=', price_min)
-        if price_max is not None:
-            query = query.where('financial.price', '<=', price_max)
+        # Only order by uploaded_at to avoid composite index requirement
+        # Filter by listing_type and status in post-processing
+        query = properties_ref.order_by('uploaded_at', direction=firestore.Query.DESCENDING)
 
-        query = query.order_by('financial.price').limit(limit * 2)  # Get more to filter by quality
+        # Get extra results for filtering
+        query = query.limit(limit * 4)
 
-        # Filter by quality score in post-processing (Firestore allows only one inequality per query)
+        # Execute query
         all_results = [_clean_property_dict(doc.to_dict()) for doc in query.stream()]
-        results = [
-            p for p in all_results
-            if p.get('metadata', {}).get('quality_score', 0) >= min_quality_score
-        ][:limit]  # Take only requested limit after filtering
 
-        logger.info(f"Retrieved {len(results)} {listing_type} properties (quality >= {min_quality_score}, price > 0)")
+        # Filter by listing_type in post-processing
+        all_results = [
+            p for p in all_results
+            if p.get('basic_info', {}).get('listing_type') == listing_type
+            and p.get('basic_info', {}).get('status') == 'available'
+        ]
+
+        # Filter by price in post-processing
+        if price_min is not None and price_min > 0:
+            all_results = [
+                p for p in all_results
+                if p.get('financial', {}).get('price', 0) >= price_min
+            ]
+        if price_max is not None:
+            all_results = [
+                p for p in all_results
+                if p.get('financial', {}).get('price', 0) <= price_max
+            ]
+
+        # Filter by quality score in post-processing
+        if min_quality_score > 0:
+            all_results = [
+                p for p in all_results
+                if p.get('metadata', {}).get('quality_score', 0) >= min_quality_score
+            ]
+
+        results = all_results[:limit]
+        logger.info(f"Retrieved {len(results)} {listing_type} properties (quality >= {min_quality_score})")
         return results
 
     except Exception as e:
@@ -830,4 +850,67 @@ def get_site_properties(
 
     except Exception as e:
         logger.error(f"Error querying site properties: {e}")
+        return []
+
+
+def get_all_properties(
+    limit: int = 100,
+    offset: int = 0,
+    min_quality_score: int = 0,
+    status: str = 'available'
+) -> List[Dict[str, Any]]:
+    """
+    Get all properties from Firestore with pagination.
+
+    Args:
+        limit: Maximum number of results (default: 100)
+        offset: Number of results to skip (default: 0)
+        min_quality_score: Minimum quality score (default: 0)
+        status: Property status filter (default: 'available')
+
+    Returns:
+        List of property dictionaries
+    """
+    db = _get_firestore_client()
+    if not db:
+        return []
+
+    try:
+        import firebase_admin.firestore as firestore
+        properties_ref = db.collection('properties')
+
+        # Order by upload timestamp (newest first) - this uses existing index
+        query = properties_ref.order_by('uploaded_at', direction=firestore.Query.DESCENDING)
+
+        # Apply limit with large buffer for status and quality filtering
+        query = query.limit(limit * 3)
+
+        # Execute query
+        all_results = [_clean_property_dict(doc.to_dict()) for doc in query.stream()]
+
+        # Filter by status in post-processing
+        if status:
+            all_results = [
+                p for p in all_results
+                if p.get('basic_info', {}).get('status') == status
+            ]
+
+        # Filter by quality score in post-processing
+        if min_quality_score > 0:
+            all_results = [
+                p for p in all_results
+                if p.get('metadata', {}).get('quality_score', 0) >= min_quality_score
+            ]
+
+        # Apply offset and limit
+        if offset > 0:
+            results = all_results[offset:offset+limit]
+        else:
+            results = all_results[:limit]
+
+        logger.info(f"Retrieved {len(results)} properties (quality >= {min_quality_score}, status={status})")
+        return results
+
+    except Exception as e:
+        logger.error(f"Error querying all properties: {e}")
         return []

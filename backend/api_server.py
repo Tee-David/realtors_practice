@@ -985,7 +985,27 @@ def score_quality():
 @app.route('/api/test-new-code', methods=['GET'])
 def test_new_code():
     """Test endpoint to verify code is running"""
-    return jsonify({'message': 'NEW CODE IS RUNNING', 'timestamp': '2025-12-24-10:07'})
+    return jsonify({'message': 'NEW CODE IS RUNNING', 'timestamp': '2025-12-24-13:07-FIXED'})
+
+@app.route('/api/debug-query', methods=['GET'])
+def debug_query():
+    """Debug endpoint to test query functions directly"""
+    try:
+        from core.firestore_queries_enterprise import get_all_properties, get_properties_by_listing_type
+
+        all_props = get_all_properties(limit=3)
+        sale_props = get_properties_by_listing_type('sale', limit=3)
+
+        return jsonify({
+            'all_properties_count': len(all_props),
+            'sale_properties_count': len(sale_props),
+            'all_first': all_props[0] if all_props else None,
+            'sale_first': sale_props[0] if sale_props else None
+        })
+    except Exception as e:
+        logger.error(f"Debug query error: {str(e)}")
+        import traceback
+        return jsonify({'error': str(e), 'traceback': traceback.format_exc()}), 500
 
 @app.route('/api/firestore/dashboard', methods=['GET'])
 def firestore_dashboard():
@@ -1014,6 +1034,31 @@ def firestore_top_deals():
         })
     except Exception as e:
         logger.error(f"Firestore top deals error: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/firestore/properties', methods=['GET'])
+def firestore_all_properties():
+    """Get all properties from Firestore with pagination"""
+    try:
+        from core.firestore_queries_enterprise import get_all_properties
+        limit = int(request.args.get('limit', 100))
+        offset = int(request.args.get('offset', 0))
+        min_quality_score = int(request.args.get('min_quality_score', 0))
+
+        properties = get_all_properties(
+            limit=limit,
+            offset=offset,
+            min_quality_score=min_quality_score
+        )
+
+        return jsonify({
+            'properties': properties,
+            'total': len(properties),
+            'offset': offset,
+            'limit': limit
+        })
+    except Exception as e:
+        logger.error(f"Firestore all properties error: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/firestore/for-sale', methods=['GET'])
