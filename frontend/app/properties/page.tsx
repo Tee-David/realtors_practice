@@ -60,6 +60,7 @@ export default function PropertiesPage() {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [selectedProperty, setSelectedProperty] = useState<any | null>(null);
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
+  const [hideIncompleteListing, setHideIncompleteListings] = useState(false);
   const itemsPerPage = 20;
 
   // Listing type options
@@ -152,8 +153,31 @@ export default function PropertiesPage() {
 
   const { data, loading, error, refetch } = useApi<any>(getAllData);
 
-  const properties = data?.properties || [];
+  const rawProperties = data?.properties || [];
   const totalCount = data?.total || 0;
+
+  // Enterprise-grade quality filtering
+  const isPropertyComplete = (property: any): boolean => {
+    const normalized = property.basic_info || property;
+    const title = normalized.basic_info?.title || normalized.title || '';
+    const price = normalized.financial?.price || normalized.price || 0;
+    const location = normalized.location?.area || normalized.location || '';
+
+    // Consider a property complete if:
+    // - Has a descriptive title (> 10 chars)
+    // - Has a price > 0
+    // - Has location info
+    return title.length > 10 && price > 0 && location.length > 0;
+  };
+
+  // Apply client-side quality filter
+  const properties = hideIncompleteListing
+    ? rawProperties.filter(isPropertyComplete)
+    : rawProperties;
+
+  const filteredCount = hideIncompleteListing
+    ? properties.length
+    : totalCount;
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
@@ -280,9 +304,11 @@ export default function PropertiesPage() {
                 {totalCount > 0 && (
                   <div className="flex gap-3">
                     <div className="bg-slate-800/50 border border-slate-700 rounded-lg px-4 py-2">
-                      <div className="text-xs text-slate-400">Total</div>
+                      <div className="text-xs text-slate-400">
+                        {hideIncompleteListing ? "Quality" : "Total"}
+                      </div>
                       <div className="text-xl font-bold text-white">
-                        {totalCount}
+                        {hideIncompleteListing ? filteredCount : totalCount}
                       </div>
                     </div>
                     <div className="bg-slate-800/50 border border-slate-700 rounded-lg px-4 py-2">
@@ -291,6 +317,14 @@ export default function PropertiesPage() {
                         {properties.length}
                       </div>
                     </div>
+                    {hideIncompleteListing && filteredCount < totalCount && (
+                      <div className="bg-green-500/10 border border-green-500/30 rounded-lg px-4 py-2">
+                        <div className="text-xs text-green-400">Filtered Out</div>
+                        <div className="text-xl font-bold text-green-400">
+                          {totalCount - filteredCount}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -437,6 +471,25 @@ export default function PropertiesPage() {
                       <span className="hidden sm:inline text-sm">List</span>
                     </button>
                   </div>
+
+                  {/* Quality Filter Toggle */}
+                  <button
+                    onClick={() => setHideIncompleteListings(!hideIncompleteListing)}
+                    className={`
+                      flex items-center gap-2 px-3 py-2 rounded-lg border transition-all
+                      ${
+                        hideIncompleteListing
+                          ? "bg-green-500/20 border-green-500/30 text-green-400"
+                          : "bg-slate-900 border-slate-700 text-slate-400 hover:text-white"
+                      }
+                    `}
+                    title="Hide properties with incomplete data"
+                  >
+                    <CheckCircle2 className="w-4 h-4" />
+                    <span className="hidden md:inline text-sm">
+                      {hideIncompleteListing ? "Quality Filter ON" : "Quality Filter"}
+                    </span>
+                  </button>
                 </div>
 
                 <div className="flex items-center gap-2">
@@ -549,10 +602,10 @@ export default function PropertiesPage() {
                   property={selectedProperty}
                 />
 
-                {totalCount > itemsPerPage && (
+                {filteredCount > itemsPerPage && (
                   <Pagination
                     currentPage={currentPage}
-                    totalItems={totalCount}
+                    totalItems={filteredCount}
                     itemsPerPage={itemsPerPage}
                     onPageChange={handlePageChange}
                   />
