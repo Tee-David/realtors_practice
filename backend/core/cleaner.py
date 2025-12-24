@@ -71,7 +71,13 @@ def _extract_beds(text: str) -> int | None:
 
 def _extract_baths(text: str) -> int | None:
     m = _BATH_PAT.search(text or "")
-    return int(m.group(1)) if m else None
+    if m:
+        count = int(m.group(1))
+        # Validate: bathrooms should be reasonable (0-10 range)
+        # Numbers > 10 are likely phone numbers (e.g., 08012345678)
+        if 0 <= count <= 10:
+            return count
+    return None
 
 def _extract_toilets(text: str) -> int | None:
     m = _TOILET_PAT.search(text or "")

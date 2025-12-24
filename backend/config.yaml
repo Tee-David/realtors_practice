@@ -94,6 +94,12 @@ sites:
     name: CW Real Estate
     parser: specials
     url: https://cwlagos.com/
+    selectors:
+      card: article.property-item
+      title: h2.property-title a
+      price: .property-price
+      location: .property-location
+      image: .property-image img
   edenoasis:
     enabled: false
     name: Eden Oasis
