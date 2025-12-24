@@ -1079,10 +1079,12 @@ export default function DashboardPage() {
     toast.success("Dashboard refreshed");
   }, [firestoreStatsError, refetchFirestoreStats, refetchLegacyStats]);
 
-  const totalProperties = stats?.total_properties || 0;
-  const forSaleCount = stats?.for_sale_count || stats?.by_status?.for_sale || 0;
-  const forRentCount = stats?.for_rent_count || stats?.by_status?.for_rent || 0;
-  const avgPriceForSale = stats?.avg_price_for_sale || stats?.avg_price || 0;
+  // Access stats.data since API returns { data: {...}, success: true }
+  const statsData = stats?.data || stats;
+  const totalProperties = statsData?.total_properties || 0;
+  const forSaleCount = statsData?.total_for_sale || statsData?.for_sale_count || statsData?.by_status?.for_sale || 0;
+  const forRentCount = statsData?.total_for_rent || statsData?.for_rent_count || statsData?.by_status?.for_rent || 0;
+  const avgPriceForSale = statsData?.price_range?.avg || statsData?.avg_price_for_sale || statsData?.avg_price || 0;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-4 sm:p-6 lg:p-8">
