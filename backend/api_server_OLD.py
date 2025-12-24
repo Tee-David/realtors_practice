@@ -1880,12 +1880,9 @@ def trigger_github_scrape():
 
         # Get request body
         data = request.get_json() or {}
-        max_pages = data.get('max_pages', data.get('page_cap', 15))  # Support both parameter names
+        page_cap = data.get('page_cap', 20)
         geocode = data.get('geocode', 1)
         sites = data.get('sites', [])
-
-        # Convert sites array to comma-separated string (workflow expects this format)
-        sites_str = ','.join(sites) if isinstance(sites, list) else str(sites)
 
         # Prepare GitHub API request
         url = f'https://api.github.com/repos/{github_owner}/{github_repo}/dispatches'
@@ -1897,9 +1894,9 @@ def trigger_github_scrape():
         payload = {
             'event_type': 'trigger-scrape',
             'client_payload': {
-                'max_pages': str(max_pages),  # Workflow expects string
-                'geocode': str(geocode),       # Workflow expects string
-                'sites': sites_str,             # Workflow expects comma-separated string
+                'page_cap': page_cap,
+                'geocode': geocode,
+                'sites': sites,
                 'triggered_by': 'api',
                 'timestamp': datetime.now().isoformat()
             }
@@ -1914,7 +1911,7 @@ def trigger_github_scrape():
                 'message': 'Scraper workflow triggered successfully',
                 'run_url': f'https://github.com/{github_owner}/{github_repo}/actions',
                 'parameters': {
-                    'max_pages': max_pages,
+                    'page_cap': page_cap,
                     'geocode': geocode,
                     'sites': sites if sites else 'all enabled sites'
                 }
@@ -2941,144 +2938,6 @@ def send_test_email():
 
     except Exception as e:
         logger.error(f"Error sending test email: {e}")
-        return jsonify({'error': str(e)}), 500
-
-
-# ============================================================================
-# SETTINGS MANAGEMENT API
-# ============================================================================
-
-@app.route('/api/settings', methods=['GET'])
-def get_settings():
-    """
-    Get current system settings/environment variables
-    Returns key environment variables that can be modified from frontend
-    """
-    try:
-        settings = {
-            # Scraping settings
-            'RP_PAGE_CAP': int(os.getenv('RP_PAGE_CAP', 30)),
-            'RP_GEOCODE': int(os.getenv('RP_GEOCODE', 1)),
-            'RP_HEADLESS': int(os.getenv('RP_HEADLESS', 1)),
-            'RP_NO_IMAGES': int(os.getenv('RP_NO_IMAGES', 1)),
-            'RP_DEBUG': int(os.getenv('RP_DEBUG', 0)),
-            'RP_MAX_GEOCODES': int(os.getenv('RP_MAX_GEOCODES', 120)),
-            'RP_NET_RETRY_SECS': int(os.getenv('RP_NET_RETRY_SECS', 180)),
-            'RP_SCROLL_STEPS': int(os.getenv('RP_SCROLL_STEPS', 12)),
-
-            # Firestore settings
-            'FIRESTORE_ENABLED': int(os.getenv('FIRESTORE_ENABLED', 1)),
-            'RP_FIRESTORE_BATCH': int(os.getenv('RP_FIRESTORE_BATCH', 0)),
-            'FIRESTORE_AUTO_AGGREGATE': int(os.getenv('FIRESTORE_AUTO_AGGREGATE', 0)),
-
-            # GitHub settings (mask token for security)
-            'GITHUB_OWNER': os.getenv('GITHUB_OWNER', ''),
-            'GITHUB_REPO': os.getenv('GITHUB_REPO', ''),
-            'GITHUB_TOKEN_SET': bool(os.getenv('GITHUB_TOKEN')),
-
-            # Firebase settings (mask for security)
-            'FIREBASE_CREDENTIALS_SET': bool(os.getenv('FIREBASE_CREDENTIALS') or os.getenv('FIREBASE_SERVICE_ACCOUNT')),
-        }
-
-        return jsonify({
-            'success': True,
-            'settings': settings
-        }), 200
-
-    except Exception as e:
-        logger.error(f"Failed to get settings: {e}")
-        return jsonify({'error': str(e)}), 500
-
-
-@app.route('/api/settings', methods=['PUT'])
-def update_settings():
-    """
-    Update system settings/environment variables
-    IMPORTANT: Changes are in-memory only and don't persist across restarts
-    For persistent changes, update the .env file manually
-
-    Body: {
-        "RP_PAGE_CAP": 20,
-        "RP_GEOCODE": 1,
-        "RP_HEADLESS": 1,
-        ...
-    }
-    """
-    try:
-        data = request.get_json() or {}
-
-        # Whitelist of settings that can be updated via API
-        allowed_settings = {
-            'RP_PAGE_CAP', 'RP_GEOCODE', 'RP_HEADLESS', 'RP_NO_IMAGES',
-            'RP_DEBUG', 'RP_MAX_GEOCODES', 'RP_NET_RETRY_SECS', 'RP_SCROLL_STEPS',
-            'FIRESTORE_ENABLED', 'RP_FIRESTORE_BATCH', 'FIRESTORE_AUTO_AGGREGATE',
-            'GITHUB_OWNER', 'GITHUB_REPO', 'GITHUB_TOKEN'
-        }
-
-        updated = []
-        rejected = []
-
-        for key, value in data.items():
-            if key in allowed_settings:
-                # Update environment variable
-                os.environ[key] = str(value)
-                updated.append(key)
-                logger.info(f"Updated setting: {key} = {value}")
-            else:
-                rejected.append(key)
-                logger.warning(f"Rejected setting update (not in whitelist): {key}")
-
-        return jsonify({
-            'success': True,
-            'message': f'Updated {len(updated)} setting(s)',
-            'updated': updated,
-            'rejected': rejected,
-            'note': 'Changes are in-memory only and will reset on server restart. For persistent changes, update .env file.'
-        }), 200
-
-    except Exception as e:
-        logger.error(f"Failed to update settings: {e}")
-        return jsonify({'error': str(e)}), 500
-
-
-@app.route('/api/settings/env-file', methods=['GET'])
-def get_env_file():
-    """
-    Get .env file contents (sanitized - secrets masked)
-    Useful for understanding current configuration
-    """
-    try:
-        env_path = os.path.join(os.path.dirname(__file__), '.env')
-
-        if not os.path.exists(env_path):
-            return jsonify({
-                'error': '.env file not found',
-                'path': env_path
-            }), 404
-
-        # Read and sanitize .env file
-        sanitized_lines = []
-        secrets_keys = ['TOKEN', 'KEY', 'SECRET', 'PASSWORD', 'CREDENTIALS']
-
-        with open(env_path, 'r') as f:
-            for line in f:
-                line = line.rstrip()
-                # Check if line contains secret
-                if any(key in line.upper() for key in secrets_keys) and '=' in line:
-                    key_part = line.split('=')[0]
-                    sanitized_lines.append(f"{key_part}=***MASKED***")
-                else:
-                    sanitized_lines.append(line)
-
-        return jsonify({
-            'success': True,
-            'content': '\n'.join(sanitized_lines),
-            'path': env_path,
-            'note': 'Secrets are masked for security'
-        }), 200
-
-    except Exception as e:
-        logger.error(f"Failed to read .env file: {e}")
         return jsonify({'error': str(e)}), 500
 
 

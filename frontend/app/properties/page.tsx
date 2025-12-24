@@ -530,7 +530,13 @@ export default function PropertiesPage() {
                 >
                   {properties.map((property: any) => (
                     <PropertyCard
-                      key={property.id || property.listing_id}
+                      key={
+                        property.id ||
+                        property.listing_id ||
+                        property.metadata?.hash ||
+                        property.basic_info?.listing_url ||
+                        JSON.stringify(property).slice(0, 50)
+                      }
                       property={property}
                       onClick={() => handlePropertyClick(property)}
                     />

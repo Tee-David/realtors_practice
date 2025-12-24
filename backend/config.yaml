@@ -60,17 +60,17 @@ retry:
   retry_on_zero_results: false
 sites:
   adronhomes:
-    enabled: false  # Blocked by robots.txt - cannot scrape
+    enabled: true
     name: Adron Homes
     parser: specials
     url: https://adronhomesproperties.com/
   ashproperties:
-    enabled: false
+    enabled: true
     name: Ash Properties & Constructions
     parser: specials
     url: https://ashpropertiesng.com/
   brokerfield:
-    enabled: false
+    enabled: true
     name: Brokerfield Real Estate Services
     parser: specials
     url: https://brokerfieldrealestate.com/
@@ -80,7 +80,7 @@ sites:
     parser: specials
     url: https://buyletlive.com/
   castles:
-    enabled: true
+    enabled: false
     name: Castles
     parser: specials
     url: http://castles.com.ng/
@@ -329,12 +329,12 @@ sites:
       title: h2, .prop-title, a[title]
     url: https://nigeriapropertycentre.com/
   olist:
-    enabled: false
+    enabled: true
     name: OList Real Estate
     parser: specials
     url: https://www.olist.ng/real-estate
   oparahrealty:
-    enabled: false
+    enabled: true
     name: Oparah Realty
     parser: specials
     url: https://oparahrealty.com/

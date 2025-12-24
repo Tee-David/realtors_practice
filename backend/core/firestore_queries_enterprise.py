@@ -166,7 +166,8 @@ def get_properties_by_listing_type(
     listing_type: str = 'sale',
     limit: int = 100,
     price_min: Optional[float] = None,
-    price_max: Optional[float] = None
+    price_max: Optional[float] = None,
+    min_quality_score: int = 50
 ) -> List[Dict[str, Any]]:
     """
     Get properties by listing type (sale, rent, lease, shortlet).
@@ -176,6 +177,7 @@ def get_properties_by_listing_type(
         limit: Maximum number of results
         price_min: Minimum price filter
         price_max: Maximum price filter
+        min_quality_score: Minimum quality score (default 50, prevents poor quality data)
 
     Returns:
         List of property dictionaries
@@ -187,18 +189,25 @@ def get_properties_by_listing_type(
     try:
         properties_ref = db.collection('properties')
         query = properties_ref.where('basic_info.listing_type', '==', listing_type) \
-                             .where('basic_info.status', '==', 'available')
+                             .where('basic_info.status', '==', 'available') \
+                             .where('financial.price', '>', 0)
 
         # Add price filters if provided
-        if price_min is not None:
+        if price_min is not None and price_min > 0:
             query = query.where('financial.price', '>=', price_min)
         if price_max is not None:
             query = query.where('financial.price', '<=', price_max)
 
-        query = query.order_by('financial.price').limit(limit)
+        query = query.order_by('financial.price').limit(limit * 2)  # Get more to filter by quality
 
-        results = [_clean_property_dict(doc.to_dict()) for doc in query.stream()]
-        logger.info(f"Retrieved {len(results)} {listing_type} properties")
+        # Filter by quality score in post-processing (Firestore allows only one inequality per query)
+        all_results = [_clean_property_dict(doc.to_dict()) for doc in query.stream()]
+        results = [
+            p for p in all_results
+            if p.get('metadata', {}).get('quality_score', 0) >= min_quality_score
+        ][:limit]  # Take only requested limit after filtering
+
+        logger.info(f"Retrieved {len(results)} {listing_type} properties (quality >= {min_quality_score}, price > 0)")
         return results
 
     except Exception as e:
