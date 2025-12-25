@@ -1063,11 +1063,12 @@ def firestore_all_properties():
 
 @app.route('/api/firestore/for-sale', methods=['GET'])
 def firestore_for_sale():
-    """Get for-sale properties from Firestore"""
+    """Get for-sale properties from Firestore (with pagination support)"""
     try:
         from core.firestore_queries_enterprise import get_properties_by_listing_type
         limit = int(request.args.get('limit', 100))
-        properties = get_properties_by_listing_type('sale', limit=limit)
+        offset = int(request.args.get('offset', 0))
+        properties = get_properties_by_listing_type('sale', limit=limit, offset=offset)
         return jsonify({
             'properties': properties,
             'total': len(properties)
@@ -1078,11 +1079,12 @@ def firestore_for_sale():
 
 @app.route('/api/firestore/for-rent', methods=['GET'])
 def firestore_for_rent():
-    """Get for-rent properties from Firestore"""
+    """Get for-rent properties from Firestore (with pagination support)"""
     try:
         from core.firestore_queries_enterprise import get_properties_by_listing_type
         limit = int(request.args.get('limit', 100))
-        properties = get_properties_by_listing_type('rent', limit=limit)
+        offset = int(request.args.get('offset', 0))
+        properties = get_properties_by_listing_type('rent', limit=limit, offset=offset)
         return jsonify({
             'properties': properties,
             'total': len(properties)

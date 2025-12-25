@@ -165,6 +165,7 @@ def get_properties_by_status(
 def get_properties_by_listing_type(
     listing_type: str = 'sale',
     limit: int = 100,
+    offset: int = 0,
     price_min: Optional[float] = None,
     price_max: Optional[float] = None,
     min_quality_score: int = 0
@@ -175,6 +176,7 @@ def get_properties_by_listing_type(
     Args:
         listing_type: Type of listing
         limit: Maximum number of results
+        offset: Number of results to skip (for pagination)
         price_min: Minimum price filter
         price_max: Maximum price filter
         min_quality_score: Minimum quality score (default 0, show all properties)
@@ -194,8 +196,10 @@ def get_properties_by_listing_type(
         # Filter by listing_type and status in post-processing
         query = properties_ref.order_by('uploaded_at', direction=firestore.Query.DESCENDING)
 
-        # Get extra results for filtering
-        query = query.limit(limit * 4)
+        # Get extra results for filtering and pagination
+        # Fetch more to account for offset and filtering
+        fetch_limit = (offset + limit) * 4
+        query = query.limit(fetch_limit)
 
         # Execute query
         all_results = [_clean_property_dict(doc.to_dict()) for doc in query.stream()]
@@ -226,8 +230,9 @@ def get_properties_by_listing_type(
                 if p.get('metadata', {}).get('quality_score', 0) >= min_quality_score
             ]
 
-        results = all_results[:limit]
-        logger.info(f"Retrieved {len(results)} {listing_type} properties (quality >= {min_quality_score})")
+        # Apply offset and limit for pagination
+        results = all_results[offset:offset + limit]
+        logger.info(f"Retrieved {len(results)} {listing_type} properties (offset={offset}, quality >= {min_quality_score})")
         return results
 
     except Exception as e:
