@@ -75,7 +75,7 @@ sites:
     parser: specials
     url: https://brokerfieldrealestate.com/
   buyletlive:
-    enabled: false
+    enabled: true
     name: BuyLetLive
     parser: specials
     url: https://buyletlive.com/

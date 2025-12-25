@@ -1,0 +1,138 @@
+### New console messages
+- [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5000/api/firestore/d...
+- [LOG] [Dashboard] Firestore unavailable, using legacy endpoint @ http://localhost:3000/_next/static/...
+- [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5000/api/health:0
+- [ERROR] [useApi] Request failed: Failed to fetch TypeError: Failed to fetch
+    at RealEstateApiClie...
+- [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5000/api/scrape/stat...
+- [WARNING] [usePolling] Poll #1 failed (attempt #1): Failed to fetch @ http://localhost:3000/_next/st...
+- [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5000/api/scrape/hist...
+- [ERROR] [useApi] Request failed: Failed to fetch TypeError: Failed to fetch
+    at RealEstateApiClie...
+- [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5000/api/firestore/n...
+- [LOG] [Dashboard] Firestore properties unavailable, using legacy endpoint @ http://localhost:3000/_n...
+- [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5000/api/sites:0
+- [ERROR] [useApi] Request failed: Failed to fetch TypeError: Failed to fetch
+    at RealEstateApiClie...
+- [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_7...
+- [LOG] [Fast Refresh] done in 122ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dis...
+- [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5000/api/searches:0
+- [ERROR] [useApi] Request failed: Failed to fetch TypeError: Failed to fetch
+    at RealEstateApiClie...
+- [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5000/api/firestore/d...
+- [LOG] [Dashboard] Firestore unavailable, using legacy endpoint @ http://localhost:3000/_next/static/...
+- [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5000/api/health:0
+- [ERROR] [useApi] Request failed: Failed to fetch TypeError: Failed to fetch
+    at RealEstateApiClie...
+- [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5000/api/scrape/stat...
+- [WARNING] [usePolling] Poll #1 failed (attempt #1): Failed to fetch @ http://localhost:3000/_next/st...
+- [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5000/api/scrape/hist...
+- [ERROR] [useApi] Request failed: Failed to fetch TypeError: Failed to fetch
+    at RealEstateApiClie...
+- [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5000/api/firestore/n...
+- [LOG] [Dashboard] Firestore properties unavailable, using legacy endpoint @ http://localhost:3000/_n...
+- [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5000/api/sites:0
+- [ERROR] [useApi] Request failed: Failed to fetch TypeError: Failed to fetch
+    at RealEstateApiClie...
+- [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5000/api/searches:0
+- [ERROR] [useApi] Request failed: Failed to fetch TypeError: Failed to fetch
+    at RealEstateApiClie...
+
+### Page state
+- Page URL: http://localhost:3000/
+- Page Title: Property Insights - Real Estate Scraper
+- Page Snapshot:
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic "Keep-alive active" [ref=e3]:
+      - img [ref=e4]
+      - generic [ref=e8]: Keep-alive
+    - button [ref=e10]:
+      - img
+    - main [ref=e12]:
+      - generic [ref=e14]:
+        - generic [ref=e15]:
+          - generic [ref=e16]:
+            - heading "Dashboard" [level=1] [ref=e17]
+            - paragraph [ref=e18]: Monitor your real estate data, system health, and scraping activity in real-time.
+          - button "Refresh" [ref=e19]:
+            - img [ref=e20]
+            - generic [ref=e25]: Refresh
+        - generic [ref=e26]:
+          - generic [ref=e28]:
+            - generic [ref=e29]:
+              - paragraph [ref=e30]: Total Properties
+              - paragraph [ref=e135]: "0"
+              - paragraph [ref=e32]: In database
+            - img [ref=e34]
+          - generic [ref=e38]:
+            - generic [ref=e39]:
+              - paragraph [ref=e40]: For Sale
+              - paragraph [ref=e136]: "0"
+              - paragraph [ref=e42]: "Avg: ₦0.0M"
+            - img [ref=e44]
+          - generic [ref=e48]:
+            - generic [ref=e49]:
+              - paragraph [ref=e50]: For Rent
+              - paragraph [ref=e137]: "0"
+              - paragraph [ref=e52]: Rental listings
+            - img [ref=e54]
+          - generic [ref=e58]:
+            - generic [ref=e59]:
+              - paragraph [ref=e60]: Saved Searches
+              - paragraph [ref=e138]: "0"
+              - paragraph [ref=e62]: Active alerts
+            - img [ref=e64]
+        - generic [ref=e67]:
+          - generic [ref=e69]:
+            - generic [ref=e70]:
+              - img [ref=e71]
+              - generic [ref=e75]:
+                - paragraph [ref=e76]: API Server
+                - paragraph [ref=e77]: Backend service
+            - generic [ref=e78]: Unknown
+          - generic [ref=e80]:
+            - generic [ref=e81]:
+              - img [ref=e82]
+              - generic [ref=e85]:
+                - paragraph [ref=e86]: Scraper
+                - paragraph [ref=e87]: Ready to scrape
+            - generic [ref=e88]: Idle
+          - generic [ref=e90]:
+            - generic [ref=e91]:
+              - img [ref=e92]
+              - generic [ref=e96]:
+                - paragraph [ref=e97]: Data Sources
+                - paragraph [ref=e98]: Enabled sites
+            - generic [ref=e99]: 0 Active
+        - generic [ref=e102]:
+          - heading "Scrape Activity" [level=2] [ref=e103]:
+            - img [ref=e104]
+            - text: Scrape Activity
+          - button "Show History" [ref=e106]:
+            - text: Show History
+            - img [ref=e107]
+        - generic [ref=e110]:
+          - heading "Recent Properties" [level=2] [ref=e111]:
+            - img [ref=e112]
+            - text: Recent Properties
+          - generic [ref=e115]:
+            - img [ref=e139]
+            - heading "No Properties Yet" [level=3] [ref=e141]
+            - paragraph [ref=e142]: Start by running a scrape to collect property data.
+            - button "Start Scraping" [ref=e143]
+  - region "Notifications alt+T"
+  - generic [ref=e129] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e130]:
+      - img [ref=e131]
+    - generic [ref=e144]:
+      - button "Open issues overlay" [ref=e145]:
+        - generic [ref=e146]:
+          - generic [ref=e147]: "0"
+          - generic [ref=e148]: "1"
+        - generic [ref=e149]: Issue
+      - button "Collapse issues badge" [ref=e150]:
+        - img [ref=e151]
+  - alert [ref=e134]
+```
