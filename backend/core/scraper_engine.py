@@ -250,7 +250,19 @@ def generic_extract_listings_from_html(page_url: str, html: str) -> List[Dict]:
     Very lightweight heuristic extractor to get *something* out:
     title, listing_url, price-ish text, location-ish text.
     Parsers can do better; this is a safety net.
+
+    Now enhanced with universal category detection to skip category pages.
     """
+    # UNIVERSAL INTELLIGENCE: Check if this is a category page
+    try:
+        from core.universal_integration import is_url_category_page
+        if is_url_category_page(page_url, html):
+            logger.info(f"Skipping category page: {page_url[:60]}...")
+            return []  # Return empty list for category pages
+    except Exception as e:
+        logger.debug(f"Category detection unavailable: {e}")
+        # Continue with extraction if detection fails
+
     soup = BeautifulSoup(html, "lxml")
     items: List[Dict] = []
 
