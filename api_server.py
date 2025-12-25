@@ -14,7 +14,12 @@ if backend_path not in sys.path:
 # Change to backend directory for file operations
 os.chdir(backend_path)
 
-# Now import the app from backend
-from api_server import app
+# Now import the app from backend/api_server.py
+# Import as a module to avoid circular import
+import importlib.util
+spec = importlib.util.spec_from_file_location("backend_api_server", os.path.join(backend_path, "api_server.py"))
+backend_module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(backend_module)
+app = backend_module.app
 
 __all__ = ['app']
