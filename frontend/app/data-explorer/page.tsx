@@ -629,7 +629,7 @@ export default function DataExplorerPage() {
                   property={selectedProperty}
                 />
 
-                {filteredCount > itemsPerPage && (
+                {filteredCount > 0 && (
                   <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8">
                     {/* Items Per Page Selector */}
                     <div className="flex items-center gap-3">
@@ -652,12 +652,14 @@ export default function DataExplorerPage() {
                     </div>
 
                     {/* Pagination */}
-                    <Pagination
-                      currentPage={currentPage}
-                      totalItems={filteredCount}
-                      itemsPerPage={itemsPerPage}
-                      onPageChange={handlePageChange}
-                    />
+                    {filteredCount > itemsPerPage && (
+                      <Pagination
+                        currentPage={currentPage}
+                        totalItems={filteredCount}
+                        itemsPerPage={itemsPerPage}
+                        onPageChange={handlePageChange}
+                      />
+                    )}
                   </div>
                 )}
               </>

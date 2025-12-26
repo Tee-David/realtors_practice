@@ -514,3 +514,8 @@ sites:
     name: VConnect
     parser: specials
     url: https://www.vconnect.com/
+  google:
+    name: Google
+    url: https://google.com
+    enabled: true
+    parser: specials

@@ -144,7 +144,7 @@ export default function DataExplorer() {
         )}
 
         {/* Pagination Controls */}
-        {!loading && totalCount > itemsPerPage && (
+        {!loading && totalCount > 0 && (
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8">
             {/* Items Per Page Selector */}
             <div className="flex items-center gap-3">
@@ -171,12 +171,14 @@ export default function DataExplorer() {
             </div>
 
             {/* Pagination Component */}
-            <Pagination
-              currentPage={currentPage}
-              totalItems={totalCount}
-              itemsPerPage={itemsPerPage}
-              onPageChange={setCurrentPage}
-            />
+            {totalCount > itemsPerPage && (
+              <Pagination
+                currentPage={currentPage}
+                totalItems={totalCount}
+                itemsPerPage={itemsPerPage}
+                onPageChange={setCurrentPage}
+              />
+            )}
           </div>
         )}
       </div>

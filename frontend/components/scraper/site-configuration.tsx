@@ -77,7 +77,13 @@ export function SiteConfiguration({
     return false;
   });
 
-  const PAGE_SIZE = 10;
+  const [pageSize, setPageSize] = useState(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("siteConfigPageSize");
+      return stored ? parseInt(stored, 10) || 10 : 10;
+    }
+    return 10;
+  });
 
   // Bulk action states
   const [bulkLoading, setBulkLoading] = useState(false);
@@ -91,8 +97,9 @@ export function SiteConfiguration({
       localStorage.setItem("siteConfigShowDisabled", String(showDisabled));
       localStorage.setItem("siteConfigPage", String(page));
       localStorage.setItem("siteConfigAutoRefresh", String(autoRefresh));
+      localStorage.setItem("siteConfigPageSize", String(pageSize));
     }
-  }, [showDisabled, page, autoRefresh]);
+  }, [showDisabled, page, autoRefresh, pageSize]);
 
   // API calls
   const getSites = useCallback(() => apiClient.listSites(), []);
@@ -136,14 +143,21 @@ export function SiteConfiguration({
       );
     }
 
+    // Sort alphabetically by name
+    sites = sites.sort((a: any, b: any) => {
+      const nameA = (a.name || a.site_key || '').toLowerCase();
+      const nameB = (b.name || b.site_key || '').toLowerCase();
+      return nameA.localeCompare(nameB);
+    });
+
     return sites;
   }, [allSites, showDisabled, searchQuery]);
 
   // Pagination
-  const totalPages = Math.max(1, Math.ceil(filteredSites.length / PAGE_SIZE));
+  const totalPages = Math.max(1, Math.ceil(filteredSites.length / pageSize));
   const pagedSites = filteredSites.slice(
-    (page - 1) * PAGE_SIZE,
-    page * PAGE_SIZE
+    (page - 1) * pageSize,
+    page * pageSize
   );
 
   // Reset page if out of range
@@ -710,32 +724,56 @@ export function SiteConfiguration({
             ))}
           </div>
 
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="flex justify-center items-center gap-2">
-              <Button
-                size="sm"
-                variant="outline"
-                disabled={page === 1}
-                onClick={() => setPage(page - 1)}
-                className="border-slate-600 bg-slate-700   "
+          {/* Pagination and Items Per Page */}
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-4">
+            {/* Items Per Page Selector */}
+            <div className="flex items-center gap-3">
+              <label htmlFor="site-items-per-page" className="text-sm text-slate-400 whitespace-nowrap">
+                Items per page:
+              </label>
+              <select
+                id="site-items-per-page"
+                value={pageSize}
+                onChange={(e) => {
+                  setPageSize(Number(e.target.value));
+                  setPage(1); // Reset to first page
+                }}
+                className="bg-slate-700 border border-slate-600 rounded-lg px-3 py-1.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-slate-500 transition-colors"
               >
-                Previous
-              </Button>
-              <span className="text-slate-400 text-sm">
-                Page {page} of {totalPages}
-              </span>
-              <Button
-                size="sm"
-                variant="outline"
-                disabled={page === totalPages}
-                onClick={() => setPage(page + 1)}
-                className="border-slate-600 bg-slate-700  "
-              >
-                Next
-              </Button>
+                <option value={10}>10</option>
+                <option value={20}>20</option>
+                <option value={50}>50</option>
+                <option value={100}>100</option>
+              </select>
             </div>
-          )}
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex justify-center items-center gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={page === 1}
+                  onClick={() => setPage(page - 1)}
+                  className="border-slate-600 bg-slate-700   "
+                >
+                  Previous
+                </Button>
+                <span className="text-slate-400 text-sm">
+                  Page {page} of {totalPages}
+                </span>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={page === totalPages}
+                  onClick={() => setPage(page + 1)}
+                  className="border-slate-600 bg-slate-700  "
+                >
+                  Next
+                </Button>
+              </div>
+            )}
+          </div>
         </>
       )}
 

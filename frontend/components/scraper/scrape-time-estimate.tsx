@@ -187,9 +187,11 @@ export function ScrapeTimeEstimate({
               <span className="text-slate-200 font-bold">
                 {estimate.estimated_duration_text}
               </span>
-              <Badge className={getRiskColor(estimate.timeout_risk)}>
-                {estimate.timeout_risk.toUpperCase()}
-              </Badge>
+              {estimate.timeout_risk && (
+                <Badge className={getRiskColor(estimate.timeout_risk)}>
+                  {estimate.timeout_risk.toUpperCase()}
+                </Badge>
+              )}
             </div>
             {estimate.timeout_message && (
               <div className="text-yellow-400 text-sm">
