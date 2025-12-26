@@ -18,6 +18,7 @@ import {
   Zap,
   Database,
   Globe,
+  ChevronDown,
 } from "lucide-react";
 import { ScheduledRunsPanel } from "./scheduled-runs-panel";
 import { ErrorAlertPanel } from "./error-alert-panel";
@@ -535,7 +536,7 @@ export function ScraperControl() {
               <Settings className="w-5 h-5 text-slate-400" />
               <span className="text-white font-medium">Advanced Settings</span>
             </div>
-            <RefreshCw
+            <ChevronDown
               className={`w-5 h-5 text-slate-400 transition-transform ${
                 showAdvancedSettings ? "rotate-180" : ""
               }`}

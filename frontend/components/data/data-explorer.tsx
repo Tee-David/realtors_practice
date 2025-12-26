@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { apiClient } from "@/lib/api";
 import { PropertyCard } from "@/components/shared/property-card";
 import { SearchBar } from "@/components/shared/search-bar";
@@ -17,7 +17,7 @@ export default function DataExplorer() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(20);
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     setLoading(true);
     try {
       const response = await apiClient.getFirestoreForSale({
@@ -31,11 +31,11 @@ export default function DataExplorer() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [itemsPerPage, currentPage]);
 
   useEffect(() => {
     loadData();
-  }, [currentPage, itemsPerPage]);
+  }, [loadData]);
 
   const filteredProperties = searchQuery
     ? properties.filter(
@@ -144,7 +144,7 @@ export default function DataExplorer() {
         )}
 
         {/* Pagination Controls */}
-        {!loading && totalCount > 0 && (
+        {!loading && totalCount > itemsPerPage && (
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8">
             {/* Items Per Page Selector */}
             <div className="flex items-center gap-3">
@@ -173,10 +173,9 @@ export default function DataExplorer() {
             {/* Pagination Component */}
             <Pagination
               currentPage={currentPage}
-              totalPages={Math.ceil(totalCount / itemsPerPage)}
-              onPageChange={setCurrentPage}
               totalItems={totalCount}
               itemsPerPage={itemsPerPage}
+              onPageChange={setCurrentPage}
             />
           </div>
         )}

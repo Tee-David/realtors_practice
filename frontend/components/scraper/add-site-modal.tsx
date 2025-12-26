@@ -46,8 +46,9 @@ export function AddSiteModal({
       const siteData = {
         site_key: generatedSiteKey,
         name: siteName,
-        base_url: baseUrl,
+        url: baseUrl, // Backend expects "url" not "base_url"
         enabled: false, // New sites start disabled by default
+        parser: "specials", // Default parser
       };
 
       const response = await apiClient.createSite(siteData);
