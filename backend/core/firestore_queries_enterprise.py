@@ -169,7 +169,7 @@ def get_properties_by_listing_type(
     price_min: Optional[float] = None,
     price_max: Optional[float] = None,
     min_quality_score: int = 0
-) -> List[Dict[str, Any]]:
+) -> Dict[str, Any]:
     """
     Get properties by listing type (sale, rent, lease, shortlet).
 
@@ -196,11 +196,8 @@ def get_properties_by_listing_type(
         # Filter by listing_type and status in post-processing
         query = properties_ref.order_by('uploaded_at', direction=firestore.Query.DESCENDING)
 
-        # Get extra results for filtering and pagination
-        # Fetch more to account for offset and filtering
-        fetch_limit = (offset + limit) * 4
-        query = query.limit(fetch_limit)
-
+        # Fetch ALL documents from Firestore (no limit)
+        # This ensures accurate total count and pagination
         # Execute query
         all_results = [_clean_property_dict(doc.to_dict()) for doc in query.stream()]
 
@@ -231,13 +228,19 @@ def get_properties_by_listing_type(
             ]
 
         # Apply offset and limit for pagination
+        total_count = len(all_results)
         results = all_results[offset:offset + limit]
-        logger.info(f"Retrieved {len(results)} {listing_type} properties (offset={offset}, quality >= {min_quality_score})")
-        return results
+        logger.info(f"Retrieved {len(results)}/{total_count} {listing_type} properties (offset={offset}, quality >= {min_quality_score})")
+
+        # Return dict with both results and total count for pagination
+        return {
+            'properties': results,
+            'total': total_count
+        }
 
     except Exception as e:
         logger.error(f"Error querying by listing type: {e}")
-        return []
+        return {'properties': [], 'total': 0}
 
 
 def get_furnished_properties(

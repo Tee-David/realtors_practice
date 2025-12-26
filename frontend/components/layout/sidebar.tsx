@@ -37,10 +37,17 @@ const navigation = [
     badge: null,
   },
   {
+    name: "Properties",
+    icon: Home,
+    id: "properties",
+    description: "Browse and export listings",
+    badge: null,
+  },
+  {
     name: "Data Explorer",
     icon: Database,
     id: "data-explorer",
-    description: "Explore & export property data",
+    description: "Advanced search & filtering",
     badge: null,
   },
   // Admin features
@@ -50,13 +57,6 @@ const navigation = [
     id: "scraper",
     description: "Manage scraping ops",
     badge: "ADMIN",
-  },
-  {
-    name: "Properties",
-    icon: Home,
-    id: "properties",
-    description: "Browse & search listings",
-    badge: null,
   },
   {
     name: "Scrape Results",

@@ -18,6 +18,7 @@ import { KeepAliveIndicator } from "@/components/ui/keep-alive-indicator";
 // Static imports for ALL pages to avoid React.lazy() issues on Vercel
 import DashboardPage from "./dashboard/page";
 import PropertiesPage from "./properties/page";
+import DataExplorerPage from "./data-explorer/page";
 import SettingsPage from "./settings/page";
 import SavedSearchesPage from "./saved-searches/page";
 import ApiTestPage from "./api-test/page";
@@ -101,6 +102,8 @@ export default function Home() {
         return <DashboardPage />;
       case "properties":
         return <PropertiesPage />;
+      case "data-explorer":
+        return <DataExplorerPage />;
       case "settings":
         return <SettingsPage />;
       case "saved-searches":
@@ -109,8 +112,6 @@ export default function Home() {
         return <ApiTestPage />;
       case "scrape-results":
         return <ScrapeResultsPage />;
-      case "data-explorer":
-        return <DataExplorer />;
       case "scraper":
         return <ScraperPage />;
       case "status":

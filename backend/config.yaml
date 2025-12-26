@@ -60,22 +60,22 @@ retry:
   retry_on_zero_results: false
 sites:
   adronhomes:
-    enabled: true
+    enabled: false
     name: Adron Homes
     parser: specials
     url: https://adronhomesproperties.com/
   ashproperties:
-    enabled: true
+    enabled: false
     name: Ash Properties & Constructions
     parser: specials
     url: https://ashpropertiesng.com/
   brokerfield:
-    enabled: true
+    enabled: false
     name: Brokerfield Real Estate Services
     parser: specials
     url: https://brokerfieldrealestate.com/
   buyletlive:
-    enabled: true
+    enabled: false
     name: BuyLetLive
     parser: specials
     url: https://buyletlive.com/
@@ -90,7 +90,7 @@ sites:
     parser: specials
     url: https://cuddlerealty.com/
   cwlagos:
-    enabled: true
+    enabled: false
     name: CW Real Estate
     parser: specials
     url: https://cwlagos.com/
@@ -335,12 +335,12 @@ sites:
       title: h2, .prop-title, a[title]
     url: https://nigeriapropertycentre.com/
   olist:
-    enabled: true
+    enabled: false
     name: OList Real Estate
     parser: specials
     url: https://www.olist.ng/real-estate
   oparahrealty:
-    enabled: true
+    enabled: false
     name: Oparah Realty
     parser: specials
     url: https://oparahrealty.com/

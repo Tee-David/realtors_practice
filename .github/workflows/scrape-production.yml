@@ -265,7 +265,7 @@ jobs:
     name: Scrape Session ${{ matrix.session.session_id }}
     needs: calculate
     runs-on: ubuntu-latest
-    timeout-minutes: 120  # 2 hours per session (1 site with detail scraping = ~80 min estimated)
+    timeout-minutes: 180  # 3 hours per session (safer for detail scraping - was 120)
     strategy:
       max-parallel: 10  # Increased for detail scraping to fit within 6-hour limit
       fail-fast: false
@@ -323,8 +323,12 @@ jobs:
           echo "Enabling sites: $SITES_SPACE"
           python backend/scripts/enable_sites.py $SITES_SPACE
 
-          # Run scraper
-          python backend/main.py
+          # Run scraper with verbose logging
+          echo "Starting scraper at $(date)"
+          set -x  # Print commands for debugging
+          python backend/main.py 2>&1 | tee scrape-session-${{ matrix.session.session_id }}.log
+          set +x
+          echo "Scraper completed at $(date)"
 
           # Cleanup
           if [ -f "firebase-temp-credentials.json" ]; then
@@ -479,6 +483,12 @@ jobs:
             rm -f firebase-temp-credentials.json
             exit 1
           fi
+
+          # Debug: Show directory structure
+          echo ""
+          echo "Export directory structure:"
+          find exports/sites -type f \( -name "*.csv" -o -name "*.xlsx" \) 2>/dev/null | head -20 || echo "No CSV/XLSX files found"
+          echo ""
 
           # Count session export files
           echo ""

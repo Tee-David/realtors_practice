@@ -720,36 +720,57 @@ class ScraperManager:
 
     def get_history(self, limit: int = 20) -> Dict:
         """
-        Get scraping history
+        Get scraping history formatted for frontend
 
         Args:
             limit: Number of recent runs to return
+
+        Returns:
+            {
+                'scrapes': [ScrapeHistoryItem],
+                'total': int
+            }
         """
-        # For now, return last run from state
-        # In production, store full history in a database or log file
+        logger.info(f"[NEW CODE] get_history called with limit={limit}")
         state = self._load_state()
         metadata = self._load_metadata()
 
-        history = []
+        scrapes = []
 
-        # Add last run if exists
+        # Add last run if exists (full run with details)
         if state.get('last_run'):
-            history.append(state['last_run'])
+            last_run = state['last_run']
+            scrapes.append({
+                'id': last_run.get('run_id', f"run_{int(time.time())}"),
+                'start_time': last_run.get('start_time', datetime.now().isoformat()),
+                'end_time': last_run.get('end_time'),
+                'duration_seconds': last_run.get('duration_seconds'),
+                'sites': last_run.get('sites', []),
+                'total_listings': last_run.get('final_stats', {}).get('total_listings', 0),
+                'status': 'completed' if last_run.get('success') else 'failed',
+                'error': last_run.get('error')
+            })
 
-        # Add site metadata as historical data
+        # Transform site metadata into scrape history items
         for site_key, site_meta in metadata.items():
             if 'last_successful_scrape' in site_meta:
-                history.append({
-                    'site_key': site_key,
-                    'timestamp': site_meta.get('last_successful_scrape'),
-                    'count': site_meta.get('last_count', 0)
+                timestamp = site_meta.get('last_successful_scrape')
+                scrapes.append({
+                    'id': f"{site_key}_{timestamp}",
+                    'start_time': timestamp,
+                    'end_time': timestamp,
+                    'duration_seconds': site_meta.get('last_duration', 0),
+                    'sites': [site_key],
+                    'total_listings': site_meta.get('last_count', 0),
+                    'status': 'completed',
+                    'error': None
                 })
 
-        # Sort by timestamp
-        history.sort(key=lambda x: x.get('timestamp', ''), reverse=True)
+        # Sort by start_time
+        scrapes.sort(key=lambda x: x.get('start_time', ''), reverse=True)
 
+        # Return in frontend expected format
         return {
-            'total': len(history),
-            'limit': limit,
-            'history': history[:limit]
+            'scrapes': scrapes[:limit],
+            'total': len(scrapes)
         }

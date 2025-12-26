@@ -12,15 +12,15 @@ interface PropertyCardProps {
 
 // Helper to normalize property data from both flat and nested schemas
 function normalizeProperty(property: any) {
-  // Check if it's nested Firestore enterprise schema
-  const isNested = property.basic_info || property.financial || property.location?.area;
+  // Check if it's nested Firestore enterprise schema - check for object structure, not just values
+  const isNested = property.basic_info || property.financial || (typeof property.location === 'object' && property.location !== null);
 
   if (isNested) {
     return {
       id: property.id || property.metadata?.hash,
       title: property.basic_info?.title || property.title,
       price: property.financial?.price,
-      location: property.location?.area || property.location?.full_address || property.location?.location_text,
+      location: property.location?.area || property.location?.full_address || property.location?.location_text || property.location?.lga || property.location?.state || undefined,
       bedrooms: property.property_details?.bedrooms,
       bathrooms: property.property_details?.bathrooms,
       property_type: property.property_details?.property_type,
@@ -30,14 +30,40 @@ function normalizeProperty(property: any) {
     };
   }
 
-  // Flat schema - return as-is with quality score if available
+  // Flat schema - explicitly extract only the fields we need to avoid nested objects
+  const flatLocation = typeof property.location === 'object'
+    ? (property.location?.area || property.location?.full_address || property.location?.location_text || property.location?.lga || property.location?.state || undefined)
+    : property.location;
+
   return {
-    ...property,
+    id: property.id,
+    title: property.title,
+    price: property.price,
+    location: flatLocation,
+    bedrooms: property.bedrooms,
+    bathrooms: property.bathrooms,
+    property_type: property.property_type,
+    image_url: property.image_url,
+    site_key: property.site_key,
     quality_score: property.quality_score || property.metadata?.quality_score,
   };
 }
 
 // Enterprise-grade data quality helpers
+function isValidImageUrl(url: string | undefined): boolean {
+  if (!url) return false;
+
+  // Reject relative paths (../../, ../, ./)
+  if (url.startsWith('../') || url.startsWith('./')) return false;
+
+  // Accept absolute URLs (http://, https://) or absolute paths (/)
+  if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('/')) {
+    return true;
+  }
+
+  return false;
+}
+
 function getDisplayTitle(title: string | undefined, location: string | undefined, propertyType: string | undefined): string {
   // If title is missing or too short (generic location names like "Chevron", "Ikate")
   if (!title || title.length < 10) {
@@ -72,8 +98,11 @@ function getDisplayPrice(price: number | undefined): { display: string; color: s
 export function PropertyCard({ property, onClick }: PropertyCardProps) {
   const normalized = normalizeProperty(property);
 
+  // CRITICAL: Force location to be a string or undefined to prevent React errors
+  const safeLocation = typeof normalized.location === 'string' ? normalized.location : undefined;
+
   // Enterprise-grade data processing
-  const displayTitle = getDisplayTitle(normalized.title, normalized.location, normalized.property_type);
+  const displayTitle = getDisplayTitle(normalized.title, safeLocation, normalized.property_type);
   const priceInfo = getDisplayPrice(normalized.price);
   const hasLowQuality = normalized.quality_score !== undefined && normalized.quality_score < 50;
 
@@ -84,7 +113,7 @@ export function PropertyCard({ property, onClick }: PropertyCardProps) {
     >
       {/* Property Image */}
       <div className="relative h-48 w-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-        {normalized.image_url ? (
+        {isValidImageUrl(normalized.image_url) ? (
           <Image
             src={normalized.image_url}
             alt={displayTitle}
@@ -135,10 +164,10 @@ export function PropertyCard({ property, onClick }: PropertyCardProps) {
         </h3>
 
         {/* Location */}
-        {normalized.location && (
+        {safeLocation && (
           <div className="flex items-center gap-2 text-slate-400">
             <MapPin className="w-4 h-4 flex-shrink-0" />
-            <span className="text-sm truncate">{normalized.location}</span>
+            <span className="text-sm truncate">{safeLocation}</span>
           </div>
         )}
 

@@ -1054,10 +1054,49 @@ export default function DashboardPage() {
     { immediate: !!firestorePropertiesError }
   );
 
-  // Determine which properties to use
-  const recentProperties = firestorePropertiesError
+  // Helper function to completely flatten nested Firestore schema for PropertyCard
+  const flattenFirestoreProperty = (property: any) => {
+    // If property is already flat (legacy format), return as-is
+    if (!property.basic_info && !property.financial && typeof property.location !== 'object') {
+      return property;
+    }
+
+    // Extract location string from nested object
+    const locationObj = property.location || {};
+    const locationString = locationObj.area ||
+                          locationObj.full_address ||
+                          locationObj.location_text ||
+                          locationObj.lga ||
+                          locationObj.state ||
+                          undefined;
+
+    // Flatten to simple property object that PropertyCard expects
+    return {
+      id: property.id || property.metadata?.hash,
+      title: property.basic_info?.title || property.title,
+      price: property.financial?.price,
+      location: locationString, // CRITICAL: Force to string only
+      bedrooms: property.property_details?.bedrooms,
+      bathrooms: property.property_details?.bathrooms,
+      property_type: property.property_details?.property_type,
+      image_url: property.media?.images?.[0]?.url || property.image_url,
+      site_key: property.basic_info?.site_key || property.site_key,
+      quality_score: property.metadata?.quality_score,
+      // Only include primitive values, NO nested objects
+    };
+  };
+
+  // Determine which properties to use - handle both {properties: [...]} and [...] formats
+  const recentPropertiesRaw = firestorePropertiesError
     ? legacyProperties
     : firestoreProperties;
+  const recentPropertiesArray = recentPropertiesRaw?.properties || recentPropertiesRaw || [];
+
+  // CRITICAL: Flatten all properties before passing to PropertyCard
+  const recentProperties = Array.isArray(recentPropertiesArray)
+    ? recentPropertiesArray.map(flattenFirestoreProperty)
+    : [];
+
   const propertiesLoading =
     firestorePropertiesLoading || legacyPropertiesLoading;
 
@@ -1082,8 +1121,8 @@ export default function DashboardPage() {
   // Access stats.data since API returns { data: {...}, success: true }
   const statsData = stats?.data || stats;
   const totalProperties = statsData?.total_properties || 0;
-  const forSaleCount = statsData?.total_for_sale || statsData?.for_sale_count || statsData?.by_status?.for_sale || 0;
-  const forRentCount = statsData?.total_for_rent || statsData?.for_rent_count || statsData?.by_status?.for_rent || 0;
+  const forSaleCount = statsData?.for_sale || statsData?.total_for_sale || statsData?.for_sale_count || statsData?.by_status?.for_sale || 0;
+  const forRentCount = statsData?.for_rent || statsData?.total_for_rent || statsData?.for_rent_count || statsData?.by_status?.for_rent || 0;
   const avgPriceForSale = statsData?.price_range?.avg || statsData?.avg_price_for_sale || statsData?.avg_price || 0;
 
   return (
@@ -1358,35 +1397,31 @@ export default function DashboardPage() {
             Recent Properties
           </h2>
           {propertiesLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {[1, 2, 3].map((i) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[...Array(6)].map((_, i) => (
                 <div
                   key={i}
-                  className="bg-slate-800/50 border border-slate-700 rounded-lg p-4 animate-pulse"
-                >
-                  <div className="h-6 bg-slate-700 rounded mb-2" />
-                  <div className="h-4 bg-slate-700 rounded w-2/3" />
-                </div>
+                  className="bg-slate-800 rounded-lg h-64 animate-pulse"
+                />
               ))}
             </div>
-          ) : Array.isArray(recentProperties) && recentProperties.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {recentProperties.map((property: Property, idx: number) => (
-                <PropertyCard key={property.id ?? idx} property={property} />
+          ) : recentProperties.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {recentProperties.slice(0, 6).map((property) => (
+                <PropertyCard
+                  key={property.id}
+                  property={property}
+                  onClick={() => {
+                    setSelectedProperty(property);
+                    setShowPropertyModal(true);
+                  }}
+                />
               ))}
             </div>
           ) : (
             <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-8 text-center">
-              <AlertCircle className="w-12 h-12 text-yellow-400 mx-auto mb-3" />
-              <h3 className="text-lg font-semibold text-white mb-2">
-                No Properties Yet
-              </h3>
-              <p className="text-slate-400 mb-4">
-                Start by running a scrape to collect property data.
-              </p>
-              <button className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-colors">
-                Start Scraping
-              </button>
+              <Home className="w-12 h-12 text-slate-600 mx-auto mb-3" />
+              <p className="text-slate-400">No Properties Yet</p>
             </div>
           )}
         </div>

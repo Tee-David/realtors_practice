@@ -46,6 +46,7 @@ from api.helpers.config_manager import ConfigManager
 from api.helpers.scraper_manager import ScraperManager
 from api.helpers.stats_generator import StatsGenerator
 from api.helpers.health_monitor import get_health_monitor
+from api.helpers.json_sanitizer import sanitize_for_json
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -1013,13 +1014,26 @@ def firestore_dashboard():
     try:
         from core.firestore_queries_enterprise import get_dashboard_stats
         stats = get_dashboard_stats()
-        return jsonify({
-            'success': True,
-            'data': stats
-        })
+
+        # Map to frontend-expected field names
+        response = {
+            '_version': 'fixed_v4_nan_sanitized',  # Version marker to verify new code
+            'total_properties': stats.get('total_properties', 0),
+            'for_sale': stats.get('total_for_sale', 0),
+            'for_rent': stats.get('total_for_rent', 0),
+            'shortlet': stats.get('by_listing_type', {}).get('shortlet', 0),
+            'premium_properties': stats.get('premium_properties', 0),
+            'price_range': stats.get('price_range', {}),
+            'by_property_type': stats.get('by_property_type', {}),
+            'by_listing_type': stats.get('by_listing_type', {}),
+            'top_areas': stats.get('top_areas', {}),
+            'updated_at': stats.get('updated_at')
+        }
+
+        return jsonify(sanitize_for_json(response))
     except Exception as e:
         logger.error(f"Firestore dashboard error: {str(e)}")
-        return jsonify({'success': False, 'error': str(e)}), 500
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/api/firestore/top-deals', methods=['GET'])
 def firestore_top_deals():
@@ -1068,13 +1082,46 @@ def firestore_for_sale():
         from core.firestore_queries_enterprise import get_properties_by_listing_type
         limit = int(request.args.get('limit', 100))
         offset = int(request.args.get('offset', 0))
-        properties = get_properties_by_listing_type('sale', limit=limit, offset=offset)
-        return jsonify({
-            'properties': properties,
-            'total': len(properties)
-        })
+
+        logger.info(f"[DEBUG] API called with limit={limit}, offset={offset}")
+
+        result = get_properties_by_listing_type('sale', limit=limit, offset=offset)
+
+        logger.info(f"[DEBUG] Function returned type: {type(result)}")
+        logger.info(f"[DEBUG] Function result keys: {result.keys() if isinstance(result, dict) else 'N/A'}")
+
+        if isinstance(result, dict):
+            logger.info(f"[DEBUG] result['total'] = {result.get('total')}")
+            logger.info(f"[DEBUG] len(result['properties']) = {len(result.get('properties', []))}")
+            # Sanitize NaN/Infinity values before JSON serialization
+            sanitized_result = sanitize_for_json(result)
+            # Add version marker to verify this code is running
+            sanitized_result['_debug_version'] = 'v3_nan_fix'
+            return jsonify(sanitized_result)
+        else:
+            # Old format - result is a list
+            logger.warning(f"[DEBUG] Old format detected - returning list with len={len(result)}")
+            sanitized_result = sanitize_for_json(result)
+            return jsonify({
+                'properties': sanitized_result,
+                'total': len(result)
+            })
     except Exception as e:
         logger.error(f"Firestore for-sale error: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/firestore/for-sale-v2', methods=['GET'])
+def firestore_for_sale_v2():
+    """NEW ENDPOINT: Get for-sale properties with correct total count"""
+    try:
+        from core.firestore_queries_enterprise import get_properties_by_listing_type
+        limit = int(request.args.get('limit', 100))
+        offset = int(request.args.get('offset', 0))
+        result = get_properties_by_listing_type('sale', limit=limit, offset=offset)
+        # Directly return the dict - it has 'properties' and 'total' keys
+        return jsonify(result)
+    except Exception as e:
+        logger.error(f"Firestore for-sale-v2 error: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/firestore/for-rent', methods=['GET'])
@@ -1084,11 +1131,23 @@ def firestore_for_rent():
         from core.firestore_queries_enterprise import get_properties_by_listing_type
         limit = int(request.args.get('limit', 100))
         offset = int(request.args.get('offset', 0))
-        properties = get_properties_by_listing_type('rent', limit=limit, offset=offset)
-        return jsonify({
+        result = get_properties_by_listing_type('rent', limit=limit, offset=offset)
+        # FORCE FIX: Explicitly build response to preserve total count
+        if isinstance(result, dict):
+            total_count = result.get('total', 0)
+            properties = result.get('properties', [])
+        else:
+            # Old format - result is a list
+            properties = result
+            total_count = len(properties)
+
+        # Sanitize and build response explicitly to avoid any corruption
+        response_data = sanitize_for_json({
             'properties': properties,
-            'total': len(properties)
+            'total': total_count,
+            '_debug_version': 'v3_nan_fix'
         })
+        return jsonify(response_data)
     except Exception as e:
         logger.error(f"Firestore for-rent error: {str(e)}")
         return jsonify({'error': str(e)}), 500
@@ -1100,10 +1159,10 @@ def firestore_newest():
         from core.firestore_queries_enterprise import get_newest_listings
         limit = int(request.args.get('limit', 50))
         properties = get_newest_listings(limit=limit)
-        return jsonify({
+        return jsonify(sanitize_for_json({
             'properties': properties,
             'total': len(properties)
-        })
+        }))
     except Exception as e:
         logger.error(f"Firestore newest error: {str(e)}")
         return jsonify({'error': str(e)}), 500
@@ -1115,10 +1174,10 @@ def firestore_premium():
         from core.firestore_queries_enterprise import get_premium_properties
         limit = int(request.args.get('limit', 50))
         properties = get_premium_properties(limit=limit)
-        return jsonify({
+        return jsonify(sanitize_for_json({
             'properties': properties,
             'total': len(properties)
-        })
+        }))
     except Exception as e:
         logger.error(f"Firestore premium error: {str(e)}")
         return jsonify({'error': str(e)}), 500
@@ -1130,10 +1189,10 @@ def firestore_hot_deals():
         from core.firestore_queries_enterprise import get_hot_deals
         limit = int(request.args.get('limit', 50))
         properties = get_hot_deals(limit=limit)
-        return jsonify({
+        return jsonify(sanitize_for_json({
             'properties': properties,
             'total': len(properties)
-        })
+        }))
     except Exception as e:
         logger.error(f"Firestore hot deals error: {str(e)}")
         return jsonify({'error': str(e)}), 500

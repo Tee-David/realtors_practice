@@ -1,0 +1,2302 @@
+[
+  {
+    "doc_id": "001806b3ada44bea6328b083324184f9e1eaad421e8d412170075d4679777fc3",
+    "title": "Victoria Island",
+    "price": 25000000,
+    "bedrooms": 1,
+    "bathrooms": 25,
+    "location": "Victoria Island",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Victoria Island'",
+      "Phone number as bathrooms: 25"
+    ]
+  },
+  {
+    "doc_id": "01ee2897f013a51fefdfa715eb2d9d6d2168e4f3b46221399d2ab8de4e0929dd",
+    "title": "Ikoyi",
+    "price": 35000000,
+    "bedrooms": 1,
+    "bathrooms": 35,
+    "location": "Ikoyi",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Ikoyi'",
+      "Title too short (5 chars): 'Ikoyi'",
+      "Phone number as bathrooms: 35"
+    ]
+  },
+  {
+    "doc_id": "0248127cbbef0cc2a1251a493bb91a85d19d4204ba2e841581b7af467f2ccbc1",
+    "title": "",
+    "price": 53555600,
+    "bedrooms": 5,
+    "bathrooms": 50,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Phone number as bathrooms: 50"
+    ]
+  },
+  {
+    "doc_id": "0448329404d4b15365ca3a58d658d9be849f5ecf557cd75c96b6a8f3efa270bf",
+    "title": "Chevron",
+    "price": 10400000,
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "location": "Chevron",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Chevron'",
+      "Title too short (7 chars): 'Chevron'"
+    ]
+  },
+  {
+    "doc_id": "0511b8085f31d5dd76c9f798bbf802eb8c90e00e3e348321184ef6d30c4a3eb5",
+    "title": "Latest Posts",
+    "price": 4000000,
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "location": "Ajah",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Latest Posts'",
+      "Title too short (12 chars): 'Latest Posts'"
+    ]
+  },
+  {
+    "doc_id": "06f2b8d671acd09000f4a709953d526da68fc09150fc89182b531c79a6711d55",
+    "title": "Chevron",
+    "price": 10400000,
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "location": "Chevron",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Chevron'",
+      "Title too short (7 chars): 'Chevron'"
+    ]
+  },
+  {
+    "doc_id": "0961bbff8757be6481b132c99f72e5daf1192a4cde3a88598a50e02e76dd9482",
+    "title": "",
+    "price": 2110000,
+    "bedrooms": 2,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''"
+    ]
+  },
+  {
+    "doc_id": "0a0f28c6a0871f373b23ae5f68778ef04f2b502668df4797e77a5044cc655ac6",
+    "title": "Chevron",
+    "price": 0,
+    "bedrooms": null,
+    "bathrooms": null,
+    "location": "Chevron",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Chevron'",
+      "Title too short (7 chars): 'Chevron'",
+      "Missing price + bedrooms + short title"
+    ]
+  },
+  {
+    "doc_id": "0d323d4cfcba2636dbc882abe72bff873d268e6feb340b2bb7fcc4d3dc252016",
+    "title": "",
+    "price": 4180000000000000,
+    "bedrooms": 4,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Unrealistic price: 4,180,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "0de55de49f12e4a87a77710d2f692ba398367eefed09fc5d1cbe81395fd92361",
+    "title": "Ikoyi, Lagos",
+    "price": 25000000,
+    "bedrooms": 5,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (12 chars): 'Ikoyi, Lagos'"
+    ]
+  },
+  {
+    "doc_id": "0fc249f0c4b51c3f1cb6d060b9f0d820d85554df005ad4501d70faf23b1ebfb1",
+    "title": "",
+    "price": 4750000000000000,
+    "bedrooms": 4,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Unrealistic price: 4,750,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "122df65e36b43b281fddb48e709269ea12996b286c88d8aa870065ee7293341d",
+    "title": "Ikate",
+    "price": 1000000000,
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Ikate'",
+      "Title too short (5 chars): 'Ikate'"
+    ]
+  },
+  {
+    "doc_id": "13c39884939e4bfac83dda3d6e885b8df71e02a202142cc07d6cc597faf0017f",
+    "title": "Lekki",
+    "price": 1600000000,
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "location": "Lekki",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Lekki'",
+      "Title too short (5 chars): 'Lekki'"
+    ]
+  },
+  {
+    "doc_id": "15e183eea7260b19772a1d0a4797cedf3d07c997de275e4208c2cf1f551da9d6",
+    "title": "Lagos",
+    "price": 0,
+    "bedrooms": null,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Lagos'",
+      "Title too short (5 chars): 'Lagos'",
+      "Missing price + bedrooms + short title"
+    ]
+  },
+  {
+    "doc_id": "18d4c79176412c7687e5213e1b381130af1733188b9e9430a7b09cf501f7a047",
+    "title": "Agbara",
+    "price": 25000000,
+    "bedrooms": 5,
+    "bathrooms": 1,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (6 chars): 'Agbara'"
+    ]
+  },
+  {
+    "doc_id": "193f9098a61478ac730f1c5621331f6984c87c7211e458d8bbf24d1b3e2bd9f4",
+    "title": "Victoria Island",
+    "price": 2400000000,
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "location": "Victoria Island",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Victoria Island'"
+    ]
+  },
+  {
+    "doc_id": "1b3fdf4630775b0086837f3b77f20eabcb52d0844ceb5eaf6d9ef08c4e8e059f",
+    "title": "Victoria Island",
+    "price": 25000000,
+    "bedrooms": 1,
+    "bathrooms": 25,
+    "location": "Victoria Island",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Victoria Island'",
+      "Phone number as bathrooms: 25"
+    ]
+  },
+  {
+    "doc_id": "1eb87217f151d9a7d31dd828ac3a4c0c3dd185900713cb2cbfe6922efc4fff3b",
+    "title": "Oniru",
+    "price": 0,
+    "bedrooms": null,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (5 chars): 'Oniru'",
+      "Missing price + bedrooms + short title"
+    ]
+  },
+  {
+    "doc_id": "1ef7f862d37d24962cde3ea487f7a7e2ac8e51f8b7d8032c1c02a29e04e5502e",
+    "title": "Victoria Island",
+    "price": 25000000,
+    "bedrooms": 1,
+    "bathrooms": 25,
+    "location": "Victoria Island",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Victoria Island'",
+      "Phone number as bathrooms: 25"
+    ]
+  },
+  {
+    "doc_id": "2040f8928815b4371e75509b26bc1ebf0617c0c4eee02314bab966dc59ed3fe2",
+    "title": "Lekki",
+    "price": 18000000,
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "location": "Lekki",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Lekki'",
+      "Title too short (5 chars): 'Lekki'"
+    ]
+  },
+  {
+    "doc_id": "205eb1339ec1a0dbb40acd290c001a7b89645d5f74c8bfce1edc0a5c555345ed",
+    "title": "300 and 500 SQM DRY LAND AVAILABLE AT ELERANGBE, IBEJU - LEKKI, LAGOS STATE.",
+    "price": 30000000000000000,
+    "bedrooms": 3,
+    "bathrooms": 3,
+    "location": "Lekki",
+    "url": "",
+    "reasons": [
+      "Unrealistic price: 30,000,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "20878ffccc76acec516407dc0a8e04170f34838304a62d97f06dc4e258e8bac3",
+    "title": "",
+    "price": 721280000000000000,
+    "bedrooms": 7,
+    "bathrooms": 14,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Unrealistic price: 721,280,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "2391e93bf286c2b50f159aeb36757dfedce3f75240fa90928f4fea78dd9a266d",
+    "title": "",
+    "price": 140000000000000,
+    "bedrooms": 5,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Unrealistic price: 140,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "25ae9d5c430746177602607703160ec95654d94f881dfc381df65e769e03ed7d",
+    "title": "4-Bedroom Terrace in Ikate, Lekki, for Sale",
+    "price": 4325000000000000,
+    "bedrooms": 4,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Unrealistic price: 4,325,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "2640f3bc4c95e4e4294cf34e083346530295beb6ba73da38d5f737e1404a0cc4",
+    "title": "Lagos Mainland",
+    "price": 0,
+    "bedrooms": 1,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (14 chars): 'Lagos Mainland'"
+    ]
+  },
+  {
+    "doc_id": "2783262a649a49af83a3fbef7be82bd60d0c03c628e63c092ad75e0ac81205ae",
+    "title": "",
+    "price": 2170000000000000,
+    "bedrooms": 2,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Unrealistic price: 2,170,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "27d7307c83d5ebe30513bdf27c185e47481ce20dc0350cc8fce49598b4b9cb4e",
+    "title": "",
+    "price": 1180000000000000,
+    "bedrooms": 4,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Unrealistic price: 1,180,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "288d161b6af48b10e08e28a9b01d9a541c3316b6c7e833ad07c76d6a68e4e032",
+    "title": "",
+    "price": 1000000,
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''"
+    ]
+  },
+  {
+    "doc_id": "2c9fe62d8efb7cece72cb0a497011ea3d8649375996225338876f6e251436d1f",
+    "title": "lagos island",
+    "price": 0,
+    "bedrooms": null,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (12 chars): 'lagos island'",
+      "Missing price + bedrooms + short title"
+    ]
+  },
+  {
+    "doc_id": "2eb44838ea61a15b86d564ed40bc9ab71c06537a5070181bbb62beba932d57a8",
+    "title": "",
+    "price": 27000000000000,
+    "bedrooms": 2,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Unrealistic price: 27,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "2ed50c8b6b8902b215a813cfe04bb96838080b1e56b240c3656456ef3c5dc796",
+    "title": "",
+    "price": 721250000000000000,
+    "bedrooms": 7,
+    "bathrooms": 14,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Unrealistic price: 721,250,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "2f2d758e094c3b73d9049fad6cd1dcf3a15d07a81f4adebdd7e3e6c872ea518c",
+    "title": "Agege",
+    "price": 0,
+    "bedrooms": 2348179999395,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (5 chars): 'Agege'"
+    ]
+  },
+  {
+    "doc_id": "2ff356f2151a5f5ffe1f8a5220ec06a83a5c632dd1c4bd3d67021f05d0c7590d",
+    "title": "",
+    "price": 4300000000000000,
+    "bedrooms": 4,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Unrealistic price: 4,300,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "3174d5498385bd3e949b507165558e3eb4c2f333b05a5617a8d8e52a13e56213",
+    "title": "",
+    "price": 51530000000000000,
+    "bedrooms": 5,
+    "bathrooms": 5,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Unrealistic price: 51,530,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "31d68d61cb6145fdb9779298449ed3c76b42234e9395ed923a2f78a4425c12d8",
+    "title": "2 bedroom in ikate for shortlet",
+    "price": 2155000000000,
+    "bedrooms": 2,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Unrealistic price: 2,155,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "331719795a9077f94ba16f206a906853e5b726d5eba0bc2e0212ef0d0641b649",
+    "title": "2-Bedroom Apartment in Ikate Lekki for Sale",
+    "price": 2170000000000000,
+    "bedrooms": 2,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Unrealistic price: 2,170,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "33de55c0380543ca155823e97b6bc3c041408749194e5f186d811a3cc2754b74",
+    "title": "",
+    "price": 5470000000000000,
+    "bedrooms": 5,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Unrealistic price: 5,470,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "36809a31cc605cc7f327968fab0f9ee7653b7200d179c57215dc67f4021e3339",
+    "title": "",
+    "price": 185000000,
+    "bedrooms": 9058800857,
+    "bathrooms": 9058800857,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Phone number as bathrooms: 9058800857"
+    ]
+  },
+  {
+    "doc_id": "3958ae09936c2e2a5280213940f8056ee2b8a2d9d1f9ac8baa8b78727d8fc3ae",
+    "title": "Oniru",
+    "price": 35000000,
+    "bedrooms": 1,
+    "bathrooms": 25,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (5 chars): 'Oniru'",
+      "Phone number as bathrooms: 25"
+    ]
+  },
+  {
+    "doc_id": "3a26fb7a5e9a9241f6b65ec3b53e0b8500dc8ae24513152b5b9f01ab65a7a522",
+    "title": "Lekki",
+    "price": 1600000000,
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "location": "Lekki",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Lekki'",
+      "Title too short (5 chars): 'Lekki'"
+    ]
+  },
+  {
+    "doc_id": "3af6e92e4a8b1ee640bb9bd8d4e62ad0bb265f775c3cd0284a67e297fef65ab4",
+    "title": "",
+    "price": 5380000000000000,
+    "bedrooms": 5,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Unrealistic price: 5,380,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "3c4d4b32e144a626d6946e0fea9d22a9d2ab9bd200d28d1d6cc121b055aeb3e5",
+    "title": "Oniru",
+    "price": 280000300000500000,
+    "bedrooms": 5,
+    "bathrooms": 1,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (5 chars): 'Oniru'",
+      "Unrealistic price: 280,000,300,000,500,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "3fd99a94da556e11c83591b877ee5cd03917f8afc960b87d0bc0479d77a667b3",
+    "title": "",
+    "price": 455000000000000,
+    "bedrooms": 20,
+    "bathrooms": 1,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Unrealistic price: 455,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "42ed7742991160d228be2c8052980e9cedfd8f7b6460a41f4a188f0b565df3ea",
+    "title": "1-Bed Apartment for Sale in Sangotedo Lagos",
+    "price": 140000000000000,
+    "bedrooms": 5,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Unrealistic price: 140,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "43efa574a067ce5666a670b24e2d3fe830368d26105ef8fd1923ab67d8c43c2d",
+    "title": "Victoria Island",
+    "price": 0,
+    "bedrooms": null,
+    "bathrooms": null,
+    "location": "Victoria Island",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Victoria Island'",
+      "Missing price + bedrooms + short title"
+    ]
+  },
+  {
+    "doc_id": "45371f83f5101ddd9476650f92c30f4381d4d1426512df0413c055f64876c311",
+    "title": "",
+    "price": 78000000,
+    "bedrooms": 234,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''"
+    ]
+  },
+  {
+    "doc_id": "45ad48efcc23ee34e221be191974378cb9952e926cf2ad575147e4a2a18f0d8f",
+    "title": "Oniru",
+    "price": 15000000,
+    "bedrooms": 16,
+    "bathrooms": 16,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (5 chars): 'Oniru'"
+    ]
+  },
+  {
+    "doc_id": "45ca31c3315a5978f40438aab46040d75e99c9b125c2fd01db6e10ac80bef906",
+    "title": "",
+    "price": 0,
+    "bedrooms": null,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Missing price + bedrooms + short title"
+    ]
+  },
+  {
+    "doc_id": "4619e6191dfe894b0877a12721c65f69b7efaafb6bf915c5ae811b259f450c5e",
+    "title": "Victoria Island",
+    "price": 35000000,
+    "bedrooms": 1,
+    "bathrooms": 25,
+    "location": "Victoria Island",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Victoria Island'",
+      "Phone number as bathrooms: 25"
+    ]
+  },
+  {
+    "doc_id": "47f7e0c4a67bb58d41f20dc7191741002934c10e7659b1bbeac774d54ea17edd",
+    "title": "Estates",
+    "price": 0,
+    "bedrooms": null,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (7 chars): 'Estates'",
+      "Missing price + bedrooms + short title"
+    ]
+  },
+  {
+    "doc_id": "48b2d48882921c72bb540d1b00cb7f70dbccfb85503bedc9fb0fe0ae43e5a811",
+    "title": "Victoria Island",
+    "price": 25000000,
+    "bedrooms": 1,
+    "bathrooms": 25,
+    "location": "Victoria Island",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Victoria Island'",
+      "Phone number as bathrooms: 25"
+    ]
+  },
+  {
+    "doc_id": "494588237efb856cf697382383571e4c299398ad352cde34c0fbcef65b57fe74",
+    "title": "",
+    "price": 4175000000000000,
+    "bedrooms": 4,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Unrealistic price: 4,175,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "4a106e6494878a921677e30cb1c8eee54d2426cc23083a6ecc8d02a35e1bf0ec",
+    "title": "Lekki",
+    "price": 1600000000,
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "location": "Lekki",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Lekki'",
+      "Title too short (5 chars): 'Lekki'"
+    ]
+  },
+  {
+    "doc_id": "4b1add34e166549e0287405c20ebc4f6fcf3f753633e4214e52c4be0d3bb43d6",
+    "title": "Chevron",
+    "price": 10400000,
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "location": "Chevron",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Chevron'",
+      "Title too short (7 chars): 'Chevron'"
+    ]
+  },
+  {
+    "doc_id": "4bd28aaa97c1c41014b0584fc864639b74b833b41f61bb523b349305a8d60ff3",
+    "title": "",
+    "price": 5250000,
+    "bedrooms": 5,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''"
+    ]
+  },
+  {
+    "doc_id": "4daaff26fbb15bb2145a5c48d6b6b15760608542e914516163493bb8d0d71af2",
+    "title": "",
+    "price": 5900000000000000,
+    "bedrooms": 5,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Unrealistic price: 5,900,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "506879f25c0aa7aece360201a0f45295ad1ebe3e765510e016043a62dfcc1815",
+    "title": "",
+    "price": 70000,
+    "bedrooms": 70,
+    "bathrooms": 70,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Phone number as bathrooms: 70"
+    ]
+  },
+  {
+    "doc_id": "518ea17bddff01d7b5bc0faae00d92111e074f1585634b59fb437dd694aa44d6",
+    "title": "Stunning 5-Bedroom Duplex for Sale in Osapa Lekki",
+    "price": 5900000000000000,
+    "bedrooms": 5,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Unrealistic price: 5,900,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "51ac726eff82f5f90fa1aad42e018d4201774901cb710e2b9d008f7d84f29cdf",
+    "title": "",
+    "price": 6550000000000000,
+    "bedrooms": 6,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Unrealistic price: 6,550,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "5340ba4f09bdf96a5bc62f254ace9241bb41419f9066a5a94a6fb8f5a6dccaed",
+    "title": "Ikoyi",
+    "price": 35000000,
+    "bedrooms": 1,
+    "bathrooms": 35,
+    "location": "Ikoyi",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Ikoyi'",
+      "Title too short (5 chars): 'Ikoyi'",
+      "Phone number as bathrooms: 35"
+    ]
+  },
+  {
+    "doc_id": "54314c23471d5b39006a98766cf9396460347372d7d5bff7fbe975d31a313cfb",
+    "title": "Lekki, Lagos",
+    "price": 4000000,
+    "bedrooms": null,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (12 chars): 'Lekki, Lagos'"
+    ]
+  },
+  {
+    "doc_id": "55f572583f34ee66f6531041bf280871723c767fb1d161cc5980d7ef5f15140e",
+    "title": "Lekki, Lagos",
+    "price": 25000000,
+    "bedrooms": 5,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (12 chars): 'Lekki, Lagos'"
+    ]
+  },
+  {
+    "doc_id": "574fdefe92f9ea47c53ed9dc1753103653b40f2249cd8eccb5926ad8ab2d5c19",
+    "title": "",
+    "price": 35000000,
+    "bedrooms": 4,
+    "bathrooms": 4,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''"
+    ]
+  },
+  {
+    "doc_id": "5a173b4441cd3cbec949c90039676c775b42364672e0a4eae02975631b0706a5",
+    "title": "",
+    "price": 5280000,
+    "bedrooms": 5,
+    "bathrooms": 5,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''"
+    ]
+  },
+  {
+    "doc_id": "5a20213070b4f575ad390c684cdb7f5a5fe68fe4e0b40fa31800ad64c78a94fa",
+    "title": "",
+    "price": 5315000000000000,
+    "bedrooms": 5,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Unrealistic price: 5,315,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "5a21304adb13f5002893681a2f37b87fe0932d7d26960af4c055015b392af2e7",
+    "title": "",
+    "price": 2120000000000000,
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Unrealistic price: 2,120,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "5ab72b46bf62e8a3b55b7807f53beda71ef9a6197938ca9479801ef5eccffa57",
+    "title": "3 BEDROOM OFF PLAN BUNGALOW + BOYS QUARTER AVAILABLE AT AIYETORO, IBEJU LEKKI, RIGHT ALONG LEKKI- EPE EXPRESSWAY, LAGOS STATE.",
+    "price": 75000000000000000,
+    "bedrooms": 3,
+    "bathrooms": 3,
+    "location": "Lekki",
+    "url": "",
+    "reasons": [
+      "Unrealistic price: 75,000,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "5ac3021fb0f32f4f44c74586669240fc1d8894a6301dbf6958ace4050c108f1f",
+    "title": "View Listing",
+    "price": 95000000000000000,
+    "bedrooms": 3,
+    "bathrooms": 4,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (12 chars): 'View Listing'",
+      "Unrealistic price: 95,000,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "6020f8a73429baa9465ffe24f72568e25f446620df52df74300ad8652acaf846",
+    "title": "",
+    "price": 150000000,
+    "bedrooms": 10,
+    "bathrooms": 10,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''"
+    ]
+  },
+  {
+    "doc_id": "617a1c5f67580d0597b27d26a14386176ee3324dbeb459e275d1218966687295",
+    "title": "For Sale",
+    "price": 30000000,
+    "bedrooms": null,
+    "bathrooms": null,
+    "location": "Lekki",
+    "url": "",
+    "reasons": [
+      "Title too short (8 chars): 'For Sale'"
+    ]
+  },
+  {
+    "doc_id": "61e42574c312e638f7f87730a0bec7fa9596b610a789fb1e19bfb2dd37eb6b88",
+    "title": "",
+    "price": 5000000000,
+    "bedrooms": null,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''"
+    ]
+  },
+  {
+    "doc_id": "6355e01c523131180bcbe2e40354eba397c15e3288470818ebd30ccc46a184a5",
+    "title": "Lekki",
+    "price": 1600000000,
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "location": "Lekki",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Lekki'",
+      "Title too short (5 chars): 'Lekki'"
+    ]
+  },
+  {
+    "doc_id": "63c2abaa3f233616240c6783e9a7e1dc8d7e0e55f80f139548cf92c47c3b8460",
+    "title": "Oniru",
+    "price": 25000000,
+    "bedrooms": 1,
+    "bathrooms": 25,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (5 chars): 'Oniru'",
+      "Phone number as bathrooms: 25"
+    ]
+  },
+  {
+    "doc_id": "6589d8545a233f6fe21809eb5e32e14af4d12e5082fc1375ed7bee317ce97648",
+    "title": "5-Bedroom Smart Home in Lekki with Pool & Cinema",
+    "price": 5900000000000000,
+    "bedrooms": 5,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Unrealistic price: 5,900,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "65b84bc6bdd26e543d457ee361869980d61ddec947ed9959a77f9922bbfd2dc8",
+    "title": "",
+    "price": 120000,
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''"
+    ]
+  },
+  {
+    "doc_id": "68ac42574e9738fb3a9115dc4655f5152477ca2427c5a28159a8247572d977cc",
+    "title": "Lagos Island",
+    "price": 450000000000000,
+    "bedrooms": 125,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (12 chars): 'Lagos Island'",
+      "Unrealistic price: 450,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "69b9edea8b3477f6f293a6fade7da441c41dc708718703b4cae2b12ed4e5e52a",
+    "title": "Ikoyi",
+    "price": 35000000,
+    "bedrooms": 1,
+    "bathrooms": 35,
+    "location": "Ikoyi",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Ikoyi'",
+      "Title too short (5 chars): 'Ikoyi'",
+      "Phone number as bathrooms: 35"
+    ]
+  },
+  {
+    "doc_id": "6b134bfa0b2f85f83b623a09c3becb3b29040326cceea0fa5bc7d4115ab5ac3f",
+    "title": "Lagos Island",
+    "price": 1500000000000000,
+    "bedrooms": 127,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (12 chars): 'Lagos Island'",
+      "Unrealistic price: 1,500,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "6cd28df61fd1d2d942c59914e451d673e41c292c88aaa899a0a3d3abb44dec23",
+    "title": "2-Bed Luxury Apartment with Modern Finishes in Ologolo Lekki Lagos",
+    "price": 2120000000000000,
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Unrealistic price: 2,120,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "6db32bc7f0eaa6c01b23bd361f018ec56eaaa4dcbfd5931b6eb9555d870e2914",
+    "title": "Lagos state",
+    "price": 0,
+    "bedrooms": null,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (11 chars): 'Lagos state'",
+      "Missing price + bedrooms + short title"
+    ]
+  },
+  {
+    "doc_id": "6e0fee55a6ca20b9a6fe58bb8b8a4ef1b6d87cf12896e1aa56217c8416d632a8",
+    "title": "Lagos",
+    "price": 70000000,
+    "bedrooms": 27,
+    "bathrooms": 27,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Lagos'",
+      "Title too short (5 chars): 'Lagos'",
+      "Phone number as bathrooms: 27"
+    ]
+  },
+  {
+    "doc_id": "6e580afa8d16570fb5c6c998c8c5e8947b6cc1dca94232c954acfe91c887bee7",
+    "title": "Ikoyi",
+    "price": 35000000,
+    "bedrooms": 1,
+    "bathrooms": 35,
+    "location": "Ikoyi",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Ikoyi'",
+      "Title too short (5 chars): 'Ikoyi'",
+      "Phone number as bathrooms: 35"
+    ]
+  },
+  {
+    "doc_id": "6ee39e86bb60885f2dc6e8c4143f3ea5acc0b8553ea6c37f4fa0279f9a869f32",
+    "title": "",
+    "price": 58225000000000000,
+    "bedrooms": 5,
+    "bathrooms": 10,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Unrealistic price: 58,225,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "729949761208a0c07f46ffa20b9e1221f4ad119f240a6f3e1f7ddce43fa70f38",
+    "title": "",
+    "price": 230000000,
+    "bedrooms": 10,
+    "bathrooms": 10,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''"
+    ]
+  },
+  {
+    "doc_id": "72acebc5403bf8d7a3fa300c02c9fae4cc233808bb1768e22ece3040d2a74cf5",
+    "title": "Lekki",
+    "price": 18000000,
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "location": "Lekki",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Lekki'",
+      "Title too short (5 chars): 'Lekki'"
+    ]
+  },
+  {
+    "doc_id": "762f1c67f50cd383d8c0e4e2f3b9d32cdc57a3bfe58f8a9c73ea2ff830505c60",
+    "title": "",
+    "price": 2220000000000000,
+    "bedrooms": 2,
+    "bathrooms": 10,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Unrealistic price: 2,220,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "76f87f9054cb8d4db4fc22b2274e6786430d352a60e883ad1a770869c4f6b6b2",
+    "title": "",
+    "price": 5530000000000000,
+    "bedrooms": 5,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Unrealistic price: 5,530,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "7871d031a67140e1e6c2c6d226dd8bb571ea1fb4a93f593d1250b6cc34f769ed",
+    "title": "Ikoyi",
+    "price": 0,
+    "bedrooms": null,
+    "bathrooms": null,
+    "location": "Ikoyi",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Ikoyi'",
+      "Title too short (5 chars): 'Ikoyi'",
+      "Missing price + bedrooms + short title"
+    ]
+  },
+  {
+    "doc_id": "78d077a2a214599b8a600fa9491ca576e14a1d13b7a65228f3b50321c00b88ca",
+    "title": "Ikoyi",
+    "price": 35000000,
+    "bedrooms": 1,
+    "bathrooms": 35,
+    "location": "Ikoyi",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Ikoyi'",
+      "Title too short (5 chars): 'Ikoyi'",
+      "Phone number as bathrooms: 35"
+    ]
+  },
+  {
+    "doc_id": "7a706b5ee51cf6d9bbc605d4ac173216c41e1345eaadaecb71db909c455d78f3",
+    "title": "",
+    "price": 4250000000000,
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Unrealistic price: 4,250,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "7a9729c4e38a018ef543f5eaa65177b2c94359bc8df769655abc187659743fe3",
+    "title": "Ikoyi",
+    "price": 35000000,
+    "bedrooms": 1,
+    "bathrooms": 35,
+    "location": "Ikoyi",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Ikoyi'",
+      "Title too short (5 chars): 'Ikoyi'",
+      "Phone number as bathrooms: 35"
+    ]
+  },
+  {
+    "doc_id": "7b08003987ee9c6bd9be5cd560b053435e4f79ea1949a4d505bfcb3e696409e7",
+    "title": "",
+    "price": 27000000,
+    "bedrooms": null,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''"
+    ]
+  },
+  {
+    "doc_id": "7b626d46cfc34522a47b59e21f740d811989419fcee7173baad7bec0442834b4",
+    "title": "",
+    "price": 2140000,
+    "bedrooms": 2,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''"
+    ]
+  },
+  {
+    "doc_id": "7ce4e7d63750a71f7490073c0175de52595106f1a01fa7c3fa68ec1d3aa2d30b",
+    "title": "lagos mainland",
+    "price": 0,
+    "bedrooms": null,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (14 chars): 'lagos mainland'",
+      "Missing price + bedrooms + short title"
+    ]
+  },
+  {
+    "doc_id": "7d60c5802e13091ebca428505c896da76e60f21b858ffb34b81a428fc9bbefee",
+    "title": "",
+    "price": 4250000000000000,
+    "bedrooms": 4,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Unrealistic price: 4,250,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "7df2c2e40bf577c544fc202ab41883c19c910d9c80680a4b8966f931132e3608",
+    "title": "Ajah",
+    "price": 4000000,
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "location": "Ajah",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Ajah'",
+      "Title too short (4 chars): 'Ajah'"
+    ]
+  },
+  {
+    "doc_id": "7f15970841449b4aa02dba57d5d339d3cd49f0a094ee60ea580519a836495b14",
+    "title": "",
+    "price": 4325000000000000,
+    "bedrooms": 4,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Unrealistic price: 4,325,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "7f3c2be50b06948e5ba1ef7a4198d04ab0afd78661a6c91f2fe9ac11b6c43c27",
+    "title": "",
+    "price": 1138000000000000,
+    "bedrooms": 1,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Unrealistic price: 1,138,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "8085ff901d49bf09b0f1de54d3f8b8f18e6f7b764be9b5c41e4ca628d12ea14b",
+    "title": "Ikoyi",
+    "price": 35000000,
+    "bedrooms": 1,
+    "bathrooms": 35,
+    "location": "Ikoyi",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Ikoyi'",
+      "Title too short (5 chars): 'Ikoyi'",
+      "Phone number as bathrooms: 35"
+    ]
+  },
+  {
+    "doc_id": "8440d14ad90e4e5822d336d59d203208d4bc668fab295ea236c7ecc46dd43efb",
+    "title": "Oniru",
+    "price": 25000000,
+    "bedrooms": 1,
+    "bathrooms": 25,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (5 chars): 'Oniru'",
+      "Phone number as bathrooms: 25"
+    ]
+  },
+  {
+    "doc_id": "8855a2ca19411d0e8bdded6a0312c82244cecf163583844e61f707360c15117d",
+    "title": "",
+    "price": 2150000,
+    "bedrooms": 2,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''"
+    ]
+  },
+  {
+    "doc_id": "89181ff0d496dca21029ee73f1915de28d725f04dcbf60598ddf27aab2a39636",
+    "title": "",
+    "price": 4130000,
+    "bedrooms": 4,
+    "bathrooms": 4,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''"
+    ]
+  },
+  {
+    "doc_id": "8c30654e238526eb49945dfe195968433fae4fd9af8003e4740e01385581511c",
+    "title": "Ikoyi",
+    "price": 35000000,
+    "bedrooms": 1,
+    "bathrooms": 35,
+    "location": "Ikoyi",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Ikoyi'",
+      "Title too short (5 chars): 'Ikoyi'",
+      "Phone number as bathrooms: 35"
+    ]
+  },
+  {
+    "doc_id": "8c472940521f4a340a4f9b73777d7e238b2833e3e28e81c405ffa7c59dc2fac1",
+    "title": "",
+    "price": 4170000,
+    "bedrooms": 4,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''"
+    ]
+  },
+  {
+    "doc_id": "8db72089fc7df9d21d52342a46383037863be54893843ef1456ce337bd0005db",
+    "title": "Ikoyi, Lagos",
+    "price": 4000000,
+    "bedrooms": null,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (12 chars): 'Ikoyi, Lagos'"
+    ]
+  },
+  {
+    "doc_id": "8e4621d9102bce26fcd4d2bcca8fe09066f87ec13333726df2d54c30ed50db60",
+    "title": "Victoria Island",
+    "price": 25000000,
+    "bedrooms": 1,
+    "bathrooms": 25,
+    "location": "Victoria Island",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Victoria Island'",
+      "Phone number as bathrooms: 25"
+    ]
+  },
+  {
+    "doc_id": "8eac791029cbe28612ce1757f7d42a6ed12da9bd38a8e70160a8ab964277c9bb",
+    "title": "Lekki",
+    "price": 15000000,
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Lekki'",
+      "Title too short (5 chars): 'Lekki'"
+    ]
+  },
+  {
+    "doc_id": "903e4c03febb9d74e3a30213372aebfcc1009a16a25c3ac9031a2314fef1c1ce",
+    "title": "",
+    "price": 1150000000000000,
+    "bedrooms": 10,
+    "bathrooms": 10,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Unrealistic price: 1,150,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "90ba2c06f0dc17731641c605b816a64d884a0cc6baab3dba720f4cfdb23c9eb8",
+    "title": "",
+    "price": 3120000000000000,
+    "bedrooms": 3,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Unrealistic price: 3,120,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "93fc23877f825bda645dadc0e74a134ecdf4ac4e93017cd1d3963b75b4074825",
+    "title": "Victoria Island",
+    "price": 535500000,
+    "bedrooms": 44,
+    "bathrooms": 44,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Victoria Island'",
+      "Phone number as bathrooms: 44"
+    ]
+  },
+  {
+    "doc_id": "94663527e89a196cf9164c794b6cbc7eb6e4975c2a36637193a26f6a1fc03b48",
+    "title": "",
+    "price": 2155000000000,
+    "bedrooms": 2,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Unrealistic price: 2,155,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "9809190744fd147028daa18134e323e576ddfff827d704b10afcde81caaef6d9",
+    "title": "",
+    "price": 60020000000000000,
+    "bedrooms": null,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Unrealistic price: 60,020,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "997c042698d44eed5768ac68fd6b4ab6feb2d3b9bee738299bb8569271e65506",
+    "title": "",
+    "price": 140000,
+    "bedrooms": 140,
+    "bathrooms": 140,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Phone number as bathrooms: 140"
+    ]
+  },
+  {
+    "doc_id": "99e0d2d9cde41708ee567cd94a15b77692354a5ac35ef0354036df3cef75d566",
+    "title": "",
+    "price": 1400000000,
+    "bedrooms": null,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''"
+    ]
+  },
+  {
+    "doc_id": "9c392ab49e5ec7be6ce3e9caf204b74bc669995bb6b4b1e0f7e8d019982b8c01",
+    "title": "Victoria Island",
+    "price": 25000000,
+    "bedrooms": 1,
+    "bathrooms": 25,
+    "location": "Victoria Island",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Victoria Island'",
+      "Phone number as bathrooms: 25"
+    ]
+  },
+  {
+    "doc_id": "9c923ce2b6fef401b4a2168372c34c83b5a26ad9de4069894d4ea988f4cb59f8",
+    "title": "",
+    "price": 5114000,
+    "bedrooms": 5,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''"
+    ]
+  },
+  {
+    "doc_id": "9d7a1cfb899bf7b917ffd3806e7facacc633a9b79872f98599912f58940a2d5d",
+    "title": "4 bedroom in ikate Lekki for rent on shortlet",
+    "price": 4250000000000,
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Unrealistic price: 4,250,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "9f0a88958be42b7517bca1baea1195e615b4548dbcb0b6b37451df40c9c1a57d",
+    "title": "Ikoyi",
+    "price": 35000000,
+    "bedrooms": 1,
+    "bathrooms": 35,
+    "location": "Ikoyi",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Ikoyi'",
+      "Title too short (5 chars): 'Ikoyi'",
+      "Phone number as bathrooms: 35"
+    ]
+  },
+  {
+    "doc_id": "a1e78a783a43d856d22cedb886b3073c4d5262779e2cb2c8824b3c0e8209b8e9",
+    "title": "5-Bedroom Detached House in Chevron Toll, Lekki",
+    "price": 5450000000000000,
+    "bedrooms": 5,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Unrealistic price: 5,450,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "a26f3d853aab1fbf53bbbc1ee78d33729d78d8a1496301919d776dda1bcac7d7",
+    "title": "",
+    "price": 4165000,
+    "bedrooms": 4,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''"
+    ]
+  },
+  {
+    "doc_id": "a7fbb2b29f4ce978b178f0d56ced628592ccce85e1eac93a5d5864b12d8aa286",
+    "title": "Lekki",
+    "price": 18000000,
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "location": "Lekki",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Lekki'",
+      "Title too short (5 chars): 'Lekki'"
+    ]
+  },
+  {
+    "doc_id": "a84af071d4d2fd44d5f39d7174156b25e1621c374de44d4b753a4a5cd5bcfad4",
+    "title": "Lagos Island",
+    "price": 0,
+    "bedrooms": 1,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (12 chars): 'Lagos Island'"
+    ]
+  },
+  {
+    "doc_id": "a8d3113ccc03c8fb086f2f44c109b3d0f98ac45e7600b7584c1b4c649f053101",
+    "title": "",
+    "price": 475000000000000,
+    "bedrooms": 4,
+    "bathrooms": 10,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Unrealistic price: 475,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "a9e3ea9e094f2bee593c42b1679d6681dcdbc2a92569b6bcb2e0ad17a77c8d7d",
+    "title": "",
+    "price": 5400000000000000,
+    "bedrooms": 5,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Unrealistic price: 5,400,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "aa221cd9959e01337afc38cb1c89d78c9f5c273eb807d4f26e19eb5d2bd32867",
+    "title": "",
+    "price": 5690000000000000,
+    "bedrooms": 5,
+    "bathrooms": 13,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Unrealistic price: 5,690,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "ab8543beed5a9550c50119bbeac3c559f3126fde4a2b8f7348d2db9daf396f88",
+    "title": "Victoria Island",
+    "price": 25000000,
+    "bedrooms": 1,
+    "bathrooms": 25,
+    "location": "Victoria Island",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Victoria Island'",
+      "Phone number as bathrooms: 25"
+    ]
+  },
+  {
+    "doc_id": "abf26f7a8ca6a04750b8dd881068440fb94a0e58392acfc0362e7fbe4fdf7ebf",
+    "title": "",
+    "price": 5003000,
+    "bedrooms": 5,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''"
+    ]
+  },
+  {
+    "doc_id": "abfc33f9562e8997102bd2153e9e5e845ce42a3cc3e89d758e24526bb3e9a47e",
+    "title": "",
+    "price": 25000000,
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''"
+    ]
+  },
+  {
+    "doc_id": "afa5e44788e2a0d8d1f21a20c044ae34daadcad6aef13d1e6e8a38c60a29fb0b",
+    "title": "",
+    "price": 2200000,
+    "bedrooms": 2,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''"
+    ]
+  },
+  {
+    "doc_id": "b0b24ac77256f4194b17a296d426604a5986e15684cac4a42d46cfddf071087f",
+    "title": "Ikoyi",
+    "price": 35000000,
+    "bedrooms": 1,
+    "bathrooms": 35,
+    "location": "Ikoyi",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Ikoyi'",
+      "Title too short (5 chars): 'Ikoyi'",
+      "Phone number as bathrooms: 35"
+    ]
+  },
+  {
+    "doc_id": "b1fdb171e48bcbb20d4d8f99c626a3ce348edf49b9c96f336f68e3ea30678be9",
+    "title": "Lekki",
+    "price": 0,
+    "bedrooms": null,
+    "bathrooms": null,
+    "location": "Lekki",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Lekki'",
+      "Title too short (5 chars): 'Lekki'",
+      "Missing price + bedrooms + short title"
+    ]
+  },
+  {
+    "doc_id": "b21f317520610237df3204fa9c9f55b7c2601b94af292ad0a62c92871bb48997",
+    "title": "Land.ng Marketplace",
+    "price": 0,
+    "bedrooms": null,
+    "bathrooms": null,
+    "location": "Lekki",
+    "url": "",
+    "reasons": [
+      "Missing price + bedrooms + short title"
+    ]
+  },
+  {
+    "doc_id": "b256d0e177d8529c3c4208c70101f2caa697add1697c00310086c767a8a2a8a9",
+    "title": "",
+    "price": 5550000000000000,
+    "bedrooms": 5,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Unrealistic price: 5,550,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "b27ee0d3f38f0c7eef94a96d979fe58fb8d34cb15de5183dddff8cad2a9a2d39",
+    "title": "Ikoyi",
+    "price": 35000000,
+    "bedrooms": 1,
+    "bathrooms": 35,
+    "location": "Ikoyi",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Ikoyi'",
+      "Title too short (5 chars): 'Ikoyi'",
+      "Phone number as bathrooms: 35"
+    ]
+  },
+  {
+    "doc_id": "b33dd7167d6ce478eaf1925081b89646c8a166dad5ff02ffa1f8a74ca3a8e2e8",
+    "title": "",
+    "price": 6004000000000000,
+    "bedrooms": null,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Unrealistic price: 6,004,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "b44f9dac54faea5f2cf7e0d27916ce1d887b372c0c46bb086d73d32c12152c47",
+    "title": "",
+    "price": 500000000000,
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''"
+    ]
+  },
+  {
+    "doc_id": "b7f15eaf13e1cda5f5313d888cf2e53a3653b3c13225e8bc0f89b68e028031a5",
+    "title": "",
+    "price": 320000000000000000,
+    "bedrooms": 4,
+    "bathrooms": 8,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Unrealistic price: 320,000,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "b8f4f75d56df3e2fdec1f25894dc30294d9fe78e196debb2dd9443c38302f1c2",
+    "title": "Oniru",
+    "price": 25000000,
+    "bedrooms": 1,
+    "bathrooms": 25,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (5 chars): 'Oniru'",
+      "Phone number as bathrooms: 25"
+    ]
+  },
+  {
+    "doc_id": "ba1d43b3a3d510deae5fdb480c62c3f6065815c3f7676c9dec98bbd8aab1ff46",
+    "title": "",
+    "price": 3850000,
+    "bedrooms": 3,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''"
+    ]
+  },
+  {
+    "doc_id": "ba7af7bc1ba7ac376fdb340a94270add040f5943940b2352ab697494ad0fe605",
+    "title": "View Listing",
+    "price": 350000000000000000,
+    "bedrooms": 3,
+    "bathrooms": 4,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (12 chars): 'View Listing'",
+      "Unrealistic price: 350,000,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "bdefffbf65b4e888df9d0cfede86cad15022b833c62d8ae12cd2c4045dcb2663",
+    "title": "Ikate",
+    "price": 1000000000,
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Ikate'",
+      "Title too short (5 chars): 'Ikate'"
+    ]
+  },
+  {
+    "doc_id": "be1aa3e639df558f5e509f8c3cf1237f28742cb9ff7e3dc5b8469a93ab1f802e",
+    "title": "",
+    "price": 5270000,
+    "bedrooms": 5,
+    "bathrooms": 5,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''"
+    ]
+  },
+  {
+    "doc_id": "c0796e63a257fffed8e7dd3814df806870902481b2b607066ce3ba413bbca690",
+    "title": "Ikate",
+    "price": 1000000000,
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Ikate'",
+      "Title too short (5 chars): 'Ikate'"
+    ]
+  },
+  {
+    "doc_id": "c0a20699da369f546ad9680efe24a523b405aff56df94b1a9fd7b28d847e85c6",
+    "title": "Ikate",
+    "price": 1000000000,
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Ikate'",
+      "Title too short (5 chars): 'Ikate'"
+    ]
+  },
+  {
+    "doc_id": "c1f3abcfd9f8e7e03c7a7efa2fce3df8468e5c19096ca5e5978be5c1c3d0b074",
+    "title": "Latest Posts",
+    "price": 25000000,
+    "bedrooms": 5,
+    "bathrooms": 1,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Latest Posts'",
+      "Title too short (12 chars): 'Latest Posts'"
+    ]
+  },
+  {
+    "doc_id": "c3ac59056f95b247e4644cdab2eee1cccf7f980831d3f2c6e6c3331d607f9872",
+    "title": "For Sale",
+    "price": 0,
+    "bedrooms": null,
+    "bathrooms": null,
+    "location": "Lekki",
+    "url": "",
+    "reasons": [
+      "Title too short (8 chars): 'For Sale'",
+      "Missing price + bedrooms + short title"
+    ]
+  },
+  {
+    "doc_id": "c982097877ec6a3d278f76955689b7a8c12352565747b142f7ed651e21b534ce",
+    "title": "Lagos State",
+    "price": 0,
+    "bedrooms": null,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (11 chars): 'Lagos State'",
+      "Missing price + bedrooms + short title"
+    ]
+  },
+  {
+    "doc_id": "cab7d59ae7d5fde67207e86c434c48454ae25a8c0b4aa36716da3d3b202c939c",
+    "title": "Ikoyi",
+    "price": 35000000,
+    "bedrooms": 1,
+    "bathrooms": 35,
+    "location": "Ikoyi",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Ikoyi'",
+      "Title too short (5 chars): 'Ikoyi'",
+      "Phone number as bathrooms: 35"
+    ]
+  },
+  {
+    "doc_id": "cc426845929f769e5ad5870c239a49ba623aaa7c97377d4a54027a6d5a833bce",
+    "title": "Lekki",
+    "price": 1600000000,
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "location": "Lekki",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Lekki'",
+      "Title too short (5 chars): 'Lekki'"
+    ]
+  },
+  {
+    "doc_id": "cd58d2c57ad4fe8e605b748106b298978493b1134120a228df0ef5c65cdb853d",
+    "title": "",
+    "price": 5450000000000000,
+    "bedrooms": 5,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Unrealistic price: 5,450,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "cdd82099fb0352f2b9293098fe187dc4de2439ec73c09c8604d395c00e9ebca0",
+    "title": "",
+    "price": 2800000000000,
+    "bedrooms": 2,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Unrealistic price: 2,800,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "d0108c35a4a1954ecdfb553c851f63d68f845d53bd7917163b378421276ebe91",
+    "title": "",
+    "price": 550000,
+    "bedrooms": 55,
+    "bathrooms": 55,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Phone number as bathrooms: 55"
+    ]
+  },
+  {
+    "doc_id": "d830a94678292f5575d8cc54fdd84ae43d63effb63d86fa1e7f4771395fac46e",
+    "title": "",
+    "price": 4210000000000000,
+    "bedrooms": 4,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Unrealistic price: 4,210,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "d89a286a7878f314f143c9d20a8cef0279c9348d396b053deae6f83c11b0f594",
+    "title": "Victoria Island",
+    "price": 25000000,
+    "bedrooms": 1,
+    "bathrooms": 25,
+    "location": "Victoria Island",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Victoria Island'",
+      "Phone number as bathrooms: 25"
+    ]
+  },
+  {
+    "doc_id": "d93fc72370097d13b55aa3fb5a8f9d6c9c25c23afe8b109d7cfac47aa29ed7fd",
+    "title": "Ikoyi",
+    "price": 6000000000,
+    "bedrooms": 16,
+    "bathrooms": 16,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Ikoyi'",
+      "Title too short (5 chars): 'Ikoyi'"
+    ]
+  },
+  {
+    "doc_id": "d9d0f7fd95bcac7db6d370753f1943f12bbc3bcf739d66a76cbe9508b86a4a76",
+    "title": "",
+    "price": 51818000,
+    "bedrooms": 5,
+    "bathrooms": 18,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''"
+    ]
+  },
+  {
+    "doc_id": "da9199c44c92f67f3597915a720a72be5f4b5a8db15e58c1acfa141c987d713c",
+    "title": "",
+    "price": 23000000000000,
+    "bedrooms": 2,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Unrealistic price: 23,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "dae3c4fd64abd297bc3e1619e73d88026dd2e15b367f1a5f7b00e2aac209f4a1",
+    "title": "Ikoyi",
+    "price": 35000000,
+    "bedrooms": 1,
+    "bathrooms": 35,
+    "location": "Ikoyi",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Ikoyi'",
+      "Title too short (5 chars): 'Ikoyi'",
+      "Phone number as bathrooms: 35"
+    ]
+  },
+  {
+    "doc_id": "dc6621afa255c2962722c1bea9dca645fcd4e5328dd55cdb6602fe0127a89bd0",
+    "title": "Brum Height 7 \u2013 Exclusive Smart 2-Bedroom Apartment in Lekki Phase 1",
+    "price": 721250000000000000,
+    "bedrooms": 7,
+    "bathrooms": 14,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Unrealistic price: 721,250,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "dc7bf833728546e7caf84f3a08a492108bf26de5c411b892ce73757924cb580c",
+    "title": "",
+    "price": 47500000000000,
+    "bedrooms": 4,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Unrealistic price: 47,500,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "de4b917829b13047c33ff72111a675e570a1cdb43ec6c4106885195362a43d6d",
+    "title": "Oniru",
+    "price": 25000000,
+    "bedrooms": 1,
+    "bathrooms": 25,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (5 chars): 'Oniru'",
+      "Phone number as bathrooms: 25"
+    ]
+  },
+  {
+    "doc_id": "decb559e20f2fc05634a40d5afc409cf86bd9f2727f6abbd058be6faae54026a",
+    "title": "",
+    "price": 38000000000000,
+    "bedrooms": 3,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Unrealistic price: 38,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "df5673e6676df1fb0f982b0281de88e739ebca550d71282be7cb51f3902536e4",
+    "title": "",
+    "price": 30000000,
+    "bedrooms": null,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''"
+    ]
+  },
+  {
+    "doc_id": "e26c2a00c6b82a649d37e00c92ec356031efaf0b33267a2bd325412f42adbdc7",
+    "title": "",
+    "price": 120000000,
+    "bedrooms": 9028506555,
+    "bathrooms": 9028506555,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Phone number as bathrooms: 9028506555"
+    ]
+  },
+  {
+    "doc_id": "e40785d4659811b9bfaeb218ad6eb5bb688211666ca809c3404d495bcae057f5",
+    "title": "",
+    "price": 2000000,
+    "bedrooms": 2,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''"
+    ]
+  },
+  {
+    "doc_id": "e4cb297406b6cf138fcabdf1edc0c5d31d83f6857da7227cdf8f876036209b2d",
+    "title": "",
+    "price": 250000,
+    "bedrooms": null,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''"
+    ]
+  },
+  {
+    "doc_id": "e609694856c18458cb15efbacde342a8b364b0f1f57d3f05b15c2322001e8a09",
+    "title": "2 bedroom flat in gbetu new road Lekki",
+    "price": 2800000000000,
+    "bedrooms": 2,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Unrealistic price: 2,800,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "e86ce6da008710d24f671b051fa2e520903e62131e3a5b16c3589c66496bede0",
+    "title": "Beautiful 5-Bed Detached Home for Sale in Osapa Lekki",
+    "price": 51500000000000000,
+    "bedrooms": 5,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Unrealistic price: 51,500,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "e887a60e594dfc6240fca63200da8d0c7ff4b1f546f297da5248b6760553c1d4",
+    "title": "",
+    "price": 5390000000000000,
+    "bedrooms": 5,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Unrealistic price: 5,390,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "eac178fa986413968f43aa5235571b5fb46108b4135446e85ecc8f72de9c6a6e",
+    "title": "",
+    "price": 5290000,
+    "bedrooms": 5,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''"
+    ]
+  },
+  {
+    "doc_id": "efe859ddfa84eb5e8b69b5d852bc36a91df7db01df5b40f912cfd65f2b393dfd",
+    "title": "",
+    "price": 2145000000000,
+    "bedrooms": 2,
+    "bathrooms": 10,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Unrealistic price: 2,145,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "f21c3a682b632f0791d1fc7cbacc2a40c22379e5080296fe77c7501fdb5c6b4c",
+    "title": "",
+    "price": 415000000000000,
+    "bedrooms": 4,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Unrealistic price: 415,000,000,000,000 NGN"
+    ]
+  },
+  {
+    "doc_id": "f2f2e0032d26f0806acb0f611226c15bd8a343dac23a3fd4d3caf901404cf07d",
+    "title": "",
+    "price": 5000000,
+    "bedrooms": 5,
+    "bathrooms": 34,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''",
+      "Phone number as bathrooms: 34"
+    ]
+  },
+  {
+    "doc_id": "f48fa0e9ef0455eae0a19208a830671016f4d6c4bc559ab223d568eb4f6ed578",
+    "title": "VIctoria Island",
+    "price": 0,
+    "bedrooms": null,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Generic title: 'VIctoria Island'",
+      "Missing price + bedrooms + short title"
+    ]
+  },
+  {
+    "doc_id": "f4be1b69939872b28c3b9e7dc9c17fc3ffce9df4cc8cbe380eda7d58a79b9cf4",
+    "title": "Victoria Island",
+    "price": 35000000,
+    "bedrooms": 1,
+    "bathrooms": 25,
+    "location": "Victoria Island",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Victoria Island'",
+      "Phone number as bathrooms: 25"
+    ]
+  },
+  {
+    "doc_id": "f855031d3b40d18cf32392e23e5428621d605ba3ed1d51cc9faf7d25838a4c49",
+    "title": "Ajah",
+    "price": 3000000,
+    "bedrooms": 16,
+    "bathrooms": 16,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Ajah'",
+      "Title too short (4 chars): 'Ajah'"
+    ]
+  },
+  {
+    "doc_id": "f856fec01c53dc80f4f95e27c840d4708e13f0a6071b3b84a4659c7c3e624561",
+    "title": "Ikate",
+    "price": 1000000000,
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Generic title: 'Ikate'",
+      "Title too short (5 chars): 'Ikate'"
+    ]
+  },
+  {
+    "doc_id": "f8d4c7b5eaae937b7ae5f9e047e97097c0c2fa3e28873002f1c47ba57fd37c49",
+    "title": "",
+    "price": 4139999,
+    "bedrooms": 4,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''"
+    ]
+  },
+  {
+    "doc_id": "f947bf2dd65c4a3a6a29912a6022ab9b1da702c608eada654f5fd8f46eaba11b",
+    "title": "",
+    "price": 4179999,
+    "bedrooms": 4,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''"
+    ]
+  },
+  {
+    "doc_id": "fa589a19d2c8694c9ed225a75634151ac8ee13d7d75db45b7f8e123173960adf",
+    "title": "",
+    "price": 60000000,
+    "bedrooms": 3,
+    "bathrooms": null,
+    "location": "",
+    "url": "",
+    "reasons": [
+      "Title too short (0 chars): ''"
+    ]
+  }
+]
