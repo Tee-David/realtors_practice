@@ -419,7 +419,9 @@ jobs:
 
           files_copied = 0
           for session_folder in session_folders:
-              session_sites = session_folder / 'sites'
+              # Artifacts uploaded with path 'backend/exports/' so structure is:
+              # session-exports/session-X-exports/backend/exports/sites/...
+              session_sites = session_folder / 'backend' / 'exports' / 'sites'
               if session_sites.exists():
                   for site_folder in session_sites.iterdir():
                       if site_folder.is_dir():
@@ -430,7 +432,11 @@ jobs:
                               files_copied += 1
                               print(f"Copied: {file.name}")
               else:
-                  print(f"WARNING: No 'sites' folder in {session_folder.name}")
+                  print(f"WARNING: No 'backend/exports/sites' folder in {session_folder.name}")
+                  # Debug: show what's actually in the session folder
+                  print(f"Contents of {session_folder.name}:")
+                  for item in session_folder.rglob('*'):
+                      print(f"  {item.relative_to(session_folder)}")
 
           print(f"\nConsolidation complete!")
           print(f"Total files copied: {files_copied}")
@@ -618,5 +624,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: consolidated-exports-${{ github.run_number }}
-          path: exports/cleaned/
+          path: exports/sites/
           retention-days: 30
