@@ -1,9 +1,10 @@
 """
 JSON Sanitizer Utility
 Removes NaN, Infinity, and -Infinity values that break JSON serialization
-Converts Firestore GeoPoint objects to dictionaries
+Converts Firestore GeoPoint and DatetimeWithNanoseconds objects to JSON-safe types
 """
 import math
+from datetime import datetime
 from typing import Any, Dict, List, Union
 
 
@@ -21,6 +22,22 @@ def sanitize_for_json(obj: Any) -> Any:
     """
     if obj is None:
         return None
+
+    # Handle Firestore DatetimeWithNanoseconds (MUST be before datetime check!)
+    # Convert to ISO format string
+    if hasattr(obj, 'isoformat') and hasattr(obj, 'timestamp') and not isinstance(obj, datetime):
+        try:
+            return obj.isoformat()
+        except Exception:
+            # Fallback to timestamp
+            try:
+                return obj.timestamp()
+            except Exception:
+                return None
+
+    # Handle Python datetime objects
+    if isinstance(obj, datetime):
+        return obj.isoformat()
 
     # Handle Firestore GeoPoint objects (MUST be before dict check!)
     # Check for GeoPoint by duck typing (has latitude and longitude attributes)
