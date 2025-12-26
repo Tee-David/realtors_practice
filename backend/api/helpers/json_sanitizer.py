@@ -1,6 +1,7 @@
 """
 JSON Sanitizer Utility
 Removes NaN, Infinity, and -Infinity values that break JSON serialization
+Converts Firestore GeoPoint objects to dictionaries
 """
 import math
 from typing import Any, Dict, List, Union
@@ -10,6 +11,7 @@ def sanitize_for_json(obj: Any) -> Any:
     """
     Recursively sanitize an object for JSON serialization.
     Replaces NaN, Infinity, -Infinity with None or appropriate values.
+    Converts Firestore GeoPoint objects to {latitude: float, longitude: float}.
 
     Args:
         obj: Any Python object to sanitize
@@ -19,6 +21,18 @@ def sanitize_for_json(obj: Any) -> Any:
     """
     if obj is None:
         return None
+
+    # Handle Firestore GeoPoint objects
+    # Check for GeoPoint by duck typing (has latitude and longitude attributes)
+    if hasattr(obj, 'latitude') and hasattr(obj, 'longitude'):
+        try:
+            return {
+                'latitude': sanitize_for_json(obj.latitude),
+                'longitude': sanitize_for_json(obj.longitude)
+            }
+        except Exception:
+            # If conversion fails, return None
+            return None
 
     # Handle floats - check for NaN and Infinity
     if isinstance(obj, float):
