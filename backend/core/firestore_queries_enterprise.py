@@ -46,6 +46,7 @@ def _safe_get(dictionary: Dict, *keys, default='N/A'):
 def _clean_property_dict(prop: Dict[str, Any]) -> Dict[str, Any]:
     """
     Clean a property dictionary to ensure all critical fields are present.
+    Converts Firestore GeoPoint objects to JSON-serializable dicts.
 
     Adds user-friendly defaults for missing or None values.
 
@@ -53,8 +54,18 @@ def _clean_property_dict(prop: Dict[str, Any]) -> Dict[str, Any]:
         prop: Property dictionary from Firestore
 
     Returns:
-        Cleaned property dictionary with guaranteed fields
+        Cleaned property dictionary with guaranteed fields and JSON-safe types
     """
+    # Convert GeoPoint objects to dicts FIRST (before any other processing)
+    if 'location' in prop and prop['location']:
+        coordinates = prop['location'].get('coordinates')
+        if coordinates and hasattr(coordinates, 'latitude') and hasattr(coordinates, 'longitude'):
+            # Convert Firestore GeoPoint to JSON-serializable dict
+            prop['location']['coordinates'] = {
+                'latitude': coordinates.latitude,
+                'longitude': coordinates.longitude
+            }
+
     # Ensure basic_info has required fields
     if 'basic_info' in prop and prop['basic_info']:
         basic_info = prop['basic_info']

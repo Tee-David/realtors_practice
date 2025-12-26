@@ -52,6 +52,20 @@ from api.helpers.json_sanitizer import sanitize_for_json
 app = Flask(__name__)
 CORS(app)  # Enable CORS for Next.js frontend
 
+# Custom JSON encoder that handles GeoPoint objects
+class GeoPointEncoder(json.JSONEncoder):
+    def default(self, obj):
+        # Handle Firestore GeoPoint objects
+        if hasattr(obj, 'latitude') and hasattr(obj, 'longitude'):
+            return {
+                'latitude': obj.latitude,
+                'longitude': obj.longitude
+            }
+        return super().default(obj)
+
+# Configure Flask to use custom JSON encoder
+app.json_encoder = GeoPointEncoder
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,

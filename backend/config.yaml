@@ -60,7 +60,7 @@ retry:
   retry_on_zero_results: false
 sites:
   adronhomes:
-    enabled: false
+    enabled: true
     name: Adron Homes
     parser: specials
     url: https://adronhomesproperties.com/

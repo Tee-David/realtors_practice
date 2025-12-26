@@ -22,16 +22,20 @@ def sanitize_for_json(obj: Any) -> Any:
     if obj is None:
         return None
 
-    # Handle Firestore GeoPoint objects
+    # Handle Firestore GeoPoint objects (MUST be before dict check!)
     # Check for GeoPoint by duck typing (has latitude and longitude attributes)
-    if hasattr(obj, 'latitude') and hasattr(obj, 'longitude'):
+    # This handles any object with these attributes, not just firebase GeoPoint
+    if hasattr(obj, 'latitude') and hasattr(obj, 'longitude') and not isinstance(obj, dict):
         try:
+            lat = float(obj.latitude) if not (isinstance(obj.latitude, float) and (math.isnan(obj.latitude) or math.isinf(obj.latitude))) else None
+            lng = float(obj.longitude) if not (isinstance(obj.longitude, float) and (math.isnan(obj.longitude) or math.isinf(obj.longitude))) else None
             return {
-                'latitude': sanitize_for_json(obj.latitude),
-                'longitude': sanitize_for_json(obj.longitude)
+                'latitude': lat,
+                'longitude': lng
             }
-        except Exception:
+        except Exception as e:
             # If conversion fails, return None
+            print(f"Warning: Failed to convert GeoPoint-like object: {e}")
             return None
 
     # Handle floats - check for NaN and Infinity
