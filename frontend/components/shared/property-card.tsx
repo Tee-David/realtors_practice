@@ -50,18 +50,23 @@ function normalizeProperty(property: any) {
 }
 
 // Enterprise-grade data quality helpers
-function isValidImageUrl(url: string | undefined): boolean {
-  if (!url) return false;
+function normalizeImageUrl(url: string | undefined): string | undefined {
+  if (!url) return undefined;
 
   // Reject relative paths (../../, ../, ./)
-  if (url.startsWith('../') || url.startsWith('./')) return false;
+  if (url.startsWith('../') || url.startsWith('./')) return undefined;
+
+  // Convert protocol-relative URLs to HTTPS
+  if (url.startsWith('//')) {
+    return `https:${url}`;
+  }
 
   // Accept absolute URLs (http://, https://) or absolute paths (/)
   if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('/')) {
-    return true;
+    return url;
   }
 
-  return false;
+  return undefined;
 }
 
 function getDisplayTitle(title: string | undefined, location: string | undefined, propertyType: string | undefined): string {
@@ -105,6 +110,7 @@ export function PropertyCard({ property, onClick }: PropertyCardProps) {
   const displayTitle = getDisplayTitle(normalized.title, safeLocation, normalized.property_type);
   const priceInfo = getDisplayPrice(normalized.price);
   const hasLowQuality = normalized.quality_score !== undefined && normalized.quality_score < 50;
+  const safeImageUrl = normalizeImageUrl(normalized.image_url);
 
   return (
     <Card
@@ -113,9 +119,9 @@ export function PropertyCard({ property, onClick }: PropertyCardProps) {
     >
       {/* Property Image */}
       <div className="relative h-48 w-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-        {isValidImageUrl(normalized.image_url) ? (
+        {safeImageUrl ? (
           <Image
-            src={normalized.image_url}
+            src={safeImageUrl}
             alt={displayTitle}
             fill
             className="object-cover transition-transform group-hover:scale-105"
