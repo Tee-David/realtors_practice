@@ -52,19 +52,22 @@ from api.helpers.json_sanitizer import sanitize_for_json
 app = Flask(__name__)
 CORS(app)  # Enable CORS for Next.js frontend
 
-# Custom JSON encoder that handles GeoPoint objects
-class GeoPointEncoder(json.JSONEncoder):
-    def default(self, obj):
-        # Handle Firestore GeoPoint objects
-        if hasattr(obj, 'latitude') and hasattr(obj, 'longitude'):
-            return {
-                'latitude': obj.latitude,
-                'longitude': obj.longitude
-            }
-        return super().default(obj)
+# Modern Flask 3.x approach: Use custom JSONProvider
+from flask.json.provider import DefaultJSONProvider
 
-# Configure Flask to use custom JSON encoder
-app.json_encoder = GeoPointEncoder
+class CustomJSONProvider(DefaultJSONProvider):
+    def default(self, obj):
+        # Use our comprehensive sanitizer for all objects
+        from api.helpers.json_sanitizer import sanitize_for_json
+        # Try to sanitize - this handles GeoPoint, DateTime, etc.
+        sanitized = sanitize_for_json(obj)
+        # If sanitizer returned the same object, let parent handle it
+        if sanitized is obj:
+            return super().default(obj)
+        return sanitized
+
+# Set custom JSON provider
+app.json = CustomJSONProvider(app)
 
 # Configure logging
 logging.basicConfig(
@@ -1107,19 +1110,27 @@ def firestore_for_sale():
         if isinstance(result, dict):
             logger.info(f"[DEBUG] result['total'] = {result.get('total')}")
             logger.info(f"[DEBUG] len(result['properties']) = {len(result.get('properties', []))}")
-            # Sanitize NaN/Infinity values before JSON serialization
+            # Sanitize NaN/Infinity/GeoPoint/DateTime values before JSON serialization
             sanitized_result = sanitize_for_json(result)
             # Add version marker to verify this code is running
-            sanitized_result['_debug_version'] = 'v3_nan_fix'
-            return jsonify(sanitized_result)
+            sanitized_result['_debug_version'] = 'v4_flask_json_fix'
+            # Use Response with explicit JSON encoding to bypass Flask's jsonify
+            import json
+            return Response(
+                json.dumps(sanitized_result),
+                mimetype='application/json',
+                headers={'Access-Control-Allow-Origin': '*'}
+            )
         else:
             # Old format - result is a list
             logger.warning(f"[DEBUG] Old format detected - returning list with len={len(result)}")
             sanitized_result = sanitize_for_json(result)
-            return jsonify({
-                'properties': sanitized_result,
-                'total': len(result)
-            })
+            import json
+            return Response(
+                json.dumps({'properties': sanitized_result, 'total': len(result)}),
+                mimetype='application/json',
+                headers={'Access-Control-Allow-Origin': '*'}
+            )
     except Exception as e:
         logger.error(f"Firestore for-sale error: {str(e)}")
         return jsonify({'error': str(e)}), 500
