@@ -310,7 +310,10 @@ jobs:
           echo "Estimated session time: ${{ needs.calculate.outputs.estimated_minutes }} min"
           echo ""
 
-          # Set up Firebase credentials
+          # Change to backend directory for all operations
+          cd backend
+
+          # Set up Firebase credentials (in backend directory now)
           if [ ! -z "$FIREBASE_CREDENTIALS" ]; then
             echo "$FIREBASE_CREDENTIALS" > firebase-temp-credentials.json
             export FIREBASE_SERVICE_ACCOUNT=firebase-temp-credentials.json
@@ -321,31 +324,35 @@ jobs:
           SITES="${{ matrix.session.sites }}"
           SITES_SPACE=$(echo "$SITES" | tr ',' ' ')
           echo "Enabling sites: $SITES_SPACE"
-          python backend/scripts/enable_sites.py $SITES_SPACE
+          python scripts/enable_sites.py $SITES_SPACE
 
           # Run scraper with verbose logging
           echo "Starting scraper at $(date)"
           set -x  # Print commands for debugging
-          python backend/main.py 2>&1 | tee scrape-session-${{ matrix.session.session_id }}.log
+          python main.py 2>&1 | tee ../scrape-session-${{ matrix.session.session_id }}.log
           set +x
           echo "Scraper completed at $(date)"
 
-          # Cleanup
+          # Cleanup Firebase credentials
           if [ -f "firebase-temp-credentials.json" ]; then
             rm firebase-temp-credentials.json
           fi
 
+          cd ..
+
       - name: Process exports
         run: |
           echo "Processing scraped data..."
-          python backend/watcher.py --once
+          cd backend
+          python watcher.py --once
+          cd ..
 
       - name: Upload session artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: session-${{ matrix.session.session_id }}-exports
-          path: exports/
+          path: backend/exports/
           retention-days: 7
 
   consolidate:

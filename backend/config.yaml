@@ -60,7 +60,7 @@ retry:
   retry_on_zero_results: false
 sites:
   adronhomes:
-    enabled: true
+    enabled: false
     name: Adron Homes
     parser: specials
     url: https://adronhomesproperties.com/
@@ -90,7 +90,7 @@ sites:
     parser: specials
     url: https://cuddlerealty.com/
   cwlagos:
-    enabled: true
+    enabled: false
     name: CW Real Estate
     parser: specials
     url: https://cwlagos.com/
@@ -517,5 +517,5 @@ sites:
   google:
     name: Google
     url: https://google.com
-    enabled: true
+    enabled: false
     parser: specials
