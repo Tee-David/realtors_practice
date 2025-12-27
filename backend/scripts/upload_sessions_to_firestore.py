@@ -146,7 +146,7 @@ def upload_file_to_firestore(
     file_path: str,
     site_key: str,
     uploaded_hashes: Set[str]
-) -> Tuple[int, int]:
+) -> Tuple[int, int, int]:
     """
     Upload a single export file to Firestore.
 
@@ -157,7 +157,7 @@ def upload_file_to_firestore(
         uploaded_hashes: Set of already uploaded hashes (for deduplication)
 
     Returns:
-        (uploaded_count, error_count) tuple
+        (uploaded_count, skipped_count, error_count) tuple
     """
     print(f"\n{'='*70}")
     print(f"PROCESSING: {site_key} - {Path(file_path).name}")
@@ -175,7 +175,7 @@ def upload_file_to_firestore(
 
         if total_rows == 0:
             print("WARNING: File is empty, skipping")
-            return 0, 0
+            return 0, 0, 0
 
         collection_ref = db.collection('properties')
         uploaded = 0
@@ -238,13 +238,13 @@ def upload_file_to_firestore(
         print(f"  Total rows: {total_rows}")
         print(f"{'='*70}\n")
 
-        return uploaded, errors
+        return uploaded, skipped, errors
 
     except Exception as e:
         print(f"ERROR: Failed to process file: {type(e).__name__}: {e}")
         import traceback
         print(traceback.format_exc())
-        return 0, 1
+        return 0, 0, 1
 
 
 def main():
@@ -272,12 +272,14 @@ def main():
     # Track uploaded hashes to prevent duplicates
     uploaded_hashes = set()
     total_uploaded = 0
+    total_skipped = 0
     total_errors = 0
 
     # Process each file
     for file_path, site_key in file_info:
-        uploaded, errors = upload_file_to_firestore(db, file_path, site_key, uploaded_hashes)
+        uploaded, skipped, errors = upload_file_to_firestore(db, file_path, site_key, uploaded_hashes)
         total_uploaded += uploaded
+        total_skipped += skipped
         total_errors += errors
 
     # Final summary
@@ -286,22 +288,46 @@ def main():
     print("="*70)
     print(f"Total files processed: {len(file_info)}")
     print(f"Total properties uploaded: {total_uploaded}")
+    print(f"Total properties skipped (duplicates): {total_skipped}")
     print(f"Total unique properties: {len(uploaded_hashes)}")
     print(f"Total errors: {total_errors}")
     print(f"\nFirestore collection: 'properties'")
     print(f"End time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print("="*70 + "\n")
 
+    # Determine success/failure based on actual errors, not just "no new uploads"
     if total_errors > 0:
-        print(f"WARNING: {total_errors} errors occurred during upload")
+        print(f"❌ FAILURE: {total_errors} errors occurred during upload")
         print("Check logs above for details")
         sys.exit(1)
-    elif total_uploaded == 0:
-        print("WARNING: No properties were uploaded!")
+    elif total_uploaded == 0 and total_skipped > 0:
+        # Successfully scraped properties, but all were duplicates
+        print("\n" + "="*70)
+        print("✅ SUCCESS: Scrape completed successfully!")
+        print("="*70)
+        print(f"Found {total_skipped} properties, but all were duplicates")
+        print("No new properties to upload (all already in Firestore)")
+        print("\nThis is NORMAL and indicates:")
+        print("  ✓ Scraper is working correctly")
+        print("  ✓ All scraped properties already exist in database")
+        print("  ✓ No duplicate data was added")
+        print("\n💡 TIP: This is expected when scraping the same sites frequently")
+        print("="*70)
+        sys.exit(0)  # ✅ SUCCESS - duplicates are normal!
+    elif total_uploaded == 0 and total_skipped == 0:
+        # No properties found at all - this might be a problem
+        print("❌ FAILURE: No properties were found in export files!")
         print("Check that session export files contain valid data")
-        sys.exit(1)
+        print("\nPossible causes:")
+        print("  1. Scraper failed to find any properties")
+        print("  2. All properties were filtered out (e.g., non-Lagos)")
+        print("  3. Export files are empty or corrupted")
+        sys.exit(1)  # ❌ FAILURE - truly no data found
     else:
-        print(f"[SUCCESS] Uploaded {total_uploaded} properties to Firestore")
+        # Successfully uploaded new properties
+        print(f"\n✅ SUCCESS: Uploaded {total_uploaded} new properties to Firestore")
+        if total_skipped > 0:
+            print(f"Also found {total_skipped} duplicates (already in database)")
         sys.exit(0)
 
 
