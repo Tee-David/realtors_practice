@@ -198,44 +198,73 @@ export function ScrapeTimeEstimate({
                 {estimate.timeout_message}
               </div>
             )}
-            <ul className="list-disc ml-6 text-slate-300 text-sm">
-              {estimate.recommendations.map((rec, i) => (
-                <li key={i}>{rec}</li>
-              ))}
-            </ul>
+            {estimate.recommendations && estimate.recommendations.length > 0 && (
+              <ul className="list-disc ml-6 text-slate-300 text-sm">
+                {estimate.recommendations.map((rec, i) => (
+                  <li key={i}>{rec}</li>
+                ))}
+              </ul>
+            )}
             <div className="text-xs text-slate-500 mt-2">
               Sites: {estimate.site_count} | Sessions: {estimate.sessions} |
               Batch: {estimate.batch_type}
             </div>
             {/* Granular breakdowns */}
-            <div className="mt-3 text-xs text-slate-400">
-              <div className="font-semibold mb-1">Breakdown:</div>
-              <ul className="ml-4 list-disc">
-                <li>
-                  Scraping per site: {estimate.breakdown?.scraping_per_site} min
-                </li>
-                <li>
-                  Geocoding per site: {estimate.breakdown?.geocoding_per_site}{" "}
-                  min
-                </li>
-                <li>
-                  Upload per site: {estimate.breakdown?.upload_per_site} min
-                </li>
-                <li>
-                  Watcher overhead: {estimate.breakdown?.watcher_overhead} min
-                </li>
-                <li>
-                  Buffer multiplier: {estimate.breakdown?.buffer_multiplier}
-                </li>
-              </ul>
-              <div className="mt-2">
-                Session time: {estimate.session_time_minutes} min (limit:{" "}
-                {estimate.session_timeout_limit} min)
+            {estimate.breakdown && (
+              <div className="mt-3 text-xs text-slate-400">
+                <div className="font-semibold mb-1">Breakdown:</div>
+                <ul className="ml-4 list-disc">
+                  {estimate.breakdown.scraping_per_site !== undefined && (
+                    <li>
+                      Scraping per site: {estimate.breakdown.scraping_per_site} min
+                    </li>
+                  )}
+                  {estimate.breakdown.geocoding_per_site !== undefined && (
+                    <li>
+                      Geocoding per site: {estimate.breakdown.geocoding_per_site} min
+                    </li>
+                  )}
+                  {estimate.breakdown.upload_per_site !== undefined && (
+                    <li>
+                      Upload per site: {estimate.breakdown.upload_per_site} min
+                    </li>
+                  )}
+                  {estimate.breakdown.watcher_overhead !== undefined && (
+                    <li>
+                      Watcher overhead: {estimate.breakdown.watcher_overhead} min
+                    </li>
+                  )}
+                  {estimate.breakdown.buffer_multiplier !== undefined && (
+                    <li>
+                      Buffer multiplier: {estimate.breakdown.buffer_multiplier}
+                    </li>
+                  )}
+                </ul>
               </div>
-              <div>Total timeout limit: {estimate.total_timeout_limit} min</div>
-              <div>Sites per session: {estimate.sites_per_session}</div>
-              <div>Max parallel sessions: {estimate.max_parallel_sessions}</div>
-            </div>
+            )}
+            {(estimate.session_time_minutes !== undefined ||
+              estimate.session_timeout_limit !== undefined ||
+              estimate.total_timeout_limit !== undefined ||
+              estimate.sites_per_session !== undefined ||
+              estimate.max_parallel_sessions !== undefined) && (
+              <div className="mt-3 text-xs text-slate-400 space-y-1">
+                {estimate.session_time_minutes !== undefined && estimate.session_timeout_limit !== undefined && (
+                  <div>
+                    Session time: {estimate.session_time_minutes} min (limit:{" "}
+                    {estimate.session_timeout_limit} min)
+                  </div>
+                )}
+                {estimate.total_timeout_limit !== undefined && (
+                  <div>Total timeout limit: {estimate.total_timeout_limit} min</div>
+                )}
+                {estimate.sites_per_session !== undefined && (
+                  <div>Sites per session: {estimate.sites_per_session}</div>
+                )}
+                {estimate.max_parallel_sessions !== undefined && (
+                  <div>Max parallel sessions: {estimate.max_parallel_sessions}</div>
+                )}
+              </div>
+            )}
           </div>
         )}
         {/* Test Scrape Modal (custom structure) */}

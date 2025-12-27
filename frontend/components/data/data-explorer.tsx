@@ -16,6 +16,8 @@ export default function DataExplorer() {
   const [totalCount, setTotalCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(20);
+  const [showLargePageWarning, setShowLargePageWarning] = useState(false);
+  const [pendingPageSize, setPendingPageSize] = useState<number | null>(null);
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -155,9 +157,16 @@ export default function DataExplorer() {
                 id="items-per-page"
                 value={itemsPerPage}
                 onChange={(e) => {
-                  setItemsPerPage(Number(e.target.value));
-                  setCurrentPage(1); // Reset to first page
-                  window.scrollTo({ top: 0, behavior: "smooth" });
+                  const newValue = Number(e.target.value);
+                  // Show warning for page sizes >= 200
+                  if (newValue >= 200) {
+                    setPendingPageSize(newValue);
+                    setShowLargePageWarning(true);
+                  } else {
+                    setItemsPerPage(newValue);
+                    setCurrentPage(1);
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }
                 }}
                 className="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-slate-600 transition-colors"
               >
@@ -179,6 +188,56 @@ export default function DataExplorer() {
                 onPageChange={setCurrentPage}
               />
             )}
+          </div>
+        )}
+
+        {/* Large Page Size Warning Dialog */}
+        {showLargePageWarning && (
+          <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+            <Card className="bg-slate-800 border-slate-700 max-w-md w-full">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center gap-2">
+                  <svg className="w-6 h-6 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                  Performance Warning
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="text-slate-300">
+                <p className="mb-4">
+                  Loading {pendingPageSize} items at once may cause performance issues or browser crashes on some devices.
+                </p>
+                <p className="mb-6 text-sm text-slate-400">
+                  Consider using the Export CSV feature instead for large datasets.
+                </p>
+                <div className="flex gap-3 justify-end">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setShowLargePageWarning(false);
+                      setPendingPageSize(null);
+                    }}
+                    className="border-slate-600 hover:bg-slate-700"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      if (pendingPageSize) {
+                        setItemsPerPage(pendingPageSize);
+                        setCurrentPage(1);
+                        window.scrollTo({ top: 0, behavior: "smooth" });
+                      }
+                      setShowLargePageWarning(false);
+                      setPendingPageSize(null);
+                    }}
+                    className="bg-yellow-600 hover:bg-yellow-700"
+                  >
+                    Continue Anyway
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         )}
       </div>

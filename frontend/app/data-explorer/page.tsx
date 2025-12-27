@@ -110,60 +110,43 @@ export default function DataExplorerPage() {
     };
 
     try {
-      // Check if we have complex filters (search query or multiple filters)
-      const hasComplexFilters = searchQuery ||
-        Object.keys(filters).filter(key => key !== 'listingType').length > 0;
+      // Check if we have any filters (excluding listingType which is handled separately)
+      const hasFilters = searchQuery ||
+        filters.location ||
+        filters.minPrice ||
+        filters.maxPrice ||
+        filters.bedrooms ||
+        filters.bathrooms ||
+        filters.propertyType ||
+        filters.siteKey ||
+        (filters.amenities && filters.amenities.length > 0);
 
-      if (hasComplexFilters) {
-        // Use search endpoint for complex queries
+      // ALWAYS use searchFirestore when there are any filters - it handles all cases properly
+      if (hasFilters || filters.listingType) {
         return await apiClient.searchFirestore({
           query: searchQuery || undefined,
           location: filters.location,
           property_type: filters.propertyType,
           min_price: filters.minPrice,
           max_price: filters.maxPrice,
-          min_bedrooms: filters.bedrooms,
-          bathrooms: filters.bathrooms,
+          min_bedrooms: filters.bedrooms, // API expects min_bedrooms
+          min_bathrooms: filters.bathrooms, // API expects min_bathrooms (not bathrooms)
           listing_type: filters.listingType,
           site_key: filters.siteKey,
-          amenities: filters.amenities,
           ...params,
         });
       }
 
-      // Use optimized endpoints for simple listing type filters
-      if (filters.listingType === "For Rent") {
-        return await apiClient.getFirestoreForRent(params);
-      } else if (filters.listingType === "For Sale") {
-        return await apiClient.getFirestoreForSale(params);
-      }
-
-      // Default to For Sale endpoint when no filters
+      // Default to For Sale endpoint when no filters at all
       return await apiClient.getFirestoreForSale(params);
     } catch (error: any) {
-      try {
-        if (searchQuery || Object.keys(filters).length > 0) {
-          return await apiClient.queryProperties({
-            query: searchQuery || undefined,
-            filters: {
-              location: filters.location,
-              property_type: filters.propertyType,
-              min_price: filters.minPrice,
-              max_price: filters.maxPrice,
-              bedrooms: filters.bedrooms,
-              bathrooms: filters.bathrooms,
-              amenities: filters.amenities,
-              listing_type: filters.listingType,
-              site_key: filters.siteKey,
-            },
-            ...params,
-          });
-        }
-
-        return await apiClient.getAllData(params);
-      } catch (legacyError: any) {
-        return { properties: [], total: 0, error: legacyError.message };
-      }
+      console.error('[DataExplorer] API Error:', error);
+      // Return empty result with error message instead of throwing
+      return {
+        properties: [],
+        total: 0,
+        error: error.message || 'Failed to fetch properties'
+      };
     }
   }, [currentPage, searchQuery, filters, hideIncompleteListing, itemsPerPage]);
 
@@ -222,6 +205,10 @@ export default function DataExplorerPage() {
   };
 
   const handleItemsPerPageChange = (value: number) => {
+    // Warn user if selecting large pagination (performance impact)
+    if (value > 200 && (searchQuery || Object.keys(filters).length > 0)) {
+      console.warn('[DataExplorer] Large pagination with filters may impact performance');
+    }
     setItemsPerPage(value);
     setCurrentPage(1); // Reset to first page when changing items per page
     window.scrollTo({ top: 0, behavior: "smooth" });

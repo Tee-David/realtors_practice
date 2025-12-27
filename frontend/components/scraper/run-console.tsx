@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useCallback } from "react";
-import { RefreshCw } from "lucide-react";
+import { useState, useCallback, useEffect } from "react";
+import { RefreshCw, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { apiClient } from "@/lib/api";
 import { useApi, usePolling } from "@/lib/hooks/useApi";
@@ -10,15 +10,23 @@ import {
   LogResponse,
   ScrapeHistory,
   ScrapeHistoryItem,
+  GitHubWorkflowLogsResponse,
 } from "@/lib/types";
 import { toast } from "sonner";
 
 interface RunConsoleProps {
   isRunning: boolean;
+  githubRunId?: number;
 }
 
-export function RunConsole({ isRunning }: RunConsoleProps) {
+export function RunConsole({ isRunning, githubRunId }: RunConsoleProps) {
   const [activeTab, setActiveTab] = useState("current");
+
+  // DEBUG: Log when githubRunId changes
+  useEffect(() => {
+    console.log('[RunConsole] githubRunId changed:', githubRunId);
+    console.log('[RunConsole] isRunning:', isRunning);
+  }, [githubRunId, isRunning]);
 
   // Only use new polling and history logic below
 
@@ -51,6 +59,34 @@ export function RunConsole({ isRunning }: RunConsoleProps) {
   const { data: historyData, refetch: refetchHistory } =
     useApi<ScrapeHistoryItem[]>(getHistory);
 
+  // Poll for GitHub workflow logs when run ID is available
+  const getGithubLogs = useCallback(async (): Promise<GitHubWorkflowLogsResponse | null> => {
+    if (!githubRunId) {
+      console.log('[RunConsole] No githubRunId, skipping log fetch');
+      return null;
+    }
+    try {
+      console.log('[RunConsole] Fetching logs for run:', githubRunId);
+      const logs = await apiClient.getWorkflowLogs(githubRunId, { tail: 200 });
+      console.log('[RunConsole] Received logs:', logs);
+      return logs;
+    } catch (error) {
+      console.error("[RunConsole] Failed to fetch GitHub logs:", error);
+      return null;
+    }
+  }, [githubRunId]);
+
+  const { data: githubLogsData } = usePolling<GitHubWorkflowLogsResponse | null>(
+    getGithubLogs,
+    githubRunId ? 10000 : 60000, // Poll every 10s if run ID exists, otherwise 60s
+    !!githubRunId
+  );
+
+  // DEBUG: Log when githubLogsData changes
+  useEffect(() => {
+    console.log('[RunConsole] githubLogsData updated:', githubLogsData);
+  }, [githubLogsData]);
+
   const handleRefresh = () => {
     toast.success("Logs refreshed");
   };
@@ -60,6 +96,7 @@ export function RunConsole({ isRunning }: RunConsoleProps) {
     const sitePrefix = log.site ? `[${log.site}] ` : "";
     return `> [${timestamp}] ${sitePrefix}${log.message}`;
   };
+
   const tabs = [
     { id: "current", label: "Current Run" },
     { id: "errors", label: "Error Logs" },
@@ -109,22 +146,107 @@ export function RunConsole({ isRunning }: RunConsoleProps) {
         <div className="bg-slate-900 rounded-lg p-3 sm:p-4 h-48 sm:h-64 overflow-y-auto font-mono text-xs sm:text-sm">
           {activeTab === "current" && (
             <div className="space-y-1">
-              {currentLogs && currentLogs.length > 0 ? (
-                currentLogs.map((log: LogEntry, index: number) => (
-                  <div
-                    key={`log-${index}`}
-                    className="text-green-400 break-all"
-                  >
-                    {formatLogEntry(log)}
+              {/* Show GitHub workflow logs if available */}
+              {githubRunId && githubLogsData && githubLogsData.jobs && githubLogsData.jobs.length > 0 ? (
+                <div className="space-y-3">
+                  <div className="text-blue-400 text-sm font-semibold flex items-center gap-2">
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                    GitHub Workflow Run #{githubRunId}
                   </div>
-                ))
-              ) : (
-                <div className="text-slate-400">No recent logs</div>
-              )}
-              {isRunning && (
-                <div className="text-blue-400 animate-pulse">
-                  {"> Running..."}
+                  {githubLogsData.jobs.map((job) => (
+                    <div key={`job-${job.id}`} className="space-y-1">
+                      {/* Job Header */}
+                      <div className="flex items-center justify-between pb-1 border-b border-slate-700">
+                        <div className="flex items-center gap-2">
+                          <span className={`font-semibold text-xs ${
+                            job.status === "completed" && job.conclusion === "success"
+                              ? "text-green-400"
+                              : job.status === "in_progress"
+                              ? "text-blue-400"
+                              : job.status === "queued"
+                              ? "text-yellow-400"
+                              : "text-red-400"
+                          }`}>
+                            {job.status === "completed" && job.conclusion === "success" ? "✓" :
+                             job.status === "in_progress" ? "⟳" :
+                             job.status === "queued" ? "⏱" : "✗"}
+                          </span>
+                          <span className="text-slate-300 text-xs font-medium">{job.name}</span>
+                        </div>
+                        <span className="text-slate-500 text-xs">
+                          {job.log_count} lines
+                        </span>
+                      </div>
+
+                      {/* Job Logs */}
+                      <div className="space-y-0.5 max-h-96 overflow-y-auto">
+                        {job.logs && job.logs.length > 0 ? (
+                          job.logs.map((line, lineIndex) => (
+                            <div
+                              key={`job-${job.id}-line-${lineIndex}`}
+                              className={`text-xs font-mono ${
+                                line.includes("ERROR") || line.includes("FAIL")
+                                  ? "text-red-400"
+                                  : line.includes("WARNING") || line.includes("WARN")
+                                  ? "text-yellow-400"
+                                  : line.includes("SUCCESS") || line.includes("✓")
+                                  ? "text-green-400"
+                                  : "text-slate-300"
+                              }`}
+                            >
+                              {line}
+                            </div>
+                          ))
+                        ) : (
+                          <div className="text-slate-500 text-xs">No logs available yet...</div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+
+                  {/* Link to GitHub Actions */}
+                  <div className="pt-2 border-t border-slate-700">
+                    <a
+                      href={`https://github.com/${process.env.NEXT_PUBLIC_GITHUB_OWNER || 'Tee-David'}/${process.env.NEXT_PUBLIC_GITHUB_REPO || 'realtors_practice'}/actions/runs/${githubRunId}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-400 hover:text-blue-300 text-xs flex items-center gap-1"
+                    >
+                      <ExternalLink className="w-3 h-3" />
+                      View full logs on GitHub
+                    </a>
+                  </div>
                 </div>
+              ) : (
+                /* Fallback to local logs */
+                <>
+                  {currentLogs && currentLogs.length > 0 ? (
+                    currentLogs.map((log: LogEntry, index: number) => (
+                      <div
+                        key={`log-${index}`}
+                        className="text-green-400 break-all text-sm"
+                      >
+                        {formatLogEntry(log)}
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-slate-400">
+                      {githubRunId ? (
+                        <div className="flex items-center gap-2">
+                          <RefreshCw className="w-4 h-4 animate-spin" />
+                          <span>Loading workflow logs...</span>
+                        </div>
+                      ) : (
+                        "No active scrape running. Start a scrape to see live logs here."
+                      )}
+                    </div>
+                  )}
+                  {isRunning && !githubRunId && (
+                    <div className="text-blue-400 animate-pulse">
+                      {"> Running..."}
+                    </div>
+                  )}
+                </>
               )}
             </div>
           )}

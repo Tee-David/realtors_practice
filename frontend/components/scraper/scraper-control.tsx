@@ -111,30 +111,38 @@ export function ScraperControl() {
   // Poll for GitHub workflow runs to track current run
   const getLatestWorkflowRuns = useCallback(async () => {
     try {
+      console.log('[ScraperControl] Fetching latest workflow runs...');
       const runs = await apiClient.listWorkflowRuns(1);
+      console.log('[ScraperControl] Received runs:', runs);
+
       if (runs && runs.length > 0) {
         const latestRun = runs[0];
+        console.log('[ScraperControl] Latest run:', latestRun);
 
         // Show logs for active runs OR recently completed runs (within 2 hours)
         if (latestRun.status === "in_progress" || latestRun.status === "queued") {
+          console.log('[ScraperControl] Setting githubRunId for active run:', latestRun.id);
           setGithubRunId(latestRun.id);
         } else if (latestRun.status === "completed") {
           // Check if run completed recently (within 2 hours)
           const completedAt = new Date(latestRun.updated_at);
           const now = new Date();
           const minutesAgo = (now.getTime() - completedAt.getTime()) / 1000 / 60;
+          console.log('[ScraperControl] Run completed', minutesAgo, 'minutes ago');
 
           if (minutesAgo < 120) {
             // Show logs for recently completed runs (within 2 hours)
+            console.log('[ScraperControl] Setting githubRunId for recent completed run:', latestRun.id);
             setGithubRunId(latestRun.id);
           } else {
             // Run is too old, clear it
+            console.log('[ScraperControl] Run too old, clearing githubRunId');
             setGithubRunId(undefined);
           }
         }
       }
     } catch (error) {
-      console.error("Failed to fetch workflow runs:", error);
+      console.error("[ScraperControl] Failed to fetch workflow runs:", error);
     }
   }, []);
 

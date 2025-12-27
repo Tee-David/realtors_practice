@@ -12,7 +12,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional
 from flask import Flask, jsonify, request, send_file, Response
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 import logging
 
 # Load environment variables from .env file
@@ -50,7 +50,9 @@ from api.helpers.json_sanitizer import sanitize_for_json
 
 # Initialize Flask app
 app = Flask(__name__)
-CORS(app)  # Enable CORS for Next.js frontend
+
+# Enable CORS - simple permissive configuration for development
+CORS(app, origins=["http://localhost:3000", "http://localhost:3001", "http://127.0.0.1:3000", "http://127.0.0.1:3001"])
 
 # Modern Flask 3.x approach: Use custom JSONProvider
 from flask.json.provider import DefaultJSONProvider
@@ -1095,11 +1097,13 @@ def firestore_all_properties():
 @app.route('/api/firestore/for-sale', methods=['GET'])
 def firestore_for_sale():
     """Get for-sale properties from Firestore (with pagination support)"""
+    print(f"[FIRESTORE FOR-SALE] Route hit!")
     try:
         from core.firestore_queries_enterprise import get_properties_by_listing_type
         limit = int(request.args.get('limit', 100))
         offset = int(request.args.get('offset', 0))
 
+        print(f"[DEBUG] API called with limit={limit}, offset={offset}")
         logger.info(f"[DEBUG] API called with limit={limit}, offset={offset}")
 
         result = get_properties_by_listing_type('sale', limit=limit, offset=offset)
@@ -1111,16 +1115,25 @@ def firestore_for_sale():
             logger.info(f"[DEBUG] result['total'] = {result.get('total')}")
             logger.info(f"[DEBUG] len(result['properties']) = {len(result.get('properties', []))}")
             # Sanitize NaN/Infinity/GeoPoint/DateTime values before JSON serialization
+            logger.info("[DEBUG] Calling sanitize_for_json...")
             sanitized_result = sanitize_for_json(result)
+            logger.info("[DEBUG] Sanitization complete")
             # Add version marker to verify this code is running
-            sanitized_result['_debug_version'] = 'v4_flask_json_fix'
+            sanitized_result['_debug_version'] = 'v5_with_logging'
             # Use Response with explicit JSON encoding to bypass Flask's jsonify
             import json
-            return Response(
-                json.dumps(sanitized_result),
-                mimetype='application/json',
-                headers={'Access-Control-Allow-Origin': '*'}
-            )
+            logger.info("[DEBUG] Converting to JSON...")
+            try:
+                json_str = json.dumps(sanitized_result)
+                logger.info(f"[DEBUG] JSON conversion SUCCESS - {len(json_str)} bytes")
+                return Response(
+                    json_str,
+                    mimetype='application/json',
+                    headers={'Access-Control-Allow-Origin': '*'}
+                )
+            except Exception as json_error:
+                logger.error(f"[DEBUG] JSON conversion FAILED: {json_error}")
+                raise
         else:
             # Old format - result is a list
             logger.warning(f"[DEBUG] Old format detected - returning list with len={len(result)}")
@@ -1301,18 +1314,37 @@ def firestore_site_properties(site_key):
 
 @app.route('/api/firestore/search', methods=['POST'])
 def firestore_search():
-    """Advanced property search"""
+    """Advanced property search with pagination limits"""
     try:
         from core.firestore_queries_enterprise import search_properties_advanced
         filters = request.get_json() or {}
+
+        # Add pagination limits to prevent huge payloads
+        MAX_LIMIT = 200  # Maximum items per request
+        limit = filters.get('limit', 20)
+        if limit > MAX_LIMIT:
+            logger.warning(f"Request limit {limit} exceeds maximum {MAX_LIMIT}, capping at {MAX_LIMIT}")
+            filters['limit'] = MAX_LIMIT
+
         properties = search_properties_advanced(filters)
         return jsonify({
             'properties': properties,
-            'total': len(properties)
+            'total': len(properties),
+            'capped_at_limit': limit > MAX_LIMIT
         })
     except Exception as e:
         logger.error(f"Firestore search error: {str(e)}")
         return jsonify({'error': str(e)}), 500
+
+@app.route('/api/query', methods=['POST', 'OPTIONS'])
+@cross_origin()
+def query_properties_alias():
+    """
+    Alias endpoint for /api/firestore/query for backward compatibility
+    Redirects to the Firestore query endpoint
+    """
+    # Forward to the firestore query endpoint
+    return query_firestore()
 
 @app.route('/api/firestore/query', methods=['POST'])
 def query_firestore():
@@ -2507,6 +2539,132 @@ def download_artifact(artifact_id):
         return jsonify({'error': f'GitHub API request failed: {str(e)}'}), 500
     except Exception as e:
         logger.error(f"Error getting artifact download URL: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/github/workflow-runs/<int:run_id>/logs', methods=['GET'])
+def get_workflow_logs(run_id):
+    """
+    Get logs for a specific GitHub Actions workflow run
+
+    Query params:
+        - job_id: Optional specific job ID to fetch logs for
+        - tail: Number of recent lines to return (default: 100, max: 1000)
+
+    Returns:
+        {
+            "run_id": 12345,
+            "jobs": [
+                {
+                    "id": 67890,
+                    "name": "Scrape Session 1",
+                    "status": "in_progress",
+                    "conclusion": null,
+                    "started_at": "2024-01-01T12:00:00Z",
+                    "logs": ["log line 1", "log line 2", ...]
+                }
+            ]
+        }
+    """
+    try:
+        import requests
+        import re
+
+        # Get GitHub credentials from environment
+        github_token = os.getenv('GITHUB_TOKEN')
+        github_owner = os.getenv('GITHUB_OWNER')
+        github_repo = os.getenv('GITHUB_REPO')
+
+        if not all([github_token, github_owner, github_repo]):
+            return jsonify({
+                'error': 'Missing GitHub configuration',
+                'details': 'Set GITHUB_TOKEN, GITHUB_OWNER, and GITHUB_REPO environment variables'
+            }), 500
+
+        # Get query parameters
+        specific_job_id = request.args.get('job_id', type=int)
+        tail_lines = min(int(request.args.get('tail', 100)), 1000)
+
+        headers = {
+            'Accept': 'application/vnd.github+json',
+            'Authorization': f'Bearer {github_token}'
+        }
+
+        # First, get all jobs for this workflow run
+        jobs_url = f'https://api.github.com/repos/{github_owner}/{github_repo}/actions/runs/{run_id}/jobs'
+        jobs_response = requests.get(jobs_url, headers=headers, timeout=10)
+
+        if jobs_response.status_code != 200:
+            return jsonify({
+                'error': f'Failed to fetch workflow jobs: {jobs_response.status_code}',
+                'details': jobs_response.text
+            }), jobs_response.status_code
+
+        jobs_data = jobs_response.json()
+        jobs = jobs_data.get('jobs', [])
+
+        # Filter to specific job if requested
+        if specific_job_id:
+            jobs = [j for j in jobs if j['id'] == specific_job_id]
+
+        result_jobs = []
+
+        for job in jobs:
+            job_id = job['id']
+            job_name = job['name']
+            job_status = job['status']
+            job_conclusion = job['conclusion']
+            job_started_at = job.get('started_at')
+
+            # Fetch logs for this job
+            logs_url = f'https://api.github.com/repos/{github_owner}/{github_repo}/actions/jobs/{job_id}/logs'
+            logs_response = requests.get(logs_url, headers=headers, timeout=30)
+
+            logs_lines = []
+            if logs_response.status_code == 200:
+                # Parse the log text (GitHub returns plain text logs)
+                log_text = logs_response.text
+                # Split into lines and clean up ANSI color codes
+                raw_lines = log_text.split('\n')
+                # Remove ANSI escape sequences
+                ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
+                clean_lines = [ansi_escape.sub('', line).strip() for line in raw_lines if line.strip()]
+
+                # Return only the last N lines (tail)
+                logs_lines = clean_lines[-tail_lines:] if len(clean_lines) > tail_lines else clean_lines
+            elif logs_response.status_code == 404:
+                # Logs not available yet for queued/in-progress jobs
+                if job_status == 'queued':
+                    logs_lines = ["Job is queued and hasn't started yet..."]
+                elif job_status == 'in_progress':
+                    logs_lines = ["Job is in progress. Logs will be available soon..."]
+                else:
+                    logs_lines = ["Logs not available for this job."]
+
+            result_jobs.append({
+                'id': job_id,
+                'name': job_name,
+                'status': job_status,
+                'conclusion': job_conclusion,
+                'started_at': job_started_at,
+                'logs': logs_lines,
+                'log_count': len(logs_lines)
+            })
+
+        return jsonify({
+            'run_id': run_id,
+            'total_jobs': len(jobs),
+            'jobs': result_jobs
+        }), 200
+
+    except requests.exceptions.Timeout:
+        logger.error("GitHub API request timed out")
+        return jsonify({'error': 'Request to GitHub API timed out'}), 504
+    except requests.exceptions.RequestException as e:
+        logger.error(f"GitHub API request failed: {e}")
+        return jsonify({'error': f'GitHub API request failed: {str(e)}'}), 500
+    except Exception as e:
+        logger.error(f"Error getting workflow logs: {e}")
         return jsonify({'error': str(e)}), 500
 
 

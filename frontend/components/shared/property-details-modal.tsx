@@ -55,6 +55,9 @@ export const PropertyDetailsModal: React.FC<PropertyDetailsModalProps> = ({
 
   if (!normalized) return null;
 
+  // Check if image URL has query string (needs unoptimized mode)
+  const hasQueryString = normalized.image_url?.includes('?') ?? false;
+
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-lg w-full bg-slate-900 border-slate-700 text-white p-0">
@@ -80,6 +83,7 @@ export const PropertyDetailsModal: React.FC<PropertyDetailsModalProps> = ({
               alt={normalized.title}
               fill
               className="object-cover"
+              unoptimized={hasQueryString}
             />
           ) : (
             <div className="flex items-center justify-center h-full">

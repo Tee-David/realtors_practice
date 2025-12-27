@@ -112,6 +112,9 @@ export function PropertyCard({ property, onClick }: PropertyCardProps) {
   const hasLowQuality = normalized.quality_score !== undefined && normalized.quality_score < 50;
   const safeImageUrl = normalizeImageUrl(normalized.image_url);
 
+  // Check if image URL has query string (needs unoptimized mode)
+  const hasQueryString = safeImageUrl?.includes('?') ?? false;
+
   return (
     <Card
       className="bg-slate-800 border-slate-700 hover:border-slate-600 transition-all hover:scale-[1.02] cursor-pointer overflow-hidden group"
@@ -125,6 +128,7 @@ export function PropertyCard({ property, onClick }: PropertyCardProps) {
             alt={displayTitle}
             fill
             className="object-cover transition-transform group-hover:scale-105"
+            unoptimized={hasQueryString}
             onError={(e) => {
               // Fallback if image fails to load
               const target = e.target as HTMLImageElement;

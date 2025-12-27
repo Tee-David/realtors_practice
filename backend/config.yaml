@@ -90,7 +90,7 @@ sites:
     parser: specials
     url: https://cuddlerealty.com/
   cwlagos:
-    enabled: false
+    enabled: true
     name: CW Real Estate
     parser: specials
     url: https://cwlagos.com/

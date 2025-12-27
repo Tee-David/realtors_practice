@@ -341,10 +341,46 @@ jobs:
           cd ..
 
       - name: Process exports
+        env:
+          FIREBASE_CREDENTIALS: ${{ secrets.FIREBASE_CREDENTIALS }}
+          FIRESTORE_ENABLED: "1"
+          RP_PAGE_CAP: ${{ github.event.inputs.max_pages || github.event.client_payload.max_pages || '8' }}
+          RP_GEOCODE: ${{ github.event.inputs.geocode || github.event.client_payload.geocode || '1' }}
         run: |
           echo "Processing scraped data..."
           cd backend
-          python watcher.py --once
+
+          # Set up Firebase credentials if available
+          if [ ! -z "$FIREBASE_CREDENTIALS" ]; then
+            echo "$FIREBASE_CREDENTIALS" > firebase-temp-credentials.json
+            export FIREBASE_SERVICE_ACCOUNT=firebase-temp-credentials.json
+            echo "Firebase credentials configured for watcher"
+          fi
+
+          # Ensure exports directory structure exists
+          mkdir -p exports/sites exports/cleaned
+
+          # DEBUG: Check if exports were created by the scraper
+          echo "Checking for export files..."
+          if [ -d "exports/sites" ]; then
+            echo "Export files found:"
+            find exports/sites -type f \( -name "*.csv" -o -name "*.xlsx" \) -ls || echo "No CSV/XLSX files found"
+          else
+            echo "ERROR: exports/sites directory not found!"
+          fi
+
+          # Run watcher to process exports (allow failure - artifacts should still be uploaded)
+          python watcher.py --once || echo "WARNING: Watcher failed, but continuing..."
+
+          # DEBUG: Verify exports still exist after watcher
+          echo "After watcher processing:"
+          find exports/sites -type f -ls 2>/dev/null || echo "No files in exports/sites"
+
+          # Cleanup Firebase credentials
+          if [ -f "firebase-temp-credentials.json" ]; then
+            rm firebase-temp-credentials.json
+          fi
+
           cd ..
 
       - name: Upload session artifacts
@@ -385,6 +421,19 @@ jobs:
           merge-multiple: false
         continue-on-error: true  # Don't fail if no artifacts (all scrape sessions might have failed)
 
+      - name: Debug artifact contents
+        run: |
+          echo "=== Debugging Downloaded Artifacts ==="
+          echo "Listing session-exports directory:"
+          ls -la session-exports/ 2>/dev/null || echo "session-exports/ does not exist"
+          echo ""
+          echo "Detailed artifact structure:"
+          find session-exports/ -type f -o -type d 2>/dev/null | head -50 || echo "No artifacts found"
+          echo ""
+          echo "Looking for CSV/XLSX files:"
+          find session-exports/ -type f \( -name "*.csv" -o -name "*.xlsx" \) 2>/dev/null || echo "No CSV/XLSX files found"
+          echo "==================================="
+
       - name: Consolidate sessions
         run: |
           echo "Consolidating ${{ needs.calculate.outputs.total_sessions }} sessions..."
@@ -411,18 +460,25 @@ jobs:
               print("ERROR: No session artifact folders found!")
               print(f"Checked pattern: session-*-exports in {session_dir}")
               print(f"Directory contents:")
-              for item in session_dir.iterdir():
-                  print(f"  - {item.name}")
+              if session_dir.exists():
+                  for item in session_dir.iterdir():
+                      print(f"  - {item.name}")
               sys.exit(1)
 
           print(f"Found {len(session_folders)} session artifact folders")
 
           files_copied = 0
+          successful_sessions = 0
+          failed_sessions = []
+
           for session_folder in session_folders:
+              session_name = session_folder.name
               # Artifacts uploaded with path 'backend/exports/' so structure is:
               # session-exports/session-X-exports/backend/exports/sites/...
               session_sites = session_folder / 'backend' / 'exports' / 'sites'
+
               if session_sites.exists():
+                  session_files = 0
                   for site_folder in session_sites.iterdir():
                       if site_folder.is_dir():
                           dest = consolidated_dir / site_folder.name
@@ -430,22 +486,49 @@ jobs:
                           for file in site_folder.iterdir():
                               shutil.copy2(file, dest / file.name)
                               files_copied += 1
-                              print(f"Copied: {file.name}")
-              else:
-                  print(f"WARNING: No 'backend/exports/sites' folder in {session_folder.name}")
-                  # Debug: show what's actually in the session folder
-                  print(f"Contents of {session_folder.name}:")
-                  for item in session_folder.rglob('*'):
-                      print(f"  {item.relative_to(session_folder)}")
+                              session_files += 1
+                              print(f"Copied: {file.name} from {session_name}")
 
-          print(f"\nConsolidation complete!")
+                  if session_files > 0:
+                      successful_sessions += 1
+                      print(f"SUCCESS: {session_name} - copied {session_files} files")
+                  else:
+                      failed_sessions.append(f"{session_name} (no files in exports/sites)")
+              else:
+                  failed_sessions.append(f"{session_name} (exports/sites not found)")
+                  print(f"WARNING: No 'backend/exports/sites' folder in {session_name}")
+                  # Debug: show what's actually in the session folder
+                  print(f"Contents of {session_name}:")
+                  for item in session_folder.rglob('*'):
+                      if item.is_file():
+                          print(f"  FILE: {item.relative_to(session_folder)}")
+                      elif item.is_dir():
+                          print(f"  DIR:  {item.relative_to(session_folder)}")
+
+          print(f"\n{'='*60}")
+          print(f"CONSOLIDATION SUMMARY")
+          print(f"{'='*60}")
+          print(f"Total sessions processed: {len(session_folders)}")
+          print(f"Successful sessions: {successful_sessions}")
+          print(f"Failed sessions: {len(failed_sessions)}")
           print(f"Total files copied: {files_copied}")
           print(f"Destination: {consolidated_dir}")
 
+          if failed_sessions:
+              print(f"\nFailed sessions:")
+              for failed in failed_sessions:
+                  print(f"  - {failed}")
+
+          # Only fail if NO files were consolidated (allow partial success)
           if files_copied == 0:
-              print("ERROR: No files were consolidated!")
-              print("This means scraping sessions produced no export files")
+              print("\nERROR: No files were consolidated!")
+              print("All scraping sessions failed to produce export files")
               sys.exit(1)
+          elif len(failed_sessions) > 0:
+              print(f"\nWARNING: {len(failed_sessions)} session(s) failed, but {successful_sessions} succeeded")
+              print("Continuing with partial results...")
+          else:
+              print("\nSUCCESS: All sessions consolidated successfully!")
           EOF
 
       - name: Create master workbook (OPTIONAL - DISABLED BY DEFAULT)
