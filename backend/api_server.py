@@ -1879,8 +1879,9 @@ def generate_export():
         else:
             base_filename = f"properties_export_{timestamp}"
 
-        # Create exports/temp directory if it doesn't exist
-        temp_dir = Path('exports/temp')
+        # Create exports/temp directory if it doesn't exist (use absolute path)
+        backend_dir = Path(__file__).parent
+        temp_dir = backend_dir / 'exports' / 'temp'
         temp_dir.mkdir(parents=True, exist_ok=True)
 
         # Generate file based on format
@@ -1927,10 +1928,13 @@ def generate_export():
 def download_export_file(filename):
     """Download generated export file"""
     try:
-        filepath = Path('exports/temp') / filename
+        # Use absolute path to find the file
+        backend_dir = Path(__file__).parent
+        filepath = backend_dir / 'exports' / 'temp' / filename
 
         if not filepath.exists():
-            return jsonify({'error': 'File not found'}), 404
+            logger.error(f"Export file not found: {filepath}")
+            return jsonify({'error': 'File not found', 'path': str(filepath)}), 404
 
         # Determine mimetype based on extension
         extension = filepath.suffix.lower()
