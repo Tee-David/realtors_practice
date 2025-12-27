@@ -178,8 +178,8 @@ export function RunConsole({ isRunning, githubRunId }: RunConsoleProps) {
                         </span>
                       </div>
 
-                      {/* Job Logs */}
-                      <div className="space-y-0.5 max-h-96 overflow-y-auto">
+                      {/* Job Logs - Most Recent First */}
+                      <div className="space-y-0.5 max-h-96 overflow-y-auto flex flex-col-reverse">
                         {job.logs && job.logs.length > 0 ? (
                           job.logs.map((line, lineIndex) => (
                             <div
@@ -218,10 +218,10 @@ export function RunConsole({ isRunning, githubRunId }: RunConsoleProps) {
                   </div>
                 </div>
               ) : (
-                /* Fallback to local logs */
+                /* Fallback to local logs - Most Recent First */
                 <>
                   {currentLogs && currentLogs.length > 0 ? (
-                    currentLogs.map((log: LogEntry, index: number) => (
+                    [...currentLogs].reverse().map((log: LogEntry, index: number) => (
                       <div
                         key={`log-${index}`}
                         className="text-green-400 break-all text-sm"
@@ -254,7 +254,7 @@ export function RunConsole({ isRunning, githubRunId }: RunConsoleProps) {
           {activeTab === "errors" && (
             <div className="space-y-1">
               {errorLogs && errorLogs.length > 0 ? (
-                errorLogs.map((log: LogEntry, index: number) => (
+                [...errorLogs].reverse().map((log: LogEntry, index: number) => (
                   <div
                     key={`error-${index}`}
                     className="text-red-400 break-all"
