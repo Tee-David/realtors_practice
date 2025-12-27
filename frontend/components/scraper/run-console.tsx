@@ -135,6 +135,30 @@ export function RunConsole({ isRunning, githubRunId }: RunConsoleProps) {
     return `> [${timestamp}] ${sitePrefix}${log.message}`;
   };
 
+  // Memoize processed logs to improve performance
+  const processedGithubLogs = useMemo(() => {
+    if (!githubLogsData || !githubLogsData.jobs) return null;
+
+    // Process each job's logs and limit to maxVisibleLogs
+    return githubLogsData.jobs.map((job) => ({
+      ...job,
+      logs: job.logs ? job.logs.slice(0, maxVisibleLogs) : [],
+      totalLogCount: job.logs ? job.logs.length : 0,
+    }));
+  }, [githubLogsData, maxVisibleLogs]);
+
+  const processedCurrentLogs = useMemo(() => {
+    if (!currentLogs || currentLogs.length === 0) return [];
+    const reversed = [...currentLogs].reverse();
+    return reversed.slice(0, maxVisibleLogs);
+  }, [currentLogs, maxVisibleLogs]);
+
+  const processedErrorLogs = useMemo(() => {
+    if (!errorLogs || errorLogs.length === 0) return [];
+    const reversed = [...errorLogs].reverse();
+    return reversed.slice(0, maxVisibleLogs);
+  }, [errorLogs, maxVisibleLogs]);
+
   const tabs = [
     { id: "current", label: "Current Run" },
     { id: "errors", label: "Error Logs" },
@@ -185,13 +209,14 @@ export function RunConsole({ isRunning, githubRunId }: RunConsoleProps) {
           {activeTab === "current" && (
             <div className="space-y-1">
               {/* Show GitHub workflow logs if available */}
-              {githubRunId && githubLogsData && githubLogsData.jobs && githubLogsData.jobs.length > 0 ? (
+              {githubRunId && processedGithubLogs && processedGithubLogs.length > 0 ? (
                 <div className="space-y-3">
                   <div className="text-blue-400 text-sm font-semibold flex items-center gap-2">
-                    <RefreshCw className="w-4 h-4 animate-spin" />
+                    {!shouldPoll && <span className="text-xs text-slate-500">(Completed)</span>}
+                    {shouldPoll && <RefreshCw className="w-4 h-4 animate-spin" />}
                     GitHub Workflow Run #{githubRunId}
                   </div>
-                  {githubLogsData.jobs.map((job) => (
+                  {processedGithubLogs.map((job) => (
                     <div key={`job-${job.id}`} className="space-y-1">
                       {/* Job Header */}
                       <div className="flex items-center justify-between pb-1 border-b border-slate-700">
@@ -212,7 +237,9 @@ export function RunConsole({ isRunning, githubRunId }: RunConsoleProps) {
                           <span className="text-slate-300 text-xs font-medium">{job.name}</span>
                         </div>
                         <span className="text-slate-500 text-xs">
-                          {job.log_count} lines
+                          {job.totalLogCount > maxVisibleLogs
+                            ? `Showing ${maxVisibleLogs} of ${job.totalLogCount} lines`
+                            : `${job.totalLogCount} lines`}
                         </span>
                       </div>
 
@@ -239,6 +266,16 @@ export function RunConsole({ isRunning, githubRunId }: RunConsoleProps) {
                           <div className="text-slate-500 text-xs">No logs available yet...</div>
                         )}
                       </div>
+
+                      {/* Show "Load More" button if there are more logs */}
+                      {job.totalLogCount > maxVisibleLogs && (
+                        <button
+                          onClick={() => setMaxVisibleLogs(maxVisibleLogs + 100)}
+                          className="text-blue-400 hover:text-blue-300 text-xs mt-2"
+                        >
+                          Load more logs ({job.totalLogCount - maxVisibleLogs} remaining)
+                        </button>
+                      )}
                     </div>
                   ))}
 
@@ -258,15 +295,25 @@ export function RunConsole({ isRunning, githubRunId }: RunConsoleProps) {
               ) : (
                 /* Fallback to local logs - Most Recent First */
                 <>
-                  {currentLogs && currentLogs.length > 0 ? (
-                    [...currentLogs].reverse().map((log: LogEntry, index: number) => (
-                      <div
-                        key={`log-${index}`}
-                        className="text-green-400 break-all text-sm"
-                      >
-                        {formatLogEntry(log)}
-                      </div>
-                    ))
+                  {processedCurrentLogs.length > 0 ? (
+                    <>
+                      {processedCurrentLogs.map((log: LogEntry, index: number) => (
+                        <div
+                          key={`log-${index}`}
+                          className="text-green-400 break-all text-sm"
+                        >
+                          {formatLogEntry(log)}
+                        </div>
+                      ))}
+                      {currentLogs && currentLogs.length > maxVisibleLogs && (
+                        <button
+                          onClick={() => setMaxVisibleLogs(maxVisibleLogs + 100)}
+                          className="text-blue-400 hover:text-blue-300 text-xs mt-2"
+                        >
+                          Load more logs ({currentLogs.length - maxVisibleLogs} remaining)
+                        </button>
+                      )}
+                    </>
                   ) : (
                     <div className="text-slate-400">
                       {githubRunId ? (
@@ -291,15 +338,25 @@ export function RunConsole({ isRunning, githubRunId }: RunConsoleProps) {
 
           {activeTab === "errors" && (
             <div className="space-y-1">
-              {errorLogs && errorLogs.length > 0 ? (
-                [...errorLogs].reverse().map((log: LogEntry, index: number) => (
-                  <div
-                    key={`error-${index}`}
-                    className="text-red-400 break-all"
-                  >
-                    • {formatLogEntry(log)}
-                  </div>
-                ))
+              {processedErrorLogs.length > 0 ? (
+                <>
+                  {processedErrorLogs.map((log: LogEntry, index: number) => (
+                    <div
+                      key={`error-${index}`}
+                      className="text-red-400 break-all"
+                    >
+                      • {formatLogEntry(log)}
+                    </div>
+                  ))}
+                  {errorLogs && errorLogs.length > maxVisibleLogs && (
+                    <button
+                      onClick={() => setMaxVisibleLogs(maxVisibleLogs + 100)}
+                      className="text-blue-400 hover:text-blue-300 text-xs mt-2"
+                    >
+                      Load more errors ({errorLogs.length - maxVisibleLogs} remaining)
+                    </button>
+                  )}
+                </>
               ) : (
                 <div className="text-slate-400">No recent errors</div>
               )}
