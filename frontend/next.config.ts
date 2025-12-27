@@ -5,10 +5,6 @@ const nextConfig: NextConfig = {
     // !! Danger zone – no type checking at build time
     ignoreBuildErrors: true,
   },
-  eslint: {
-    // !! Danger zone – no ESLint during build
-    ignoreDuringBuilds: true,
-  },
   images: {
     remotePatterns: [
       {

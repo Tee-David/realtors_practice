@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import { RefreshCw, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { apiClient } from "@/lib/api";
@@ -21,6 +21,7 @@ interface RunConsoleProps {
 
 export function RunConsole({ isRunning, githubRunId }: RunConsoleProps) {
   const [activeTab, setActiveTab] = useState("current");
+  const [maxVisibleLogs, setMaxVisibleLogs] = useState(100); // Limit visible logs for performance
 
   // DEBUG: Log when githubRunId changes
   useEffect(() => {
@@ -76,11 +77,48 @@ export function RunConsole({ isRunning, githubRunId }: RunConsoleProps) {
     }
   }, [githubRunId]);
 
+  // Determine if we should continue polling
+  // Stop polling if:
+  // 1. No run ID exists
+  // 2. Run is completed (status === "completed")
+  const [shouldPoll, setShouldPoll] = useState(false);
+
   const { data: githubLogsData } = usePolling<GitHubWorkflowLogsResponse | null>(
     getGithubLogs,
     githubRunId ? 10000 : 60000, // Poll every 10s if run ID exists, otherwise 60s
-    !!githubRunId
+    shouldPoll
   );
+
+  // Update polling state based on run ID and workflow status
+  useEffect(() => {
+    if (!githubRunId) {
+      // No run ID, don't poll
+      setShouldPoll(false);
+      console.log('[RunConsole] No run ID, stopping polling');
+      return;
+    }
+
+    // Check if the workflow is still active
+    if (githubLogsData && githubLogsData.jobs && githubLogsData.jobs.length > 0) {
+      const allJobsCompleted = githubLogsData.jobs.every(
+        (job) => job.status === "completed"
+      );
+
+      if (allJobsCompleted) {
+        // All jobs completed, stop polling
+        setShouldPoll(false);
+        console.log('[RunConsole] All jobs completed, stopping polling');
+      } else {
+        // Jobs still running, continue polling
+        setShouldPoll(true);
+        console.log('[RunConsole] Jobs still running, continuing polling');
+      }
+    } else {
+      // Start polling when we have a run ID but no data yet
+      setShouldPoll(true);
+      console.log('[RunConsole] Starting polling for run ID:', githubRunId);
+    }
+  }, [githubRunId, githubLogsData]);
 
   // DEBUG: Log when githubLogsData changes
   useEffect(() => {

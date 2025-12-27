@@ -65,7 +65,7 @@ sites:
     parser: specials
     url: https://adronhomesproperties.com/
   ashproperties:
-    enabled: false
+    enabled: true
     name: Ash Properties & Constructions
     parser: specials
     url: https://ashpropertiesng.com/
