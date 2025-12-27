@@ -49,6 +49,7 @@ export function ScraperControl() {
   const [scrapeError, setScrapeError] = useState<string | null>(null);
   const [scrapeComplete, setScrapeComplete] = useState(false);
   const [refreshSites, setRefreshSites] = useState(0);
+  const [githubRunId, setGithubRunId] = useState<number | undefined>(undefined);
 
   // GitHub Actions Hook
   const {
@@ -107,6 +108,39 @@ export function ScraperControl() {
     }
   };
 
+  // Poll for GitHub workflow runs to track current run
+  const getLatestWorkflowRuns = useCallback(async () => {
+    try {
+      const runs = await apiClient.listWorkflowRuns(1);
+      if (runs && runs.length > 0) {
+        const latestRun = runs[0];
+
+        // Show logs for active runs OR recently completed runs (within 2 hours)
+        if (latestRun.status === "in_progress" || latestRun.status === "queued") {
+          setGithubRunId(latestRun.id);
+        } else if (latestRun.status === "completed") {
+          // Check if run completed recently (within 2 hours)
+          const completedAt = new Date(latestRun.updated_at);
+          const now = new Date();
+          const minutesAgo = (now.getTime() - completedAt.getTime()) / 1000 / 60;
+
+          if (minutesAgo < 120) {
+            // Show logs for recently completed runs (within 2 hours)
+            setGithubRunId(latestRun.id);
+          } else {
+            // Run is too old, clear it
+            setGithubRunId(undefined);
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Failed to fetch workflow runs:", error);
+    }
+  }, []);
+
+  // Poll for workflow runs
+  usePolling(getLatestWorkflowRuns, 15000, true);
+
   // GitHub Actions Scrape Trigger
   const handleTriggerGitHubScrape = async () => {
     try {
@@ -115,6 +149,19 @@ export function ScraperControl() {
         geocode: geocoding ? 1 : 0,
         sites: selectedSites,
       });
+
+      // Fetch the latest workflow run to get its ID
+      setTimeout(async () => {
+        try {
+          const runs = await apiClient.listWorkflowRuns(1);
+          if (runs && runs.length > 0) {
+            setGithubRunId(runs[0].id);
+          }
+        } catch (error) {
+          console.error("Failed to fetch workflow run ID:", error);
+        }
+      }, 3000); // Wait 3s for GitHub to create the run
+
       toast.success("GitHub Actions scrape triggered!", {
         description: res.message || "Workflow started.",
         duration: 4000,
@@ -619,7 +666,7 @@ export function ScraperControl() {
         {/* Run Console */}
         <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-6">
           <h3 className="text-lg font-semibold text-white mb-4">Run Console</h3>
-          <RunConsole isRunning={isRunning} />
+          <RunConsole isRunning={isRunning} githubRunId={githubRunId} />
         </div>
 
         {/* Error & Alert Center */}
