@@ -52,13 +52,15 @@ from api.helpers.json_sanitizer import sanitize_for_json
 app = Flask(__name__)
 
 # Enable CORS - allow both local development and production Vercel deployment
+# Using regex pattern to support all Vercel subdomains
+import re
 CORS(app, origins=[
     "http://localhost:3000",
     "http://localhost:3001",
     "http://127.0.0.1:3000",
     "http://127.0.0.1:3001",
     "https://realtors-practice.vercel.app",  # Production Vercel deployment
-    "https://*.vercel.app"  # All Vercel preview deployments
+    re.compile(r"^https://.*\.vercel\.app$")  # All Vercel preview deployments (regex pattern)
 ])
 
 # Modern Flask 3.x approach: Use custom JSONProvider
