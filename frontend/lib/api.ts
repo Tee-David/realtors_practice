@@ -428,7 +428,8 @@ export class RealEstateApiClient {
   // ============================================================================
 
   async listSavedSearches(): Promise<SavedSearch[]> {
-    return this.request<SavedSearch[]>("GET", "/searches");
+    const response = await this.request<{searches: SavedSearch[], total: number}>("GET", "/searches");
+    return response.searches;
   }
 
   async createSavedSearch(
