@@ -243,7 +243,15 @@ export function Sidebar({ currentPage, onPageChange, onLogout }: SidebarProps) {
         {/* Copyright Footer */}
         <div className="mt-4 pt-4 px-3 text-xs text-slate-500 border-t border-slate-800">
           <p>
-            © {new Date().getFullYear()} Realtor's Practice
+            © {new Date().getFullYear()}{" "}
+            <a
+              href="https://realtorspractice.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-400 hover:text-blue-300 hover:underline transition-colors"
+            >
+              Realtor's Practice
+            </a>
           </p>
           <p className="mt-1">
             Powered by{" "}
