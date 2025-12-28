@@ -1907,9 +1907,14 @@ def generate_export():
 
         file_size = filepath.stat().st_size
 
+        # Return full URL with backend host and port (fixes 404 when frontend opens URL)
+        # Use hardcoded backend URL since request.host_url returns frontend URL when proxied
+        backend_url = os.getenv('BACKEND_URL', 'http://localhost:5000/')
+        download_url = f"{backend_url}api/export/download/{filename}"
+
         return jsonify({
             'success': True,
-            'download_url': f'/api/export/download/{filename}',
+            'download_url': download_url,
             'filename': filename,
             'format': export_format,
             'record_count': len(df),
