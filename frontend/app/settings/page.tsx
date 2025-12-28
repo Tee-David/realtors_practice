@@ -38,6 +38,7 @@ import {
   Users,
 } from "lucide-react";
 import { toast } from "sonner";
+import { mockUsers } from "@/lib/mockData";
 
 /**
  * Settings Admin Page
@@ -604,6 +605,17 @@ function UsersTab() {
       } catch (e) {
         // Ignore parse errors
       }
+    }
+
+    // If no users in localStorage, use mock data
+    if (usersList.length === 0) {
+      const mockUsersList = mockUsers.map((user) => ({
+        email: user.email,
+        username: user.name,
+        role: user.role.toLowerCase(),
+        createdAt: new Date().toISOString(),
+      }));
+      usersList.push(...mockUsersList);
     }
 
     setUsers(usersList);

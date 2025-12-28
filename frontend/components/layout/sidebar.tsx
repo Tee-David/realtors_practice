@@ -250,7 +250,7 @@ export function Sidebar({ currentPage, onPageChange, onLogout }: SidebarProps) {
               rel="noopener noreferrer"
               className="text-blue-400 hover:text-blue-300 hover:underline transition-colors"
             >
-              Realtor's Practice
+              Realtors' Practice
             </a>
           </p>
           <p className="mt-1">
@@ -261,7 +261,7 @@ export function Sidebar({ currentPage, onPageChange, onLogout }: SidebarProps) {
               rel="noopener noreferrer"
               className="text-blue-400 hover:text-blue-300 hover:underline transition-colors"
             >
-              We Dig Creativity Team
+              WDC Solutions
             </a>
           </p>
         </div>
