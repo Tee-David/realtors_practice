@@ -428,25 +428,47 @@ export class RealEstateApiClient {
   // ============================================================================
 
   async listSavedSearches(): Promise<SavedSearch[]> {
-    const response = await this.request<{searches: SavedSearch[], total: number}>("GET", "/searches");
-    return response.searches;
+    const response = await this.request<{searches: any[], total: number}>("GET", "/searches");
+    // Transform backend 'criteria' to frontend 'query'
+    return response.searches.map(search => ({
+      ...search,
+      query: search.criteria || search.query,
+    }));
   }
 
   async createSavedSearch(
     search: Omit<SavedSearch, "id" | "created_at">
   ): Promise<{ id: string; message: string }> {
-    return this.request("POST", "/searches", search);
+    // Transform request to match backend expectations
+    const requestBody = {
+      user_id: "default-user", // Demo app - single user
+      name: search.name,
+      criteria: search.query, // Backend expects 'criteria' not 'query'
+      alert_frequency: search.alert_frequency || "daily",
+    };
+    return this.request("POST", "/searches", requestBody);
   }
 
   async getSavedSearch(searchId: string): Promise<SavedSearch> {
-    return this.request<SavedSearch>("GET", `/searches/${searchId}`);
+    const search = await this.request<any>("GET", `/searches/${searchId}`);
+    // Transform backend 'criteria' to frontend 'query'
+    return {
+      ...search,
+      query: search.criteria || search.query,
+    };
   }
 
   async updateSavedSearch(
     searchId: string,
     updates: Partial<SavedSearch>
   ): Promise<{ message: string }> {
-    return this.request("PUT", `/searches/${searchId}`, updates);
+    // Transform request to match backend expectations
+    const requestBody: any = { ...updates };
+    if (updates.query) {
+      requestBody.criteria = updates.query; // Backend expects 'criteria' not 'query'
+      delete requestBody.query;
+    }
+    return this.request("PUT", `/searches/${searchId}`, requestBody);
   }
 
   async deleteSavedSearch(searchId: string): Promise<{ message: string }> {
