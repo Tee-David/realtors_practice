@@ -1120,10 +1120,10 @@ export default function DashboardPage() {
 
   // Access stats.data since API returns { data: {...}, success: true }
   const statsData = stats?.data || stats;
-  const totalProperties = statsData?.total_properties || 0;
-  const forSaleCount = statsData?.for_sale || statsData?.total_for_sale || statsData?.for_sale_count || statsData?.by_status?.for_sale || 0;
-  const forRentCount = statsData?.for_rent || statsData?.total_for_rent || statsData?.for_rent_count || statsData?.by_status?.for_rent || 0;
-  const avgPriceForSale = statsData?.price_range?.avg || statsData?.avg_price_for_sale || statsData?.avg_price || 0;
+  const totalProperties = statsData?.total_properties || statsData?.overview?.total_listings || 0;
+  const forSaleCount = statsData?.for_sale || statsData?.total_for_sale || statsData?.for_sale_count || statsData?.by_status?.for_sale || statsData?.overview?.by_listing_type?.for_sale || 0;
+  const forRentCount = statsData?.for_rent || statsData?.total_for_rent || statsData?.for_rent_count || statsData?.by_status?.for_rent || statsData?.overview?.by_listing_type?.for_rent || 0;
+  const avgPriceForSale = statsData?.price_range?.avg || statsData?.avg_price_for_sale || statsData?.avg_price || statsData?.overview?.price_stats?.avg || 0;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-4 sm:p-6 lg:p-8">
