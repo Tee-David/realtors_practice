@@ -51,8 +51,15 @@ from api.helpers.json_sanitizer import sanitize_for_json
 # Initialize Flask app
 app = Flask(__name__)
 
-# Enable CORS - simple permissive configuration for development
-CORS(app, origins=["http://localhost:3000", "http://localhost:3001", "http://127.0.0.1:3000", "http://127.0.0.1:3001"])
+# Enable CORS - allow both local development and production Vercel deployment
+CORS(app, origins=[
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:3001",
+    "https://realtors-practice.vercel.app",  # Production Vercel deployment
+    "https://*.vercel.app"  # All Vercel preview deployments
+])
 
 # Modern Flask 3.x approach: Use custom JSONProvider
 from flask.json.provider import DefaultJSONProvider
