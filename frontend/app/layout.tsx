@@ -11,8 +11,11 @@ const redHatDisplay = Red_Hat_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Property Insights - Real Estate Scraper",
-  description: "Professional real estate data scraping and management platform",
+  title: "Realtor's Practice Property Aggregation Platform",
+  description: "Professional real estate data scraping and management platform for Nigerian properties",
+  icons: {
+    icon: '/favicon.ico',
+  },
 };
 
 export default function RootLayout({

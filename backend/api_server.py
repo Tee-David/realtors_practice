@@ -832,8 +832,8 @@ def manage_searches():
             )
 
             return jsonify({
-                'success': True,
-                'search_id': search_id
+                'id': search_id,
+                'message': f'Saved search "{name}" created successfully'
             }), 201
 
     except Exception as e:

@@ -38,16 +38,6 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
     }, 1500);
   };
 
-  // Quick login for testing (demo mode)
-  const handleDemoLogin = () => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      toast.success("Demo mode activated!");
-      onLogin();
-    }, 500);
-  };
-
   const handleForgotPassword = () => {
     toast.info("Password reset link sent to your email");
   };
@@ -185,26 +175,6 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
             )}
           </Button>
 
-          {/* Demo Login Button */}
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-slate-700"></div>
-            </div>
-            <div className="relative flex justify-center text-xs">
-              <span className="bg-slate-900 px-2 text-slate-400">
-                Quick Access
-              </span>
-            </div>
-          </div>
-
-          <Button
-            type="button"
-            onClick={handleDemoLogin}
-            className="w-full h-11 sm:h-12 bg-slate-700 hover:bg-slate-600 text-white font-medium rounded-lg transition-colors text-sm sm:text-base"
-            disabled={isLoading}
-          >
-            Continue as Guest
-          </Button>
         </form>
       </div>
     </div>
