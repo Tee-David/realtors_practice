@@ -235,7 +235,7 @@ sites:
     parser: specials
     url: https://www.naijalandlord.com/
   nazaprimehive:
-    enabled: false
+    enabled: true
     name: Nazaprime Hive
     parser: specials
     url: https://hive.nazaprime.com.ng
