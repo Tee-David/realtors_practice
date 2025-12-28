@@ -1406,18 +1406,24 @@ export default function DashboardPage() {
               ))}
             </div>
           ) : recentProperties.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {recentProperties.slice(0, 6).map((property) => (
-                <PropertyCard
-                  key={property.id}
-                  property={property}
-                  onClick={() => {
-                    setSelectedProperty(property);
-                    setShowPropertyModal(true);
-                  }}
-                />
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {recentProperties.slice(0, 6).map((property) => (
+                  <PropertyCard
+                    key={property.id}
+                    property={property}
+                  />
+                ))}
+              </div>
+              <div className="mt-6 text-center">
+                <button
+                  onClick={() => window.dispatchEvent(new CustomEvent("navigate", { detail: { page: "properties" } }))}
+                  className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg transition-colors"
+                >
+                  See All Properties
+                </button>
+              </div>
+            </>
           ) : (
             <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-8 text-center">
               <Home className="w-12 h-12 text-slate-600 mx-auto mb-3" />
