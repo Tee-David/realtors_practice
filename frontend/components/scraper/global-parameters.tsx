@@ -60,19 +60,17 @@ export function GlobalParameters({
             Headless
           </label>
           <Select
-            value={parameters.headless ? "Enabled" : "Disabled"}
-            onValueChange={(value) =>
-              updateParameter("headless", value === "Enabled")
-            }
+            value="Enabled"
+            disabled
           >
-            <SelectTrigger className="bg-slate-700 border-slate-600 text-white">
+            <SelectTrigger className="bg-slate-700/50 border-slate-600 text-white cursor-not-allowed opacity-60">
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="bg-slate-700 border-slate-600">
-              <SelectItem value="Enabled">Enabled</SelectItem>
-              <SelectItem value="Disabled">Disabled</SelectItem>
+              <SelectItem value="Enabled">Enabled (Locked)</SelectItem>
             </SelectContent>
           </Select>
+          <p className="text-xs text-slate-500 mt-1">Always enabled for production stability</p>
         </div>
 
         <div>
@@ -117,20 +115,17 @@ export function GlobalParameters({
             Retry Strategy
           </label>
           <Select
-            value={parameters.retryStrategy}
-            onValueChange={(value) => updateParameter("retryStrategy", value)}
+            value="Exponential Backoff"
+            disabled
           >
-            <SelectTrigger className="bg-slate-700 border-slate-600 text-white">
+            <SelectTrigger className="bg-slate-700/50 border-slate-600 text-white cursor-not-allowed opacity-60">
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="bg-slate-700 border-slate-600">
-              <SelectItem value="Exponential Backoff">
-                Exponential Backoff
-              </SelectItem>
-              <SelectItem value="Linear Backoff">Linear Backoff</SelectItem>
-              <SelectItem value="Fixed Delay">Fixed Delay</SelectItem>
+              <SelectItem value="Exponential Backoff">Exponential Backoff (Locked)</SelectItem>
             </SelectContent>
           </Select>
+          <p className="text-xs text-slate-500 mt-1">Optimized for reliability</p>
         </div>
 
         <div>
@@ -138,18 +133,17 @@ export function GlobalParameters({
             Proxy Pool
           </label>
           <Select
-            value={parameters.proxyPool}
-            onValueChange={(value) => updateParameter("proxyPool", value)}
+            value="Residential"
+            disabled
           >
-            <SelectTrigger className="bg-slate-700 border-slate-600 text-white">
+            <SelectTrigger className="bg-slate-700/50 border-slate-600 text-white cursor-not-allowed opacity-60">
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="bg-slate-700 border-slate-600">
-              <SelectItem value="Residential">Residential</SelectItem>
-              <SelectItem value="Datacenter">Datacenter</SelectItem>
-              <SelectItem value="Mobile">Mobile</SelectItem>
+              <SelectItem value="Residential">Residential (Locked)</SelectItem>
             </SelectContent>
           </Select>
+          <p className="text-xs text-slate-500 mt-1">Best success rate for scraping</p>
         </div>
 
         <div>
@@ -157,18 +151,17 @@ export function GlobalParameters({
             Export Format
           </label>
           <Select
-            value={parameters.exportFormat}
-            onValueChange={(value) => updateParameter("exportFormat", value)}
+            value="CSV"
+            disabled
           >
-            <SelectTrigger className="bg-slate-700 border-slate-600 text-white">
+            <SelectTrigger className="bg-slate-700/50 border-slate-600 text-white cursor-not-allowed opacity-60">
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="bg-slate-700 border-slate-600">
-              <SelectItem value="CSV">CSV</SelectItem>
-              <SelectItem value="JSON">JSON</SelectItem>
-              <SelectItem value="XLSX">XLSX</SelectItem>
+              <SelectItem value="CSV">CSV (Default)</SelectItem>
             </SelectContent>
           </Select>
+          <p className="text-xs text-slate-500 mt-1">Export format set per export action</p>
         </div>
       </div>
     </div>
