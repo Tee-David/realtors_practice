@@ -94,6 +94,22 @@ export default function Home() {
     }
   }, []);
 
+  // Listen for navigation events from dashboard and other components
+  React.useEffect(() => {
+    const handleNavigateEvent = (event: Event) => {
+      const customEvent = event as CustomEvent<{ page: string }>;
+      if (customEvent.detail?.page) {
+        handlePageChange(customEvent.detail.page);
+      }
+    };
+
+    window.addEventListener("navigate", handleNavigateEvent);
+
+    return () => {
+      window.removeEventListener("navigate", handleNavigateEvent);
+    };
+  }, [handlePageChange]);
+
   // Move renderContent before conditional return to maintain hook order
   const renderContent = useCallback(() => {
     console.log("[Home] Rendering content for activeTab:", activeTab);

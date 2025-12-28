@@ -834,6 +834,7 @@ interface StatsCardProps {
   variant?: VariantType;
   description?: string;
   trend?: number;
+  onClick?: () => void;
 }
 const StatsCard = ({
   title,
@@ -843,6 +844,7 @@ const StatsCard = ({
   variant = "default",
   description,
   trend,
+  onClick,
 }: StatsCardProps) => {
   const variants: Record<VariantType, string> = {
     default: "from-slate-700 to-slate-800 border-slate-600",
@@ -862,7 +864,8 @@ const StatsCard = ({
 
   return (
     <div
-      className={`relative overflow-hidden rounded-xl border bg-gradient-to-br ${variants[variant]} p-5 transition-all hover:shadow-lg hover:scale-[1.02]`}
+      onClick={onClick}
+      className={`relative overflow-hidden rounded-xl border bg-gradient-to-br ${variants[variant]} p-5 transition-all hover:shadow-lg hover:scale-[1.02] ${onClick ? 'cursor-pointer' : ''}`}
     >
       <div className="flex items-start justify-between">
         <div className="flex-1">
@@ -1157,6 +1160,7 @@ export default function DashboardPage() {
             loading={dashboardLoading}
             variant="info"
             description="In database"
+            onClick={() => window.dispatchEvent(new CustomEvent("navigate", { detail: { page: "properties" } }))}
           />
           <StatsCard
             title="For Sale"
@@ -1165,6 +1169,7 @@ export default function DashboardPage() {
             loading={dashboardLoading}
             variant="success"
             description={`Avg: ₦${(avgPriceForSale / 1000000).toFixed(1)}M`}
+            onClick={() => window.dispatchEvent(new CustomEvent("navigate", { detail: { page: "properties" } }))}
           />
           <StatsCard
             title="For Rent"
@@ -1173,6 +1178,7 @@ export default function DashboardPage() {
             loading={dashboardLoading}
             variant="default"
             description="Rental listings"
+            onClick={() => window.dispatchEvent(new CustomEvent("navigate", { detail: { page: "properties" } }))}
           />
           <StatsCard
             title="Saved Searches"
@@ -1181,6 +1187,7 @@ export default function DashboardPage() {
             loading={savedSearchesLoading || dashboardLoading}
             variant="default"
             description="Active alerts"
+            onClick={() => window.dispatchEvent(new CustomEvent("navigate", { detail: { page: "saved-searches" } }))}
           />
         </div>
 
