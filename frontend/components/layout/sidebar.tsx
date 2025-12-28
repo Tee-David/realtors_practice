@@ -239,6 +239,24 @@ export function Sidebar({ currentPage, onPageChange, onLogout }: SidebarProps) {
             </button>
           );
         })}
+
+        {/* Copyright Footer */}
+        <div className="mt-4 pt-4 px-3 text-xs text-slate-500 border-t border-slate-800">
+          <p>
+            © {new Date().getFullYear()} Realtor's Practice
+          </p>
+          <p className="mt-1">
+            Powered by{" "}
+            <a
+              href="https://wedigcreativity.com.ng"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-400 hover:text-blue-300 hover:underline transition-colors"
+            >
+              We Dig Creativity Team
+            </a>
+          </p>
+        </div>
       </div>
     </div>
   );

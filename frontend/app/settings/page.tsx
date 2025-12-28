@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { apiClient } from "@/lib/api";
 import { useApi } from "@/lib/hooks/useApi";
 import { Button } from "@/components/ui/button";
@@ -35,6 +35,7 @@ import {
   Check,
   X,
   TestTube,
+  Users,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -47,7 +48,7 @@ import { toast } from "sonner";
  * - System: global settings, cache management, export preferences
  */
 
-type TabType = "sites" | "email" | "firestore" | "system";
+type TabType = "sites" | "email" | "firestore" | "system" | "users";
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState<TabType>("sites");
@@ -61,6 +62,7 @@ export default function SettingsPage() {
       icon: Database,
     },
     { id: "system" as TabType, label: "System Settings", icon: Sliders },
+    { id: "users" as TabType, label: "User Management", icon: Users },
   ];
 
   return (
@@ -118,6 +120,7 @@ export default function SettingsPage() {
         {activeTab === "email" && <EmailTab />}
         {activeTab === "firestore" && <FirestoreTab />}
         {activeTab === "system" && <SystemTab />}
+        {activeTab === "users" && <UsersTab />}
       </div>
     </div>
   );
@@ -558,5 +561,324 @@ function SystemTab() {
         </Button>
       </CardContent>
     </Card>
+  );
+}
+
+// User Management Tab
+function UsersTab() {
+  const [users, setUsers] = useState<any[]>([]);
+  const [showAddUser, setShowAddUser] = useState(false);
+  const [newUser, setNewUser] = useState({
+    username: "",
+    email: "",
+    password: "",
+    role: "user",
+  });
+  const [resetPasswordEmail, setResetPasswordEmail] = useState("");
+
+  const loadUsers = () => {
+    // Load admin credentials
+    const adminCreds = localStorage.getItem("adminCredentials");
+    const usersList = [];
+
+    if (adminCreds) {
+      try {
+        const admin = JSON.parse(adminCreds);
+        usersList.push({
+          email: admin.email,
+          username: admin.username,
+          role: "admin",
+          createdAt: admin.createdAt,
+        });
+      } catch (e) {
+        // Ignore parse errors
+      }
+    }
+
+    // Load additional users (if any stored)
+    const storedUsers = localStorage.getItem("users");
+    if (storedUsers) {
+      try {
+        const parsed = JSON.parse(storedUsers);
+        usersList.push(...parsed);
+      } catch (e) {
+        // Ignore parse errors
+      }
+    }
+
+    setUsers(usersList);
+  };
+
+  const handleAddUser = () => {
+    if (!newUser.username || !newUser.email || !newUser.password) {
+      toast.error("All fields are required");
+      return;
+    }
+
+    // Validate email
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newUser.email)) {
+      toast.error("Invalid email address");
+      return;
+    }
+
+    // Validate password
+    if (
+      newUser.password.length < 8 ||
+      !/[A-Za-z]/.test(newUser.password) ||
+      !/\d/.test(newUser.password)
+    ) {
+      toast.error("Password must be at least 8 characters with letters and numbers");
+      return;
+    }
+
+    // Check if email already exists
+    if (users.some((u) => u.email === newUser.email)) {
+      toast.error("User with this email already exists");
+      return;
+    }
+
+    // Add new user
+    const userToAdd = {
+      ...newUser,
+      password: btoa(newUser.password), // Base64 encoding (NOT SECURE - for demo only)
+      createdAt: new Date().toISOString(),
+    };
+
+    const existingUsers = JSON.parse(localStorage.getItem("users") || "[]");
+    existingUsers.push(userToAdd);
+    localStorage.setItem("users", JSON.stringify(existingUsers));
+
+    toast.success(`User ${newUser.username} added successfully`);
+    setShowAddUser(false);
+    setNewUser({ username: "", email: "", password: "", role: "user" });
+    loadUsers();
+  };
+
+  const handleRemoveUser = (email: string) => {
+    if (email === users.find((u) => u.role === "admin")?.email) {
+      toast.error("Cannot remove admin user");
+      return;
+    }
+
+    const existingUsers = JSON.parse(localStorage.getItem("users") || "[]");
+    const filtered = existingUsers.filter((u: any) => u.email !== email);
+    localStorage.setItem("users", JSON.stringify(filtered));
+
+    toast.success("User removed successfully");
+    loadUsers();
+  };
+
+  const handleResetPassword = () => {
+    if (!resetPasswordEmail) {
+      toast.error("Please enter an email address");
+      return;
+    }
+
+    const user = users.find((u) => u.email === resetPasswordEmail);
+    if (!user) {
+      toast.error("User not found");
+      return;
+    }
+
+    // In production, this would send a password reset email
+    toast.success(
+      `Password reset email would be sent to ${resetPasswordEmail}`,
+      {
+        description: "Implement actual email sending in production",
+      }
+    );
+    setResetPasswordEmail("");
+  };
+
+  // Load users on mount
+  useEffect(() => {
+    loadUsers();
+  }, []);
+
+  return (
+    <div className="space-y-6">
+      {/* Security Warning */}
+      <Card className="bg-amber-900/20 border-amber-700">
+        <CardHeader>
+          <CardTitle className="text-amber-400 flex items-center gap-2">
+            <Users className="w-5 h-5" />
+            User Management
+          </CardTitle>
+          <CardDescription className="text-amber-300">
+            This is a demo implementation using localStorage. In production, implement proper backend user management with database storage, password hashing, and authentication.
+          </CardDescription>
+        </CardHeader>
+      </Card>
+
+      {/* Current Users */}
+      <Card className="bg-slate-800 border-slate-700">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-white">Current Users</CardTitle>
+              <CardDescription>
+                Manage user accounts and permissions
+              </CardDescription>
+            </div>
+            <Button
+              onClick={() => setShowAddUser(!showAddUser)}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
+              {showAddUser ? "Cancel" : "Add User"}
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {showAddUser && (
+            <div className="mb-6 p-4 bg-slate-900 rounded-lg space-y-4">
+              <h3 className="text-white font-medium">Add New User</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-slate-300">Username</Label>
+                  <Input
+                    value={newUser.username}
+                    onChange={(e) =>
+                      setNewUser({ ...newUser, username: e.target.value })
+                    }
+                    placeholder="john_doe"
+                    className="bg-slate-800 border-slate-600 text-white"
+                  />
+                </div>
+                <div>
+                  <Label className="text-slate-300">Email</Label>
+                  <Input
+                    type="email"
+                    value={newUser.email}
+                    onChange={(e) =>
+                      setNewUser({ ...newUser, email: e.target.value })
+                    }
+                    placeholder="john@example.com"
+                    className="bg-slate-800 border-slate-600 text-white"
+                  />
+                </div>
+                <div>
+                  <Label className="text-slate-300">Password</Label>
+                  <Input
+                    type="password"
+                    value={newUser.password}
+                    onChange={(e) =>
+                      setNewUser({ ...newUser, password: e.target.value })
+                    }
+                    placeholder="Min 8 chars, letters + numbers"
+                    className="bg-slate-800 border-slate-600 text-white"
+                  />
+                </div>
+                <div>
+                  <Label className="text-slate-300">Role</Label>
+                  <select
+                    value={newUser.role}
+                    onChange={(e) =>
+                      setNewUser({ ...newUser, role: e.target.value })
+                    }
+                    className="w-full h-10 px-3 bg-slate-800 border border-slate-600 text-white rounded-md"
+                  >
+                    <option value="user">User</option>
+                    <option value="admin">Admin</option>
+                  </select>
+                </div>
+              </div>
+              <Button
+                onClick={handleAddUser}
+                className="w-full bg-green-600 hover:bg-green-700"
+              >
+                Create User
+              </Button>
+            </div>
+          )}
+
+          <Table>
+            <TableHeader>
+              <TableRow className="border-slate-700">
+                <TableHead className="text-slate-300">Username</TableHead>
+                <TableHead className="text-slate-300">Email</TableHead>
+                <TableHead className="text-slate-300">Role</TableHead>
+                <TableHead className="text-slate-300">Created</TableHead>
+                <TableHead className="text-slate-300">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {users.length === 0 ? (
+                <TableRow className="border-slate-700">
+                  <TableCell colSpan={5} className="text-center text-slate-400">
+                    No users found. Create an admin user at /set-admin
+                  </TableCell>
+                </TableRow>
+              ) : (
+                users.map((user, index) => (
+                  <TableRow key={index} className="border-slate-700">
+                    <TableCell className="text-white">
+                      {user.username}
+                    </TableCell>
+                    <TableCell className="text-slate-300">
+                      {user.email}
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        variant={user.role === "admin" ? "default" : "secondary"}
+                        className={
+                          user.role === "admin"
+                            ? "bg-orange-600"
+                            : "bg-blue-600"
+                        }
+                      >
+                        {user.role}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-slate-400 text-sm">
+                      {new Date(user.createdAt).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell>
+                      {user.role !== "admin" ? (
+                        <Button
+                          onClick={() => handleRemoveUser(user.email)}
+                          variant="destructive"
+                          size="sm"
+                        >
+                          Remove
+                        </Button>
+                      ) : (
+                        <span className="text-slate-500 text-sm">Protected</span>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+
+      {/* Reset Password */}
+      <Card className="bg-slate-800 border-slate-700">
+        <CardHeader>
+          <CardTitle className="text-white">Reset User Password</CardTitle>
+          <CardDescription>
+            Send password reset link to user's email
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex gap-4">
+            <Input
+              type="email"
+              value={resetPasswordEmail}
+              onChange={(e) => setResetPasswordEmail(e.target.value)}
+              placeholder="user@example.com"
+              className="bg-slate-900 border-slate-600 text-white"
+            />
+            <Button
+              onClick={handleResetPassword}
+              className="bg-blue-600 hover:bg-blue-700 whitespace-nowrap"
+            >
+              Send Reset Link
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

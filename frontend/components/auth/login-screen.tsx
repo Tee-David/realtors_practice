@@ -14,7 +14,7 @@ interface LoginScreenProps {
 }
 
 export function LoginScreen({ onLogin }: LoginScreenProps) {
-  const [email, setEmail] = useState("");
+  const [emailOrUsername, setEmailOrUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
@@ -23,18 +23,69 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!email && !password) {
+    if (!emailOrUsername || !password) {
       toast.error("Please fill in all fields");
       return;
     }
 
     setIsLoading(true);
 
-    // Simulate API call
+    // Check credentials from localStorage
+    // First check admin credentials
+    const adminCreds = localStorage.getItem("adminCredentials");
+    if (adminCreds) {
+      try {
+        const admin = JSON.parse(adminCreds);
+        const storedPassword = atob(admin.password); // Decode base64
+
+        // Check if input matches email or username
+        if (
+          (emailOrUsername === admin.email || emailOrUsername === admin.username) &&
+          password === storedPassword
+        ) {
+          setTimeout(() => {
+            setIsLoading(false);
+            toast.success(`Welcome back, ${admin.username}!`);
+            localStorage.setItem("isAuthenticated", "true");
+            onLogin();
+          }, 1500);
+          return;
+        }
+      } catch (e) {
+        // Ignore parse errors
+      }
+    }
+
+    // Check other users
+    const users = localStorage.getItem("users");
+    if (users) {
+      try {
+        const userList = JSON.parse(users);
+        const user = userList.find(
+          (u: any) => u.email === emailOrUsername || u.username === emailOrUsername
+        );
+
+        if (user) {
+          const storedPassword = atob(user.password); // Decode base64
+          if (password === storedPassword) {
+            setTimeout(() => {
+              setIsLoading(false);
+              toast.success(`Welcome back, ${user.username}!`);
+              localStorage.setItem("isAuthenticated", "true");
+              onLogin();
+            }, 1500);
+            return;
+          }
+        }
+      } catch (e) {
+        // Ignore parse errors
+      }
+    }
+
+    // If we get here, credentials are invalid
     setTimeout(() => {
       setIsLoading(false);
-      toast.success("Welcome back!");
-      onLogin();
+      toast.error("Invalid email/username or password");
     }, 1500);
   };
 
@@ -84,18 +135,18 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
           <div className="space-y-4 sm:space-y-5">
             <div>
               <label
-                htmlFor="email"
+                htmlFor="emailOrUsername"
                 className="block text-sm font-medium text-slate-300 mb-1.5 sm:mb-2"
               >
-                Email Address
+                Email or Username
               </label>
               <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                id="emailOrUsername"
+                type="text"
+                value={emailOrUsername}
+                onChange={(e) => setEmailOrUsername(e.target.value)}
                 className="w-full h-11 sm:h-12 bg-slate-800 border-slate-700 text-white placeholder-slate-400 focus:border-blue-500 focus:ring-blue-500 text-sm sm:text-base"
-                placeholder="Enter your email"
+                placeholder="Enter your email or username"
                 disabled={isLoading}
               />
             </div>
