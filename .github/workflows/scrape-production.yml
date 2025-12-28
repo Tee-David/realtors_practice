@@ -473,9 +473,12 @@ jobs:
 
           for session_folder in session_folders:
               session_name = session_folder.name
-              # Artifacts uploaded with path 'backend/exports/' so structure is:
-              # session-exports/session-X-exports/backend/exports/sites/...
+              # Try multiple paths for artifacts (handles different upload structures)
+              # Path 1: backend/exports/sites (old structure)
+              # Path 2: sites (new direct structure)
               session_sites = session_folder / 'backend' / 'exports' / 'sites'
+              if not session_sites.exists():
+                  session_sites = session_folder / 'sites'
 
               if session_sites.exists():
                   session_files = 0
@@ -493,10 +496,10 @@ jobs:
                       successful_sessions += 1
                       print(f"SUCCESS: {session_name} - copied {session_files} files")
                   else:
-                      failed_sessions.append(f"{session_name} (no files in exports/sites)")
+                      failed_sessions.append(f"{session_name} (no files in sites folder)")
               else:
-                  failed_sessions.append(f"{session_name} (exports/sites not found)")
-                  print(f"WARNING: No 'backend/exports/sites' folder in {session_name}")
+                  failed_sessions.append(f"{session_name} (sites folder not found)")
+                  print(f"WARNING: No 'sites' folder in {session_name}")
                   # Debug: show what's actually in the session folder
                   print(f"Contents of {session_name}:")
                   for item in session_folder.rglob('*'):
