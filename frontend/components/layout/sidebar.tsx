@@ -261,15 +261,28 @@ export function Sidebar({ currentPage, onPageChange, onLogout }: SidebarProps) {
 
   return (
     <>
-      {/* Mobile menu button */}
-      <Button
-        onClick={toggleMobile}
-        variant="ghost"
-        size="sm"
-        className="md:hidden fixed top-4 left-4 z-50 p-2 bg-slate-800/90 backdrop-blur-sm border border-slate-700 text-white hover:bg-slate-700"
-      >
-        <Menu className="w-5 h-5" />
-      </Button>
+      {/* Mobile header bar with menu button */}
+      <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 shadow-lg">
+        <div className="flex items-center justify-between px-4 py-3">
+          <Button
+            onClick={toggleMobile}
+            variant="ghost"
+            size="sm"
+            className="p-2 text-white hover:bg-slate-800"
+          >
+            <Menu className="w-5 h-5" />
+          </Button>
+          <div className="flex items-center gap-2">
+            <img
+              src="/realtor.png"
+              alt="Logo"
+              className="w-6 h-6 object-contain"
+            />
+            <span className="text-sm font-medium text-white">Realtors' Practice</span>
+          </div>
+          <div className="w-8" /> {/* Spacer for balance */}
+        </div>
+      </div>
 
       {/* Mobile sidebar overlay */}
       {isMobileOpen && (
