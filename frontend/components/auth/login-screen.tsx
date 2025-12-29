@@ -9,13 +9,14 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Eye, EyeOff, Info, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { TypewriterEffect } from "@/components/ui/typewriter-effect";
+import { Globe } from "@/components/ui/globe";
 
 interface LoginScreenProps {
   onLogin: () => void;
 }
 
 const powerfulFeatures = [
-  { text: "Aggregate 50+ Real Estate Sites", className: "text-blue-400 font-bold" },
+  { text: "Aggregate Unlimited Real Estate Sites", className: "text-blue-400 font-bold" },
   { text: "Smart Property Search & Filtering", className: "text-green-400 font-bold" },
   { text: "Advanced Data Analytics & Insights", className: "text-purple-400 font-bold" },
   { text: "Real-Time Price Tracking", className: "text-yellow-400 font-bold" },
@@ -112,19 +113,19 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
   return (
     <div className="min-h-screen bg-slate-900 flex items-center justify-center p-0 overflow-hidden">
       <div className="w-full h-screen flex flex-col lg:flex-row">
-        {/* Left Side - Animated Background & Branding */}
+        {/* Left Side - Globe & Branding */}
         <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
-          {/* Animated gradient orbs */}
-          <div className="absolute inset-0">
-            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse" />
-            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse delay-1000" />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-cyan-500/20 rounded-full blur-3xl animate-pulse delay-500" />
+          {/* Globe Background */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-full h-full">
+              <Globe className="w-full h-full" />
+            </div>
           </div>
 
-          {/* Content */}
+          {/* Content Overlay */}
           <div className="relative z-10 flex flex-col items-center justify-center w-full p-12 text-center">
-            <div className="mb-8">
-              <div className="inline-block p-4 bg-slate-800/50 backdrop-blur-sm rounded-2xl mb-6">
+            <div className="mb-8 bg-slate-900/80 backdrop-blur-md rounded-3xl p-8 border border-slate-700/50">
+              <div className="inline-block mb-6">
                 <img
                   src="/realtor.png"
                   alt="Realtors' Practice Logo"
@@ -137,30 +138,15 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
               <p className="text-xl text-blue-300 mb-8">
                 Property Aggregation Platform
               </p>
-            </div>
 
-            <div className="space-y-6 max-w-lg">
-              <div className="flex items-center justify-center gap-2 mb-4">
-                <Sparkles className="w-5 h-5 text-yellow-400" />
-                <span className="text-slate-300 text-lg">Powered by</span>
-              </div>
-              <div className="h-16 flex items-center justify-center">
-                <TypewriterEffect words={powerfulFeatures} />
-              </div>
-            </div>
-
-            <div className="mt-12 grid grid-cols-3 gap-4 text-center">
-              <div className="bg-slate-800/30 backdrop-blur-sm rounded-lg p-4">
-                <div className="text-3xl font-bold text-blue-400">50+</div>
-                <div className="text-sm text-slate-400">Data Sources</div>
-              </div>
-              <div className="bg-slate-800/30 backdrop-blur-sm rounded-lg p-4">
-                <div className="text-3xl font-bold text-green-400">24/7</div>
-                <div className="text-sm text-slate-400">Monitoring</div>
-              </div>
-              <div className="bg-slate-800/30 backdrop-blur-sm rounded-lg p-4">
-                <div className="text-3xl font-bold text-purple-400">100K+</div>
-                <div className="text-sm text-slate-400">Properties</div>
+              <div className="space-y-4 max-w-lg">
+                <div className="flex items-center justify-center gap-2">
+                  <Sparkles className="w-5 h-5 text-yellow-400" />
+                  <span className="text-slate-300 text-lg">Powered by</span>
+                </div>
+                <div className="h-16 flex items-center justify-center">
+                  <TypewriterEffect words={powerfulFeatures} />
+                </div>
               </div>
             </div>
           </div>
