@@ -6,19 +6,20 @@ import {
   Settings,
   Home,
   Database,
-  Menu,
-  X,
-  ChevronRight,
   LogOut,
-  Activity,
   Bookmark,
   Play,
   FileCheck,
   Wrench,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import {
+  Sidebar as AceternitySidebar,
+  SidebarBody,
+  SidebarLink,
+} from "@/components/ui/sidebar";
+import { motion } from "motion/react";
 
 interface SidebarProps {
   currentPage: string;
@@ -26,289 +27,222 @@ interface SidebarProps {
   onLogout?: () => void;
 }
 
-// Navigation configuration with descriptions and badges (ordered by importance)
+// Navigation configuration
 const navigation = [
-  // Primary user features
   {
     name: "Dashboard",
     icon: LayoutDashboard,
     id: "dashboard",
     description: "System overview & stats",
-    badge: null,
   },
   {
     name: "Properties",
     icon: Home,
     id: "properties",
     description: "Browse and export listings",
-    badge: null,
   },
   {
     name: "Data Explorer",
     icon: Database,
     id: "data-explorer",
     description: "Advanced search & filtering",
-    badge: null,
   },
-  // Admin features
   {
     name: "Scraper Control",
     icon: Play,
     id: "scraper",
     description: "Manage scraping ops",
-    badge: "ADMIN",
   },
   {
     name: "Scrape Results",
     icon: FileCheck,
     id: "scrape-results",
     description: "Verify scrape success",
-    badge: "INFO",
   },
   {
     name: "Saved Searches",
     icon: Bookmark,
     id: "saved-searches",
     description: "Your alerts & preferences",
-    badge: null,
   },
-
-  // Admin features
   {
     name: "Settings",
     icon: Settings,
     id: "settings",
     description: "System configuration",
-    badge: "ADMIN",
   },
-  // Developer & diagnostic tools
   {
     name: "API Test",
     icon: Wrench,
     id: "api-test",
     description: "Test API connection",
-    badge: "DEV",
   },
 ];
 
-// Footer navigation
-const footerNavigation = [
-  // { name: "Help & Support", icon: HelpCircle, action: "help" },
-  { name: "Sign Out", icon: LogOut, action: "logout" },
-];
-
 export function Sidebar({ currentPage, onPageChange, onLogout }: SidebarProps) {
-  const [isMobileOpen, setIsMobileOpen] = useState(false);
-  // Keeping for future desktop collapse feature
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_isCollapsed, _setIsCollapsed] = useState(false);
-
-  // Handle mobile menu toggle
-  const toggleMobile = useCallback(() => {
-    setIsMobileOpen((prev) => !prev);
-  }, []);
+  const [open, setOpen] = useState(false);
 
   // Handle page navigation
   const handleNavigation = useCallback(
     (pageId: string) => {
       onPageChange(pageId);
-      setIsMobileOpen(false); // Close mobile menu after navigation
     },
     [onPageChange]
   );
 
-  // Handle footer actions
-  const handleFooterAction = useCallback(
-    (action: string) => {
-      switch (action) {
-        case "help":
-          toast.info("Help documentation will open soon");
-          break;
-        case "logout":
-          if (onLogout) {
-            onLogout();
-          } else {
-            toast.info("Logging out...");
-          }
-          break;
-      }
-    },
-    [onLogout]
-  );
+  // Handle logout
+  const handleLogout = useCallback(() => {
+    if (onLogout) {
+      onLogout();
+    } else {
+      toast.info("Logging out...");
+    }
+  }, [onLogout]);
 
-  // Sidebar content component
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const SidebarContent = ({ isMobile = false }: { isMobile?: boolean }) => (
-    <div className="flex flex-col h-full overflow-y-auto scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-slate-900">
-      {/* Logo and brand */}
-      <div className="flex items-center space-x-3 p-6 border-b border-slate-700">
-        <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
-          <Database className="w-5 h-5 text-white" />
-        </div>
-        <div className="flex-1 min-w-0">
-          <h1 className="text-lg font-bold text-white truncate">
-            Realtor Scraper
-          </h1>
-          <div className="flex items-center space-x-2">
-            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-            <p className="text-xs text-slate-400">System Online</p>
-          </div>
-        </div>
-      </div>
+  // Create links with custom onClick instead of href
+  const links = navigation.map((item) => {
+    const Icon = item.icon;
+    return {
+      label: item.name,
+      href: "#", // Placeholder, won't be used
+      icon: (
+        <Icon
+          className={cn(
+            "h-5 w-5 flex-shrink-0",
+            currentPage === item.id ? "text-blue-400" : "text-slate-400"
+          )}
+        />
+      ),
+      onClick: (e: React.MouseEvent) => {
+        e.preventDefault();
+        handleNavigation(item.id);
+      },
+      isActive: currentPage === item.id,
+    };
+  });
 
-      {/* Main Navigation */}
-      <nav className="flex-1 p-4 space-y-1">
-        <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3 px-3">
-          Navigation
-        </div>
-        {navigation.map((item) => {
-          const Icon = item.icon;
-          const isActive = currentPage === item.id;
-
-          return (
-            <button
-              key={item.id}
-              onClick={() => handleNavigation(item.id)}
-              className={cn(
-                "group w-full flex items-center justify-between px-3 py-3 rounded-xl text-left transition-all duration-200",
-                "focus:outline-none focus:ring-2 focus:ring-blue-500/50",
-                isActive
-                  ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg"
-                  : "text-slate-300 hover:bg-slate-800/50 hover:text-white"
-              )}
-            >
-              <div className="flex items-center space-x-3 flex-1 min-w-0">
-                <Icon
+  return (
+    <div
+      className={cn(
+        "flex flex-col md:flex-row bg-slate-900 w-full flex-1 border-slate-700"
+      )}
+    >
+      <AceternitySidebar open={open} setOpen={setOpen} animate={true}>
+        <SidebarBody className="justify-between gap-10 bg-slate-900 border-r border-slate-700">
+          <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
+            {open ? <Logo /> : <LogoIcon />}
+            <div className="mt-8 flex flex-col gap-2">
+              {links.map((link, idx) => (
+                <div
+                  key={idx}
+                  onClick={link.onClick}
                   className={cn(
-                    "w-5 h-5 flex-shrink-0",
-                    isActive ? "text-white" : "text-slate-400"
+                    "cursor-pointer flex items-center justify-start gap-2 group/sidebar py-2 px-2 rounded-lg transition-colors",
+                    link.isActive
+                      ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white"
+                      : "text-slate-300 hover:bg-slate-800/50 hover:text-white"
                   )}
-                />
-                <div className="flex-1 min-w-0">
-                  <div className="font-medium truncate">{item.name}</div>
-                  <div className="text-xs opacity-75 truncate">
-                    {item.description}
-                  </div>
-                </div>
-              </div>
-
-              {/* Badge or arrow */}
-              <div className="flex items-center space-x-2">
-                {item.badge && (
-                  <span
-                    className={cn(
-                      "text-xs px-2 py-0.5 rounded-full font-medium",
-                      isActive
-                        ? "bg-white/20 text-white"
-                        : "bg-slate-700 text-slate-300"
-                    )}
+                >
+                  {link.icon}
+                  <motion.span
+                    animate={{
+                      display: open ? "inline-block" : "none",
+                      opacity: open ? 1 : 0,
+                    }}
+                    className="text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block !p-0 !m-0"
                   >
-                    {item.badge}
-                  </span>
-                )}
-                {isActive && <ChevronRight className="w-4 h-4 text-white/70" />}
-              </div>
-            </button>
-          );
-        })}
-      </nav>
-
-      {/* Footer Navigation */}
-      <div className="p-4 border-t border-slate-700 space-y-1">
-        <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3 px-3">
-          Account
-        </div>
-        {footerNavigation.map((item) => {
-          const Icon = item.icon;
-          const isLogout = item.action === "logout";
-
-          return (
-            <button
-              key={item.action}
-              onClick={() => handleFooterAction(item.action)}
-              className={cn(
-                "w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-all duration-200",
-                "focus:outline-none focus:ring-2 focus:ring-blue-500/50",
-                isLogout
-                  ? "text-red-400 hover:bg-red-500/10 hover:text-red-300"
-                  : "text-slate-400 hover:bg-slate-800/50 hover:text-white"
-              )}
+                    {link.label}
+                  </motion.span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div>
+            <div
+              onClick={handleLogout}
+              className="cursor-pointer flex items-center justify-start gap-2 group/sidebar py-2 px-2 rounded-lg transition-colors text-red-400 hover:bg-red-500/10 hover:text-red-300"
             >
-              <Icon className="w-4 h-4" />
-              <span className="font-medium">{item.name}</span>
-            </button>
-          );
-        })}
+              <LogOut className="h-5 w-5 flex-shrink-0" />
+              <motion.span
+                animate={{
+                  display: open ? "inline-block" : "none",
+                  opacity: open ? 1 : 0,
+                }}
+                className="text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block !p-0 !m-0"
+              >
+                Sign Out
+              </motion.span>
+            </div>
 
-        {/* Copyright Footer */}
-        <div className="mt-4 pt-4 px-3 text-xs text-slate-500 border-t border-slate-800">
-          <p>
-            © {new Date().getFullYear()}{" "}
-            <a
-              href="https://realtorspractice.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-400 hover:text-blue-300 hover:underline transition-colors"
-            >
-              Realtors' Practice
-            </a>
-          </p>
-          <p className="mt-1">
-            Powered by{" "}
-            <a
-              href="https://wedigcreativity.com.ng"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-400 hover:text-blue-300 hover:underline transition-colors"
-            >
-              WDC Solutions
-            </a>
-          </p>
+            {/* Copyright Footer */}
+            {open && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="mt-4 pt-4 px-2 text-xs text-slate-500 border-t border-slate-800"
+              >
+                <p>
+                  © {new Date().getFullYear()}{" "}
+                  <a
+                    href="https://realtorspractice.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-400 hover:text-blue-300 hover:underline transition-colors"
+                  >
+                    Realtors' Practice
+                  </a>
+                </p>
+                <p className="mt-1">
+                  Powered by{" "}
+                  <a
+                    href="https://wedigcreativity.com.ng"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-400 hover:text-blue-300 hover:underline transition-colors"
+                  >
+                    WDC Solutions
+                  </a>
+                </p>
+              </motion.div>
+            )}
+          </div>
+        </SidebarBody>
+      </AceternitySidebar>
+    </div>
+  );
+}
+
+export const Logo = () => {
+  return (
+    <div className="flex items-center space-x-3 py-2 px-2">
+      <div className="w-10 h-10 rounded-xl flex items-center justify-center">
+        <img
+          src="/favicon.ico"
+          alt="Realtors' Practice Logo"
+          className="w-10 h-10 object-contain"
+        />
+      </div>
+      <div className="flex-1 min-w-0">
+        <h1 className="text-base font-bold text-white truncate">
+          Realtors' Practice
+        </h1>
+        <div className="flex items-center space-x-2">
+          <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+          <p className="text-xs text-slate-400">System Online</p>
         </div>
       </div>
     </div>
   );
+};
 
+export const LogoIcon = () => {
   return (
-    <>
-      {/* Mobile menu button */}
-      <Button
-        onClick={toggleMobile}
-        variant="ghost"
-        size="sm"
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-slate-800/90 backdrop-blur-sm border border-slate-700 text-white hover:bg-slate-700"
-      >
-        <Menu className="w-5 h-5" />
-      </Button>
-
-      {/* Mobile sidebar overlay */}
-      {isMobileOpen && (
-        <div className="lg:hidden fixed inset-0 z-40 flex">
-          {/* Backdrop */}
-          <div
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm"
-            onClick={toggleMobile}
-          />
-
-          {/* Mobile sidebar */}
-          <div className="relative flex flex-col w-full max-w-[90vw] bg-slate-900 border-r border-slate-700 shadow-2xl overflow-y-auto">
-            <Button
-              onClick={toggleMobile}
-              variant="ghost"
-              size="sm"
-              className="absolute top-4 right-4 p-2 text-slate-400 hover:text-white z-10"
-            >
-              <X className="w-5 h-5" />
-            </Button>
-            <SidebarContent isMobile={true} />
-          </div>
-        </div>
-      )}
-
-      {/* Desktop sidebar */}
-      <div className="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0 bg-slate-900 border-r border-slate-700 shadow-xl overflow-y-auto max-h-screen">
-        <SidebarContent />
-      </div>
-    </>
+    <div className="flex items-center justify-center py-2">
+      <img
+        src="/favicon.ico"
+        alt="Realtors' Practice Logo"
+        className="w-10 h-10 object-contain"
+      />
+    </div>
   );
-}
+};

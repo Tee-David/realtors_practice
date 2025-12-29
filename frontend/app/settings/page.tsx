@@ -169,8 +169,7 @@ function SitesTab() {
           <div>
             <CardTitle className="text-white">Sites Configuration</CardTitle>
             <CardDescription className="text-slate-400">
-              Manage 82+ real estate sites - enable, disable, test, and
-              configure
+              Manage real estate sites — enable, disable, test, and configure
             </CardDescription>
           </div>
           <Button

@@ -18,7 +18,7 @@ Imagine you're looking for a house to buy or rent in Lagos. Normally, you'd have
 **This scraper does ALL of that automatically.**
 
 It's like having a tireless assistant who:
-- Checks EVERY real estate website in Lagos 24/7 (currently monitoring 82+ sites, can add unlimited more)
+- Checks EVERY real estate website in Lagos 24/7 (can monitor unlimited sites)
 - Can scrape ANY new website you add - just configure it in YAML, no programming needed
 - Remembers every property it has seen
 - Alerts you when prices drop
@@ -33,7 +33,7 @@ It's like having a tireless assistant who:
 
 ### 1. Automatic Property Collection (Unlimited Scalability)
 
-**What it does**: Visits UNLIMITED Nigerian real estate websites (currently 82+ configured) and collects ALL property listings in Lagos.
+**What it does**: Visits UNLIMITED Nigerian real estate websites and collects ALL property listings in Lagos.
 
 **Why it matters**: You get to see properties from everywhere in one place, instead of visiting dozens or hundreds of different websites.
 
@@ -330,7 +330,7 @@ The scraper understands they all mean the same thing and standardizes it to "3 b
 
 | Manual Searching | This Scraper |
 |-----------------|--------------|
-| Visit 82+ websites manually (or more) | One place for everything |
+| Visit many websites manually | One place for everything |
 | Takes 2-3 hours per day | Takes 5 minutes per day |
 | Miss properties between checks | Never miss anything |
 | No price tracking | Automatic price alerts |
@@ -346,7 +346,7 @@ The scraper understands they all mean the same thing and standardizes it to "3 b
 ### Compared to Other Property Aggregators:
 
 **What makes this better**:
-1. **Unlimited sources** - Currently 82+ sites (most aggregators only have 5-10 sources)
+1. **Unlimited sources** - Supports multiple sites (most aggregators only have 5-10 sources)
 2. **Infinitely scalable** - Add any new site via config, no programming needed
 3. **Lagos-specific** - Focused only on Lagos, not nationwide
 4. **Price tracking** - Most don't track price changes
@@ -391,7 +391,7 @@ This is useful for testing or faster runs.
 - **5 sites, 20 pages**: ~1.5 hours
 - **50 sites, all pages**: ~15 hours
 
-Most users scrape 10-20 sites with 30 pages each (~3-5 hours total). With 82+ sites configured, a full scrape takes ~20-30 hours.
+Most users scrape 10-20 sites with 30 pages each (~3-5 hours total). A full scrape of all configured sites takes ~20-30 hours.
 
 ---
 
@@ -689,7 +689,7 @@ All feedback helps improve the system!
 
 ## Conclusion
 
-This real estate scraper is like having a **tireless property hunting assistant** working for you 24/7. It checks 82+ websites (and can add unlimited more), remembers every property, tracks prices, and alerts you to the best opportunities - all automatically.
+This real estate scraper is like having a **tireless property hunting assistant** working for you 24/7. It checks multiple websites (and can add unlimited more), remembers every property, tracks prices, and alerts you to the best opportunities - all automatically.
 
 **Instead of spending hours every day checking websites manually, you spend 5 minutes reviewing curated results.**
 

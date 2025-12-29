@@ -158,7 +158,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Dynamic configuration system via config.yaml
-- 82+ real estate websites support (unlimited scalability)
+- Multiple real estate websites support (unlimited scalability)
 - Per-site overrides and metadata tracking
 - Adaptive scraping (requests → playwright → scraperapi fallback)
 - Quality scoring (0-100%) with configurable threshold

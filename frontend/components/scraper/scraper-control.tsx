@@ -324,12 +324,18 @@ export function ScraperControl() {
             <p className="text-slate-400 text-sm sm:text-base">
               Manage web scraping operations and site configurations. View
               results in{" "}
-              <a
-                href="/scrape-results"
-                className="text-blue-400 hover:text-blue-300 underline"
+              <button
+                onClick={() =>
+                  window.dispatchEvent(
+                    new CustomEvent("navigate", {
+                      detail: { page: "scrape-results" },
+                    })
+                  )
+                }
+                className="text-blue-400 hover:text-blue-300 underline cursor-pointer bg-transparent border-0 p-0"
               >
                 Scrape Results
-              </a>
+              </button>
             </p>
           </div>
 
@@ -527,12 +533,18 @@ export function ScraperControl() {
                     </a>
                     <p className="text-slate-400 text-sm">
                       When finished, check{" "}
-                      <a
-                        href="/scrape-results"
-                        className="text-blue-400 hover:text-blue-300 underline"
+                      <button
+                        onClick={() =>
+                          window.dispatchEvent(
+                            new CustomEvent("navigate", {
+                              detail: { page: "scrape-results" },
+                            })
+                          )
+                        }
+                        className="text-blue-400 hover:text-blue-300 underline cursor-pointer bg-transparent border-0 p-0"
                       >
                         Scrape Results
-                      </a>{" "}
+                      </button>{" "}
                       for new data
                     </p>
                   </div>

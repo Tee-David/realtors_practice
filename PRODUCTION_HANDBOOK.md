@@ -30,7 +30,7 @@
 ### What is Realtor's Practice?
 
 Realtor's Practice is a comprehensive Nigerian real estate property aggregation platform that:
-- **Scrapes** data from 82+ property websites
+- **Scrapes** data from multiple property websites
 - **Normalizes** and validates property information
 - **Geocodes** locations for accurate mapping
 - **Stores** data in Google Firestore for fast, scalable access
@@ -41,7 +41,7 @@ Realtor's Practice is a comprehensive Nigerian real estate property aggregation 
 ### Key Statistics
 
 - **Properties in Database:** 352+ (and growing)
-- **Supported Websites:** 82+ real estate platforms
+- **Supported Websites:** Multiple real estate platforms
 - **API Endpoints:** 82
 - **Core Modules:** 32
 - **Lines of Code:** 30,000+
