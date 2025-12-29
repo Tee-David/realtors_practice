@@ -6,7 +6,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Eye, EyeOff, Sparkles, Info } from "lucide-react";
+import { Eye, EyeOff, Info } from "lucide-react";
 import { toast } from "sonner";
 
 interface LoginScreenProps {
@@ -99,15 +99,22 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
         {/* Logo and Title */}
         <div className="text-center space-y-3 sm:space-y-4">
           <div className="flex justify-center">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-500 rounded-lg flex items-center justify-center">
-              <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl flex items-center justify-center">
+              <img
+                src="/realtor.png"
+                alt="Realtors' Practice Logo"
+                className="w-full h-full object-contain"
+              />
             </div>
           </div>
           <div className="space-y-1 sm:space-y-2">
             <h1 className="text-2xl sm:text-3xl font-bold text-white">
-              Property Insights
+              Realtors' Practice
             </h1>
             <p className="text-sm sm:text-base text-slate-400 px-4 sm:px-0">
+              Property Aggregation Platform
+            </p>
+            <p className="text-xs sm:text-sm text-slate-500 px-4 sm:px-0">
               Welcome back! Please log in to your account.
             </p>
           </div>
