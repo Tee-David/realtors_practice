@@ -26,7 +26,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${redHatDisplay.variable} antialiased dark`} suppressHydrationWarning>
+    <html lang="en" className={`${redHatDisplay.variable} antialiased`} suppressHydrationWarning>
       <body suppressHydrationWarning className="font-sans min-h-screen bg-background text-foreground transition-colors duration-300">
         <ThemeProvider>
           <AuthProvider>

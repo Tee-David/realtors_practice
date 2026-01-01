@@ -244,10 +244,10 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
         </div>
 
         {/* Right Side - Login Form */}
-        <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-8 lg:p-12 bg-slate-900">
-          <div className="w-full max-w-md space-y-6 sm:space-y-8">
+        <div className="w-full lg:w-1/2 flex flex-col justify-between p-6 sm:p-8 lg:p-12 bg-slate-900 min-h-screen lg:min-h-0">
+          <div className="w-full max-w-md mx-auto space-y-5 sm:space-y-6 flex-1 flex flex-col justify-center py-8">
             {/* Logo and Branding - Desktop & Mobile */}
-            <div className="flex flex-col items-center space-y-4">
+            <div className="flex flex-col items-center space-y-3 sm:space-y-4">
               {/* Logo and Platform Name - Horizontal Layout */}
               <div className="flex items-center gap-3 sm:gap-4 justify-center">
                 <img
@@ -390,6 +390,32 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
               </Button>
 
             </form>
+          </div>
+
+          {/* Copyright Footer */}
+          <div className="w-full max-w-md mx-auto mt-8 pt-6 text-xs text-slate-500 text-center border-t border-slate-800">
+            <p>
+              © {new Date().getFullYear()}{" "}
+              <a
+                href="https://realtorspractice.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-400 hover:text-blue-300 hover:underline transition-colors"
+              >
+                Realtors' Practice
+              </a>
+            </p>
+            <p className="mt-1">
+              Powered by{" "}
+              <a
+                href="https://wedigcreativity.com.ng"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-400 hover:text-blue-300 hover:underline transition-colors"
+              >
+                WDC Solutions
+              </a>
+            </p>
           </div>
         </div>
       </div>

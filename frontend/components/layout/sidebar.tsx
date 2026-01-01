@@ -208,7 +208,7 @@ export function Sidebar({ currentPage, onPageChange, onLogout }: SidebarProps) {
 
         {/* Theme Switch */}
         {(isMobile || isDesktopExpanded) && (
-          <div className="mb-3 flex justify-center">
+          <div className="mb-2 px-3 py-2">
             <ThemeSwitch variant="default" showLabel={false} />
           </div>
         )}
