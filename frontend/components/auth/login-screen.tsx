@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -81,8 +81,67 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [statsData, setStatsData] = useState([
+    { value: 50, suffix: "+", label: "Real Estate Sites Aggregated" },
+    { value: 352, suffix: "", label: "Properties Currently Listed" },
+    { value: 100, suffix: "%", label: "Lagos Coverage" },
+  ]);
 
   const { signIn, sendPasswordReset } = useAuth();
+
+  // Fetch real stats data from API
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+
+        // Fetch dashboard stats for properties count
+        const dashboardRes = await fetch(`${apiUrl}/firestore/dashboard`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+        });
+
+        // Fetch sites data for enabled sites count
+        const sitesRes = await fetch(`${apiUrl}/sites`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+        });
+
+        let propertiesCount = 352; // Fallback
+        let sitesCount = 50; // Fallback
+
+        if (dashboardRes.ok) {
+          const dashboardData = await dashboardRes.json();
+          // Extract total properties from dashboard data
+          if (dashboardData?.by_listing_type) {
+            propertiesCount = Object.values(dashboardData.by_listing_type).reduce(
+              (sum: number, val: any) => sum + (typeof val === 'number' ? val : 0),
+              0
+            ) || propertiesCount;
+          }
+        }
+
+        if (sitesRes.ok) {
+          const sitesData = await sitesRes.json();
+          if (sitesData?.enabled !== undefined) {
+            sitesCount = sitesData.enabled;
+          }
+        }
+
+        // Update stats with real data
+        setStatsData([
+          { value: sitesCount, suffix: "+", label: "Real Estate Sites Aggregated" },
+          { value: propertiesCount, suffix: "", label: "Properties Currently Listed" },
+          { value: 100, suffix: "%", label: "Lagos Coverage" },
+        ]);
+      } catch (error) {
+        console.error('Failed to fetch stats:', error);
+        // Keep fallback values on error
+      }
+    };
+
+    fetchStats();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -176,7 +235,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
 
             {/* Stats Carousel Below Globe - Much Smaller */}
             <div className="w-full max-w-xs scale-50">
-              <StatsCarouselCount className="py-0" />
+              <StatsCarouselCount stats={statsData} className="py-0" />
             </div>
           </div>
         </div>
