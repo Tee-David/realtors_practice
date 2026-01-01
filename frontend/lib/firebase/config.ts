@@ -28,25 +28,39 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID || ""
 };
 
-// Initialize Firebase
-let app: FirebaseApp;
-let auth: Auth;
-let db: Firestore;
+// Check if Firebase is properly configured
+const isFirebaseConfigured = () => {
+  return !!(
+    firebaseConfig.apiKey &&
+    firebaseConfig.authDomain &&
+    firebaseConfig.projectId &&
+    firebaseConfig.appId
+  );
+};
 
-if (!getApps().length) {
-  app = initializeApp(firebaseConfig);
-  auth = getAuth(app);
-  db = getFirestore(app);
+// Initialize Firebase only if properly configured
+let app: FirebaseApp | null = null;
+let auth: Auth | null = null;
+let db: Firestore | null = null;
+
+if (isFirebaseConfigured()) {
+  if (!getApps().length) {
+    app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    db = getFirestore(app);
+  } else {
+    app = getApps()[0];
+    auth = getAuth(app);
+    db = getFirestore(app);
+  }
 } else {
-  app = getApps()[0];
-  auth = getAuth(app);
-  db = getFirestore(app);
+  console.warn('Firebase not configured. Set NEXT_PUBLIC_FIREBASE_* environment variables to enable Firebase features.');
 }
 
-// Enable persistence for Firestore
-if (typeof window !== 'undefined') {
+// Enable persistence for Firestore (only if Firebase is configured)
+if (typeof window !== 'undefined' && db) {
   import('firebase/firestore').then(({ enableIndexedDbPersistence }) => {
-    enableIndexedDbPersistence(db).catch((err) => {
+    enableIndexedDbPersistence(db!).catch((err) => {
       if (err.code === 'failed-precondition') {
         console.warn('Firestore persistence failed: Multiple tabs open');
       } else if (err.code === 'unimplemented') {

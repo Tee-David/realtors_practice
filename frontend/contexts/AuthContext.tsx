@@ -52,7 +52,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [userRole, setUserRole] = useState<string | null>(null);
 
   useEffect(() => {
-    // Subscribe to auth state changes
+    // Subscribe to auth state changes (only if Firebase is configured)
+    if (!auth) {
+      console.warn('Firebase Auth not initialized. User authentication is disabled.');
+      setLoading(false);
+      return;
+    }
+
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         setUser(firebaseUser);
