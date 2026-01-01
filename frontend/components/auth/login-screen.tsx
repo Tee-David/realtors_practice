@@ -167,27 +167,15 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
               </div>
             </div>
 
-            {/* Globe - 20% Smaller */}
-            <div className="w-4/5 h-[50vh] xl:h-[55vh] flex items-center justify-center mb-6">
+            {/* Globe - Larger (70% of container) */}
+            <div className="w-full h-[65vh] xl:h-[70vh] flex items-center justify-center mb-4">
               <div className="w-full h-full">
                 <World data={sampleArcs} globeConfig={globeConfig} />
               </div>
             </div>
 
-            {/* Powered By Text with Reveal Animation */}
-            <div className="mb-6 text-center">
-              <RevealText
-                mode="auto"
-                direction="up"
-                stagger={0.05}
-                className="text-lg xl:text-xl text-blue-200 italic font-light"
-              >
-                Powered by Data & Intelligence
-              </RevealText>
-            </div>
-
-            {/* Stats Carousel Below Globe */}
-            <div className="w-full max-w-2xl">
+            {/* Stats Carousel Below Globe - Smaller */}
+            <div className="w-full max-w-md scale-90">
               <StatsCarouselCount className="py-0" />
             </div>
           </div>
