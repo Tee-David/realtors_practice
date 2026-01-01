@@ -6,29 +6,72 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Eye, EyeOff, Info, Sparkles } from "lucide-react";
+import { Eye, EyeOff, Info } from "lucide-react";
 import { toast } from "sonner";
-import { TypewriterEffect } from "@/components/ui/typewriter-effect";
-import { Globe } from "@/components/ui/globe";
+import StatsCarouselCount from "@/components/ui/stats-carousel";
+import dynamic from "next/dynamic";
 import { useAuth } from "@/contexts/AuthContext";
+
+const World = dynamic(() => import("@/components/ui/globe").then((m) => m.World), {
+  ssr: false,
+});
 
 interface LoginScreenProps {
   onLogin: () => void;
 }
 
-const powerfulFeatures = [
-  { text: "Aggregate Unlimited Real Estate Sites", className: "text-blue-400 font-bold" },
-  { text: "Smart Property Search & Filtering", className: "text-green-400 font-bold" },
-  { text: "Advanced Data Analytics & Insights", className: "text-purple-400 font-bold" },
-  { text: "Real-Time Price Tracking", className: "text-yellow-400 font-bold" },
-  { text: "Location-Based Market Intelligence", className: "text-pink-400 font-bold" },
-  { text: "Automated Property Scraping", className: "text-cyan-400 font-bold" },
-  { text: "Export to CSV, Excel & JSON", className: "text-orange-400 font-bold" },
-  { text: "Save & Track Favorite Searches", className: "text-indigo-400 font-bold" },
-  { text: "Email Alerts for New Listings", className: "text-red-400 font-bold" },
-  { text: "Property Quality Scoring", className: "text-teal-400 font-bold" },
-  { text: "Interactive Data Visualization", className: "text-lime-400 font-bold" },
-  { text: "Comprehensive Market Trends", className: "text-fuchsia-400 font-bold" },
+const globeConfig = {
+  pointSize: 4,
+  globeColor: "#1d072e",
+  showAtmosphere: true,
+  atmosphereColor: "#FFFFFF",
+  atmosphereAltitude: 0.1,
+  emissive: "#1d072e",
+  emissiveIntensity: 0.1,
+  shininess: 0.9,
+  polygonColor: "rgba(255,255,255,0.7)",
+  ambientLight: "#38bdf8",
+  directionalLeftLight: "#ffffff",
+  directionalTopLight: "#ffffff",
+  pointLight: "#ffffff",
+  arcTime: 1000,
+  arcLength: 0.9,
+  rings: 1,
+  maxRings: 3,
+  initialPosition: { lat: 6.5244, lng: 3.3792 }, // Lagos, Nigeria
+  autoRotate: true,
+  autoRotateSpeed: 0.5,
+};
+
+const colors = ["#06b6d4", "#3b82f6", "#6366f1"];
+const sampleArcs = [
+  {
+    order: 1,
+    startLat: 6.5244,
+    startLng: 3.3792,
+    endLat: 51.5074,
+    endLng: -0.1278,
+    arcAlt: 0.3,
+    color: colors[0],
+  },
+  {
+    order: 2,
+    startLat: 6.5244,
+    startLng: 3.3792,
+    endLat: 40.7128,
+    endLng: -74.0060,
+    arcAlt: 0.3,
+    color: colors[1],
+  },
+  {
+    order: 3,
+    startLat: 6.5244,
+    startLng: 3.3792,
+    endLat: -33.8688,
+    endLng: 151.2093,
+    arcAlt: 0.3,
+    color: colors[2],
+  },
 ];
 
 export function LoginScreen({ onLogin }: LoginScreenProps) {
@@ -107,7 +150,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
           {/* Globe Background */}
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="w-full h-full">
-              <Globe className="w-full h-full" />
+              <World data={sampleArcs} globeConfig={globeConfig} />
             </div>
           </div>
 
@@ -124,19 +167,14 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
               <h1 className="text-5xl font-bold text-white mb-4">
                 Realtors' Practice
               </h1>
-              <p className="text-xl text-blue-300 mb-8">
+              <p className="text-xl text-blue-300 mb-6">
                 Property Aggregation Platform
               </p>
 
-              <div className="space-y-4 max-w-lg">
-                <div className="flex items-center justify-center gap-2">
-                  <Sparkles className="w-5 h-5 text-yellow-400" />
-                  <span className="text-slate-300 text-lg">Powered by</span>
-                </div>
-                <div className="h-16 flex items-center justify-center">
-                  <TypewriterEffect words={powerfulFeatures} />
-                </div>
-              </div>
+              <StatsCarouselCount
+                title="POWERED BY DATA & INTELLIGENCE"
+                className="py-0"
+              />
             </div>
           </div>
         </div>

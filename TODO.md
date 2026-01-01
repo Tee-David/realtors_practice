@@ -17,6 +17,48 @@
 
 ## 🔴 CRITICAL PRIORITY (Security - Before Production)
 
+### URGENT FIXES (2026-01-01 - Session 2)
+- [ ] 🔄 Fix globe component SSR errors and build issues
+  - Remove static JSON import causing "Module not found" errors
+  - Implement dynamic loading via fetch from public directory
+  - Fix "window is not defined" SSR error
+  - Test login page renders correctly
+- [ ] Verify Firestore users can login to the application as admin
+  - Test login with admin@realtorspractice.com
+  - Verify admin role and permissions work
+  - Test user creation and authentication flow
+- [ ] Replace mock user data with real Firebase users in User Management
+  - Remove mockData from frontend/lib/mockData.ts
+  - Connect User Management to Firebase Auth backend
+  - Display actual users from Firestore
+  - Test user CRUD operations
+- [ ] Fix scrape control page "site isn't working" issue
+  - Investigate which site is failing
+  - Check scraper configuration
+  - Test site scraping functionality
+- [ ] Fix mobile sticky header logo display issue
+  - Header shows logo in sidebar at top left incorrectly
+  - Test with Playwright in mobile viewport
+  - Ensure logo displays correctly in mobile mode
+- [ ] Fix backend API connection issues
+  - Resolve "Failed to fetch" errors in frontend
+  - Check CORS configuration
+  - Verify API endpoints are accessible
+  - Test all API integrations
+- [ ] Fix Render.com deployment issues
+  - Use Render MCP to diagnose issues
+  - Update deployment configuration
+  - Test production API endpoints
+- [ ] Fix Vercel deployment issues
+  - Use Vercel MCP if needed
+  - Update build configuration
+  - Test production frontend
+- [ ] Push all fixes to GitHub
+  - Commit globe component fixes
+  - Commit user management updates
+  - Commit mobile fixes
+  - Commit API connection fixes
+
 ### Authentication & Authorization
 - [x] ✅ Implement Firebase Authentication system (COMPLETED 2026-01-01)
   - **Backend**: Firebase Admin SDK with JWT token verification ✅
