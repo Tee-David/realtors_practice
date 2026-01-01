@@ -397,6 +397,57 @@ function EmailTab() {
 function FirestoreTab() {
   const [firestoreConnected, setFirestoreConnected] = useState(false);
   const [propertyCount, setPropertyCount] = useState(0);
+  const [envCategories, setEnvCategories] = useState<any>({});
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [envChanges, setEnvChanges] = useState<Record<string, any>>({});
+
+  // Load environment variables on mount
+  useEffect(() => {
+    loadEnvVariables();
+  }, []);
+
+  const loadEnvVariables = async () => {
+    try {
+      setLoading(true);
+      const response = await apiClient.getEnvCategories();
+      if (response.success) {
+        setEnvCategories(response.categories);
+      }
+    } catch (error) {
+      toast.error("Failed to load environment variables");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEnvChange = (key: string, value: any) => {
+    setEnvChanges((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+  };
+
+  const handleSaveEnvVariables = async () => {
+    if (Object.keys(envChanges).length === 0) {
+      toast.info("No changes to save");
+      return;
+    }
+
+    try {
+      setSaving(true);
+      const response = await apiClient.updateEnvVariables(envChanges);
+      if (response.success) {
+        toast.success(response.message);
+        setEnvChanges({});
+        await loadEnvVariables(); // Reload to show updated values
+      }
+    } catch (error: any) {
+      toast.error(error.message || "Failed to save environment variables");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const handleUpload = async () => {
     try {
@@ -408,20 +459,83 @@ function FirestoreTab() {
     }
   };
 
+  const renderEnvInput = (envVar: any) => {
+    const currentValue =
+      envChanges[envVar.key] !== undefined
+        ? envChanges[envVar.key]
+        : envVar.value;
+
+    switch (envVar.type) {
+      case "boolean":
+        return (
+          <Switch
+            checked={currentValue}
+            onCheckedChange={(checked) => handleEnvChange(envVar.key, checked)}
+          />
+        );
+
+      case "number":
+        return (
+          <Input
+            type="number"
+            value={currentValue}
+            onChange={(e) =>
+              handleEnvChange(envVar.key, Number(e.target.value))
+            }
+            className="bg-slate-900 border-slate-600 text-white"
+          />
+        );
+
+      case "select":
+        return (
+          <select
+            value={currentValue}
+            onChange={(e) => handleEnvChange(envVar.key, e.target.value)}
+            className="w-full h-10 px-3 bg-slate-900 border border-slate-600 text-white rounded-md"
+          >
+            {envVar.options?.map((option: string) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        );
+
+      case "password":
+        return (
+          <Input
+            type="password"
+            value={currentValue}
+            onChange={(e) => handleEnvChange(envVar.key, e.target.value)}
+            className="bg-slate-900 border-slate-600 text-white"
+            placeholder="••••••••"
+          />
+        );
+
+      default:
+        return (
+          <Input
+            type="text"
+            value={currentValue}
+            onChange={(e) => handleEnvChange(envVar.key, e.target.value)}
+            className="bg-slate-900 border-slate-600 text-white"
+          />
+        );
+    }
+  };
+
   return (
-    <Card className="bg-slate-800 border-slate-700">
-      <CardHeader>
-        <CardTitle className="text-white">Firestore Integration</CardTitle>
-        <CardDescription className="text-slate-400">
-          Manage cloud database connection and data synchronization
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        {/* Connection Status */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-white">
-            Connection Status
-          </h3>
+    <div className="space-y-6">
+      {/* Firestore Connection Status */}
+      <Card className="bg-slate-800 border-slate-700">
+        <CardHeader>
+          <CardTitle className="text-white">Firestore Connection</CardTitle>
+          <CardDescription className="text-slate-400">
+            Manage cloud database connection and data synchronization
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {/* Connection Status */}
           <div className="p-4 bg-slate-900 rounded-lg border border-slate-700">
             <div className="flex items-center justify-between">
               <div>
@@ -440,11 +554,8 @@ function FirestoreTab() {
               </Badge>
             </div>
           </div>
-        </div>
 
-        {/* Upload Actions */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-white">Data Management</h3>
+          {/* Upload Actions */}
           <Button
             onClick={handleUpload}
             className="bg-blue-600 hover:bg-blue-700"
@@ -452,9 +563,92 @@ function FirestoreTab() {
             <Database className="w-4 h-4 mr-2" />
             Upload Data to Firestore
           </Button>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+
+      {/* Environment Variables Configuration */}
+      <Card className="bg-slate-800 border-slate-700">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-white">
+                Environment Variables
+              </CardTitle>
+              <CardDescription className="text-slate-400">
+                Configure project settings - changes persist to backend .env file
+              </CardDescription>
+            </div>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={loadEnvVariables}
+                disabled={loading}
+                className="border-slate-600 hover:bg-slate-700"
+              >
+                <RefreshCw className="w-4 h-4" />
+              </Button>
+              <Button
+                onClick={handleSaveEnvVariables}
+                disabled={saving || Object.keys(envChanges).length === 0}
+                className="bg-green-600 hover:bg-green-700"
+              >
+                {saving ? "Saving..." : "Save Changes"}
+                {Object.keys(envChanges).length > 0 && (
+                  <Badge className="ml-2 bg-orange-600">
+                    {Object.keys(envChanges).length}
+                  </Badge>
+                )}
+              </Button>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {loading ? (
+            <div className="space-y-4">
+              {[1, 2, 3].map((i) => (
+                <Skeleton key={i} className="h-20 w-full" />
+              ))}
+            </div>
+          ) : (
+            <div className="space-y-6">
+              {Object.entries(envCategories).map(([category, variables]: [string, any]) => (
+                <div key={category} className="space-y-4">
+                  <h3 className="text-lg font-semibold text-white border-b border-slate-700 pb-2">
+                    {category}
+                  </h3>
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    {variables.map((envVar: any) => (
+                      <div
+                        key={envVar.key}
+                        className="p-4 bg-slate-900 rounded-lg border border-slate-700 space-y-2"
+                      >
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <Label className="text-slate-300 font-medium">
+                              {envVar.key}
+                            </Label>
+                            <p className="text-xs text-slate-400 mt-1">
+                              {envVar.description}
+                            </p>
+                          </div>
+                          {envChanges[envVar.key] !== undefined && (
+                            <Badge className="bg-orange-600 text-xs ml-2">
+                              Modified
+                            </Badge>
+                          )}
+                        </div>
+                        <div className="mt-2">{renderEnvInput(envVar)}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
   );
 }
 

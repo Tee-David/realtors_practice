@@ -984,6 +984,70 @@ export class RealEstateApiClient {
   async searchFirestoreAdvanced(request: any): Promise<any> {
     return this.request("POST", "/firestore/search", request);
   }
+
+  // ============================================================================
+  // Configuration Management Endpoints
+  // ============================================================================
+
+  /**
+   * Get all editable environment variables
+   */
+  async getEnvVariables(): Promise<{
+    success: boolean;
+    variables: Array<{
+      key: string;
+      value: any;
+      type: string;
+      description: string;
+      options?: string[];
+    }>;
+    total: number;
+  }> {
+    return this.request("GET", "/config/env");
+  }
+
+  /**
+   * Get environment variables grouped by category
+   */
+  async getEnvCategories(): Promise<{
+    success: boolean;
+    categories: Record<
+      string,
+      Array<{
+        key: string;
+        value: any;
+        type: string;
+        description: string;
+        options?: string[];
+      }>
+    >;
+  }> {
+    return this.request("GET", "/config/env/categories");
+  }
+
+  /**
+   * Update environment variables
+   */
+  async updateEnvVariables(variables: Record<string, any>): Promise<{
+    success: boolean;
+    message: string;
+    updated_count: number;
+  }> {
+    return this.request("POST", "/config/env", { variables });
+  }
+
+  /**
+   * Test if environment variable changes took effect
+   */
+  async testEnvChange(key: string): Promise<{
+    success: boolean;
+    key: string;
+    current_value: string;
+    file_value: string;
+    in_sync: boolean;
+  }> {
+    return this.request("POST", "/config/env/test", { key });
+  }
 }
 
 /**

@@ -209,22 +209,15 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
         <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
           {/* Content Container */}
           <div className="relative z-10 flex flex-col items-center justify-center w-full h-full p-8 xl:p-12 gap-8">
-            {/* Globe - Very Large (70%) */}
-            <div className="w-full flex-1 flex items-center justify-center">
-              <div className="w-full h-full">
+            {/* Globe - Very Large */}
+            <div className="w-full flex-1 flex items-center justify-center min-h-0">
+              <div className="w-full max-w-2xl aspect-square">
                 <World data={sampleArcs} globeConfig={globeConfig} />
               </div>
             </div>
 
-            {/* Powered By Text */}
-            <div className="text-center">
-              <p className="text-xl xl:text-2xl text-blue-200 italic font-light">
-                Powered by Data & Intelligence
-              </p>
-            </div>
-
             {/* Stats Carousel - Normal Size */}
-            <div className="w-full max-w-md scale-75">
+            <div className="w-full max-w-md scale-75 mt-4">
               <StatsCarouselCount stats={statsData} className="py-0" />
             </div>
           </div>

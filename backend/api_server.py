@@ -72,6 +72,16 @@ except ImportError as e:
 except Exception as e:
     logger.error(f"Error registering auth routes: {e}")
 
+# Register configuration management routes Blueprint
+try:
+    from api.routes.config_routes import config_bp
+    app.register_blueprint(config_bp)
+    logger.info("Configuration routes registered successfully")
+except ImportError as e:
+    logger.warning(f"Failed to import config routes: {e}")
+except Exception as e:
+    logger.error(f"Error registering config routes: {e}")
+
 # Modern Flask 3.x approach: Use custom JSONProvider
 from flask.json.provider import DefaultJSONProvider
 

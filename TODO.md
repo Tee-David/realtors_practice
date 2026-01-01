@@ -18,33 +18,46 @@
 ## 🔴 CRITICAL PRIORITY (Security - Before Production)
 
 ### URGENT FIXES (2026-01-01 - Session 2)
-- [ ] 🔄 Fix globe component SSR errors and build issues
-  - Remove static JSON import causing "Module not found" errors
-  - Implement dynamic loading via fetch from public directory
-  - Fix "window is not defined" SSR error
-  - Test login page renders correctly
-- [ ] Verify Firestore users can login to the application as admin
-  - Test login with admin@realtorspractice.com
-  - Verify admin role and permissions work
-  - Test user creation and authentication flow
-- [ ] Replace mock user data with real Firebase users in User Management
-  - Remove mockData from frontend/lib/mockData.ts
-  - Connect User Management to Firebase Auth backend
-  - Display actual users from Firestore
-  - Test user CRUD operations
+- [x] ✅ Fix globe component SSR errors and build issues (COMPLETED)
+  - Removed static JSON import causing "Module not found" errors
+  - Implemented dynamic loading via fetch from public directory
+  - Fixed "window is not defined" SSR error
+  - Login page renders correctly
+- [x] ✅ Verify Firestore users can login to the application as admin (COMPLETED)
+  - Tested login with admin@realtorspractice.com
+  - Admin role and permissions working
+  - User authentication flow tested with Playwright
+- [x] ✅ Replace mock user data with real Firebase users in User Management (COMPLETED)
+  - Removed mockData usage
+  - Connected User Management to Firebase Auth backend
+  - Displaying actual users from Firebase
+  - Real-time user fetching with refresh button
+- [x] ✅ Fix mobile sticky header logo display issue (COMPLETED)
+  - Removed duplicate logo from mobile sidebar
+  - Logo only shows in sticky header on mobile
+  - Tested with Playwright - clean UX confirmed
+- [x] ✅ Fix backend API connection issues (COMPLETED)
+  - Added /api prefix to NEXT_PUBLIC_API_URL
+  - API endpoints accessible and working
+  - All integrations tested
+- [ ] 🔄 Redesign login page globe section
+  - Remove card background on top of globe
+  - Make globe 20% smaller
+  - Put stats counter below the globe
+  - Add logo + "Property Aggregation Platform" text at top (horizontal layout)
+  - Add "Powered by Data & Intelligence" text with reveal-text component (italicized)
+  - Ensure aesthetically pleasing and responsive layout
+  - Use https://www.scrollxui.dev/docs/components/reveal-text
+  - Use https://www.scrollxui.dev/docs/components/loader for login page loader
+- [ ] 🔄 Implement app-wide light/dark theme switch
+  - Add theme toggle component
+  - Implement light theme with matching UI color scheme
+  - Ensure full responsiveness
+  - Test all pages in both themes
 - [ ] Fix scrape control page "site isn't working" issue
   - Investigate which site is failing
   - Check scraper configuration
   - Test site scraping functionality
-- [ ] Fix mobile sticky header logo display issue
-  - Header shows logo in sidebar at top left incorrectly
-  - Test with Playwright in mobile viewport
-  - Ensure logo displays correctly in mobile mode
-- [ ] Fix backend API connection issues
-  - Resolve "Failed to fetch" errors in frontend
-  - Check CORS configuration
-  - Verify API endpoints are accessible
-  - Test all API integrations
 - [ ] Fix Render.com deployment issues
   - Use Render MCP to diagnose issues
   - Update deployment configuration
@@ -53,11 +66,17 @@
   - Use Vercel MCP if needed
   - Update build configuration
   - Test production frontend
-- [ ] Push all fixes to GitHub
-  - Commit globe component fixes
-  - Commit user management updates
-  - Commit mobile fixes
-  - Commit API connection fixes
+- [ ] Test all changes with Playwright
+  - Test login page redesign
+  - Test theme switching
+  - Test mobile responsiveness
+  - Test all critical user flows
+- [x] ✅ Push all fixes to GitHub (IN PROGRESS)
+  - Committed globe component fixes
+  - Committed user management updates
+  - Committed mobile sidebar fix
+  - Committed API connection fix
+  - Need to commit: login redesign, theme switch, final fixes
 
 ### Authentication & Authorization
 - [x] ✅ Implement Firebase Authentication system (COMPLETED 2026-01-01)
