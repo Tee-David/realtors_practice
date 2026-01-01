@@ -119,27 +119,29 @@ export function Sidebar({ currentPage, onPageChange, onLogout }: SidebarProps) {
   // Sidebar content component
   const SidebarContent = ({ isMobile = false }: { isMobile?: boolean }) => (
     <div className="flex flex-col h-full overflow-y-auto scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-slate-900">
-      {/* Logo and brand */}
-      <div className="flex items-center space-x-3 p-6 border-b border-slate-700">
-        <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0">
-          <img
-            src="/realtor.png"
-            alt="Realtors' Practice Logo"
-            className="w-10 h-10 object-contain"
-          />
-        </div>
-        {(isMobile || isDesktopExpanded) && (
-          <div className="flex-1 min-w-0 transition-opacity duration-300">
-            <h1 className="text-lg font-bold text-white truncate">
-              Realtors' Practice
-            </h1>
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-              <p className="text-xs text-slate-400">System Online</p>
-            </div>
+      {/* Logo and brand - Hidden on mobile since it's already in the sticky header */}
+      {!isMobile && (
+        <div className="flex items-center space-x-3 p-6 border-b border-slate-700">
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0">
+            <img
+              src="/realtor.png"
+              alt="Realtors' Practice Logo"
+              className="w-10 h-10 object-contain"
+            />
           </div>
-        )}
-      </div>
+          {isDesktopExpanded && (
+            <div className="flex-1 min-w-0 transition-opacity duration-300">
+              <h1 className="text-lg font-bold text-white truncate">
+                Realtors' Practice
+              </h1>
+              <div className="flex items-center space-x-2">
+                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                <p className="text-xs text-slate-400">System Online</p>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Main Navigation */}
       <nav className="flex-1 p-4 space-y-1">
