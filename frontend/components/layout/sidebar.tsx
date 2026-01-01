@@ -206,14 +206,40 @@ export function Sidebar({ currentPage, onPageChange, onLogout }: SidebarProps) {
           </div>
         )}
 
-        {/* Theme Switch */}
+        {/* Theme Switch and Sign Out - Horizontal Layout on Mobile */}
         {(isMobile || isDesktopExpanded) && (
-          <div className="mb-2 px-3 py-2">
+          <div className="flex items-center justify-between gap-3 px-3 py-2">
+            {/* Sign Out Button */}
+            {footerNavigation.map((item) => {
+              const Icon = item.icon;
+              const isLogout = item.action === "logout";
+
+              return (
+                <button
+                  key={item.action}
+                  onClick={() => handleFooterAction(item.action)}
+                  className={cn(
+                    "flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200",
+                    "focus:outline-none focus:ring-2 focus:ring-blue-500/50",
+                    isLogout
+                      ? "text-red-400 hover:bg-red-500/10 hover:text-red-300"
+                      : "text-slate-400 hover:bg-slate-800/50 hover:text-white"
+                  )}
+                  title={item.name}
+                >
+                  <Icon className="w-4 h-4 flex-shrink-0" />
+                  <span className="font-medium text-sm">{item.name}</span>
+                </button>
+              );
+            })}
+
+            {/* Theme Switch */}
             <ThemeSwitch variant="default" showLabel={false} />
           </div>
         )}
 
-        {footerNavigation.map((item) => {
+        {/* Desktop - Keep original layout */}
+        {!isMobile && !isDesktopExpanded && footerNavigation.map((item) => {
           const Icon = item.icon;
           const isLogout = item.action === "logout";
 
@@ -222,19 +248,15 @@ export function Sidebar({ currentPage, onPageChange, onLogout }: SidebarProps) {
               key={item.action}
               onClick={() => handleFooterAction(item.action)}
               className={cn(
-                "w-full flex items-center px-3 py-2 rounded-lg text-left transition-all duration-200",
+                "w-full flex items-center justify-center px-3 py-2 rounded-lg transition-all duration-200",
                 "focus:outline-none focus:ring-2 focus:ring-blue-500/50",
                 isLogout
                   ? "text-red-400 hover:bg-red-500/10 hover:text-red-300"
-                  : "text-slate-400 hover:bg-slate-800/50 hover:text-white dark:text-slate-400 dark:hover:bg-slate-800/50 text-slate-600 hover:bg-slate-100",
-                (isMobile || isDesktopExpanded) ? "space-x-3" : "justify-center"
+                  : "text-slate-400 hover:bg-slate-800/50 hover:text-white"
               )}
-              title={!isDesktopExpanded && !isMobile ? item.name : undefined}
+              title={item.name}
             >
               <Icon className="w-4 h-4 flex-shrink-0" />
-              {(isMobile || isDesktopExpanded) && (
-                <span className="font-medium">{item.name}</span>
-              )}
             </button>
           );
         })}
@@ -242,7 +264,7 @@ export function Sidebar({ currentPage, onPageChange, onLogout }: SidebarProps) {
         {/* Copyright Footer */}
         {(isMobile || isDesktopExpanded) && (
           <div className="mt-4 pt-4 px-3 text-xs text-slate-500 border-t border-slate-800">
-            <p>
+            <p className="whitespace-nowrap overflow-hidden text-ellipsis">
               © {new Date().getFullYear()}{" "}
               <a
                 href="https://realtorspractice.com"
@@ -253,7 +275,7 @@ export function Sidebar({ currentPage, onPageChange, onLogout }: SidebarProps) {
                 Realtors' Practice
               </a>
             </p>
-            <p className="mt-1">
+            <p className="mt-1 whitespace-nowrap overflow-hidden text-ellipsis">
               Powered by{" "}
               <a
                 href="https://wedigcreativity.com.ng"
