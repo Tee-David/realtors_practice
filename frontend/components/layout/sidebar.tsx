@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { ThemeSwitch } from "@/components/ui/theme-switch";
 import { toast } from "sonner";
 
 interface SidebarProps {
@@ -118,10 +119,10 @@ export function Sidebar({ currentPage, onPageChange, onLogout }: SidebarProps) {
 
   // Sidebar content component
   const SidebarContent = ({ isMobile = false }: { isMobile?: boolean }) => (
-    <div className="flex flex-col h-full overflow-y-auto scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-slate-900">
+    <div className="flex flex-col h-full">
       {/* Logo and brand - Hidden on mobile since it's already in the sticky header */}
       {!isMobile && (
-        <div className="flex items-center space-x-3 p-6 border-b border-slate-700">
+        <div className="flex items-center space-x-3 p-6 border-b border-slate-700 flex-shrink-0">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0">
             <img
               src="/realtor.png"
@@ -143,8 +144,8 @@ export function Sidebar({ currentPage, onPageChange, onLogout }: SidebarProps) {
         </div>
       )}
 
-      {/* Main Navigation */}
-      <nav className="flex-1 p-4 space-y-1">
+      {/* Main Navigation - Scrollable */}
+      <nav className="flex-1 p-4 space-y-1 overflow-y-auto scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-slate-900">
         {!isMobile && isDesktopExpanded && (
           <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3 px-3">
             Navigation
@@ -197,13 +198,21 @@ export function Sidebar({ currentPage, onPageChange, onLogout }: SidebarProps) {
         })}
       </nav>
 
-      {/* Footer Navigation */}
-      <div className="p-4 border-t border-slate-700 space-y-1">
+      {/* Footer Navigation - Sticky at bottom */}
+      <div className="p-4 border-t border-slate-700 dark:border-slate-700 border-slate-200 space-y-1 flex-shrink-0 bg-slate-900">
         {!isMobile && isDesktopExpanded && (
-          <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3 px-3">
+          <div className="text-xs font-semibold text-slate-500 dark:text-slate-500 text-slate-600 uppercase tracking-wider mb-3 px-3">
             Account
           </div>
         )}
+
+        {/* Theme Switch */}
+        {(isMobile || isDesktopExpanded) && (
+          <div className="mb-3 flex justify-center">
+            <ThemeSwitch variant="default" showLabel={false} />
+          </div>
+        )}
+
         {footerNavigation.map((item) => {
           const Icon = item.icon;
           const isLogout = item.action === "logout";
@@ -217,7 +226,7 @@ export function Sidebar({ currentPage, onPageChange, onLogout }: SidebarProps) {
                 "focus:outline-none focus:ring-2 focus:ring-blue-500/50",
                 isLogout
                   ? "text-red-400 hover:bg-red-500/10 hover:text-red-300"
-                  : "text-slate-400 hover:bg-slate-800/50 hover:text-white",
+                  : "text-slate-400 hover:bg-slate-800/50 hover:text-white dark:text-slate-400 dark:hover:bg-slate-800/50 text-slate-600 hover:bg-slate-100",
                 (isMobile || isDesktopExpanded) ? "space-x-3" : "justify-center"
               )}
               title={!isDesktopExpanded && !isMobile ? item.name : undefined}
@@ -296,16 +305,37 @@ export function Sidebar({ currentPage, onPageChange, onLogout }: SidebarProps) {
           />
 
           {/* Mobile sidebar */}
-          <div className="relative flex flex-col w-full max-w-[90vw] bg-slate-900 border-r border-slate-700 shadow-2xl overflow-y-auto animate-in slide-in-from-left duration-300">
-            <Button
-              onClick={toggleMobile}
-              variant="ghost"
-              size="sm"
-              className="absolute top-4 right-4 p-2 text-slate-400 hover:text-white z-10"
-            >
-              <X className="w-5 h-5" />
-            </Button>
-            <SidebarContent isMobile={true} />
+          <div className="relative flex flex-col w-full max-w-[90vw] bg-slate-900 border-r border-slate-700 shadow-2xl animate-in slide-in-from-left duration-300">
+            {/* Mobile sidebar header with close button */}
+            <div className="flex items-center justify-between p-4 border-b border-slate-700 flex-shrink-0">
+              <div className="flex items-center gap-3">
+                <img
+                  src="/realtor.png"
+                  alt="Realtors' Practice Logo"
+                  className="w-8 h-8 object-contain"
+                />
+                <div>
+                  <h1 className="text-sm font-bold text-white">Realtors' Practice</h1>
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse" />
+                    <p className="text-xs text-slate-400">System Online</p>
+                  </div>
+                </div>
+              </div>
+              <Button
+                onClick={toggleMobile}
+                variant="ghost"
+                size="sm"
+                className="p-2 text-slate-400 hover:text-white"
+              >
+                <X className="w-5 h-5" />
+              </Button>
+            </div>
+
+            {/* Sidebar content - Full height with internal scrolling */}
+            <div className="flex-1 min-h-0 flex flex-col">
+              <SidebarContent isMobile={true} />
+            </div>
           </div>
         </div>
       )}

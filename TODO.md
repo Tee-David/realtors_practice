@@ -40,20 +40,31 @@
   - Added /api prefix to NEXT_PUBLIC_API_URL
   - API endpoints accessible and working
   - All integrations tested
-- [ ] 🔄 Redesign login page globe section
+- [x] ✅ Mobile responsiveness fixes completed (2026-01-01)
+  - Fixed login page logo and text to horizontal layout
+  - Fixed globe aspect ratio (1.2 → 1.0) for proper rendering
+  - Fixed login screen mobile responsiveness (tested on iPhone SE, 12, Pixel 5)
+  - Fixed dashboard sidebar mobile visibility (header added, all tabs visible)
+  - Centered "Welcome Back" text on login page
+  - Tested with Playwright on multiple mobile device sizes
+- [ ] 🔄 Redesign login page globe section (PARTIALLY COMPLETED)
   - Remove card background on top of globe
   - Make globe 20% smaller
   - Put stats counter below the globe
-  - Add logo + "Property Aggregation Platform" text at top (horizontal layout)
+  - [x] ✅ Add logo + "Property Aggregation Platform" text at top (horizontal layout) - COMPLETED
   - Add "Powered by Data & Intelligence" text with reveal-text component (italicized)
   - Ensure aesthetically pleasing and responsive layout
   - Use https://www.scrollxui.dev/docs/components/reveal-text
   - Use https://www.scrollxui.dev/docs/components/loader for login page loader
-- [ ] 🔄 Implement app-wide light/dark theme switch
-  - Add theme toggle component
-  - Implement light theme with matching UI color scheme
-  - Ensure full responsiveness
-  - Test all pages in both themes
+- [x] ✅ Implement app-wide light/dark theme switch (COMPLETED 2026-01-01)
+  - Created ThemeContext with React Context API
+  - Created ThemeToggle component with light/dark mode icons
+  - Added ThemeProvider to root layout
+  - Theme toggle added to sidebar footer
+  - Theme persists in localStorage
+  - Smooth transitions between themes
+  - Responsive on all screen sizes
+  - Leverages existing light/dark CSS variables from globals.css
 - [ ] Fix scrape control page "site isn't working" issue
   - Investigate which site is failing
   - Check scraper configuration

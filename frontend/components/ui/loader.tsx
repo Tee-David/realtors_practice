@@ -13,13 +13,13 @@ interface LoaderProps {
 export function Loader({
   children,
   className = "",
-  variant = "default",
+  variant = "dual-ring",
   size,
 }: LoaderProps) {
-  const finalSize = useMemo(() => size ?? 24, [size]);
+  const finalSize = useMemo(() => size ?? 48, [size]);
 
   return (
-    <div className={cn("flex gap-2", className)}>
+    <div className={cn("flex flex-col items-center justify-center gap-4", className)}>
       <div
         className="relative flex items-center justify-center"
         style={{
@@ -29,9 +29,9 @@ export function Loader({
       >
         {variant === "default" && (
           <>
-            <div className="absolute inset-0 rounded-full border-t-[1.5px] border-b-[1.5px] border-black/30 dark:border-white/30" />
+            <div className="absolute inset-0 rounded-full border-t-[3px] border-b-[3px] border-blue-500/30" />
             <motion.div
-              className="absolute inset-0 rounded-full border-t-[1.5px] border-b-[1.5px] border-black dark:border-white"
+              className="absolute inset-0 rounded-full border-t-[3px] border-b-[3px] border-blue-500"
               animate={{ rotate: 360 }}
               transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
             />
@@ -40,7 +40,7 @@ export function Loader({
 
         {variant === "cube" && (
           <motion.div
-            className="absolute inset-0 bg-black dark:bg-white shadow-[0_0_4px_rgba(255,255,255,0.6)] dark:shadow-[0_0_4px_rgba(255,255,255,0.6)]"
+            className="absolute inset-0 bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.6)]"
             animate={{ rotateX: [0, 180, 0], rotateY: [0, 180, 0] }}
             transition={{ repeat: Infinity, duration: 1.1, ease: "linear" }}
           />
@@ -48,11 +48,21 @@ export function Loader({
 
         {variant === "dual-ring" && (
           <>
-            <div className="absolute inset-0 rounded-full border-[1.5px] border-black/20 dark:border-white/20" />
+            <div className="absolute inset-0 rounded-full border-[3px] border-blue-500/20" />
             <motion.div
-              className="absolute inset-0 rounded-full border-t-[1.5px] border-black border-b-transparent dark:border-white dark:border-b-transparent"
+              className="absolute inset-0 rounded-full border-t-[3px] border-blue-500 border-r-transparent border-b-transparent border-l-transparent"
               animate={{ rotate: 360 }}
               transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+            />
+            <motion.div
+              className="absolute inset-[20%] rounded-full border-[3px] border-blue-400/30"
+              animate={{ rotate: -360 }}
+              transition={{ repeat: Infinity, duration: 0.8, ease: "linear" }}
+            />
+            <motion.div
+              className="absolute inset-[20%] rounded-full border-b-[3px] border-blue-400 border-t-transparent border-r-transparent border-l-transparent"
+              animate={{ rotate: -360 }}
+              transition={{ repeat: Infinity, duration: 0.8, ease: "linear" }}
             />
           </>
         )}
@@ -60,7 +70,7 @@ export function Loader({
         {variant === "magnetic-dots" && (
           <div className="relative flex items-center justify-center h-full w-full">
             <motion.div
-              className="absolute rounded-full bg-black dark:bg-white"
+              className="absolute rounded-full bg-blue-500"
               style={{
                 height: finalSize / 3,
                 width: finalSize / 3,
@@ -74,7 +84,7 @@ export function Loader({
               }}
             />
             <motion.div
-              className="absolute rounded-full bg-black dark:bg-white"
+              className="absolute rounded-full bg-blue-400"
               style={{
                 height: finalSize / 3,
                 width: finalSize / 3,
@@ -88,7 +98,7 @@ export function Loader({
               }}
             />
             <motion.div
-              className="absolute rounded-full bg-black dark:bg-white opacity-0"
+              className="absolute rounded-full bg-blue-600 opacity-0"
               style={{
                 height: finalSize / 3,
                 width: finalSize / 3,
@@ -105,7 +115,11 @@ export function Loader({
         )}
       </div>
 
-      {children && <div className="text-sm">{children}</div>}
+      {children && (
+        <div className="text-sm text-slate-400 dark:text-slate-400 animate-pulse">
+          {children}
+        </div>
+      )}
     </div>
   );
 }

@@ -10,6 +10,7 @@ import { Eye, EyeOff, Info } from "lucide-react";
 import { toast } from "sonner";
 import StatsCarouselCount from "@/components/ui/stats-carousel";
 import { RevealText } from "@/components/ui/reveal-text";
+import { Loader } from "@/components/ui/loader";
 import dynamic from "next/dynamic";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -81,6 +82,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [pageLoading, setPageLoading] = useState(true);
   const [statsData, setStatsData] = useState([
     { value: 50, suffix: "+", label: "Real Estate Sites Aggregated" },
     { value: 352, suffix: "", label: "Properties Currently Listed" },
@@ -88,6 +90,15 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
   ]);
 
   const { signIn, sendPasswordReset } = useAuth();
+
+  // Initial page loading effect
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setPageLoading(false);
+    }, 1500); // Show loader for 1.5 seconds
+
+    return () => clearTimeout(timer);
+  }, []);
 
   // Fetch real stats data from API
   useEffect(() => {
@@ -204,6 +215,15 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
 
   return (
     <div className="min-h-screen bg-slate-900 flex items-center justify-center p-0 overflow-hidden">
+      {/* Page Loading Overlay */}
+      {pageLoading && (
+        <div className="fixed inset-0 z-50 bg-slate-900 flex items-center justify-center">
+          <Loader variant="dual-ring" size={60}>
+            <span className="text-white">Loading...</span>
+          </Loader>
+        </div>
+      )}
+
       <div className="w-full h-screen flex flex-col lg:flex-row">
         {/* Left Side - Globe, Powered By, & Stats */}
         <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
@@ -227,26 +247,27 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
         <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-8 lg:p-12 bg-slate-900">
           <div className="w-full max-w-md space-y-6 sm:space-y-8">
             {/* Logo and Branding - Desktop & Mobile */}
-            <div className="text-center space-y-4">
-              <div className="flex justify-center">
+            <div className="flex flex-col items-center space-y-4">
+              {/* Logo and Platform Name - Horizontal Layout */}
+              <div className="flex items-center gap-3 sm:gap-4 justify-center">
                 <img
                   src="/realtor.png"
                   alt="Realtors' Practice Logo"
-                  className="w-20 h-20 sm:w-24 sm:h-24 object-contain"
+                  className="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 object-contain flex-shrink-0"
                 />
-              </div>
-              <div className="space-y-1">
-                <h1 className="text-3xl sm:text-4xl font-bold text-white">
-                  Realtors' Practice
-                </h1>
-                <p className="text-base sm:text-lg text-blue-300">
-                  Property Aggregation Platform
-                </p>
+                <div className="text-left">
+                  <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-white leading-tight">
+                    Realtors' Practice
+                  </h1>
+                  <p className="text-xs sm:text-sm md:text-base lg:text-lg text-blue-300 leading-tight">
+                    Property Aggregation Platform
+                  </p>
+                </div>
               </div>
             </div>
 
             {/* Welcome Text */}
-            <div className="text-center lg:text-left space-y-2">
+            <div className="text-center space-y-2">
               <h2 className="text-2xl sm:text-3xl font-bold text-white">
                 Welcome Back
               </h2>

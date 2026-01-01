@@ -15,7 +15,7 @@ declare module "@react-three/fiber" {
 extend({ ThreeGlobe: ThreeGlobe });
 
 const RING_PROPAGATION_SPEED = 3;
-const aspect = 1.2;
+const aspect = 1.0; // Changed from 1.2 to 1.0 for square containers
 const cameraZ = 300;
 
 type Position = {
@@ -250,7 +250,7 @@ export function WebGLRendererConfig() {
     gl.setPixelRatio(window.devicePixelRatio);
     gl.setSize(size.width, size.height);
     gl.setClearColor(0xffaaff, 0);
-  }, []);
+  }, [gl, size.width, size.height]); // Added dependencies to handle resize
 
   return null;
 }
