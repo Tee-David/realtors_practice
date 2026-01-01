@@ -31,8 +31,10 @@ const ThemeSwitch = React.forwardRef<HTMLDivElement, ThemeSwitchProps>(
     const currentModeIndex = theme === "dark" ? 1 : 0;
 
     const handleToggle = React.useCallback(() => {
+      console.log('[ThemeSwitch] Toggle clicked, current theme:', theme);
       toggleTheme();
-    }, [toggleTheme]);
+      console.log('[ThemeSwitch] Toggle theme called');
+    }, [toggleTheme, theme]);
 
     const handleIconClick = (index: number) => {
       setTheme(index === 0 ? "light" : "dark");

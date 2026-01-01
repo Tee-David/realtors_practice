@@ -25,7 +25,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     } else {
       // Check system preference
       const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      setThemeState(prefersDark ? "dark" : "light");
+      const initialTheme = prefersDark ? "dark" : "light";
+      setThemeState(initialTheme);
+      localStorage.setItem("theme", initialTheme);
     }
   }, []);
 
@@ -40,10 +42,16 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   }, [theme, mounted]);
 
   const toggleTheme = () => {
-    setThemeState((prev) => (prev === "dark" ? "light" : "dark"));
+    console.log('[ThemeContext] toggleTheme called');
+    setThemeState((prev) => {
+      const newTheme = prev === "dark" ? "light" : "dark";
+      console.log('[ThemeContext] Toggling from', prev, 'to', newTheme);
+      return newTheme;
+    });
   };
 
   const setTheme = (newTheme: Theme) => {
+    console.log('[ThemeContext] setTheme called with:', newTheme);
     setThemeState(newTheme);
   };
 
