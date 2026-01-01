@@ -149,9 +149,9 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
         {/* Left Side - Globe & Branding */}
         <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
           {/* Content Container */}
-          <div className="relative z-10 flex flex-col items-center justify-center w-full p-8 xl:p-12">
+          <div className="relative z-10 flex flex-col w-full h-full p-6 xl:p-8">
             {/* Logo and Title - Horizontal Layout at Top */}
-            <div className="flex items-center justify-center gap-4 mb-8">
+            <div className="flex items-center justify-center gap-4 py-6">
               <img
                 src="/realtor.png"
                 alt="Realtors' Practice Logo"
@@ -168,14 +168,14 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
             </div>
 
             {/* Globe - Very Large */}
-            <div className="flex-1 w-full flex items-center justify-center">
-              <div className="w-full h-full min-h-[75vh]">
+            <div className="flex-1 w-full flex items-center justify-center min-h-0 py-4">
+              <div className="w-full h-full">
                 <World data={sampleArcs} globeConfig={globeConfig} />
               </div>
             </div>
 
             {/* Stats Carousel Below Globe - Compact */}
-            <div className="w-full max-w-sm scale-75 mt-auto">
+            <div className="w-full max-w-sm scale-75 mx-auto py-4">
               <StatsCarouselCount className="py-0" />
             </div>
           </div>
