@@ -1,21 +1,50 @@
 "use client";
 
-import { useState } from "react";
-import { Plus, Search } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Plus, Search, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { UserTable } from "./user-table";
 import { AddUserModal } from "./add-user-modal";
 import { EditUserModal } from "./edit-user-modal";
-import { mockUsers } from "@/lib/mockData";
 import type { User } from "@/lib/types";
 import { toast } from "sonner";
+import { useAuthAPI } from "@/hooks/useAuthAPI";
 
 export function UserManagement() {
-  const [users, setUsers] = useState<User[]>(mockUsers);
+  const { listUsers, deleteUser: deleteUserAPI, loading } = useAuthAPI();
+  const [users, setUsers] = useState<User[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [isLoadingUsers, setIsLoadingUsers] = useState(true);
+
+  // Fetch users from Firebase
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const fetchUsers = async () => {
+    setIsLoadingUsers(true);
+    const result = await listUsers(1000); // Fetch up to 1000 users
+
+    if (result.success && result.data?.users) {
+      // Transform Firebase user data to match our User type
+      const transformedUsers: User[] = result.data.users.map((fbUser: any) => ({
+        id: fbUser.uid,
+        name: fbUser.displayName || fbUser.email?.split('@')[0] || 'Unknown User',
+        email: fbUser.email,
+        role: fbUser.customClaims?.role || 'user',
+        status: fbUser.disabled ? 'Inactive' : 'Active',
+        lastLogin: fbUser.metadata?.lastSignInTime || 'Never',
+        createdAt: fbUser.metadata?.creationTime || new Date().toISOString()
+      }));
+      setUsers(transformedUsers);
+    } else {
+      toast.error(result.error || 'Failed to fetch users');
+    }
+    setIsLoadingUsers(false);
+  };
 
   const filteredUsers = users.filter(
     (user) =>
@@ -38,9 +67,16 @@ export function UserManagement() {
     toast.success("User updated successfully");
   };
 
-  const handleDeleteUser = (userId: string) => {
-    setUsers(users.filter((user) => user.id !== userId));
-    toast.success("User deleted successfully");
+  const handleDeleteUser = async (userId: string) => {
+    const result = await deleteUserAPI(userId);
+    if (result.success) {
+      setUsers(users.filter((user) => user.id !== userId));
+      toast.success("User deleted successfully");
+      // Refresh to get updated list from server
+      await fetchUsers();
+    } else {
+      toast.error(result.error || "Failed to delete user");
+    }
   };
 
   const handleToggleStatus = (userId: string) => {
@@ -72,32 +108,54 @@ export function UserManagement() {
           />
         </div>
 
-        <Button
-          onClick={() => setShowAddModal(true)}
-          className="bg-blue-500 hover:bg-blue-600 flex items-center justify-center space-x-2 w-full sm:w-auto text-white"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Add New User</span>
-        </Button>
+        <div className="flex gap-2 w-full sm:w-auto">
+          <Button
+            onClick={fetchUsers}
+            disabled={isLoadingUsers}
+            className="bg-slate-700 hover:bg-slate-600 flex items-center justify-center space-x-2 flex-1 sm:flex-initial text-white"
+          >
+            <RefreshCw className={`w-4 h-4 ${isLoadingUsers ? 'animate-spin' : ''}`} />
+            <span>Refresh</span>
+          </Button>
+          <Button
+            onClick={() => setShowAddModal(true)}
+            className="bg-blue-500 hover:bg-blue-600 flex items-center justify-center space-x-2 flex-1 sm:flex-initial text-white"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Add User</span>
+          </Button>
+        </div>
       </div>
 
       {/* Results count */}
       <div className="text-sm text-slate-400">
-        {searchTerm && (
-          <span>
-            {filteredUsers.length} of {users.length} users found
-          </span>
+        {isLoadingUsers ? (
+          <span>Loading users from Firebase...</span>
+        ) : (
+          <>
+            {searchTerm && (
+              <span>
+                {filteredUsers.length} of {users.length} users found
+              </span>
+            )}
+            {!searchTerm && <span>{users.length} total users (from Firebase Auth)</span>}
+          </>
         )}
-        {!searchTerm && <span>{users.length} total users</span>}
       </div>
 
       {/* User Table */}
-      <UserTable
-        users={filteredUsers}
-        onEdit={setEditingUser}
-        onDelete={handleDeleteUser}
-        onToggleStatus={handleToggleStatus}
-      />
+      {isLoadingUsers ? (
+        <div className="flex items-center justify-center py-12">
+          <RefreshCw className="w-8 h-8 animate-spin text-blue-500" />
+        </div>
+      ) : (
+        <UserTable
+          users={filteredUsers}
+          onEdit={setEditingUser}
+          onDelete={handleDeleteUser}
+          onToggleStatus={handleToggleStatus}
+        />
+      )}
 
       {/* Modals */}
       <AddUserModal
