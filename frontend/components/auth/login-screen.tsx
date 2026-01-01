@@ -9,6 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Eye, EyeOff, Info } from "lucide-react";
 import { toast } from "sonner";
 import StatsCarouselCount from "@/components/ui/stats-carousel";
+import { RevealText } from "@/components/ui/reveal-text";
 import dynamic from "next/dynamic";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -147,34 +148,47 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
       <div className="w-full h-screen flex flex-col lg:flex-row">
         {/* Left Side - Globe & Branding */}
         <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
-          {/* Globe Background */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-full h-full">
-              <World data={sampleArcs} globeConfig={globeConfig} />
-            </div>
-          </div>
-
-          {/* Content Overlay */}
-          <div className="relative z-10 flex flex-col items-center justify-center w-full p-12 text-center">
-            <div className="mb-8 bg-slate-900/80 backdrop-blur-md rounded-3xl p-8 border border-slate-700/50">
-              <div className="inline-block mb-6">
-                <img
-                  src="/realtor.png"
-                  alt="Realtors' Practice Logo"
-                  className="w-24 h-24 object-contain"
-                />
-              </div>
-              <h1 className="text-5xl font-bold text-white mb-4">
-                Realtors' Practice
-              </h1>
-              <p className="text-xl text-blue-300 mb-6">
-                Property Aggregation Platform
-              </p>
-
-              <StatsCarouselCount
-                title="POWERED BY DATA & INTELLIGENCE"
-                className="py-0"
+          {/* Content Container */}
+          <div className="relative z-10 flex flex-col items-center justify-center w-full p-8 xl:p-12">
+            {/* Logo and Title - Horizontal Layout at Top */}
+            <div className="flex items-center justify-center gap-4 mb-8">
+              <img
+                src="/realtor.png"
+                alt="Realtors' Practice Logo"
+                className="w-16 h-16 xl:w-20 xl:h-20 object-contain flex-shrink-0"
               />
+              <div className="text-left">
+                <h1 className="text-3xl xl:text-4xl font-bold text-white">
+                  Realtors' Practice
+                </h1>
+                <p className="text-base xl:text-lg text-blue-300 mt-1">
+                  Property Aggregation Platform
+                </p>
+              </div>
+            </div>
+
+            {/* Globe - 20% Smaller */}
+            <div className="w-4/5 h-[50vh] xl:h-[55vh] flex items-center justify-center mb-6">
+              <div className="w-full h-full">
+                <World data={sampleArcs} globeConfig={globeConfig} />
+              </div>
+            </div>
+
+            {/* Powered By Text with Reveal Animation */}
+            <div className="mb-6 text-center">
+              <RevealText
+                mode="auto"
+                direction="up"
+                stagger={0.05}
+                className="text-lg xl:text-xl text-blue-200 italic font-light"
+              >
+                Powered by Data & Intelligence
+              </RevealText>
+            </div>
+
+            {/* Stats Carousel Below Globe */}
+            <div className="w-full max-w-2xl">
+              <StatsCarouselCount className="py-0" />
             </div>
           </div>
         </div>
