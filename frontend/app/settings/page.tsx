@@ -39,6 +39,18 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { mockUsers } from "@/lib/mockData";
+import { registerWithEmail, resetPassword } from "@/lib/firebase/auth";
+import { db } from "@/lib/firebase/config";
+import {
+  collection,
+  query,
+  getDocs,
+  addDoc,
+  deleteDoc,
+  doc,
+  serverTimestamp,
+  orderBy,
+} from "firebase/firestore";
 
 /**
  * Settings Admin Page
@@ -761,61 +773,41 @@ function SystemTab() {
 // User Management Tab
 function UsersTab() {
   const [users, setUsers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [creating, setCreating] = useState(false);
   const [showAddUser, setShowAddUser] = useState(false);
   const [newUser, setNewUser] = useState({
-    username: "",
+    displayName: "",
     email: "",
     password: "",
-    role: "user",
+    role: "admin",
   });
   const [resetPasswordEmail, setResetPasswordEmail] = useState("");
 
-  const loadUsers = () => {
-    // Load admin credentials
-    const adminCreds = localStorage.getItem("adminCredentials");
-    const usersList = [];
+  const loadUsers = async () => {
+    try {
+      setLoading(true);
+      const usersRef = collection(db, "users");
+      const q = query(usersRef, orderBy("createdAt", "desc"));
+      const querySnapshot = await getDocs(q);
 
-    if (adminCreds) {
-      try {
-        const admin = JSON.parse(adminCreds);
-        usersList.push({
-          email: admin.email,
-          username: admin.username,
-          role: "admin",
-          createdAt: admin.createdAt,
-        });
-      } catch (e) {
-        // Ignore parse errors
-      }
-    }
-
-    // Load additional users (if any stored)
-    const storedUsers = localStorage.getItem("users");
-    if (storedUsers) {
-      try {
-        const parsed = JSON.parse(storedUsers);
-        usersList.push(...parsed);
-      } catch (e) {
-        // Ignore parse errors
-      }
-    }
-
-    // If no users in localStorage, use mock data
-    if (usersList.length === 0) {
-      const mockUsersList = mockUsers.map((user) => ({
-        email: user.email,
-        username: user.name,
-        role: user.role.toLowerCase(),
-        createdAt: new Date().toISOString(),
+      const usersList = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+        createdAt: doc.data().createdAt?.toDate?.()?.toISOString() || new Date().toISOString(),
       }));
-      usersList.push(...mockUsersList);
-    }
 
-    setUsers(usersList);
+      setUsers(usersList);
+    } catch (error: any) {
+      console.error("Error loading users:", error);
+      toast.error("Failed to load users from Firestore");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleAddUser = () => {
-    if (!newUser.username || !newUser.email || !newUser.password) {
+  const handleAddUser = async () => {
+    if (!newUser.displayName || !newUser.email || !newUser.password) {
       toast.error("All fields are required");
       return;
     }
@@ -827,12 +819,8 @@ function UsersTab() {
     }
 
     // Validate password
-    if (
-      newUser.password.length < 8 ||
-      !/[A-Za-z]/.test(newUser.password) ||
-      !/\d/.test(newUser.password)
-    ) {
-      toast.error("Password must be at least 8 characters with letters and numbers");
+    if (newUser.password.length < 6) {
+      toast.error("Password must be at least 6 characters");
       return;
     }
 
@@ -842,38 +830,69 @@ function UsersTab() {
       return;
     }
 
-    // Add new user
-    const userToAdd = {
-      ...newUser,
-      password: btoa(newUser.password), // Base64 encoding (NOT SECURE - for demo only)
-      createdAt: new Date().toISOString(),
-    };
+    try {
+      setCreating(true);
 
-    const existingUsers = JSON.parse(localStorage.getItem("users") || "[]");
-    existingUsers.push(userToAdd);
-    localStorage.setItem("users", JSON.stringify(existingUsers));
+      // Create user in Firebase Auth
+      const result = await registerWithEmail(
+        newUser.email,
+        newUser.password,
+        newUser.displayName
+      );
 
-    toast.success(`User ${newUser.username} added successfully`);
-    setShowAddUser(false);
-    setNewUser({ username: "", email: "", password: "", role: "user" });
-    loadUsers();
+      if (!result.success || !result.user) {
+        toast.error(result.error || "Failed to create user");
+        return;
+      }
+
+      // Store user metadata in Firestore
+      const usersRef = collection(db, "users");
+      await addDoc(usersRef, {
+        uid: result.user.uid,
+        email: newUser.email,
+        displayName: newUser.displayName,
+        role: newUser.role,
+        createdAt: serverTimestamp(),
+        emailVerified: false,
+      });
+
+      toast.success(`User ${newUser.displayName} created successfully!`, {
+        description: "Verification email sent to user",
+      });
+
+      setShowAddUser(false);
+      setNewUser({ displayName: "", email: "", password: "", role: "admin" });
+      await loadUsers();
+    } catch (error: any) {
+      console.error("Error creating user:", error);
+      toast.error(error.message || "Failed to create user");
+    } finally {
+      setCreating(false);
+    }
   };
 
-  const handleRemoveUser = (email: string) => {
-    if (email === users.find((u) => u.role === "admin")?.email) {
-      toast.error("Cannot remove admin user");
+  const handleRemoveUser = async (userId: string, email: string, role: string) => {
+    if (role === "admin") {
+      toast.error("Cannot remove admin users from this interface");
       return;
     }
 
-    const existingUsers = JSON.parse(localStorage.getItem("users") || "[]");
-    const filtered = existingUsers.filter((u: any) => u.email !== email);
-    localStorage.setItem("users", JSON.stringify(filtered));
+    try {
+      // Delete from Firestore
+      await deleteDoc(doc(db, "users", userId));
 
-    toast.success("User removed successfully");
-    loadUsers();
+      toast.success("User removed from Firestore", {
+        description: "User can still log in. Use Firebase Console to delete Auth account.",
+      });
+
+      await loadUsers();
+    } catch (error: any) {
+      console.error("Error removing user:", error);
+      toast.error("Failed to remove user");
+    }
   };
 
-  const handleResetPassword = () => {
+  const handleResetPassword = async () => {
     if (!resetPasswordEmail) {
       toast.error("Please enter an email address");
       return;
@@ -885,14 +904,18 @@ function UsersTab() {
       return;
     }
 
-    // In production, this would send a password reset email
-    toast.success(
-      `Password reset email would be sent to ${resetPasswordEmail}`,
-      {
-        description: "Implement actual email sending in production",
+    try {
+      const result = await resetPassword(resetPasswordEmail);
+      if (result.success) {
+        toast.success(`Password reset email sent to ${resetPasswordEmail}`);
+        setResetPasswordEmail("");
+      } else {
+        toast.error(result.error || "Failed to send reset email");
       }
-    );
-    setResetPasswordEmail("");
+    } catch (error: any) {
+      console.error("Error sending reset email:", error);
+      toast.error("Failed to send password reset email");
+    }
   };
 
   // Load users on mount
@@ -902,15 +925,15 @@ function UsersTab() {
 
   return (
     <div className="space-y-6">
-      {/* Security Warning */}
-      <Card className="bg-amber-900/20 border-amber-700">
+      {/* Info Banner */}
+      <Card className="bg-blue-900/20 border-blue-700">
         <CardHeader>
-          <CardTitle className="text-amber-400 flex items-center gap-2">
+          <CardTitle className="text-blue-400 flex items-center gap-2">
             <Users className="w-5 h-5" />
-            User Management
+            Firebase User Management
           </CardTitle>
-          <CardDescription className="text-amber-300">
-            This is a demo implementation using localStorage. In production, implement proper backend user management with database storage, password hashing, and authentication.
+          <CardDescription className="text-blue-300">
+            Create and manage admin users. Users are created in Firebase Authentication and metadata is stored in Firestore.
           </CardDescription>
         </CardHeader>
       </Card>
@@ -936,16 +959,17 @@ function UsersTab() {
         <CardContent>
           {showAddUser && (
             <div className="mb-6 p-4 bg-slate-900 rounded-lg space-y-4">
-              <h3 className="text-white font-medium">Add New User</h3>
+              <h3 className="text-white font-medium">Create New Admin User</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-slate-300">Username</Label>
+                  <Label className="text-slate-300">Display Name</Label>
                   <Input
-                    value={newUser.username}
+                    value={newUser.displayName}
                     onChange={(e) =>
-                      setNewUser({ ...newUser, username: e.target.value })
+                      setNewUser({ ...newUser, displayName: e.target.value })
                     }
-                    placeholder="john_doe"
+                    placeholder="John Doe"
+                    disabled={creating}
                     className="bg-slate-800 border-slate-600 text-white"
                   />
                 </div>
@@ -958,10 +982,11 @@ function UsersTab() {
                       setNewUser({ ...newUser, email: e.target.value })
                     }
                     placeholder="john@example.com"
+                    disabled={creating}
                     className="bg-slate-800 border-slate-600 text-white"
                   />
                 </div>
-                <div>
+                <div className="sm:col-span-2">
                   <Label className="text-slate-300">Password</Label>
                   <Input
                     type="password"
@@ -969,92 +994,92 @@ function UsersTab() {
                     onChange={(e) =>
                       setNewUser({ ...newUser, password: e.target.value })
                     }
-                    placeholder="Min 8 chars, letters + numbers"
+                    placeholder="Minimum 6 characters"
+                    disabled={creating}
                     className="bg-slate-800 border-slate-600 text-white"
                   />
-                </div>
-                <div>
-                  <Label className="text-slate-300">Role</Label>
-                  <select
-                    value={newUser.role}
-                    onChange={(e) =>
-                      setNewUser({ ...newUser, role: e.target.value })
-                    }
-                    className="w-full h-10 px-3 bg-slate-800 border border-slate-600 text-white rounded-md"
-                  >
-                    <option value="user">User</option>
-                    <option value="admin">Admin</option>
-                  </select>
+                  <p className="text-xs text-slate-400 mt-1">
+                    User will receive a verification email at the address above
+                  </p>
                 </div>
               </div>
               <Button
                 onClick={handleAddUser}
+                disabled={creating}
                 className="w-full bg-green-600 hover:bg-green-700"
               >
-                Create User
+                {creating ? "Creating..." : "Create Admin User"}
               </Button>
             </div>
           )}
 
-          <Table>
-            <TableHeader>
-              <TableRow className="border-slate-700">
-                <TableHead className="text-slate-300">Username</TableHead>
-                <TableHead className="text-slate-300">Email</TableHead>
-                <TableHead className="text-slate-300">Role</TableHead>
-                <TableHead className="text-slate-300">Created</TableHead>
-                <TableHead className="text-slate-300">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {users.length === 0 ? (
+          {loading ? (
+            <div className="space-y-2">
+              {[1, 2, 3].map((i) => (
+                <Skeleton key={i} className="h-16 w-full" />
+              ))}
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
                 <TableRow className="border-slate-700">
-                  <TableCell colSpan={5} className="text-center text-slate-400">
-                    No users found. Create an admin user at /set-admin
-                  </TableCell>
+                  <TableHead className="text-slate-300">Display Name</TableHead>
+                  <TableHead className="text-slate-300">Email</TableHead>
+                  <TableHead className="text-slate-300">Role</TableHead>
+                  <TableHead className="text-slate-300">Created</TableHead>
+                  <TableHead className="text-slate-300">Actions</TableHead>
                 </TableRow>
-              ) : (
-                users.map((user, index) => (
-                  <TableRow key={index} className="border-slate-700">
-                    <TableCell className="text-white">
-                      {user.username}
-                    </TableCell>
-                    <TableCell className="text-slate-300">
-                      {user.email}
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant={user.role === "admin" ? "default" : "secondary"}
-                        className={
-                          user.role === "admin"
-                            ? "bg-orange-600"
-                            : "bg-blue-600"
-                        }
-                      >
-                        {user.role}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-slate-400 text-sm">
-                      {new Date(user.createdAt).toLocaleDateString()}
-                    </TableCell>
-                    <TableCell>
-                      {user.role !== "admin" ? (
-                        <Button
-                          onClick={() => handleRemoveUser(user.email)}
-                          variant="destructive"
-                          size="sm"
-                        >
-                          Remove
-                        </Button>
-                      ) : (
-                        <span className="text-slate-500 text-sm">Protected</span>
-                      )}
+              </TableHeader>
+              <TableBody>
+                {users.length === 0 ? (
+                  <TableRow className="border-slate-700">
+                    <TableCell colSpan={5} className="text-center text-slate-400 py-8">
+                      No users found. Create your first admin user above.
                     </TableCell>
                   </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
+                ) : (
+                  users.map((user) => (
+                    <TableRow key={user.id} className="border-slate-700">
+                      <TableCell className="text-white">
+                        {user.displayName || "N/A"}
+                      </TableCell>
+                      <TableCell className="text-slate-300">
+                        {user.email}
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          variant={user.role === "admin" ? "default" : "secondary"}
+                          className={
+                            user.role === "admin"
+                              ? "bg-orange-600"
+                              : "bg-blue-600"
+                          }
+                        >
+                          {user.role}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-slate-400 text-sm">
+                        {new Date(user.createdAt).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell>
+                        {user.role !== "admin" ? (
+                          <Button
+                            onClick={() => handleRemoveUser(user.id, user.email, user.role)}
+                            variant="destructive"
+                            size="sm"
+                          >
+                            Remove
+                          </Button>
+                        ) : (
+                          <span className="text-slate-500 text-sm">Protected</span>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          )}
         </CardContent>
       </Card>
 
