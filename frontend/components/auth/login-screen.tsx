@@ -149,33 +149,33 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
         {/* Left Side - Globe & Branding */}
         <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
           {/* Content Container */}
-          <div className="relative z-10 flex flex-col items-center justify-center w-full h-full p-8 xl:p-12 gap-8">
-            {/* Logo and Title - Horizontal Layout at Top */}
-            <div className="flex items-center justify-center gap-4">
+          <div className="relative z-10 flex flex-col items-center justify-center w-full h-full p-8 xl:p-12 gap-6">
+            {/* Logo and Title - Horizontal Layout at Top - Smaller */}
+            <div className="flex items-center justify-center gap-3">
               <img
                 src="/realtor.png"
                 alt="Realtors' Practice Logo"
-                className="w-16 h-16 xl:w-20 xl:h-20 object-contain flex-shrink-0"
+                className="w-12 h-12 xl:w-14 xl:h-14 object-contain flex-shrink-0"
               />
               <div className="text-left">
-                <h1 className="text-3xl xl:text-4xl font-bold text-white">
+                <h1 className="text-2xl xl:text-3xl font-bold text-white">
                   Realtors' Practice
                 </h1>
-                <p className="text-base xl:text-lg text-blue-300 mt-1">
+                <p className="text-sm xl:text-base text-blue-300 mt-0.5">
                   Property Aggregation Platform
                 </p>
               </div>
             </div>
 
-            {/* Globe - Very Large */}
-            <div className="flex-1 w-full flex items-center justify-center min-h-0">
-              <div className="w-full h-full max-h-[70vh]">
+            {/* Globe - 70% of container */}
+            <div className="w-full h-[70%] flex items-center justify-center">
+              <div className="w-full h-full">
                 <World data={sampleArcs} globeConfig={globeConfig} />
               </div>
             </div>
 
-            {/* Stats Carousel Below Globe - Compact */}
-            <div className="w-full max-w-sm scale-75">
+            {/* Stats Carousel Below Globe - Much Smaller */}
+            <div className="w-full max-w-xs scale-50">
               <StatsCarouselCount className="py-0" />
             </div>
           </div>
