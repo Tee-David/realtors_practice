@@ -167,15 +167,15 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
               </div>
             </div>
 
-            {/* Globe - Larger (70% of container) */}
-            <div className="w-full h-[65vh] xl:h-[70vh] flex items-center justify-center mb-4">
-              <div className="w-full h-full">
+            {/* Globe - Very Large */}
+            <div className="flex-1 w-full flex items-center justify-center">
+              <div className="w-full h-full min-h-[75vh]">
                 <World data={sampleArcs} globeConfig={globeConfig} />
               </div>
             </div>
 
-            {/* Stats Carousel Below Globe - Smaller */}
-            <div className="w-full max-w-md scale-90">
+            {/* Stats Carousel Below Globe - Compact */}
+            <div className="w-full max-w-sm scale-75 mt-auto">
               <StatsCarouselCount className="py-0" />
             </div>
           </div>
