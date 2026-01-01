@@ -205,36 +205,26 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
   return (
     <div className="min-h-screen bg-slate-900 flex items-center justify-center p-0 overflow-hidden">
       <div className="w-full h-screen flex flex-col lg:flex-row">
-        {/* Left Side - Globe & Branding */}
+        {/* Left Side - Globe, Powered By, & Stats */}
         <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
           {/* Content Container */}
-          <div className="relative z-10 flex flex-col items-center justify-center w-full h-full p-8 xl:p-12 gap-6">
-            {/* Logo and Title - Horizontal Layout at Top - Smaller */}
-            <div className="flex items-center justify-center gap-3">
-              <img
-                src="/realtor.png"
-                alt="Realtors' Practice Logo"
-                className="w-12 h-12 xl:w-14 xl:h-14 object-contain flex-shrink-0"
-              />
-              <div className="text-left">
-                <h1 className="text-2xl xl:text-3xl font-bold text-white">
-                  Realtors' Practice
-                </h1>
-                <p className="text-sm xl:text-base text-blue-300 mt-0.5">
-                  Property Aggregation Platform
-                </p>
-              </div>
-            </div>
-
-            {/* Globe - 70% of container */}
-            <div className="w-full h-[70%] flex items-center justify-center">
+          <div className="relative z-10 flex flex-col items-center justify-center w-full h-full p-8 xl:p-12 gap-8">
+            {/* Globe - Very Large (70%) */}
+            <div className="w-full flex-1 flex items-center justify-center">
               <div className="w-full h-full">
                 <World data={sampleArcs} globeConfig={globeConfig} />
               </div>
             </div>
 
-            {/* Stats Carousel Below Globe - Much Smaller */}
-            <div className="w-full max-w-xs scale-50">
+            {/* Powered By Text */}
+            <div className="text-center">
+              <p className="text-xl xl:text-2xl text-blue-200 italic font-light">
+                Powered by Data & Intelligence
+              </p>
+            </div>
+
+            {/* Stats Carousel - Normal Size */}
+            <div className="w-full max-w-md scale-75">
               <StatsCarouselCount stats={statsData} className="py-0" />
             </div>
           </div>
@@ -243,22 +233,20 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
         {/* Right Side - Login Form */}
         <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-8 lg:p-12 bg-slate-900">
           <div className="w-full max-w-md space-y-6 sm:space-y-8">
-            {/* Mobile Logo (only shown on mobile) */}
-            <div className="lg:hidden text-center space-y-3 sm:space-y-4">
+            {/* Logo and Branding - Desktop & Mobile */}
+            <div className="text-center space-y-4">
               <div className="flex justify-center">
-                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl flex items-center justify-center">
-                  <img
-                    src="/realtor.png"
-                    alt="Realtors' Practice Logo"
-                    className="w-full h-full object-contain"
-                  />
-                </div>
+                <img
+                  src="/realtor.png"
+                  alt="Realtors' Practice Logo"
+                  className="w-20 h-20 sm:w-24 sm:h-24 object-contain"
+                />
               </div>
-              <div className="space-y-1 sm:space-y-2">
-                <h1 className="text-2xl sm:text-3xl font-bold text-white">
+              <div className="space-y-1">
+                <h1 className="text-3xl sm:text-4xl font-bold text-white">
                   Realtors' Practice
                 </h1>
-                <p className="text-sm sm:text-base text-slate-400 px-4 sm:px-0">
+                <p className="text-base sm:text-lg text-blue-300">
                   Property Aggregation Platform
                 </p>
               </div>
