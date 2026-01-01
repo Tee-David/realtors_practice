@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface GlobeProps {
   className?: string;
@@ -8,9 +8,12 @@ interface GlobeProps {
 
 export function Globe({ className }: GlobeProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     if (!canvasRef.current || typeof window === "undefined") return;
+
+    let cleanup: (() => void) | null = null;
 
     // Dynamic import to avoid SSR issues
     Promise.all([
@@ -63,6 +66,7 @@ export function Globe({ className }: GlobeProps) {
       };
 
       animate();
+      setIsLoaded(true);
 
       const handleResize = () => {
         if (!canvasRef.current) return;
@@ -75,7 +79,7 @@ export function Globe({ className }: GlobeProps) {
 
       window.addEventListener("resize", handleResize);
 
-      return () => {
+      cleanup = () => {
         window.removeEventListener("resize", handleResize);
         cancelAnimationFrame(animationFrameId);
         renderer.dispose();
@@ -83,6 +87,10 @@ export function Globe({ className }: GlobeProps) {
     }).catch((error) => {
       console.error("Failed to load globe:", error);
     });
+
+    return () => {
+      if (cleanup) cleanup();
+    };
   }, []);
 
   return (

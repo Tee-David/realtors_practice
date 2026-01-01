@@ -1,0 +1,83 @@
+## Error Type
+Runtime Error
+
+## Error Message
+window is not defined
+
+
+    at module evaluation (components\ui\globe.tsx:4:1)
+    at module evaluation (components\auth\login-screen.tsx:12:1)
+    at module evaluation (app\page.tsx:3:1)
+
+## Code Frame
+  2 |
+  3 | import { useEffect, useRef } from "react";
+> 4 | import createGlobe from "three-globe";
+    | ^
+  5 | import { WebGLRenderer, Scene, PerspectiveCamera, AmbientLight, DirectionalLight, Color, Fog } from "three";
+  6 |
+  7 | interface GlobeProps {
+
+Next.js version: 16.0.10 (Turbopack)
+## Error Type
+Runtime TypeError
+
+## Error Message
+Cannot call a class as a function
+
+
+    at _classCallCheck (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/node_modules_three-globe_dist_three-globe_mjs_ffb492c0._.js:117:34)
+    at Globe (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/node_modules_three-globe_dist_three-globe_mjs_ffb492c0._.js:5423:13)
+    at Globe.useEffect (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/components_ui_58b5431e._.js:332:199)
+    at Object.react_stack_bottom_frame (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:14866:22)
+    at runWithFiberInDEV (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:959:74)
+    at commitHookEffectListMount (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:7260:167)
+    at commitHookPassiveMountEffects (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:7295:60)
+    at commitPassiveMountOnFiber (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8690:33)
+    at recursivelyTraversePassiveMountEffects (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8677:316)
+    at commitPassiveMountOnFiber (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8751:17)
+    at recursivelyTraversePassiveMountEffects (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8677:316)
+    at commitPassiveMountOnFiber (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8751:17)
+    at recursivelyTraversePassiveMountEffects (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8677:316)
+    at commitPassiveMountOnFiber (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8751:17)
+    at recursivelyTraversePassiveMountEffects (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8677:316)
+    at commitPassiveMountOnFiber (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8751:17)
+    at recursivelyTraversePassiveMountEffects (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8677:316)
+    at commitPassiveMountOnFiber (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8751:17)
+    at recursivelyTraversePassiveMountEffects (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8677:316)
+    at commitPassiveMountOnFiber (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8689:17)
+    at recursivelyTraversePassiveMountEffects (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8677:316)
+    at commitPassiveMountOnFiber (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8689:17)
+    at recursivelyTraversePassiveMountEffects (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8677:316)
+    at commitPassiveMountOnFiber (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8689:17)
+    at recursivelyTraversePassiveMountEffects (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8677:316)
+    at commitPassiveMountOnFiber (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8689:17)
+    at recursivelyTraversePassiveMountEffects (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8677:316)
+    at commitPassiveMountOnFiber (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8751:17)
+    at recursivelyTraversePassiveMountEffects (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8677:316)
+    at commitPassiveMountOnFiber (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8751:17)
+    at recursivelyTraversePassiveMountEffects (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8677:316)
+    at commitPassiveMountOnFiber (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8689:17)
+    at recursivelyTraversePassiveMountEffects (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8677:316)
+    at commitPassiveMountOnFiber (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8694:17)
+    at recursivelyTraversePassiveMountEffects (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8677:316)
+    at commitPassiveMountOnFiber (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8689:17)
+    at recursivelyTraversePassiveMountEffects (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8677:316)
+    at commitPassiveMountOnFiber (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8694:17)
+    at recursivelyTraversePassiveMountEffects (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8677:316)
+    at commitPassiveMountOnFiber (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8689:17)
+    at recursivelyTraversePassiveMountEffects (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8677:316)
+    at commitPassiveMountOnFiber (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8689:17)
+    at recursivelyTraversePassiveMountEffects (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8677:316)
+    at commitPassiveMountOnFiber (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8689:17)
+    at recursivelyTraversePassiveMountEffects (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8677:316)
+    at commitPassiveMountOnFiber (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8694:17)
+    at recursivelyTraversePassiveMountEffects (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8677:316)
+    at commitPassiveMountOnFiber (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8689:17)
+    at recursivelyTraversePassiveMountEffects (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8677:316)
+    at commitPassiveMountOnFiber (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8689:17)
+    at LoginScreen (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/components_273cf6f8._.js:160:245)
+    at Home (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/app_ce13ec23._.js:13056:218)
+    at ClientPageRoot (file://C:/Users/DELL/Desktop/Dynamic realtors_practice/frontend/.next/dev/static/chunks/node_modules_next_dist_094231d7._.js:2202:50)
+
+Next.js version: 16.0.10 (Turbopack)

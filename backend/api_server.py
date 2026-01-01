@@ -51,6 +51,9 @@ from api.helpers.json_sanitizer import sanitize_for_json
 # Initialize Flask app
 app = Flask(__name__)
 
+# Configure logging
+logger = logging.getLogger(__name__)
+
 # Enable CORS - allow all origins (permissive for development)
 # Production deployment - restrict this if needed
 CORS(app,
@@ -58,6 +61,16 @@ CORS(app,
      allow_headers=["Content-Type", "Authorization", "X-API-Key"],
      methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"]
 )
+
+# Register authentication routes Blueprint
+try:
+    from api.routes.auth_routes import auth_bp
+    app.register_blueprint(auth_bp)
+    logger.info("Authentication routes registered successfully")
+except ImportError as e:
+    logger.warning(f"Failed to import auth routes: {e}")
+except Exception as e:
+    logger.error(f"Error registering auth routes: {e}")
 
 # Modern Flask 3.x approach: Use custom JSONProvider
 from flask.json.provider import DefaultJSONProvider

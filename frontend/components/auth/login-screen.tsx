@@ -10,6 +10,7 @@ import { Eye, EyeOff, Info, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { TypewriterEffect } from "@/components/ui/typewriter-effect";
 import { Globe } from "@/components/ui/globe";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface LoginScreenProps {
   onLogin: () => void;
@@ -37,6 +38,8 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  const { signIn, sendPasswordReset } = useAuth();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -45,69 +48,55 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
       return;
     }
 
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(emailOrUsername)) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+
     setIsLoading(true);
 
-    // Check credentials from localStorage
-    // First check admin credentials
-    const adminCreds = localStorage.getItem("adminCredentials");
-    if (adminCreds) {
-      try {
-        const admin = JSON.parse(adminCreds);
-        const storedPassword = atob(admin.password); // Decode base64
+    try {
+      // Use Firebase authentication
+      const result = await signIn(emailOrUsername, password);
 
-        // Check if input matches email or username
-        if (
-          (emailOrUsername === admin.email || emailOrUsername === admin.username) &&
-          password === storedPassword
-        ) {
-          setTimeout(() => {
-            setIsLoading(false);
-            toast.success(`Welcome back, ${admin.username}!`);
-            localStorage.setItem("isAuthenticated", "true");
-            onLogin();
-          }, 1500);
-          return;
-        }
-      } catch (e) {
-        // Ignore parse errors
+      if (result.success) {
+        toast.success("Login successful! Welcome back.");
+        onLogin();
+      } else {
+        toast.error(result.error || "Login failed. Please check your credentials.");
       }
-    }
-
-    // Check other users
-    const users = localStorage.getItem("users");
-    if (users) {
-      try {
-        const userList = JSON.parse(users);
-        const user = userList.find(
-          (u: any) => u.email === emailOrUsername || u.username === emailOrUsername
-        );
-
-        if (user) {
-          const storedPassword = atob(user.password); // Decode base64
-          if (password === storedPassword) {
-            setTimeout(() => {
-              setIsLoading(false);
-              toast.success(`Welcome back, ${user.username}!`);
-              localStorage.setItem("isAuthenticated", "true");
-              onLogin();
-            }, 1500);
-            return;
-          }
-        }
-      } catch (e) {
-        // Ignore parse errors
-      }
-    }
-
-    // If we get here, credentials are invalid
-    setTimeout(() => {
+    } catch (error: any) {
+      console.error("Login error:", error);
+      toast.error(error.message || "An error occurred during login");
+    } finally {
       setIsLoading(false);
-      toast.error("Invalid email/username or password");
-    }, 1500);
+    }
   };
 
-  const handleForgotPassword = () => {
-    toast.info("Password reset link sent to your email");
+  const handleForgotPassword = async () => {
+    if (!emailOrUsername) {
+      toast.error("Please enter your email address");
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(emailOrUsername)) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+
+    try {
+      const result = await sendPasswordReset(emailOrUsername);
+      if (result.success) {
+        toast.success("Password reset email sent! Check your inbox.");
+      } else {
+        toast.error(result.error || "Failed to send password reset email");
+      }
+    } catch (error: any) {
+      toast.error(error.message || "An error occurred");
+    }
   };
 
   return (
@@ -211,15 +200,15 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
                     htmlFor="emailOrUsername"
                     className="block text-sm font-medium text-slate-300 mb-1.5 sm:mb-2"
                   >
-                    Email or Username
+                    Email Address
                   </label>
                   <Input
                     id="emailOrUsername"
-                    type="text"
+                    type="email"
                     value={emailOrUsername}
                     onChange={(e) => setEmailOrUsername(e.target.value)}
                     className="w-full h-11 sm:h-12 bg-slate-800 border-slate-700 text-white placeholder-slate-400 focus:border-blue-500 focus:ring-blue-500 text-sm sm:text-base"
-                    placeholder="Enter your email or username"
+                    placeholder="Enter your email address"
                     disabled={isLoading}
                   />
                 </div>

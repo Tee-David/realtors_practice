@@ -14,6 +14,7 @@ import { ErrorBoundary } from "@/components/error-boundary";
 import { toast } from "sonner";
 import { useKeepAlive } from "@/lib/hooks/useKeepAlive";
 import { KeepAliveIndicator } from "@/components/ui/keep-alive-indicator";
+import { useAuth } from "@/contexts/AuthContext";
 
 // Static imports for ALL pages to avoid React.lazy() issues on Vercel
 import DashboardPage from "./dashboard/page";
@@ -41,8 +42,8 @@ import TopPerformersPage from "./top-performers/page";
 import SiteHealthPage from "./site-health/page";
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState("login");
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [activeTab, setActiveTab] = useState("dashboard");
+  const { user, loading, logout } = useAuth();
 
   // Keep backend alive to prevent Render from sleeping
   useKeepAlive({
@@ -50,17 +51,15 @@ export default function Home() {
     interval: 12 * 60 * 1000, // 12 minutes
   });
 
-  // Check for stored authentication on mount
+  // Restore active tab from localStorage
   React.useEffect(() => {
-    const storedAuth = localStorage.getItem("isAuthenticated");
-    const storedTab = localStorage.getItem("activeTab");
-
-    if (storedAuth === "true") {
-      setIsAuthenticated(true);
-      setActiveTab(storedTab || "dashboard");
-      console.log("[Home] Restored session - authenticated:", true);
+    if (user) {
+      const storedTab = localStorage.getItem("activeTab");
+      if (storedTab) {
+        setActiveTab(storedTab);
+      }
     }
-  }, []);
+  }, [user]);
 
   // Debug: Track activeTab changes
   React.useEffect(() => {
@@ -68,22 +67,20 @@ export default function Home() {
   }, [activeTab]);
 
   const handleLogin = useCallback(() => {
-    setIsAuthenticated(true);
     setActiveTab("dashboard");
-    // Persist authentication
-    localStorage.setItem("isAuthenticated", "true");
     localStorage.setItem("activeTab", "dashboard");
-    toast.success("Login successful! Welcome back.");
   }, []);
 
-  const handleLogout = useCallback(() => {
-    setIsAuthenticated(false);
-    setActiveTab("login");
-    // Clear authentication
-    localStorage.removeItem("isAuthenticated");
-    localStorage.removeItem("activeTab");
-    toast.info("Logged out successfully");
-  }, []);
+  const handleLogout = useCallback(async () => {
+    const result = await logout();
+    if (result.success) {
+      setActiveTab("login");
+      localStorage.removeItem("activeTab");
+      toast.info("Logged out successfully");
+    } else {
+      toast.error(result.error || "Logout failed");
+    }
+  }, [logout]);
 
   const handlePageChange = useCallback((page: string) => {
     console.log("[Home] Page change requested:", page);
@@ -169,8 +166,17 @@ export default function Home() {
     }
   }, [activeTab]);
 
+  // Show loading screen while checking authentication
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+        <LoadingSpinner size="large" />
+      </div>
+    );
+  }
+
   // Conditional return after all hooks
-  if (!isAuthenticated) {
+  if (!user) {
     return <LoginScreen onLogin={handleLogin} />;
   }
 
