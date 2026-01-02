@@ -52,6 +52,24 @@ service cloud.firestore {
       allow update, delete: if false; // Never allow updates/deletes to archive
     }
 
+    // Users collection - user management
+    match /users/{userId} {
+      // Allow authenticated users to read all users (for admin panel)
+      allow read: if request.auth != null;
+
+      // Allow authenticated users to create users (for registration)
+      allow create: if request.auth != null;
+
+      // Allow users to update only their own document or admins to update any
+      allow update: if request.auth != null &&
+        (request.auth.uid == userId ||
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
+
+      // Only admins can delete users
+      allow delete: if request.auth != null &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
     // Deny all other collections by default
     match /{document=**} {
       allow read, write: if false;

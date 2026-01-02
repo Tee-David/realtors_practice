@@ -241,9 +241,20 @@
   - ✅ Export button functional
   - ✅ Proper CSV formatting
   - ✅ Date-stamped filenames
-- [ ] Enhance property cards with richer information (Zillow-style reference)
-  - Surface pricing history, status, location details, amenities
-  - Inspect Zillow cards using Playwright: https://www.zillow.com/
+- [x] ✅ Enhance property cards with richer information (COMPLETED 2026-01-02)
+  - ✅ Created comprehensive property detail modal with Zillow/Airbnb-style layout
+  - ✅ Shows all property data: pricing, amenities, agent info, location, metadata
+  - ✅ Image gallery with navigation
+  - ✅ Share and favorite functionality
+  - ✅ Organized in sections: Overview, Amenities, Agent, Location, Listing Details
+- [x] ✅ Reorganize Scraper Control Page layout (COMPLETED 2026-01-02)
+  - ✅ Moved Scrape Time Estimate outside of Advanced Settings
+  - ✅ Moved Start Scrape button below Site Configuration list
+  - ✅ Advanced Settings now contains only notifications
+- [x] ✅ Move Global Parameters to System Settings tab (COMPLETED 2026-01-02)
+  - ✅ Removed Global Parameters from Scraper Control Advanced Settings
+  - ✅ Added Global Parameters section to Settings page System Settings tab
+  - ✅ Component properly wired with state management
 
 ### 9. Export Functionality
 - [ ] Fix CSV exports across all applicable pages

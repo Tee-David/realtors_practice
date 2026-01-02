@@ -102,6 +102,26 @@ export default function DataExplorer() {
     }
   };
 
+  // Get display label for view mode
+  const getViewModeLabel = (mode: ViewMode) => {
+    switch (mode) {
+      case "list":
+        return "List View";
+      case "grid-2":
+        return "2 Columns";
+      case "grid-3":
+        return "3 Columns";
+      case "grid-4":
+        return "4 Columns";
+      case "grid-5":
+        return "5 Columns";
+      case "grid-6":
+        return "6 Columns";
+      default:
+        return "Grid View";
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-2 sm:p-6">
       <div className="max-w-7xl mx-auto">
@@ -124,30 +144,38 @@ export default function DataExplorer() {
                 {/* View Mode Selector */}
                 <Select value={viewMode} onValueChange={(value) => setViewMode(value as ViewMode)}>
                   <SelectTrigger className="w-[140px] bg-slate-700 border-slate-600 text-white text-sm">
-                    <SelectValue />
+                    <SelectValue placeholder={getViewModeLabel(viewMode)}>
+                      {getViewModeLabel(viewMode)}
+                    </SelectValue>
                   </SelectTrigger>
-                  <SelectContent className="bg-slate-800 border-slate-700">
-                    <SelectItem value="list" className="text-white">
-                      <div className="flex items-center gap-2">
+                  <SelectContent className="bg-slate-800 border-slate-700 text-white">
+                    <SelectItem value="list" className="text-white cursor-pointer hover:bg-slate-700">
+                      <span className="flex items-center gap-2">
                         <List className="w-4 h-4" />
                         List View
-                      </div>
+                      </span>
                     </SelectItem>
-                    <SelectItem value="grid-2" className="text-white">
-                      <div className="flex items-center gap-2">
+                    <SelectItem value="grid-2" className="text-white cursor-pointer hover:bg-slate-700">
+                      <span className="flex items-center gap-2">
                         <Grid2x2 className="w-4 h-4" />
                         2 Columns
-                      </div>
+                      </span>
                     </SelectItem>
-                    <SelectItem value="grid-3" className="text-white">
-                      <div className="flex items-center gap-2">
+                    <SelectItem value="grid-3" className="text-white cursor-pointer hover:bg-slate-700">
+                      <span className="flex items-center gap-2">
                         <Grid3x3 className="w-4 h-4" />
                         3 Columns
-                      </div>
+                      </span>
                     </SelectItem>
-                    <SelectItem value="grid-4" className="text-white">4 Columns</SelectItem>
-                    <SelectItem value="grid-5" className="text-white">5 Columns</SelectItem>
-                    <SelectItem value="grid-6" className="text-white">6 Columns</SelectItem>
+                    <SelectItem value="grid-4" className="text-white cursor-pointer hover:bg-slate-700">
+                      4 Columns
+                    </SelectItem>
+                    <SelectItem value="grid-5" className="text-white cursor-pointer hover:bg-slate-700">
+                      5 Columns
+                    </SelectItem>
+                    <SelectItem value="grid-6" className="text-white cursor-pointer hover:bg-slate-700">
+                      6 Columns
+                    </SelectItem>
                   </SelectContent>
                 </Select>
 

@@ -41,6 +41,7 @@ import { toast } from "sonner";
 import { mockUsers } from "@/lib/mockData";
 import { registerWithEmail, resetPassword } from "@/lib/firebase/auth";
 import { db } from "@/lib/firebase/config";
+import { GlobalParameters } from "@/components/scraper/global-parameters";
 import {
   collection,
   query,
@@ -479,6 +480,10 @@ function SystemTab() {
     export_format: "xlsx",
   });
 
+  // Global Parameters State
+  const [maxPages, setMaxPages] = useState<number>(100);
+  const [geocoding, setGeocoding] = useState<boolean>(true);
+
   const [envCategories, setEnvCategories] = useState<any>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -598,6 +603,24 @@ function SystemTab() {
 
   return (
     <div className="space-y-6">
+      {/* Global Parameters */}
+      <Card className="bg-slate-800 border-slate-700">
+        <CardHeader>
+          <CardTitle className="text-white">Global Scraper Parameters</CardTitle>
+          <CardDescription className="text-slate-400">
+            Configure global scraping settings that apply to all sites
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <GlobalParameters
+            maxPages={maxPages}
+            onMaxPagesChange={(value) => setMaxPages(value ?? 100)}
+            geocoding={geocoding}
+            onGeocodingChange={(value) => setGeocoding(value ?? true)}
+          />
+        </CardContent>
+      </Card>
+
       {/* Environment Variables Configuration */}
       <Card className="bg-slate-800 border-slate-700">
         <CardHeader>

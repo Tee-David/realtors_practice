@@ -1,9 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Bed, Bath, Home, TrendingUp } from "lucide-react";
 import Image from "next/image";
+import { PropertyDetailModal } from "./property-detail-modal";
 
 interface PropertyCardProps {
   property: any; // Support both flat and nested Firestore enterprise schema
@@ -101,6 +103,7 @@ function getDisplayPrice(price: number | undefined): { display: string; color: s
 }
 
 export function PropertyCard({ property, onClick }: PropertyCardProps) {
+  const [showDetailModal, setShowDetailModal] = useState(false);
   const normalized = normalizeProperty(property);
 
   // CRITICAL: Force location to be a string or undefined to prevent React errors
@@ -115,11 +118,20 @@ export function PropertyCard({ property, onClick }: PropertyCardProps) {
   // Check if image URL has query string (needs unoptimized mode)
   const hasQueryString = safeImageUrl?.includes('?') ?? false;
 
+  const handleClick = () => {
+    if (onClick) {
+      onClick();
+    } else {
+      setShowDetailModal(true);
+    }
+  };
+
   return (
-    <Card
-      className="bg-slate-800 border-slate-700 hover:border-slate-600 transition-all hover:scale-[1.02] cursor-pointer group flex flex-col h-full"
-      onClick={onClick}
-    >
+    <>
+      <Card
+        className="bg-slate-800 border-slate-700 hover:border-slate-600 transition-all hover:scale-[1.02] cursor-pointer group flex flex-col h-full"
+        onClick={handleClick}
+      >
       {/* Property Image */}
       <div className="relative h-48 sm:h-56 w-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-hidden flex-shrink-0">
         {safeImageUrl ? (
@@ -208,5 +220,13 @@ export function PropertyCard({ property, onClick }: PropertyCardProps) {
         )}
       </CardContent>
     </Card>
+
+    {/* Property Detail Modal */}
+    <PropertyDetailModal
+      property={property}
+      open={showDetailModal}
+      onOpenChange={setShowDetailModal}
+    />
+    </>
   );
 }

@@ -477,39 +477,6 @@ export function ScraperControl() {
                 </div>
               </div>
             </div>
-
-            {/* Quick Actions */}
-            <div className="flex flex-col gap-2">
-              <Button
-                onClick={handleTriggerGitHubScrape}
-                disabled={ghLoading || isRunning}
-                className="bg-blue-600 hover:bg-blue-500 text-white"
-              >
-                {ghLoading ? (
-                  <>
-                    <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
-                    Starting...
-                  </>
-                ) : (
-                  <>
-                    <Zap className="w-4 h-4 mr-2" />
-                    Start New Scrape
-                  </>
-                )}
-              </Button>
-
-              {isRunning && (
-                <Button
-                  onClick={handleRunScraper}
-                  disabled={scrapeLoading}
-                  variant="outline"
-                  className="border-red-500/50 text-red-400 hover:bg-red-500/10"
-                >
-                  <Square className="w-4 h-4 mr-2" />
-                  Stop Scraper
-                </Button>
-              )}
-            </div>
           </div>
         </div>
 
@@ -593,6 +560,13 @@ export function ScraperControl() {
           </div>
         )}
 
+        {/* Scrape Time Estimate - Moved outside Advanced Settings */}
+        <ScrapeTimeEstimate
+          pageCap={maxPages ?? 1}
+          geocode={geocoding ?? false}
+          sites={selectedSites}
+        />
+
         {/* Advanced Settings Toggle */}
         <button
           onClick={() => setShowAdvancedSettings(!showAdvancedSettings)}
@@ -614,27 +588,6 @@ export function ScraperControl() {
         {/* Advanced Settings Content */}
         {showAdvancedSettings && (
           <div className="space-y-6">
-            {/* Global Parameters */}
-            <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-6">
-              <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                <Settings className="w-5 h-5" />
-                Global Parameters
-              </h3>
-              <GlobalParameters
-                maxPages={maxPages}
-                geocoding={geocoding}
-                onMaxPagesChange={setMaxPages}
-                onGeocodingChange={setGeocoding}
-              />
-            </div>
-
-            {/* Scrape Time Estimate */}
-            <ScrapeTimeEstimate
-              pageCap={maxPages ?? 1}
-              geocode={geocoding ?? false}
-              sites={selectedSites}
-            />
-
             {/* Notifications & Alerts */}
             <NotificationsAlerts />
           </div>
@@ -662,6 +615,45 @@ export function ScraperControl() {
             onSelectedSitesChange={setSelectedSites}
             refreshTrigger={refreshSites}
           />
+        </div>
+
+        {/* Scrape Actions - Moved below Site Configuration */}
+        <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-6">
+          <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+            <Zap className="w-5 h-5" />
+            Scrape Actions
+          </h3>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <Button
+              onClick={handleTriggerGitHubScrape}
+              disabled={ghLoading || isRunning}
+              className="bg-blue-600 hover:bg-blue-500 text-white flex-1"
+            >
+              {ghLoading ? (
+                <>
+                  <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                  Starting...
+                </>
+              ) : (
+                <>
+                  <Zap className="w-4 h-4 mr-2" />
+                  Start New Scrape
+                </>
+              )}
+            </Button>
+
+            {isRunning && (
+              <Button
+                onClick={handleRunScraper}
+                disabled={scrapeLoading}
+                variant="outline"
+                className="border-red-500/50 text-red-400 hover:bg-red-500/10 flex-1"
+              >
+                <Square className="w-4 h-4 mr-2" />
+                Stop Scraper
+              </Button>
+            )}
+          </div>
         </div>
 
         {/* Panels Grid */}
