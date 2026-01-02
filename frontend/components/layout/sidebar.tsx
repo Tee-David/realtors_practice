@@ -263,8 +263,8 @@ export function Sidebar({ currentPage, onPageChange, onLogout }: SidebarProps) {
 
         {/* Copyright Footer */}
         {(isMobile || isDesktopExpanded) && (
-          <div className="mt-4 pt-4 px-3 text-xs text-slate-500 dark:text-slate-500 border-t border-slate-200 dark:border-slate-800">
-            <p className="whitespace-nowrap overflow-hidden text-ellipsis">
+          <div className="mt-4 pt-4 px-3 text-xs text-muted-foreground border-t border-sidebar-border">
+            <p className="break-words">
               © {new Date().getFullYear()}{" "}
               <a
                 href="https://realtorspractice.com"
@@ -274,9 +274,7 @@ export function Sidebar({ currentPage, onPageChange, onLogout }: SidebarProps) {
               >
                 Realtors' Practice
               </a>
-            </p>
-            <p className="mt-1 whitespace-nowrap overflow-hidden text-ellipsis">
-              Powered by{" "}
+              {" "}• Powered by{" "}
               <a
                 href="https://wedigcreativity.com.ng"
                 target="_blank"

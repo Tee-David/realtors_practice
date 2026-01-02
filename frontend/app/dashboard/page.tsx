@@ -275,7 +275,7 @@ interface PropertyCardProps {
 //     <div className="space-y-4 sm:space-y-6 p-4 sm:p-6">
 //       {/* Scrape Status & History Section */}
 //       <div className="mt-6">
-//         <h2 className="text-lg font-semibold text-white mb-2">
+//         <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
 //           Scrape Status & History
 //         </h2>
 //         {/* Current or Last Run Details */}
@@ -287,7 +287,7 @@ interface PropertyCardProps {
 //                 <span className="text-blue-300 font-medium">
 //                   Scrape in progress
 //                 </span>
-//                 <span className="text-xs text-slate-400">
+//                 <span className="text-xs text-slate-600 dark:text-slate-400">
 //                   Started:{" "}
 //                   {new Date(
 //                     scrapeStatus.current_run.started_at
@@ -369,7 +369,7 @@ interface PropertyCardProps {
 //                   Last scrape{" "}
 //                   {scrapeStatus.last_run.success ? "succeeded" : "failed"}
 //                 </span>
-//                 <span className="text-xs text-slate-400">
+//                 <span className="text-xs text-slate-600 dark:text-slate-400">
 //                   Completed:{" "}
 //                   {new Date(
 //                     scrapeStatus.last_run.completed_at
@@ -418,7 +418,7 @@ interface PropertyCardProps {
 //             Recent Scrape History
 //           </h4>
 //           {scrapeHistoryLoading ? (
-//             <span className="text-slate-400 text-xs">Loading history...</span>
+//             <span className="text-slate-600 dark:text-slate-400 text-xs">Loading history...</span>
 //           ) : scrapeHistoryError ? (
 //             <span className="text-red-400 text-xs">Failed to load history</span>
 //           ) : scrapeHistory &&
@@ -470,7 +470,7 @@ interface PropertyCardProps {
 //               </tbody>
 //             </table>
 //           ) : (
-//             <span className="text-slate-400 text-xs">
+//             <span className="text-slate-600 dark:text-slate-400 text-xs">
 //               No scrape history found.
 //             </span>
 //           )}
@@ -509,7 +509,7 @@ interface PropertyCardProps {
 //       {!dashboardLoading && !hasError && totalProperties === 0 && (
 //         <div className="bg-slate-900/80 border border-slate-700 rounded-lg p-6 flex flex-col items-center text-center mb-6">
 //           <AlertCircle className="w-8 h-8 text-yellow-400 mb-2" />
-//           <h2 className="text-lg font-semibold text-white mb-1">
+//           <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-1">
 //             No property data yet
 //           </h2>
 //           <p className="text-slate-400 mb-3 max-w-md">
@@ -636,7 +636,7 @@ interface PropertyCardProps {
 //                       <p className="text-sm font-medium text-white">
 //                         API Server
 //                       </p>
-//                       <p className="text-xs text-slate-400">
+//                       <p className="text-xs text-slate-600 dark:text-slate-400">
 //                         {health?.status || "Unknown"}
 //                       </p>
 //                     </div>
@@ -663,7 +663,7 @@ interface PropertyCardProps {
 //                     )}
 //                     <div>
 //                       <p className="text-sm font-medium text-white">Scraper</p>
-//                       <p className="text-xs text-slate-400">
+//                       <p className="text-xs text-slate-600 dark:text-slate-400">
 //                         {isScraperRunning ? "Running" : "Idle"}
 //                       </p>
 //                     </div>
@@ -688,7 +688,7 @@ interface PropertyCardProps {
 //                       <p className="text-sm font-medium text-white">
 //                         Enabled Sites
 //                       </p>
-//                       <p className="text-xs text-slate-400">
+//                       <p className="text-xs text-slate-600 dark:text-slate-400">
 //                         Active data sources
 //                       </p>
 //                     </div>
@@ -709,7 +709,7 @@ interface PropertyCardProps {
 //                       <p className="text-sm font-medium text-white">
 //                         GitHub Actions
 //                       </p>
-//                       <p className="text-xs text-slate-400">
+//                       <p className="text-xs text-slate-600 dark:text-slate-400">
 //                         Automated workflows
 //                       </p>
 //                     </div>
@@ -876,7 +876,7 @@ const StatsCard = ({
             <p className="text-3xl font-bold text-white mb-1">{value}</p>
           )}
           {description && (
-            <p className="text-xs text-slate-400 flex items-center gap-1">
+            <p className="text-xs text-slate-600 dark:text-slate-400 flex items-center gap-1">
               {trend && (
                 <span className={trend > 0 ? "text-green-400" : "text-red-400"}>
                   {trend > 0 ? (
@@ -934,7 +934,7 @@ const PropertyCard = ({ property }: PropertyCardProps) => {
   };
 
   return (
-    <div className="group bg-slate-800/50 hover:bg-slate-800 border border-slate-700 hover:border-slate-600 rounded-lg p-4 transition-all cursor-pointer">
+    <div className="group bg-white dark:bg-slate-800/50 hover:bg-slate-50 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 rounded-lg p-4 transition-all cursor-pointer">
       <div className="flex items-start justify-between mb-3">
         <div className="flex-1">
           <h4 className="text-white font-medium mb-1 group-hover:text-blue-400 transition-colors line-clamp-1">
@@ -1194,17 +1194,17 @@ export default function DashboardPage() {
         {/* System Status Cards */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           {/* API Health */}
-          <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-5">
+          <div className="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-5">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-3">
                 {health?.status === "healthy" ? (
-                  <CheckCircle className="w-5 h-5 text-green-400" />
+                  <CheckCircle className="w-5 h-5 text-green-500 dark:text-green-400" />
                 ) : (
-                  <XCircle className="w-5 h-5 text-red-400" />
+                  <XCircle className="w-5 h-5 text-red-500 dark:text-red-400" />
                 )}
                 <div>
-                  <p className="text-sm font-semibold text-white">API Server</p>
-                  <p className="text-xs text-slate-400">Backend service</p>
+                  <p className="text-sm font-semibold text-slate-900 dark:text-white">API Server</p>
+                  <p className="text-xs text-slate-600 dark:text-slate-400">Backend service</p>
                 </div>
               </div>
               <StatusBadge
@@ -1215,17 +1215,17 @@ export default function DashboardPage() {
           </div>
 
           {/* Scraper Status */}
-          <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-5">
+          <div className="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-5">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-3">
                 {scrapeStatus?.is_running ? (
-                  <Activity className="w-5 h-5 text-blue-400 animate-pulse" />
+                  <Activity className="w-5 h-5 text-blue-500 dark:text-blue-400 animate-pulse" />
                 ) : (
-                  <Clock className="w-5 h-5 text-slate-400" />
+                  <Clock className="w-5 h-5 text-slate-500 dark:text-slate-400" />
                 )}
                 <div>
-                  <p className="text-sm font-semibold text-white">Scraper</p>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-sm font-semibold text-slate-900 dark:text-white">Scraper</p>
+                  <p className="text-xs text-slate-600 dark:text-slate-400">
                     {scrapeStatus?.is_running
                       ? "Currently running"
                       : "Ready to scrape"}
@@ -1240,15 +1240,15 @@ export default function DashboardPage() {
           </div>
 
           {/* Data Sources */}
-          <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-5">
+          <div className="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-5">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-3">
-                <Database className="w-5 h-5 text-purple-400" />
+                <Database className="w-5 h-5 text-purple-500 dark:text-purple-400" />
                 <div>
-                  <p className="text-sm font-semibold text-white">
+                  <p className="text-sm font-semibold text-slate-900 dark:text-white">
                     Data Sources
                   </p>
-                  <p className="text-xs text-slate-400">Enabled sites</p>
+                  <p className="text-xs text-slate-600 dark:text-slate-400">Enabled sites</p>
                 </div>
               </div>
               <StatusBadge
@@ -1260,16 +1260,16 @@ export default function DashboardPage() {
         </div>
 
         {/* Scrape Status & History */}
-        <div className="bg-slate-800/50 border border-slate-700 rounded-xl overflow-hidden">
+        <div className="bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden">
           <div className="p-5 border-b border-slate-700">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+              <h2 className="text-lg font-semibold text-slate-900 dark:text-white flex items-center gap-2">
                 <Activity className="w-5 h-5" />
                 Scrape Activity
               </h2>
               <button
                 onClick={() => setShowHistory(!showHistory)}
-                className="text-sm text-slate-400 hover:text-white flex items-center gap-1 transition-colors"
+                className="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white flex items-center gap-1 transition-colors"
               >
                 {showHistory ? (
                   <>
@@ -1287,7 +1287,7 @@ export default function DashboardPage() {
           {/* Current/Last Run */}
           <div className="p-5">
             {scrapeStatus?.last_run && (
-              <div className="bg-slate-900/50 rounded-lg p-4 mb-4">
+              <div className="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-4 mb-4">
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-3">
                     {scrapeStatus.last_run.success ? (
@@ -1308,7 +1308,7 @@ export default function DashboardPage() {
                           ? "completed successfully"
                           : "failed"}
                       </p>
-                      <p className="text-xs text-slate-400 flex items-center gap-1 mt-1">
+                      <p className="text-xs text-slate-600 dark:text-slate-400 flex items-center gap-1 mt-1">
                         <Calendar className="w-3 h-3" />
                         {new Date(
                           scrapeStatus.last_run.completed_at
@@ -1319,26 +1319,26 @@ export default function DashboardPage() {
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
                   <div className="bg-slate-800/50 rounded p-2">
-                    <p className="text-slate-400 text-xs">Sites</p>
-                    <p className="text-white font-semibold">
+                    <p className="text-slate-600 dark:text-slate-400 text-xs">Sites</p>
+                    <p className="text-slate-900 dark:text-white font-semibold">
                       {scrapeStatus.last_run.sites?.length || 0}
                     </p>
                   </div>
                   <div className="bg-slate-800/50 rounded p-2">
-                    <p className="text-slate-400 text-xs">Completed</p>
-                    <p className="text-white font-semibold">
+                    <p className="text-slate-600 dark:text-slate-400 text-xs">Completed</p>
+                    <p className="text-slate-900 dark:text-white font-semibold">
                       {scrapeStatus.last_run.progress?.completed_sites || 0}
                     </p>
                   </div>
                   <div className="bg-slate-800/50 rounded p-2">
-                    <p className="text-slate-400 text-xs">Duration</p>
-                    <p className="text-white font-semibold">
+                    <p className="text-slate-600 dark:text-slate-400 text-xs">Duration</p>
+                    <p className="text-slate-900 dark:text-white font-semibold">
                       {scrapeStatus.last_run.timing?.elapsed_seconds || 0}s
                     </p>
                   </div>
                   <div className="bg-slate-800/50 rounded p-2">
-                    <p className="text-slate-400 text-xs">CPU Usage</p>
-                    <p className="text-white font-semibold">
+                    <p className="text-slate-600 dark:text-slate-400 text-xs">CPU Usage</p>
+                    <p className="text-slate-900 dark:text-white font-semibold">
                       {scrapeStatus.last_run.resources?.cpu_percent || 0}%
                     </p>
                   </div>
@@ -1351,7 +1351,7 @@ export default function DashboardPage() {
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="text-left text-slate-400 border-b border-slate-700">
+                    <tr className="text-left text-slate-600 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700">
                       <th className="pb-3 font-medium">Start Time</th>
                       <th className="pb-3 font-medium hidden sm:table-cell">
                         Sites
@@ -1432,7 +1432,7 @@ export default function DashboardPage() {
               </div>
             </>
           ) : (
-            <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-8 text-center">
+            <div className="bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-8 text-center">
               <Home className="w-12 h-12 text-slate-600 mx-auto mb-3" />
               <p className="text-slate-400">No Properties Yet</p>
             </div>

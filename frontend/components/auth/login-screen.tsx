@@ -404,9 +404,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
               >
                 Realtors' Practice
               </a>
-            </p>
-            <p className="mt-1">
-              Powered by{" "}
+              {" "}• Powered by{" "}
               <a
                 href="https://wedigcreativity.com.ng"
                 target="_blank"
