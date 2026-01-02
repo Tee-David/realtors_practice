@@ -117,11 +117,11 @@ export function PropertyCard({ property, onClick }: PropertyCardProps) {
 
   return (
     <Card
-      className="bg-slate-800 border-slate-700 hover:border-slate-600 transition-all hover:scale-[1.02] cursor-pointer overflow-hidden group"
+      className="bg-slate-800 border-slate-700 hover:border-slate-600 transition-all hover:scale-[1.02] cursor-pointer group flex flex-col h-full"
       onClick={onClick}
     >
       {/* Property Image */}
-      <div className="relative h-48 w-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+      <div className="relative h-48 sm:h-56 w-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-hidden flex-shrink-0">
         {safeImageUrl ? (
           <Image
             src={safeImageUrl}
@@ -157,41 +157,41 @@ export function PropertyCard({ property, onClick }: PropertyCardProps) {
         )}
       </div>
 
-      <CardContent className="p-4 space-y-3">
+      <CardContent className="p-3 sm:p-4 space-y-2 sm:space-y-3 flex-1 flex flex-col min-h-0">
         {/* Price - Always show, with graceful handling of missing price */}
         {priceInfo && (
-          <div className="flex items-center gap-2">
-            <TrendingUp className={`w-4 h-4 ${priceInfo.color}`} />
-            <span className={`text-xl font-bold ${priceInfo.color}`}>
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <TrendingUp className={`w-4 h-4 ${priceInfo.color} flex-shrink-0`} />
+            <span className={`text-lg sm:text-xl font-bold ${priceInfo.color} truncate`}>
               {priceInfo.display}
             </span>
           </div>
         )}
 
         {/* Title - Enhanced with fallback */}
-        <h3 className="text-white font-semibold text-lg line-clamp-2 min-h-[3.5rem]">
+        <h3 className="text-white font-semibold text-base sm:text-lg line-clamp-2 min-h-[2.5rem] sm:min-h-[3.5rem] flex-shrink-0">
           {displayTitle}
         </h3>
 
         {/* Location */}
         {safeLocation && (
-          <div className="flex items-center gap-2 text-slate-400">
+          <div className="flex items-center gap-2 text-slate-400 min-w-0 flex-shrink-0">
             <MapPin className="w-4 h-4 flex-shrink-0" />
-            <span className="text-sm truncate">{safeLocation}</span>
+            <span className="text-xs sm:text-sm truncate">{safeLocation}</span>
           </div>
         )}
 
         {/* Property Details */}
-        <div className="flex items-center gap-4 text-slate-400 text-sm">
+        <div className="flex items-center gap-3 sm:gap-4 text-slate-400 text-xs sm:text-sm flex-shrink-0 flex-wrap">
           {normalized.bedrooms !== undefined && normalized.bedrooms !== null && normalized.bedrooms > 0 && (
-            <div className="flex items-center gap-1">
-              <Bed className="w-4 h-4" />
+            <div className="flex items-center gap-1 flex-shrink-0">
+              <Bed className="w-4 h-4 flex-shrink-0" />
               <span>{normalized.bedrooms} bed{normalized.bedrooms !== 1 ? 's' : ''}</span>
             </div>
           )}
           {normalized.bathrooms !== undefined && normalized.bathrooms !== null && normalized.bathrooms > 0 && normalized.bathrooms <= 10 && (
-            <div className="flex items-center gap-1">
-              <Bath className="w-4 h-4" />
+            <div className="flex items-center gap-1 flex-shrink-0">
+              <Bath className="w-4 h-4 flex-shrink-0" />
               <span>{normalized.bathrooms} bath{normalized.bathrooms !== 1 ? 's' : ''}</span>
             </div>
           )}

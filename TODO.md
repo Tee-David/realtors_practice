@@ -64,10 +64,18 @@
   - Smooth transitions between themes
   - Responsive on all screen sizes
   - Leverages existing light/dark CSS variables from globals.css
-- [ ] Fix scrape control page "site isn't working" issue
-  - Investigate which site is failing
-  - Check scraper configuration
-  - Test site scraping functionality
+- [x] ✅ Fix scrape control page text overflow on mobile (COMPLETED 2026-01-02)
+  - ✅ Fixed text overflow in mobile site cards
+  - ✅ Added overflow-hidden to card containers
+  - ✅ Implemented proper URL truncation with break-all
+  - ✅ Fixed site name and site_key truncation
+  - ✅ Added flex-shrink-0 to prevent icon compression
+  - ✅ Improved mobile responsiveness (iPhone SE, iPhone 12, Pixel 5)
+- [ ] Test scrape control "add, enable, disable, delete site" functionality
+  - Test add site button
+  - Test enable/disable site toggle
+  - Test delete site button
+  - Verify API endpoints are working
 - [ ] Fix Render.com deployment issues
   - Use Render MCP to diagnose issues
   - Update deployment configuration

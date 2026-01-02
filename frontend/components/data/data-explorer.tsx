@@ -7,7 +7,16 @@ import { SearchBar } from "@/components/shared/search-bar";
 import { Pagination } from "@/components/shared/pagination";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { RefreshCw, Download, Home } from "lucide-react";
+import { RefreshCw, Download, Home, Grid3x3, List, Grid2x2 } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+type ViewMode = "list" | "grid-2" | "grid-3" | "grid-4" | "grid-5" | "grid-6";
 
 export default function DataExplorer() {
   const [properties, setProperties] = useState<any[]>([]);
@@ -18,6 +27,7 @@ export default function DataExplorer() {
   const [itemsPerPage, setItemsPerPage] = useState(20);
   const [showLargePageWarning, setShowLargePageWarning] = useState(false);
   const [pendingPageSize, setPendingPageSize] = useState<number | null>(null);
+  const [viewMode, setViewMode] = useState<ViewMode>("grid-3");
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -72,53 +82,105 @@ export default function DataExplorer() {
     URL.revokeObjectURL(url);
   };
 
+  // Get grid class based on view mode
+  const getGridClass = () => {
+    switch (viewMode) {
+      case "list":
+        return "grid grid-cols-1 gap-4";
+      case "grid-2":
+        return "grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6";
+      case "grid-3":
+        return "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6";
+      case "grid-4":
+        return "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4";
+      case "grid-5":
+        return "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3";
+      case "grid-6":
+        return "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-3";
+      default:
+        return "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6";
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-2 sm:p-6">
       <div className="max-w-7xl mx-auto">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-2">
-            <Home className="w-8 h-8" />
+        <div className="mb-4 sm:mb-6">
+          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2 flex items-center gap-2">
+            <Home className="w-6 h-6 sm:w-8 sm:h-8" />
             Properties
           </h1>
-          <p className="text-slate-400">
+          <p className="text-sm sm:text-base text-slate-400">
             Browse and export property listings
           </p>
         </div>
 
-        <Card className="bg-slate-800/50 border-slate-700 mb-6">
-          <CardHeader>
-            <CardTitle className="text-white flex items-center justify-between">
-              <span>Search & Export</span>
-              <div className="flex gap-2">
+        {/* Sticky Filter Card */}
+        <Card className="bg-slate-800/50 border-slate-700 mb-4 sm:mb-6 sticky top-0 sm:top-2 z-10 shadow-lg">
+          <CardHeader className="pb-3 sm:pb-6">
+            <CardTitle className="text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <span className="text-base sm:text-lg">Search & Export</span>
+              <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                {/* View Mode Selector */}
+                <Select value={viewMode} onValueChange={(value) => setViewMode(value as ViewMode)}>
+                  <SelectTrigger className="w-[140px] bg-slate-700 border-slate-600 text-white text-sm">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-slate-800 border-slate-700">
+                    <SelectItem value="list" className="text-white">
+                      <div className="flex items-center gap-2">
+                        <List className="w-4 h-4" />
+                        List View
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="grid-2" className="text-white">
+                      <div className="flex items-center gap-2">
+                        <Grid2x2 className="w-4 h-4" />
+                        2 Columns
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="grid-3" className="text-white">
+                      <div className="flex items-center gap-2">
+                        <Grid3x3 className="w-4 h-4" />
+                        3 Columns
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="grid-4" className="text-white">4 Columns</SelectItem>
+                    <SelectItem value="grid-5" className="text-white">5 Columns</SelectItem>
+                    <SelectItem value="grid-6" className="text-white">6 Columns</SelectItem>
+                  </SelectContent>
+                </Select>
+
                 <Button
                   onClick={loadData}
                   disabled={loading}
                   size="sm"
                   variant="outline"
-                  className="text-white"
+                  className="text-white text-xs sm:text-sm"
                 >
-                  <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-                  Refresh
+                  <RefreshCw className={`w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 ${loading ? 'animate-spin' : ''}`} />
+                  <span className="hidden sm:inline">Refresh</span>
                 </Button>
                 <Button
                   onClick={exportToCSV}
                   disabled={filteredProperties.length === 0}
                   size="sm"
-                  className="bg-green-600 hover:bg-green-700"
+                  className="bg-green-600 hover:bg-green-700 text-xs sm:text-sm"
                 >
-                  <Download className="w-4 h-4 mr-2" />
-                  Export CSV
+                  <Download className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                  <span className="hidden sm:inline">Export CSV</span>
+                  <span className="sm:hidden">Export</span>
                 </Button>
               </div>
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-0">
             <SearchBar
               onSearch={setSearchQuery}
               placeholder="Search by title or location..."
               defaultValue={searchQuery}
             />
-            <p className="text-sm text-slate-400 mt-2">
+            <p className="text-xs sm:text-sm text-slate-400 mt-2">
               Showing {filteredProperties.length} of {totalCount} properties
             </p>
           </CardContent>
@@ -130,7 +192,7 @@ export default function DataExplorer() {
             Loading properties...
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className={getGridClass()}>
             {filteredProperties.map((property, index) => (
               <PropertyCard key={property.metadata?.hash || index} property={property} />
             ))}
