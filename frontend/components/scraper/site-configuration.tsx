@@ -624,10 +624,10 @@ export function SiteConfiguration({
             {pagedSites.map((site: any) => (
               <div
                 key={site.site_key}
-                className="bg-slate-800/50 border border-slate-700 rounded-xl p-4"
+                className="bg-slate-800/50 border border-slate-700 rounded-xl p-4 overflow-hidden"
               >
                 <div className="flex items-start justify-between mb-3">
-                  <div className="flex items-center gap-3 flex-1">
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
                     <Checkbox
                       checked={selectedSites.includes(site.site_key)}
                       onCheckedChange={() => {
@@ -703,9 +703,9 @@ export function SiteConfiguration({
                 <div className="space-y-2 text-sm">
                   <div className="flex items-center gap-2">
                     {site.enabled ? (
-                      <Power className="w-4 h-4 text-green-400" />
+                      <Power className="w-4 h-4 text-green-400 flex-shrink-0" />
                     ) : (
-                      <PowerOff className="w-4 h-4 text-red-400" />
+                      <PowerOff className="w-4 h-4 text-red-400 flex-shrink-0" />
                     )}
                     <span
                       className={
@@ -715,8 +715,10 @@ export function SiteConfiguration({
                       {site.enabled ? "Enabled" : "Disabled"}
                     </span>
                   </div>
-                  <p className="text-slate-400 truncate">{site.url}</p>
-                  <p className="text-slate-500">
+                  <div className="min-w-0">
+                    <p className="text-slate-400 truncate break-all">{site.url}</p>
+                  </div>
+                  <p className="text-slate-500 truncate">
                     Parser: {site.parser || "Auto"}
                   </p>
                 </div>
