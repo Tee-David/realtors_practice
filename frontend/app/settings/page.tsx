@@ -646,98 +646,198 @@ function SystemTab() {
       </Card>
 
       {/* Basic System Settings */}
-      <Card className="bg-slate-800 border-slate-700">
-        <CardHeader>
-          <CardTitle className="text-white">System Settings</CardTitle>
-          <CardDescription className="text-slate-400">
-            Configure global scraping defaults and system behavior
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {/* Scraping Settings */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-white">
-              Scraping Configuration
-            </h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="max-workers" className="text-slate-300">
-                  Max Workers
-                </Label>
-                <Input
-                  id="max-workers"
-                  type="number"
-                  value={settings.max_workers}
-                  onChange={(e) =>
-                    setSettings({
-                      ...settings,
-                      max_workers: Number(e.target.value),
-                    })
-                  }
-                  className="bg-slate-900 border-slate-600 text-white"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="request-delay" className="text-slate-300">
-                  Request Delay (seconds)
-                </Label>
-                <Input
-                  id="request-delay"
-                  type="number"
-                  value={settings.request_delay}
-                  onChange={(e) =>
-                    setSettings({
-                      ...settings,
-                      request_delay: Number(e.target.value),
-                    })
-                  }
-                  className="bg-slate-900 border-slate-600 text-white"
-                />
-              </div>
+      <TooltipProvider>
+        <Card className="bg-slate-800 border-slate-700">
+          <CardHeader>
+            <div className="flex items-center gap-2">
+              <CardTitle className="text-white">System Settings</CardTitle>
+              <Tooltip>
+                <TooltipTrigger>
+                  <HelpCircle className="w-4 h-4 text-slate-400" />
+                </TooltipTrigger>
+                <TooltipContent className="max-w-sm">
+                  <p>These settings control system behavior and performance. Changes affect all scraping operations.</p>
+                </TooltipContent>
+              </Tooltip>
             </div>
-          </div>
+            <CardDescription className="text-slate-400">
+              Configure global scraping defaults and system behavior
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-8">
+            {/* Scraping Configuration Section */}
+            <div className="space-y-4 p-4 bg-slate-900/50 rounded-lg border border-slate-700">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <h3 className="text-lg font-semibold text-white">Scraping Configuration</h3>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Info className="w-4 h-4 text-blue-400" />
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-sm">
+                      <p>Controls how the scraper processes multiple sites and manages request rates</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
+              </div>
 
-          {/* Feature Toggles */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-white">Features</h3>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between p-3 bg-slate-900 rounded-lg">
-                <div>
-                  <div className="text-white font-medium">Enable Geocoding</div>
-                  <div className="text-sm text-slate-400">
-                    Automatically fetch coordinates for properties
+              <Alert className="bg-blue-900/20 border-blue-700">
+                <AlertTriangle className="w-4 h-4 text-blue-400" />
+                <AlertDescription className="text-blue-300 text-sm">
+                  <strong>Impact:</strong> Higher worker count = faster scraping but more server load. Lower delay = faster but may trigger rate limits.
+                </AlertDescription>
+              </Alert>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Label htmlFor="max-workers" className="text-slate-300">
+                      Max Workers
+                    </Label>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <HelpCircle className="w-3 h-3 text-slate-400" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Number of concurrent scraping tasks. Recommended: 3-10</p>
+                      </TooltipContent>
+                    </Tooltip>
                   </div>
+                  <Input
+                    id="max-workers"
+                    type="number"
+                    min="1"
+                    max="20"
+                    value={settings.max_workers}
+                    onChange={(e) =>
+                      setSettings({
+                        ...settings,
+                        max_workers: Number(e.target.value),
+                      })
+                    }
+                    className="bg-slate-900 border-slate-600 text-white"
+                  />
+                  <p className="text-xs text-slate-400">Current: {settings.max_workers} workers</p>
                 </div>
-                <Switch
-                  checked={settings.enable_geocoding}
-                  onCheckedChange={(checked) =>
-                    setSettings({ ...settings, enable_geocoding: checked })
-                  }
-                />
-              </div>
-              <div className="flex items-center justify-between p-3 bg-slate-900 rounded-lg">
-                <div>
-                  <div className="text-white font-medium">Enable Caching</div>
-                  <div className="text-sm text-slate-400">
-                    Cache API responses to improve performance
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Label htmlFor="request-delay" className="text-slate-300">
+                      Request Delay (seconds)
+                    </Label>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <HelpCircle className="w-3 h-3 text-slate-400" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Wait time between requests to avoid rate limiting. Recommended: 0.5-2s</p>
+                      </TooltipContent>
+                    </Tooltip>
                   </div>
+                  <Input
+                    id="request-delay"
+                    type="number"
+                    min="0"
+                    max="10"
+                    step="0.1"
+                    value={settings.request_delay}
+                    onChange={(e) =>
+                      setSettings({
+                        ...settings,
+                        request_delay: Number(e.target.value),
+                      })
+                    }
+                    className="bg-slate-900 border-slate-600 text-white"
+                  />
+                  <p className="text-xs text-slate-400">Current: {settings.request_delay}s delay</p>
                 </div>
-                <Switch
-                  checked={settings.enable_caching}
-                  onCheckedChange={(checked) =>
-                    setSettings({ ...settings, enable_caching: checked })
-                  }
-                />
               </div>
+
+              <Button className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto">
+                <Save className="w-4 h-4 mr-2" />
+                Save Scraping Configuration
+              </Button>
             </div>
-          </div>
 
-          {/* Save Button */}
-          <Button className="bg-blue-600 hover:bg-blue-700">
-            Save System Settings
-          </Button>
-        </CardContent>
-      </Card>
+            {/* Feature Toggles Section */}
+            <div className="space-y-4 p-4 bg-slate-900/50 rounded-lg border border-slate-700">
+              <div className="flex items-center gap-2">
+                <h3 className="text-lg font-semibold text-white">Feature Toggles</h3>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Info className="w-4 h-4 text-blue-400" />
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-sm">
+                    <p>Enable or disable specific features that affect data collection and performance</p>
+                  </TooltipContent>
+                </Tooltip>
+              </div>
+
+              <Alert className="bg-amber-900/20 border-amber-700">
+                <AlertTriangle className="w-4 h-4 text-amber-400" />
+                <AlertDescription className="text-amber-300 text-sm">
+                  <strong>Warning:</strong> Disabling geocoding will result in properties without map coordinates. Disabling caching may slow down API responses.
+                </AlertDescription>
+              </Alert>
+
+              <div className="space-y-3">
+                <div className="flex items-center justify-between p-3 bg-slate-900 rounded-lg border border-slate-700">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <div className="text-white font-medium">Enable Geocoding</div>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <HelpCircle className="w-3 h-3 text-slate-400" />
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-sm">
+                          <p>Automatically fetch GPS coordinates for property addresses using geocoding API. Required for map features.</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
+                    <div className="text-sm text-slate-400">
+                      Automatically fetch coordinates for properties
+                    </div>
+                  </div>
+                  <Switch
+                    checked={settings.enable_geocoding}
+                    onCheckedChange={(checked) =>
+                      setSettings({ ...settings, enable_geocoding: checked })
+                    }
+                  />
+                </div>
+                <div className="flex items-center justify-between p-3 bg-slate-900 rounded-lg border border-slate-700">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <div className="text-white font-medium">Enable Caching</div>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <HelpCircle className="w-3 h-3 text-slate-400" />
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-sm">
+                          <p>Cache API responses in memory to reduce database queries and improve response times. Recommended for production.</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
+                    <div className="text-sm text-slate-400">
+                      Cache API responses to improve performance
+                    </div>
+                  </div>
+                  <Switch
+                    checked={settings.enable_caching}
+                    onCheckedChange={(checked) =>
+                      setSettings({ ...settings, enable_caching: checked })
+                    }
+                  />
+                </div>
+              </div>
+
+              <Button className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto">
+                <Save className="w-4 h-4 mr-2" />
+                Save Feature Settings
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </TooltipProvider>
     </div>
   );
 }

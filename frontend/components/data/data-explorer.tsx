@@ -29,7 +29,7 @@ export default function DataExplorer() {
   const [showLargePageWarning, setShowLargePageWarning] = useState(false);
   const [pendingPageSize, setPendingPageSize] = useState<number | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>("grid-3");
-  const [showFilters, setShowFilters] = useState(true);
+  const [showFilters, setShowFilters] = useState(false);
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -60,6 +60,10 @@ export default function DataExplorer() {
     : properties;
 
   const exportToCSV = () => {
+    console.log("=== Export CSV clicked ===");
+    console.log("Filtered properties count:", filteredProperties.length);
+    console.log("Sample property:", filteredProperties[0]);
+
     try {
       if (filteredProperties.length === 0) {
         toast.error("No properties to export");
@@ -230,7 +234,7 @@ export default function DataExplorer() {
                       {getViewModeLabel(viewMode)}
                     </SelectValue>
                   </SelectTrigger>
-                  <SelectContent className="bg-slate-800 border-slate-700 text-white">
+                  <SelectContent className="bg-slate-800 border-slate-700 text-white z-50">
                     <SelectItem value="list" className="text-white cursor-pointer hover:bg-slate-700">
                       <span className="flex items-center gap-2">
                         <List className="w-4 h-4" />

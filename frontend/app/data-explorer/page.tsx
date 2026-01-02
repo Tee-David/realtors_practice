@@ -24,7 +24,18 @@ import {
   AlertCircle,
   CheckCircle2,
   Sparkles,
+  Grid3x3,
+  Grid2x2,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 /**
  * Data Explorer Page - Advanced Filtering & Search
@@ -52,12 +63,15 @@ type ListingTypeOption = {
   borderColor: string;
 };
 
+type ViewMode = "list" | "grid-2" | "grid-3" | "grid-4" | "grid-5" | "grid-6";
+
 export default function DataExplorerPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState<Filters>({});
   const [currentPage, setCurrentPage] = useState(1);
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [viewMode, setViewMode] = useState<ViewMode>("grid-3");
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const [desktopFiltersOpen, setDesktopFiltersOpen] = useState(false);
   const [selectedProperty, setSelectedProperty] = useState<any | null>(null);
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   // Disable quality filter by default - let users see all properties
@@ -236,6 +250,46 @@ export default function DataExplorerPage() {
 
   const hasActiveFilters = activeFilterCount > 0 || searchQuery;
 
+  // Get grid class based on view mode
+  const getGridClass = () => {
+    switch (viewMode) {
+      case "list":
+        return "grid grid-cols-1 gap-4";
+      case "grid-2":
+        return "grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6";
+      case "grid-3":
+        return "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6";
+      case "grid-4":
+        return "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4";
+      case "grid-5":
+        return "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3";
+      case "grid-6":
+        return "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-3";
+      default:
+        return "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6";
+    }
+  };
+
+  // Get display label for view mode
+  const getViewModeLabel = (mode: ViewMode) => {
+    switch (mode) {
+      case "list":
+        return "List View";
+      case "grid-2":
+        return "2 Columns";
+      case "grid-3":
+        return "3 Columns";
+      case "grid-4":
+        return "4 Columns";
+      case "grid-5":
+        return "5 Columns";
+      case "grid-6":
+        return "6 Columns";
+      default:
+        return "Grid View";
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
       {/* Mobile Filter Overlay */}
@@ -277,27 +331,29 @@ export default function DataExplorerPage() {
       )}
 
       <div className="flex">
-        {/* Desktop Sidebar */}
-        <aside className="hidden lg:block w-80 border-r border-slate-800 bg-slate-900/50 overflow-y-auto sticky top-0 h-screen">
-          <div className="p-6">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-                <Sliders className="w-5 h-5" />
-                Filters
-              </h2>
-              {activeFilterCount > 0 && (
-                <span className="bg-blue-500 text-white text-xs px-2 py-1 rounded-full">
-                  {activeFilterCount}
-                </span>
-              )}
+        {/* Desktop Sidebar - Conditionally rendered */}
+        {desktopFiltersOpen && (
+          <aside className="hidden lg:block w-80 border-r border-slate-800 bg-slate-900/50 overflow-y-auto sticky top-0 h-screen">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+                  <Sliders className="w-5 h-5" />
+                  Filters
+                </h2>
+                {activeFilterCount > 0 && (
+                  <span className="bg-blue-500 text-white text-xs px-2 py-1 rounded-full">
+                    {activeFilterCount}
+                  </span>
+                )}
+              </div>
+              <FilterPanel
+                filters={filters}
+                onFilterChange={handleFilterChange}
+                onClear={handleClearFilters}
+              />
             </div>
-            <FilterPanel
-              filters={filters}
-              onFilterChange={handleFilterChange}
-              onClear={handleClearFilters}
-            />
-          </div>
-        </aside>
+          </aside>
+        )}
 
         {/* Main Content */}
         <main className="flex-1 p-4 sm:p-6 lg:p-8">
@@ -440,6 +496,19 @@ export default function DataExplorerPage() {
             <div className="bg-slate-800/50 border border-slate-700 rounded-lg p-4">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-3 flex-wrap">
+                  {/* Show/Hide Filters Button - Desktop */}
+                  <Button
+                    onClick={() => setDesktopFiltersOpen(!desktopFiltersOpen)}
+                    size="sm"
+                    variant="outline"
+                    className="hidden lg:flex bg-slate-700 border-slate-600 hover:bg-slate-600 text-white text-xs sm:text-sm"
+                  >
+                    <Filter className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                    <span className="hidden sm:inline">{desktopFiltersOpen ? 'Hide' : 'Show'} Filters</span>
+                    <span className="sm:hidden">Filters</span>
+                    {desktopFiltersOpen ? <ChevronUp className="w-3 h-3 sm:w-4 sm:h-4 ml-1" /> : <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4 ml-1" />}
+                  </Button>
+
                   {/* Mobile Filter Button */}
                   <Button
                     onClick={() => setMobileFiltersOpen(true)}
@@ -454,37 +523,43 @@ export default function DataExplorerPage() {
                     )}
                   </Button>
 
-                  {/* View Mode Toggle */}
-                  <div className="flex items-center bg-slate-900 border border-slate-700 rounded-lg">
-                    <button
-                      onClick={() => setViewMode("grid")}
-                      className={`
-                        flex items-center gap-2 px-3 py-2 transition-colors rounded-l-lg
-                        ${
-                          viewMode === "grid"
-                            ? "bg-blue-600 text-white"
-                            : "text-slate-400 hover:text-white"
-                        }
-                      `}
-                    >
-                      <Grid className="w-4 h-4" />
-                      <span className="hidden sm:inline text-sm">Grid</span>
-                    </button>
-                    <button
-                      onClick={() => setViewMode("list")}
-                      className={`
-                        flex items-center gap-2 px-3 py-2 transition-colors rounded-r-lg border-l border-slate-700
-                        ${
-                          viewMode === "list"
-                            ? "bg-blue-600 text-white"
-                            : "text-slate-400 hover:text-white"
-                        }
-                      `}
-                    >
-                      <List className="w-4 h-4" />
-                      <span className="hidden sm:inline text-sm">List</span>
-                    </button>
-                  </div>
+                  {/* Grid View Selector */}
+                  <Select value={viewMode} onValueChange={(value) => setViewMode(value as ViewMode)}>
+                    <SelectTrigger className="w-[140px] bg-slate-700 border-slate-600 text-white text-sm">
+                      <SelectValue placeholder={getViewModeLabel(viewMode)}>
+                        {getViewModeLabel(viewMode)}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent className="bg-slate-800 border-slate-700 text-white z-50">
+                      <SelectItem value="list" className="text-white cursor-pointer hover:bg-slate-700">
+                        <span className="flex items-center gap-2">
+                          <List className="w-4 h-4" />
+                          List View
+                        </span>
+                      </SelectItem>
+                      <SelectItem value="grid-2" className="text-white cursor-pointer hover:bg-slate-700">
+                        <span className="flex items-center gap-2">
+                          <Grid2x2 className="w-4 h-4" />
+                          2 Columns
+                        </span>
+                      </SelectItem>
+                      <SelectItem value="grid-3" className="text-white cursor-pointer hover:bg-slate-700">
+                        <span className="flex items-center gap-2">
+                          <Grid3x3 className="w-4 h-4" />
+                          3 Columns
+                        </span>
+                      </SelectItem>
+                      <SelectItem value="grid-4" className="text-white cursor-pointer hover:bg-slate-700">
+                        4 Columns
+                      </SelectItem>
+                      <SelectItem value="grid-5" className="text-white cursor-pointer hover:bg-slate-700">
+                        5 Columns
+                      </SelectItem>
+                      <SelectItem value="grid-6" className="text-white cursor-pointer hover:bg-slate-700">
+                        6 Columns
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
 
                   {/* Quality Filter Toggle */}
                   <button
@@ -508,7 +583,7 @@ export default function DataExplorerPage() {
 
                 <div className="flex items-center gap-2">
                   {/* Export Button */}
-                  <ExportButton filters={filters} totalCount={totalCount} />
+                  <ExportButton filters={filters} totalCount={totalCount} properties={properties} />
 
                   {/* Refresh */}
                   <Button
@@ -588,13 +663,7 @@ export default function DataExplorerPage() {
             {/* Properties Grid/List */}
             {!loading && !error && properties.length > 0 && (
               <>
-                <div
-                  className={
-                    viewMode === "grid"
-                      ? "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
-                      : "space-y-4"
-                  }
-                >
+                <div className={getGridClass()}>
                   {properties.map((property: any) => (
                     <PropertyCard
                       key={
