@@ -409,6 +409,76 @@ function EmailTab() {
 function FirestoreTab() {
   const [firestoreConnected, setFirestoreConnected] = useState(false);
   const [propertyCount, setPropertyCount] = useState(0);
+
+  const handleUpload = async () => {
+    try {
+      await apiClient.exportToFirestore([]);
+      toast.success("Data upload initiated!");
+      setFirestoreConnected(true);
+    } catch (error) {
+      toast.error("Failed to upload to Firestore");
+    }
+  };
+
+  return (
+    <Card className="bg-slate-800 border-slate-700">
+      <CardHeader>
+        <CardTitle className="text-white">Firestore Connection</CardTitle>
+        <CardDescription className="text-slate-400">
+          Manage cloud database connection and data synchronization
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {/* Connection Status */}
+        <div className="p-4 bg-slate-900 rounded-lg border border-slate-700">
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="text-white font-medium">
+                {firestoreConnected ? "Connected" : "Disconnected"}
+              </div>
+              <div className="text-sm text-slate-400">
+                {propertyCount} properties in Firestore
+              </div>
+            </div>
+            <Badge
+              variant={firestoreConnected ? "default" : "secondary"}
+              className={firestoreConnected ? "bg-green-600" : "bg-red-600"}
+            >
+              {firestoreConnected ? "Active" : "Inactive"}
+            </Badge>
+          </div>
+        </div>
+
+        {/* Upload Actions */}
+        <Button
+          onClick={handleUpload}
+          className="bg-blue-600 hover:bg-blue-700"
+        >
+          <Database className="w-4 h-4 mr-2" />
+          Upload Data to Firestore
+        </Button>
+
+        {/* Info Note */}
+        <div className="p-4 bg-blue-900/20 border border-blue-700 rounded-lg">
+          <p className="text-sm text-blue-300">
+            <strong>Note:</strong> Environment variables have been moved to the "System Settings" tab for better organization.
+          </p>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+// System Settings Tab
+function SystemTab() {
+  const [settings, setSettings] = useState({
+    max_workers: 5,
+    request_delay: 1,
+    enable_geocoding: true,
+    enable_caching: true,
+    export_format: "xlsx",
+  });
+
   const [envCategories, setEnvCategories] = useState<any>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -458,16 +528,6 @@ function FirestoreTab() {
       toast.error(error.message || "Failed to save environment variables");
     } finally {
       setSaving(false);
-    }
-  };
-
-  const handleUpload = async () => {
-    try {
-      await apiClient.exportToFirestore([]);
-      toast.success("Data upload initiated!");
-      setFirestoreConnected(true);
-    } catch (error) {
-      toast.error("Failed to upload to Firestore");
     }
   };
 
@@ -538,46 +598,6 @@ function FirestoreTab() {
 
   return (
     <div className="space-y-6">
-      {/* Firestore Connection Status */}
-      <Card className="bg-slate-800 border-slate-700">
-        <CardHeader>
-          <CardTitle className="text-white">Firestore Connection</CardTitle>
-          <CardDescription className="text-slate-400">
-            Manage cloud database connection and data synchronization
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Connection Status */}
-          <div className="p-4 bg-slate-900 rounded-lg border border-slate-700">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-white font-medium">
-                  {firestoreConnected ? "Connected" : "Disconnected"}
-                </div>
-                <div className="text-sm text-slate-400">
-                  {propertyCount} properties in Firestore
-                </div>
-              </div>
-              <Badge
-                variant={firestoreConnected ? "default" : "secondary"}
-                className={firestoreConnected ? "bg-green-600" : "bg-red-600"}
-              >
-                {firestoreConnected ? "Active" : "Inactive"}
-              </Badge>
-            </div>
-          </div>
-
-          {/* Upload Actions */}
-          <Button
-            onClick={handleUpload}
-            className="bg-blue-600 hover:bg-blue-700"
-          >
-            <Database className="w-4 h-4 mr-2" />
-            Upload Data to Firestore
-          </Button>
-        </CardContent>
-      </Card>
-
       {/* Environment Variables Configuration */}
       <Card className="bg-slate-800 border-slate-700">
         <CardHeader>
@@ -660,113 +680,101 @@ function FirestoreTab() {
           )}
         </CardContent>
       </Card>
+
+      {/* Basic System Settings */}
+      <Card className="bg-slate-800 border-slate-700">
+        <CardHeader>
+          <CardTitle className="text-white">System Settings</CardTitle>
+          <CardDescription className="text-slate-400">
+            Configure global scraping defaults and system behavior
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {/* Scraping Settings */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-white">
+              Scraping Configuration
+            </h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="max-workers" className="text-slate-300">
+                  Max Workers
+                </Label>
+                <Input
+                  id="max-workers"
+                  type="number"
+                  value={settings.max_workers}
+                  onChange={(e) =>
+                    setSettings({
+                      ...settings,
+                      max_workers: Number(e.target.value),
+                    })
+                  }
+                  className="bg-slate-900 border-slate-600 text-white"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="request-delay" className="text-slate-300">
+                  Request Delay (seconds)
+                </Label>
+                <Input
+                  id="request-delay"
+                  type="number"
+                  value={settings.request_delay}
+                  onChange={(e) =>
+                    setSettings({
+                      ...settings,
+                      request_delay: Number(e.target.value),
+                    })
+                  }
+                  className="bg-slate-900 border-slate-600 text-white"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Feature Toggles */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-white">Features</h3>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between p-3 bg-slate-900 rounded-lg">
+                <div>
+                  <div className="text-white font-medium">Enable Geocoding</div>
+                  <div className="text-sm text-slate-400">
+                    Automatically fetch coordinates for properties
+                  </div>
+                </div>
+                <Switch
+                  checked={settings.enable_geocoding}
+                  onCheckedChange={(checked) =>
+                    setSettings({ ...settings, enable_geocoding: checked })
+                  }
+                />
+              </div>
+              <div className="flex items-center justify-between p-3 bg-slate-900 rounded-lg">
+                <div>
+                  <div className="text-white font-medium">Enable Caching</div>
+                  <div className="text-sm text-slate-400">
+                    Cache API responses to improve performance
+                  </div>
+                </div>
+                <Switch
+                  checked={settings.enable_caching}
+                  onCheckedChange={(checked) =>
+                    setSettings({ ...settings, enable_caching: checked })
+                  }
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Save Button */}
+          <Button className="bg-blue-600 hover:bg-blue-700">
+            Save System Settings
+          </Button>
+        </CardContent>
+      </Card>
     </div>
-  );
-}
-
-// System Settings Tab
-function SystemTab() {
-  const [settings, setSettings] = useState({
-    max_workers: 5,
-    request_delay: 1,
-    enable_geocoding: true,
-    enable_caching: true,
-    export_format: "xlsx",
-  });
-
-  return (
-    <Card className="bg-slate-800 border-slate-700">
-      <CardHeader>
-        <CardTitle className="text-white">System Settings</CardTitle>
-        <CardDescription className="text-slate-400">
-          Configure global scraping defaults and system behavior
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        {/* Scraping Settings */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-white">
-            Scraping Configuration
-          </h3>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="max-workers" className="text-slate-300">
-                Max Workers
-              </Label>
-              <Input
-                id="max-workers"
-                type="number"
-                value={settings.max_workers}
-                onChange={(e) =>
-                  setSettings({
-                    ...settings,
-                    max_workers: Number(e.target.value),
-                  })
-                }
-                className="bg-slate-900 border-slate-600 text-white"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="request-delay" className="text-slate-300">
-                Request Delay (seconds)
-              </Label>
-              <Input
-                id="request-delay"
-                type="number"
-                value={settings.request_delay}
-                onChange={(e) =>
-                  setSettings({
-                    ...settings,
-                    request_delay: Number(e.target.value),
-                  })
-                }
-                className="bg-slate-900 border-slate-600 text-white"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Feature Toggles */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-white">Features</h3>
-          <div className="space-y-3">
-            <div className="flex items-center justify-between p-3 bg-slate-900 rounded-lg">
-              <div>
-                <div className="text-white font-medium">Enable Geocoding</div>
-                <div className="text-sm text-slate-400">
-                  Automatically fetch coordinates for properties
-                </div>
-              </div>
-              <Switch
-                checked={settings.enable_geocoding}
-                onCheckedChange={(checked) =>
-                  setSettings({ ...settings, enable_geocoding: checked })
-                }
-              />
-            </div>
-            <div className="flex items-center justify-between p-3 bg-slate-900 rounded-lg">
-              <div>
-                <div className="text-white font-medium">Enable Caching</div>
-                <div className="text-sm text-slate-400">
-                  Cache API responses to improve performance
-                </div>
-              </div>
-              <Switch
-                checked={settings.enable_caching}
-                onCheckedChange={(checked) =>
-                  setSettings({ ...settings, enable_caching: checked })
-                }
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Save Button */}
-        <Button className="bg-blue-600 hover:bg-blue-700">
-          Save System Settings
-        </Button>
-      </CardContent>
-    </Card>
   );
 }
 
