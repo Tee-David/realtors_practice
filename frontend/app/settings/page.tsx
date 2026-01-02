@@ -26,6 +26,13 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ApiStatusBanner } from "@/components/ui/api-status-banner";
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import {
   Settings as SettingsIcon,
   Globe,
   Mail,
@@ -36,6 +43,10 @@ import {
   X,
   TestTube,
   Users,
+  Info,
+  AlertTriangle,
+  HelpCircle,
+  Save,
 } from "lucide-react";
 import { toast } from "sonner";
 import { mockUsers } from "@/lib/mockData";
@@ -62,7 +73,7 @@ import {
  * - System: global settings, cache management, export preferences
  */
 
-type TabType = "sites" | "email" | "firestore" | "system" | "users";
+type TabType = "sites" | "email" | "system" | "users";
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState<TabType>("sites");
@@ -70,11 +81,6 @@ export default function SettingsPage() {
   const tabs = [
     { id: "sites" as TabType, label: "Sites Configuration", icon: Globe },
     { id: "email" as TabType, label: "Email Notifications", icon: Mail },
-    {
-      id: "firestore" as TabType,
-      label: "Firestore Integration",
-      icon: Database,
-    },
     { id: "system" as TabType, label: "System Settings", icon: Sliders },
     { id: "users" as TabType, label: "User Management", icon: Users },
   ];
@@ -132,7 +138,6 @@ export default function SettingsPage() {
       <div className="mt-6">
         {activeTab === "sites" && <SitesTab />}
         {activeTab === "email" && <EmailTab />}
-        {activeTab === "firestore" && <FirestoreTab />}
         {activeTab === "system" && <SystemTab />}
         {activeTab === "users" && <UsersTab />}
       </div>
@@ -400,70 +405,6 @@ function EmailTab() {
               Send Test Email
             </Button>
           </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
-// Firestore Integration Tab
-function FirestoreTab() {
-  const [firestoreConnected, setFirestoreConnected] = useState(false);
-  const [propertyCount, setPropertyCount] = useState(0);
-
-  const handleUpload = async () => {
-    try {
-      await apiClient.exportToFirestore([]);
-      toast.success("Data upload initiated!");
-      setFirestoreConnected(true);
-    } catch (error) {
-      toast.error("Failed to upload to Firestore");
-    }
-  };
-
-  return (
-    <Card className="bg-slate-800 border-slate-700">
-      <CardHeader>
-        <CardTitle className="text-white">Firestore Connection</CardTitle>
-        <CardDescription className="text-slate-400">
-          Manage cloud database connection and data synchronization
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {/* Connection Status */}
-        <div className="p-4 bg-slate-900 rounded-lg border border-slate-700">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="text-white font-medium">
-                {firestoreConnected ? "Connected" : "Disconnected"}
-              </div>
-              <div className="text-sm text-slate-400">
-                {propertyCount} properties in Firestore
-              </div>
-            </div>
-            <Badge
-              variant={firestoreConnected ? "default" : "secondary"}
-              className={firestoreConnected ? "bg-green-600" : "bg-red-600"}
-            >
-              {firestoreConnected ? "Active" : "Inactive"}
-            </Badge>
-          </div>
-        </div>
-
-        {/* Upload Actions */}
-        <Button
-          onClick={handleUpload}
-          className="bg-blue-600 hover:bg-blue-700"
-        >
-          <Database className="w-4 h-4 mr-2" />
-          Upload Data to Firestore
-        </Button>
-
-        {/* Info Note */}
-        <div className="p-4 bg-blue-900/20 border border-blue-700 rounded-lg">
-          <p className="text-sm text-blue-300">
-            <strong>Note:</strong> Environment variables have been moved to the "System Settings" tab for better organization.
-          </p>
         </div>
       </CardContent>
     </Card>

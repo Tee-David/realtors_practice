@@ -18,7 +18,6 @@ import { useAuth } from "@/contexts/AuthContext";
 
 // Static imports for ALL pages to avoid React.lazy() issues on Vercel
 import DashboardPage from "./dashboard/page";
-import PropertiesPage from "./properties/page";
 import DataExplorerPage from "./data-explorer/page";
 import SettingsPage from "./settings/page";
 import SavedSearchesPage from "./saved-searches/page";
@@ -113,8 +112,6 @@ export default function Home() {
     switch (activeTab) {
       case "dashboard":
         return <DashboardPage />;
-      case "properties":
-        return <PropertiesPage />;
       case "data-explorer":
         return <DataExplorerPage />;
       case "settings":

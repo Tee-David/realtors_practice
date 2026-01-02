@@ -7,7 +7,7 @@ import { SearchBar } from "@/components/shared/search-bar";
 import { Pagination } from "@/components/shared/pagination";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { RefreshCw, Download, Home, Grid3x3, List, Grid2x2 } from "lucide-react";
+import { RefreshCw, Download, Home, Grid3x3, List, Grid2x2, Filter, ChevronDown, ChevronUp } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -15,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { toast } from "sonner";
 
 type ViewMode = "list" | "grid-2" | "grid-3" | "grid-4" | "grid-5" | "grid-6";
 
@@ -28,6 +29,7 @@ export default function DataExplorer() {
   const [showLargePageWarning, setShowLargePageWarning] = useState(false);
   const [pendingPageSize, setPendingPageSize] = useState<number | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>("grid-3");
+  const [showFilters, setShowFilters] = useState(true);
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -58,28 +60,94 @@ export default function DataExplorer() {
     : properties;
 
   const exportToCSV = () => {
-    const headers = ["Title", "Price", "Location", "Bedrooms", "Bathrooms", "URL"];
-    const rows = filteredProperties.map((p) => [
-      p.basic_info?.title || "",
-      p.financial?.price || 0,
-      p.location?.area || "",
-      p.property_details?.bedrooms || "",
-      p.property_details?.bathrooms || "",
-      p.basic_info?.listing_url || "",
-    ]);
+    try {
+      if (filteredProperties.length === 0) {
+        toast.error("No properties to export");
+        return;
+      }
 
-    const csvContent = [
-      headers.join(","),
-      ...rows.map(row => row.map(cell => `"${cell}"`).join(","))
-    ].join("\n");
+      // Helper function to escape CSV values
+      const escapeCsvValue = (value: any): string => {
+        if (value === null || value === undefined) return "";
+        const str = String(value);
+        // If value contains comma, quote, or newline, wrap in quotes and escape internal quotes
+        if (str.includes(",") || str.includes('"') || str.includes("\n")) {
+          return `"${str.replace(/"/g, '""')}"`;
+        }
+        return str;
+      };
 
-    const blob = new Blob([csvContent], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `properties-export-${new Date().toISOString().split('T')[0]}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
+      // Extract data with fallback for both nested and flat schemas
+      const headers = [
+        "Title",
+        "Price (NGN)",
+        "Location",
+        "Bedrooms",
+        "Bathrooms",
+        "Property Type",
+        "Size (sqm)",
+        "Furnishing",
+        "Status",
+        "Source",
+        "URL"
+      ];
+
+      const rows = filteredProperties.map((p) => {
+        // Support both nested (Firestore enterprise) and flat schemas
+        const title = p.basic_info?.title || p.title || "";
+        const price = p.financial?.price || p.price || 0;
+        const location =
+          p.location?.area ||
+          p.location?.full_address ||
+          p.location?.lga ||
+          (typeof p.location === 'string' ? p.location : "") ||
+          "";
+        const bedrooms = p.property_details?.bedrooms || p.bedrooms || "";
+        const bathrooms = p.property_details?.bathrooms || p.bathrooms || "";
+        const propertyType = p.property_details?.property_type || p.property_type || "";
+        const size = p.property_details?.size || p.size || "";
+        const furnishing = p.property_details?.furnishing || p.furnishing || "";
+        const status = p.basic_info?.status || p.status || "";
+        const source = p.basic_info?.source || p.basic_info?.site_key || p.source || p.site_key || "";
+        const url = p.basic_info?.listing_url || p.listing_url || p.url || "";
+
+        return [
+          title,
+          price,
+          location,
+          bedrooms,
+          bathrooms,
+          propertyType,
+          size,
+          furnishing,
+          status,
+          source,
+          url
+        ].map(escapeCsvValue);
+      });
+
+      // Create CSV content
+      const csvContent = [
+        headers.join(","),
+        ...rows.map(row => row.join(","))
+      ].join("\n");
+
+      // Create and download file
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `properties-export-${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      toast.success(`Successfully exported ${filteredProperties.length} properties to CSV`);
+    } catch (error) {
+      console.error("Export error:", error);
+      toast.error("Failed to export properties. Please try again.");
+    }
   };
 
   // Get grid class based on view mode
@@ -139,7 +207,21 @@ export default function DataExplorer() {
         <Card className="bg-slate-800/50 border-slate-700 mb-4 sm:mb-6 sticky top-0 sm:top-2 z-10 shadow-lg">
           <CardHeader className="pb-3 sm:pb-6">
             <CardTitle className="text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-              <span className="text-base sm:text-lg">Search & Export</span>
+              <div className="flex items-center gap-2 sm:gap-3">
+                {/* Show Filters Button */}
+                <Button
+                  onClick={() => setShowFilters(!showFilters)}
+                  size="sm"
+                  variant="outline"
+                  className="bg-slate-700 border-slate-600 hover:bg-slate-600 text-white text-xs sm:text-sm"
+                >
+                  <Filter className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                  <span className="hidden sm:inline">{showFilters ? 'Hide' : 'Show'} Filters</span>
+                  <span className="sm:hidden">Filters</span>
+                  {showFilters ? <ChevronUp className="w-3 h-3 sm:w-4 sm:h-4 ml-1" /> : <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4 ml-1" />}
+                </Button>
+                <span className="text-base sm:text-lg">Search & Export</span>
+              </div>
               <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
                 {/* View Mode Selector */}
                 <Select value={viewMode} onValueChange={(value) => setViewMode(value as ViewMode)}>
@@ -202,16 +284,18 @@ export default function DataExplorer() {
               </div>
             </CardTitle>
           </CardHeader>
-          <CardContent className="pt-0">
-            <SearchBar
-              onSearch={setSearchQuery}
-              placeholder="Search by title or location..."
-              defaultValue={searchQuery}
-            />
-            <p className="text-xs sm:text-sm text-slate-400 mt-2">
-              Showing {filteredProperties.length} of {totalCount} properties
-            </p>
-          </CardContent>
+          {showFilters && (
+            <CardContent className="pt-0">
+              <SearchBar
+                onSearch={setSearchQuery}
+                placeholder="Search by title or location..."
+                defaultValue={searchQuery}
+              />
+              <p className="text-xs sm:text-sm text-slate-400 mt-2">
+                Showing {filteredProperties.length} of {totalCount} properties
+              </p>
+            </CardContent>
+          )}
         </Card>
 
         {loading ? (

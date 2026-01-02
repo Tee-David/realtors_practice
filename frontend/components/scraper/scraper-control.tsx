@@ -12,13 +12,11 @@ import {
   Clock,
   TrendingUp,
   AlertCircle,
-  Settings,
   Plus,
   ExternalLink,
   Zap,
   Database,
   Globe,
-  ChevronDown,
 } from "lucide-react";
 import { ScheduledRunsPanel } from "./scheduled-runs-panel";
 import { ErrorAlertPanel } from "./error-alert-panel";
@@ -41,7 +39,6 @@ export function ScraperControl() {
   // State management
   const [showAddSiteModal, setShowAddSiteModal] = useState(false);
   const [showScheduleModal, setShowScheduleModal] = useState(false);
-  const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
   const [selectedSites, setSelectedSites] = useState<string[]>([]);
   const [maxPages, setMaxPages] = useState<number | undefined>(15);
   const [geocoding, setGeocoding] = useState<boolean | undefined>(true);
@@ -560,39 +557,6 @@ export function ScraperControl() {
           </div>
         )}
 
-        {/* Scrape Time Estimate - Moved outside Advanced Settings */}
-        <ScrapeTimeEstimate
-          pageCap={maxPages ?? 1}
-          geocode={geocoding ?? false}
-          sites={selectedSites}
-        />
-
-        {/* Advanced Settings Toggle */}
-        <button
-          onClick={() => setShowAdvancedSettings(!showAdvancedSettings)}
-          className="w-full bg-slate-800/50 border border-slate-700 hover:border-slate-600 rounded-xl p-4 transition-colors text-left"
-        >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Settings className="w-5 h-5 text-slate-400" />
-              <span className="text-white font-medium">Advanced Settings</span>
-            </div>
-            <ChevronDown
-              className={`w-5 h-5 text-slate-400 transition-transform ${
-                showAdvancedSettings ? "rotate-180" : ""
-              }`}
-            />
-          </div>
-        </button>
-
-        {/* Advanced Settings Content */}
-        {showAdvancedSettings && (
-          <div className="space-y-6">
-            {/* Notifications & Alerts */}
-            <NotificationsAlerts />
-          </div>
-        )}
-
         {/* Site Configuration */}
         <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-6">
           <div className="flex items-center justify-between mb-4">
@@ -655,6 +619,16 @@ export function ScraperControl() {
             )}
           </div>
         </div>
+
+        {/* Scrape Time Estimate - Moved to bottom after Scrape Actions */}
+        <ScrapeTimeEstimate
+          pageCap={maxPages ?? 1}
+          geocode={geocoding ?? false}
+          sites={selectedSites}
+        />
+
+        {/* Notifications & Alerts - Moved to bottom */}
+        <NotificationsAlerts />
 
         {/* Panels Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

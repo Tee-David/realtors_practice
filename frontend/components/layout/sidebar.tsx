@@ -35,16 +35,10 @@ const navigation = [
     description: "System overview & stats",
   },
   {
-    name: "Properties",
-    icon: Home,
-    id: "properties",
-    description: "Browse and export listings",
-  },
-  {
     name: "Data Explorer",
     icon: Database,
     id: "data-explorer",
-    description: "Advanced search & filtering",
+    description: "Browse and export listings",
   },
   {
     name: "Scraper Control",
