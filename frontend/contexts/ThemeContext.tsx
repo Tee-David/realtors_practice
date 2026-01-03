@@ -23,9 +23,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     if (savedTheme) {
       setThemeState(savedTheme);
     } else {
-      // Check system preference
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      const initialTheme = prefersDark ? "dark" : "light";
+      // Default to dark theme
+      const initialTheme = "dark";
       setThemeState(initialTheme);
       localStorage.setItem("theme", initialTheme);
     }
