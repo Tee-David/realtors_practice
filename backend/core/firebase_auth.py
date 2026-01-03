@@ -34,27 +34,36 @@ class FirebaseAuthManager:
         Args:
             credentials_path: Path to Firebase service account JSON file
         """
+        import json
+
         self.initialized = False
-
-        # Get credentials path from environment or parameter
-        if not credentials_path:
-            credentials_path = os.getenv(
-                'FIREBASE_SERVICE_ACCOUNT',
-                'realtor-s-practice-firebase-adminsdk-fbsvc-3071684e9a.json'
-            )
-
-        # Convert to absolute path if needed
-        if not os.path.isabs(credentials_path):
-            # Look in backend directory
-            backend_dir = Path(__file__).parent.parent
-            credentials_path = str(backend_dir / credentials_path)
 
         # Initialize Firebase Admin SDK if not already initialized
         try:
             if not firebase_admin._apps:
-                cred = credentials.Certificate(credentials_path)
-                firebase_admin.initialize_app(cred)
-                logger.info(f"Firebase Admin SDK initialized with credentials: {credentials_path}")
+                # Try FIREBASE_CREDENTIALS environment variable first (JSON string)
+                cred_json = os.getenv('FIREBASE_CREDENTIALS')
+                if cred_json:
+                    cred = credentials.Certificate(json.loads(cred_json))
+                    firebase_admin.initialize_app(cred)
+                    logger.info("Firebase Admin SDK initialized from FIREBASE_CREDENTIALS environment variable")
+                else:
+                    # Fall back to file path from parameter or environment
+                    if not credentials_path:
+                        credentials_path = os.getenv(
+                            'FIREBASE_SERVICE_ACCOUNT',
+                            'realtor-s-practice-firebase-adminsdk-fbsvc-3071684e9a.json'
+                        )
+
+                    # Convert to absolute path if needed
+                    if not os.path.isabs(credentials_path):
+                        # Look in backend directory
+                        backend_dir = Path(__file__).parent.parent
+                        credentials_path = str(backend_dir / credentials_path)
+
+                    cred = credentials.Certificate(credentials_path)
+                    firebase_admin.initialize_app(cred)
+                    logger.info(f"Firebase Admin SDK initialized with credentials: {credentials_path}")
             else:
                 logger.info("Firebase Admin SDK already initialized")
 
