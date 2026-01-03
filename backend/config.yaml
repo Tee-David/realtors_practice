@@ -70,12 +70,12 @@ sites:
     parser: specials
     url: https://ashpropertiesng.com/
   brokerfield:
-    enabled: false
+    enabled: true
     name: Brokerfield Real Estate Services
     parser: specials
     url: https://brokerfieldrealestate.com/
   buyletlive:
-    enabled: false
+    enabled: true
     name: BuyLetLive
     parser: specials
     url: https://buyletlive.com/

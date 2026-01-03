@@ -28,6 +28,17 @@ import {
   Grid,
   ChevronLeft,
   ChevronRight,
+  FileText,
+  Download,
+  Printer,
+  Eye,
+  Calculator,
+  Building2,
+  Trees,
+  School,
+  ShoppingCart,
+  Utensils,
+  CarFront,
 } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
@@ -255,6 +266,43 @@ export function PropertyDetailModal({ property, open, onOpenChange }: PropertyDe
 
             <div className="h-px bg-slate-700 my-4" />
 
+            {/* Description */}
+            {(basicInfo.description || propertyDetails.description) && (
+              <div>
+                <h3 className="text-xl font-semibold text-white mb-3 flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-blue-400" />
+                  Description
+                </h3>
+                <div className="bg-slate-800/50 p-4 rounded-lg">
+                  <p className="text-slate-300 leading-relaxed whitespace-pre-line">
+                    {basicInfo.description || propertyDetails.description}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Action Buttons */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <Button variant="outline" className="border-slate-600" onClick={() => window.print()}>
+                <Printer className="w-4 h-4 mr-2" />
+                Print
+              </Button>
+              <Button variant="outline" className="border-slate-600" onClick={() => toast.info("Download feature coming soon")}>
+                <Download className="w-4 h-4 mr-2" />
+                Download
+              </Button>
+              <Button variant="outline" className="border-slate-600" onClick={() => toast.info("Virtual tour coming soon")}>
+                <Eye className="w-4 h-4 mr-2" />
+                Virtual Tour
+              </Button>
+              <Button variant="outline" className="border-slate-600" onClick={() => toast.info("Schedule viewing coming soon")}>
+                <Calendar className="w-4 h-4 mr-2" />
+                Schedule
+              </Button>
+            </div>
+
+            <div className="h-px bg-slate-700 my-4" />
+
             {/* Property Details Section */}
             <div className="grid md:grid-cols-2 gap-6">
               {/* Left Column */}
@@ -294,6 +342,52 @@ export function PropertyDetailModal({ property, open, onOpenChange }: PropertyDe
                     </div>
                   </div>
                 )}
+
+                {/* Property Features Grid */}
+                <div>
+                  <h3 className="text-xl font-semibold text-white mb-3 flex items-center gap-2">
+                    <Building2 className="w-5 h-5 text-purple-400" />
+                    Property Features
+                  </h3>
+                  <div className="grid grid-cols-2 gap-3">
+                    {propertyDetails.toilets && (
+                      <div className="bg-slate-800/50 p-3 rounded-lg flex items-center gap-2">
+                        <Droplet className="w-4 h-4 text-blue-400" />
+                        <div>
+                          <p className="text-xs text-slate-400">Toilets</p>
+                          <p className="text-white font-semibold">{propertyDetails.toilets}</p>
+                        </div>
+                      </div>
+                    )}
+                    {propertyDetails.parking && (
+                      <div className="bg-slate-800/50 p-3 rounded-lg flex items-center gap-2">
+                        <CarFront className="w-4 h-4 text-blue-400" />
+                        <div>
+                          <p className="text-xs text-slate-400">Parking</p>
+                          <p className="text-white font-semibold capitalize">{propertyDetails.parking}</p>
+                        </div>
+                      </div>
+                    )}
+                    {propertyDetails.year_built && (
+                      <div className="bg-slate-800/50 p-3 rounded-lg flex items-center gap-2">
+                        <Calendar className="w-4 h-4 text-blue-400" />
+                        <div>
+                          <p className="text-xs text-slate-400">Year Built</p>
+                          <p className="text-white font-semibold">{propertyDetails.year_built}</p>
+                        </div>
+                      </div>
+                    )}
+                    {propertyDetails.floors && (
+                      <div className="bg-slate-800/50 p-3 rounded-lg flex items-center gap-2">
+                        <Building className="w-4 h-4 text-blue-400" />
+                        <div>
+                          <p className="text-xs text-slate-400">Floors</p>
+                          <p className="text-white font-semibold">{propertyDetails.floors}</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
 
                 {/* Amenities */}
                 {(amenities.features?.length > 0 || amenities.security?.length > 0 || amenities.utilities?.length > 0) && (
@@ -498,6 +592,76 @@ export function PropertyDetailModal({ property, open, onOpenChange }: PropertyDe
                         />
                       </div>
                     ))}
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* Neighborhood Information */}
+            <div className="h-px bg-slate-700 my-4" />
+            <div>
+              <h3 className="text-xl font-semibold text-white mb-3 flex items-center gap-2">
+                <Trees className="w-5 h-5 text-green-400" />
+                Nearby Amenities
+              </h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div className="bg-slate-800/50 p-3 rounded-lg text-center">
+                  <School className="w-6 h-6 text-blue-400 mx-auto mb-2" />
+                  <p className="text-xs text-slate-400">Schools</p>
+                  <p className="text-white font-semibold text-sm">Available</p>
+                </div>
+                <div className="bg-slate-800/50 p-3 rounded-lg text-center">
+                  <ShoppingCart className="w-6 h-6 text-purple-400 mx-auto mb-2" />
+                  <p className="text-xs text-slate-400">Shopping</p>
+                  <p className="text-white font-semibold text-sm">Nearby</p>
+                </div>
+                <div className="bg-slate-800/50 p-3 rounded-lg text-center">
+                  <Utensils className="w-6 h-6 text-orange-400 mx-auto mb-2" />
+                  <p className="text-xs text-slate-400">Restaurants</p>
+                  <p className="text-white font-semibold text-sm">Available</p>
+                </div>
+                <div className="bg-slate-800/50 p-3 rounded-lg text-center">
+                  <Car className="w-6 h-6 text-red-400 mx-auto mb-2" />
+                  <p className="text-xs text-slate-400">Transport</p>
+                  <p className="text-white font-semibold text-sm">Accessible</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Mortgage Calculator */}
+            {financial.price && (
+              <>
+                <div className="h-px bg-slate-700 my-4" />
+                <div>
+                  <h3 className="text-xl font-semibold text-white mb-3 flex items-center gap-2">
+                    <Calculator className="w-5 h-5 text-yellow-400" />
+                    Mortgage Calculator
+                  </h3>
+                  <div className="bg-slate-800/50 p-4 rounded-lg">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                      <div>
+                        <p className="text-xs text-slate-400 mb-1">Property Price</p>
+                        <p className="text-white font-bold">{formatPrice(financial.price)}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-slate-400 mb-1">Est. Monthly (20 yrs @ 15%)</p>
+                        <p className="text-green-400 font-bold">
+                          {formatPrice(Math.round((financial.price * 0.15 * Math.pow(1.15, 20)) / (Math.pow(1.15, 20) - 1) / 12))}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-slate-400 mb-1">Down Payment (20%)</p>
+                        <p className="text-blue-400 font-bold">{formatPrice(Math.round(financial.price * 0.2))}</p>
+                      </div>
+                    </div>
+                    <Button
+                      variant="outline"
+                      className="w-full mt-4 border-slate-600"
+                      onClick={() => toast.info("Full calculator coming soon")}
+                    >
+                      <Calculator className="w-4 h-4 mr-2" />
+                      Get Detailed Quote
+                    </Button>
                   </div>
                 </div>
               </>

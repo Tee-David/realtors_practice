@@ -59,7 +59,7 @@ logger = logging.getLogger(__name__)
 CORS(app,
      resources={r"/*": {"origins": "*"}},
      allow_headers=["Content-Type", "Authorization", "X-API-Key"],
-     methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+     methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
 )
 
 # Register authentication routes Blueprint
