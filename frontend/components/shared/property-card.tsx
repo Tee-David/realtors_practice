@@ -65,6 +65,7 @@ function normalizeProperty(property: any) {
       title: sanitizeText(property.basic_info?.title || property.title, 150),
       price: sanitizeNumber(property.financial?.price),
       price_per_sqm: sanitizeNumber(property.financial?.price_per_sqm),
+      currency: sanitizeText(property.financial?.currency, 10),
       listing_type: sanitizeText(property.basic_info?.listing_type, 50),
       status: sanitizeText(property.basic_info?.status, 50),
       location: sanitizeText(property.location?.area || property.location?.full_address || property.location?.location_text || property.location?.lga || property.location?.state, 100),
@@ -106,6 +107,7 @@ function normalizeProperty(property: any) {
     title: sanitizeText(property.title, 150),
     price: sanitizeNumber(property.price),
     price_per_sqm: sanitizeNumber(property.price_per_sqm),
+    currency: sanitizeText(property.currency, 10),
     listing_type: sanitizeText(property.listing_type, 50),
     status: sanitizeText(property.status, 50),
     location: flatLocation,
@@ -171,21 +173,32 @@ function getDisplayTitle(title: string | undefined, location: string | undefined
   return title;
 }
 
-function getDisplayPrice(price: number | undefined): { display: string; color: string } | null {
+function getDisplayPrice(price: number | undefined, currency?: string | undefined): { display: string; color: string } | null {
   if (!price || price === 0) {
     return { display: 'Price on Request', color: 'text-slate-400' };
   }
 
-  // Format large numbers nicely
-  if (price >= 1_000_000_000) {
-    return { display: `₦${(price / 1_000_000_000).toFixed(2)}B`, color: 'text-green-400' };
-  } else if (price >= 1_000_000) {
-    return { display: `₦${(price / 1_000_000).toFixed(2)}M`, color: 'text-green-400' };
-  } else if (price >= 1_000) {
-    return { display: `₦${(price / 1_000).toFixed(0)}K`, color: 'text-green-400' };
+  // Detect currency - explicit currency field or heuristic based on price magnitude
+  const currencyUpper = currency?.toUpperCase();
+  const isUSD = currencyUpper === 'USD' || currencyUpper === '$' ||
+                (!currency && price < 100_000); // Heuristic: prices < 100K likely USD
+  const currencySymbol = isUSD ? '$' : '₦';
+
+  // Format for USD (no K/M/B suffixes, just thousands separators)
+  if (isUSD) {
+    return { display: `${currencySymbol}${price.toLocaleString()}`, color: 'text-green-400' };
   }
 
-  return { display: `₦${price.toLocaleString()}`, color: 'text-green-400' };
+  // Format large NGN numbers with K/M/B suffixes
+  if (price >= 1_000_000_000) {
+    return { display: `${currencySymbol}${(price / 1_000_000_000).toFixed(2)}B`, color: 'text-green-400' };
+  } else if (price >= 1_000_000) {
+    return { display: `${currencySymbol}${(price / 1_000_000).toFixed(2)}M`, color: 'text-green-400' };
+  } else if (price >= 1_000) {
+    return { display: `${currencySymbol}${(price / 1_000).toFixed(0)}K`, color: 'text-green-400' };
+  }
+
+  return { display: `${currencySymbol}${price.toLocaleString()}`, color: 'text-green-400' };
 }
 
 export function PropertyCard({ property, onClick, viewMode = 'grid' }: PropertyCardProps) {
@@ -197,7 +210,7 @@ export function PropertyCard({ property, onClick, viewMode = 'grid' }: PropertyC
 
   // Enterprise-grade data processing
   const displayTitle = getDisplayTitle(normalized.title, safeLocation, normalized.property_type);
-  const priceInfo = getDisplayPrice(normalized.price);
+  const priceInfo = getDisplayPrice(normalized.price, normalized.currency);
   const hasLowQuality = normalized.quality_score !== undefined && normalized.quality_score < 50;
   const safeImageUrl = normalizeImageUrl(normalized.image_url);
 
