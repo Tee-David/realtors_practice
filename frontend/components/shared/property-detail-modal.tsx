@@ -254,10 +254,12 @@ export function PropertyDetailModal({ property, open, onOpenChange }: PropertyDe
                     </span>
                   </div>
                 )}
-                {propertyDetails.size && (
+                {(propertyDetails.land_size || propertyDetails.built_area) && (
                   <div className="flex items-center gap-2 bg-slate-800 px-4 py-2 rounded-lg">
                     <Ruler className="w-5 h-5 text-blue-400" />
-                    <span className="text-white font-semibold">{propertyDetails.size}</span>
+                    <span className="text-white font-semibold">
+                      {propertyDetails.land_size || propertyDetails.built_area}
+                    </span>
                     <span className="text-slate-400 text-sm">sqm</span>
                   </div>
                 )}
@@ -359,12 +361,12 @@ export function PropertyDetailModal({ property, open, onOpenChange }: PropertyDe
                         </div>
                       </div>
                     )}
-                    {propertyDetails.parking && (
+                    {propertyDetails.parking_spaces && (
                       <div className="bg-slate-800/50 p-3 rounded-lg flex items-center gap-2">
                         <CarFront className="w-4 h-4 text-blue-400" />
                         <div>
-                          <p className="text-xs text-slate-400">Parking</p>
-                          <p className="text-white font-semibold capitalize">{propertyDetails.parking}</p>
+                          <p className="text-xs text-slate-400">Parking Spaces</p>
+                          <p className="text-white font-semibold">{propertyDetails.parking_spaces}</p>
                         </div>
                       </div>
                     )}
@@ -377,12 +379,21 @@ export function PropertyDetailModal({ property, open, onOpenChange }: PropertyDe
                         </div>
                       </div>
                     )}
-                    {propertyDetails.floors && (
+                    {propertyDetails.land_size && (
+                      <div className="bg-slate-800/50 p-3 rounded-lg flex items-center gap-2">
+                        <Ruler className="w-4 h-4 text-blue-400" />
+                        <div>
+                          <p className="text-xs text-slate-400">Land Size</p>
+                          <p className="text-white font-semibold">{propertyDetails.land_size.toLocaleString()} sqm</p>
+                        </div>
+                      </div>
+                    )}
+                    {propertyDetails.built_area && (
                       <div className="bg-slate-800/50 p-3 rounded-lg flex items-center gap-2">
                         <Building className="w-4 h-4 text-blue-400" />
                         <div>
-                          <p className="text-xs text-slate-400">Floors</p>
-                          <p className="text-white font-semibold">{propertyDetails.floors}</p>
+                          <p className="text-xs text-slate-400">Built Area</p>
+                          <p className="text-white font-semibold">{propertyDetails.built_area.toLocaleString()} sqm</p>
                         </div>
                       </div>
                     )}
