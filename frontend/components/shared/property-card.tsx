@@ -225,7 +225,7 @@ export function PropertyCard({ property, onClick, viewMode = 'grid' }: PropertyC
     }
   };
 
-  // List View Layout - Horizontal
+  // List View Layout - Horizontal (image left, content right on all screen sizes)
   if (viewMode === 'list') {
     return (
       <>
@@ -233,9 +233,9 @@ export function PropertyCard({ property, onClick, viewMode = 'grid' }: PropertyC
           className="bg-slate-800 border-slate-700 hover:border-slate-600 transition-all cursor-pointer group"
           onClick={handleClick}
         >
-          <div className="flex flex-col sm:flex-row gap-4 p-3 sm:p-4">
-            {/* Property Image - Left side on desktop, top on mobile */}
-            <div className="relative w-full sm:w-48 h-48 sm:h-32 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-hidden flex-shrink-0 rounded-lg">
+          <div className="flex flex-row gap-3 p-3">
+            {/* Property Image - Always on left side */}
+            <div className="relative w-24 sm:w-32 md:w-40 h-24 sm:h-32 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-hidden flex-shrink-0 rounded-lg">
               {safeImageUrl ? (
                 <Image
                   src={safeImageUrl}
@@ -256,26 +256,26 @@ export function PropertyCard({ property, onClick, viewMode = 'grid' }: PropertyC
               )}
 
               {/* Badges */}
-              <div className="absolute top-2 left-2 right-2 flex justify-between items-start gap-2">
-                <div className="flex flex-wrap gap-1">
+              <div className="absolute top-1 left-1 right-1 flex justify-between items-start gap-1">
+                <div className="flex flex-col gap-0.5 max-w-[70%]">
                   {normalized.is_premium && (
-                    <Badge className="bg-yellow-500 text-black border-none text-xs font-bold">
+                    <Badge className="bg-yellow-500 text-black border-none text-[9px] sm:text-[10px] font-bold py-0 px-1.5 h-4">
                       PREMIUM
                     </Badge>
                   )}
                   {normalized.is_hot_deal && (
-                    <Badge className="bg-red-500 text-white border-none text-xs font-bold">
+                    <Badge className="bg-red-500 text-white border-none text-[9px] sm:text-[10px] font-bold py-0 px-1.5 h-4">
                       HOT DEAL
                     </Badge>
                   )}
                   {hasLowQuality && (
-                    <Badge className="bg-yellow-500/80 backdrop-blur-sm text-black border-none text-xs">
+                    <Badge className="bg-yellow-500/80 backdrop-blur-sm text-black border-none text-[9px] sm:text-[10px] py-0 px-1.5 h-4">
                       Limited Info
                     </Badge>
                   )}
                 </div>
                 {normalized.site_key && (
-                  <Badge className="bg-blue-500/80 backdrop-blur-sm text-white border-none text-xs">
+                  <Badge className="bg-blue-500/80 backdrop-blur-sm text-white border-none text-[9px] sm:text-[10px] py-0 px-1.5 h-4 max-w-[28%] truncate">
                     {normalized.site_key}
                   </Badge>
                 )}
@@ -289,20 +289,20 @@ export function PropertyCard({ property, onClick, viewMode = 'grid' }: PropertyC
               )}
             </div>
 
-            {/* Property Details - Right side on desktop, bottom on mobile */}
-            <div className="flex-1 min-w-0 space-y-2">
+            {/* Property Details - Always on right side */}
+            <div className="flex-1 min-w-0 space-y-1 sm:space-y-2">
               {/* Price and Title Row */}
-              <div className="flex items-start justify-between gap-2">
-                <h3 className="text-white font-semibold text-base sm:text-lg line-clamp-2 flex-1">
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-1 sm:gap-2">
+                <h3 className="text-white font-semibold text-sm sm:text-base line-clamp-1 sm:line-clamp-2 flex-1">
                   {displayTitle}
                 </h3>
                 {priceInfo && (
-                  <div className="flex flex-col items-end flex-shrink-0">
-                    <span className={`text-lg sm:text-xl font-bold ${priceInfo.color} whitespace-nowrap`}>
+                  <div className="flex flex-col items-start sm:items-end flex-shrink-0">
+                    <span className={`text-sm sm:text-base md:text-lg font-bold ${priceInfo.color} whitespace-nowrap`}>
                       {priceInfo.display}
                     </span>
                     {normalized.price_per_sqm && (
-                      <span className="text-xs text-slate-400 whitespace-nowrap">
+                      <span className="text-xs text-slate-400 whitespace-nowrap hidden sm:inline">
                         ₦{(normalized.price_per_sqm / 1000).toFixed(0)}K/sqm
                       </span>
                     )}

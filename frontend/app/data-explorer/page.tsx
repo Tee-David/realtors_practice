@@ -63,7 +63,7 @@ type ListingTypeOption = {
   borderColor: string;
 };
 
-type ViewMode = "list" | "grid-2" | "grid-3" | "grid-4" | "grid-5" | "grid-6";
+type ViewMode = "list" | "grid-1" | "grid-2" | "grid-3" | "grid-4" | "grid-5" | "grid-6";
 
 export default function DataExplorerPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -79,16 +79,26 @@ export default function DataExplorerPage() {
   const [itemsPerPage, setItemsPerPage] = useState(20);
   const [isMobile, setIsMobile] = useState(false);
 
-  // Detect mobile screen size for grid-4 list layout on mobile
+  // Detect mobile screen size for responsive view mode options
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 1280); // xl breakpoint
+      setIsMobile(window.innerWidth < 1024); // lg breakpoint
     };
 
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
+  // Auto-adjust view mode when switching between mobile and desktop
+  useEffect(() => {
+    const mobileViewModes: ViewMode[] = ['list', 'grid-1', 'grid-2'];
+
+    if (isMobile && !mobileViewModes.includes(viewMode)) {
+      // On mobile, switch to grid-1 if current mode is not mobile-compatible
+      setViewMode('grid-1');
+    }
+  }, [isMobile, viewMode]);
 
   // Listing type options
   const listingTypes: ListingTypeOption[] = [
@@ -267,8 +277,10 @@ export default function DataExplorerPage() {
     switch (viewMode) {
       case "list":
         return "grid grid-cols-1 gap-4";
+      case "grid-1":
+        return "grid grid-cols-1 gap-4";
       case "grid-2":
-        return "grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6";
+        return "grid grid-cols-1 min-[400px]:grid-cols-2 gap-3 sm:gap-4 md:gap-6";
       case "grid-3":
         return "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6";
       case "grid-4":
@@ -287,6 +299,8 @@ export default function DataExplorerPage() {
     switch (mode) {
       case "list":
         return "List View";
+      case "grid-1":
+        return "1 Column";
       case "grid-2":
         return "2 Columns";
       case "grid-3":
@@ -303,7 +317,7 @@ export default function DataExplorerPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+    <div className="min-h-screen w-full overflow-x-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
       {/* Mobile Filter Overlay */}
       {mobileFiltersOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
@@ -368,8 +382,8 @@ export default function DataExplorerPage() {
         )}
 
         {/* Main Content */}
-        <main className="flex-1 p-4 sm:p-6 lg:p-8">
-          <div className="max-w-[1400px] mx-auto space-y-6">
+        <main className="flex-1 p-2 sm:p-4 lg:p-6 w-full max-w-full">
+          <div className="max-w-[1400px] w-full mx-auto space-y-6">
             {/* Header */}
             <div className="space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
@@ -524,7 +538,7 @@ export default function DataExplorerPage() {
                   {/* Mobile Filter Button */}
                   <Button
                     onClick={() => setMobileFiltersOpen(true)}
-                    className="lg:hidden bg-slate-700 hover:bg-slate-600 border border-slate-600 relative"
+                    className="lg:hidden bg-slate-700 hover:bg-slate-600 border border-slate-600 text-white relative"
                   >
                     <Filter className="w-4 h-4 mr-2" />
                     Filters
@@ -549,27 +563,37 @@ export default function DataExplorerPage() {
                           List View
                         </span>
                       </SelectItem>
+                      <SelectItem value="grid-1" className="text-white cursor-pointer hover:bg-slate-700">
+                        <span className="flex items-center gap-2">
+                          <Grid className="w-4 h-4" />
+                          1 Column
+                        </span>
+                      </SelectItem>
                       <SelectItem value="grid-2" className="text-white cursor-pointer hover:bg-slate-700">
                         <span className="flex items-center gap-2">
                           <Grid2x2 className="w-4 h-4" />
                           2 Columns
                         </span>
                       </SelectItem>
-                      <SelectItem value="grid-3" className="text-white cursor-pointer hover:bg-slate-700">
-                        <span className="flex items-center gap-2">
-                          <Grid3x3 className="w-4 h-4" />
-                          3 Columns
-                        </span>
-                      </SelectItem>
-                      <SelectItem value="grid-4" className="text-white cursor-pointer hover:bg-slate-700">
-                        4 Columns
-                      </SelectItem>
-                      <SelectItem value="grid-5" className="text-white cursor-pointer hover:bg-slate-700">
-                        5 Columns
-                      </SelectItem>
-                      <SelectItem value="grid-6" className="text-white cursor-pointer hover:bg-slate-700">
-                        6 Columns
-                      </SelectItem>
+                      {!isMobile && (
+                        <>
+                          <SelectItem value="grid-3" className="text-white cursor-pointer hover:bg-slate-700">
+                            <span className="flex items-center gap-2">
+                              <Grid3x3 className="w-4 h-4" />
+                              3 Columns
+                            </span>
+                          </SelectItem>
+                          <SelectItem value="grid-4" className="text-white cursor-pointer hover:bg-slate-700">
+                            4 Columns
+                          </SelectItem>
+                          <SelectItem value="grid-5" className="text-white cursor-pointer hover:bg-slate-700">
+                            5 Columns
+                          </SelectItem>
+                          <SelectItem value="grid-6" className="text-white cursor-pointer hover:bg-slate-700">
+                            6 Columns
+                          </SelectItem>
+                        </>
+                      )}
                     </SelectContent>
                   </Select>
 

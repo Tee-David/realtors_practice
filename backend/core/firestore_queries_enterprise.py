@@ -43,6 +43,20 @@ def _safe_get(dictionary: Dict, *keys, default='N/A'):
     return value if value is not None else default
 
 
+def _sanitize_nan(obj):
+    """Recursively replace NaN values with None for JSON serialization."""
+    import math
+
+    if isinstance(obj, dict):
+        return {k: _sanitize_nan(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [_sanitize_nan(item) for item in obj]
+    elif isinstance(obj, float) and math.isnan(obj):
+        return None
+    else:
+        return obj
+
+
 def _clean_property_dict(prop: Dict[str, Any]) -> Dict[str, Any]:
     """
     Clean a property dictionary to ensure all critical fields are present.
@@ -56,6 +70,9 @@ def _clean_property_dict(prop: Dict[str, Any]) -> Dict[str, Any]:
     Returns:
         Cleaned property dictionary with guaranteed fields and JSON-safe types
     """
+    # First, sanitize any NaN values to None (critical for JSON serialization)
+    prop = _sanitize_nan(prop)
+
     # Convert GeoPoint objects to dicts FIRST (before any other processing)
     if 'location' in prop and prop['location']:
         coordinates = prop['location'].get('coordinates')
