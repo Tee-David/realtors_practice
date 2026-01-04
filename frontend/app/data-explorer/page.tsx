@@ -675,6 +675,7 @@ export default function DataExplorerPage() {
                       }
                       property={property}
                       onClick={() => handlePropertyClick(property)}
+                      viewMode={viewMode === 'list' ? 'list' : 'grid'}
                     />
                   ))}
                 </div>

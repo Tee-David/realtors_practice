@@ -16,6 +16,7 @@ import { PropertyDetailModal } from "./property-detail-modal";
 interface PropertyCardProps {
   property: any; // Support both flat and nested Firestore enterprise schema
   onClick?: () => void;
+  viewMode?: 'grid' | 'list'; // Add view mode support
 }
 
 // Data sanitization helpers
@@ -187,7 +188,7 @@ function getDisplayPrice(price: number | undefined): { display: string; color: s
   return { display: `₦${price.toLocaleString()}`, color: 'text-green-400' };
 }
 
-export function PropertyCard({ property, onClick }: PropertyCardProps) {
+export function PropertyCard({ property, onClick, viewMode = 'grid' }: PropertyCardProps) {
   const [showDetailModal, setShowDetailModal] = useState(false);
   const normalized = normalizeProperty(property);
 
@@ -211,6 +212,151 @@ export function PropertyCard({ property, onClick }: PropertyCardProps) {
     }
   };
 
+  // List View Layout - Horizontal
+  if (viewMode === 'list') {
+    return (
+      <>
+        <Card
+          className="bg-slate-800 border-slate-700 hover:border-slate-600 transition-all cursor-pointer group"
+          onClick={handleClick}
+        >
+          <div className="flex flex-col sm:flex-row gap-4 p-3 sm:p-4">
+            {/* Property Image - Left side on desktop, top on mobile */}
+            <div className="relative w-full sm:w-48 h-48 sm:h-32 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-hidden flex-shrink-0 rounded-lg">
+              {safeImageUrl ? (
+                <Image
+                  src={safeImageUrl}
+                  alt={displayTitle}
+                  fill
+                  className="object-cover transition-transform group-hover:scale-105"
+                  unoptimized={hasQueryString}
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = 'none';
+                  }}
+                />
+              ) : (
+                <div className="flex flex-col items-center justify-center h-full text-slate-600">
+                  <Home className="w-12 h-12 mb-1" />
+                  <span className="text-xs text-slate-500">No Image</span>
+                </div>
+              )}
+
+              {/* Badges */}
+              <div className="absolute top-2 left-2 right-2 flex justify-between items-start gap-2">
+                <div className="flex flex-wrap gap-1">
+                  {normalized.is_premium && (
+                    <Badge className="bg-yellow-500 text-black border-none text-xs font-bold">
+                      PREMIUM
+                    </Badge>
+                  )}
+                  {normalized.is_hot_deal && (
+                    <Badge className="bg-red-500 text-white border-none text-xs font-bold">
+                      HOT DEAL
+                    </Badge>
+                  )}
+                  {hasLowQuality && (
+                    <Badge className="bg-yellow-500/80 backdrop-blur-sm text-black border-none text-xs">
+                      Limited Info
+                    </Badge>
+                  )}
+                </div>
+                {normalized.site_key && (
+                  <Badge className="bg-blue-500/80 backdrop-blur-sm text-white border-none text-xs">
+                    {normalized.site_key}
+                  </Badge>
+                )}
+              </div>
+
+              {normalized.image_count > 1 && (
+                <Badge className="absolute bottom-2 right-2 bg-black/60 backdrop-blur-sm text-white border-none text-xs flex items-center gap-1">
+                  <Camera className="w-3 h-3" />
+                  {normalized.image_count}
+                </Badge>
+              )}
+            </div>
+
+            {/* Property Details - Right side on desktop, bottom on mobile */}
+            <div className="flex-1 min-w-0 space-y-2">
+              {/* Price and Title Row */}
+              <div className="flex items-start justify-between gap-2">
+                <h3 className="text-white font-semibold text-base sm:text-lg line-clamp-2 flex-1">
+                  {displayTitle}
+                </h3>
+                {priceInfo && (
+                  <div className="flex flex-col items-end flex-shrink-0">
+                    <span className={`text-lg sm:text-xl font-bold ${priceInfo.color} whitespace-nowrap`}>
+                      {priceInfo.display}
+                    </span>
+                    {normalized.price_per_sqm && (
+                      <span className="text-xs text-slate-400 whitespace-nowrap">
+                        ₦{(normalized.price_per_sqm / 1000).toFixed(0)}K/sqm
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Location */}
+              {safeLocation && (
+                <div className="flex items-center gap-2 text-slate-400 min-w-0">
+                  <MapPin className="w-4 h-4 flex-shrink-0" />
+                  <span className="text-xs sm:text-sm truncate">{safeLocation}</span>
+                </div>
+              )}
+
+              {/* Property Details and Badges */}
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                {normalized.bedrooms !== undefined && normalized.bedrooms !== null && normalized.bedrooms > 0 && normalized.bedrooms <= 20 && (
+                  <div className="flex items-center gap-1 text-slate-400 text-xs sm:text-sm">
+                    <Bed className="w-4 h-4" />
+                    <span>{normalized.bedrooms} bed{normalized.bedrooms !== 1 ? 's' : ''}</span>
+                  </div>
+                )}
+                {normalized.bathrooms !== undefined && normalized.bathrooms !== null && normalized.bathrooms > 0 && normalized.bathrooms <= 10 && (
+                  <div className="flex items-center gap-1 text-slate-400 text-xs sm:text-sm">
+                    <Bath className="w-4 h-4" />
+                    <span>{normalized.bathrooms} bath{normalized.bathrooms !== 1 ? 's' : ''}</span>
+                  </div>
+                )}
+                {normalized.land_size && normalized.land_size < 1000000 && (
+                  <div className="flex items-center gap-1 text-slate-400 text-xs sm:text-sm">
+                    <Square className="w-4 h-4" />
+                    <span>{normalized.land_size.toLocaleString()} sqm</span>
+                  </div>
+                )}
+
+                {/* Type Badges */}
+                {normalized.property_type && (
+                  <Badge variant="outline" className="bg-slate-700/50 text-slate-300 border-slate-600 capitalize text-xs">
+                    {normalized.property_type}
+                  </Badge>
+                )}
+                {normalized.listing_type && (
+                  <Badge variant="outline" className="bg-blue-500/20 text-blue-300 border-blue-500/50 capitalize text-xs">
+                    {normalized.listing_type}
+                  </Badge>
+                )}
+                {normalized.furnishing && (
+                  <Badge variant="outline" className="bg-purple-500/20 text-purple-300 border-purple-500/50 capitalize text-xs">
+                    {normalized.furnishing}
+                  </Badge>
+                )}
+              </div>
+            </div>
+          </div>
+        </Card>
+
+        <PropertyDetailModal
+          property={property}
+          open={showDetailModal}
+          onOpenChange={setShowDetailModal}
+        />
+      </>
+    );
+  }
+
+  // Grid View Layout - Vertical Card (default)
   return (
     <>
       <Card
