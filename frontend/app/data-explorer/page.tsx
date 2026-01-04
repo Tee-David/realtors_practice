@@ -69,7 +69,7 @@ export default function DataExplorerPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState<Filters>({});
   const [currentPage, setCurrentPage] = useState(1);
-  const [viewMode, setViewMode] = useState<ViewMode>("grid-3");
+  const [viewMode, setViewMode] = useState<ViewMode>("grid-2");
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [desktopFiltersOpen, setDesktopFiltersOpen] = useState(false);
   const [selectedProperty, setSelectedProperty] = useState<any | null>(null);
@@ -250,7 +250,7 @@ export default function DataExplorerPage() {
 
   const hasActiveFilters = activeFilterCount > 0 || searchQuery;
 
-  // Get grid class based on view mode
+  // Get grid class based on view mode with mobile-first responsive design
   const getGridClass = () => {
     switch (viewMode) {
       case "list":
@@ -258,15 +258,15 @@ export default function DataExplorerPage() {
       case "grid-2":
         return "grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6";
       case "grid-3":
-        return "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6";
+        return "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6";
       case "grid-4":
-        return "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4";
+        return "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5";
       case "grid-5":
-        return "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3";
+        return "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-3";
       case "grid-6":
-        return "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-3";
+        return "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 sm:gap-3";
       default:
-        return "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6";
+        return "grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6";
     }
   };
 
