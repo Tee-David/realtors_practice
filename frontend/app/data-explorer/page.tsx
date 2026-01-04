@@ -69,7 +69,7 @@ export default function DataExplorerPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState<Filters>({});
   const [currentPage, setCurrentPage] = useState(1);
-  const [viewMode, setViewMode] = useState<ViewMode>("grid-2");
+  const [viewMode, setViewMode] = useState<ViewMode>("grid-4");
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [desktopFiltersOpen, setDesktopFiltersOpen] = useState(false);
   const [selectedProperty, setSelectedProperty] = useState<any | null>(null);
@@ -77,6 +77,18 @@ export default function DataExplorerPage() {
   // Disable quality filter by default - let users see all properties
   const [hideIncompleteListing, setHideIncompleteListings] = useState(false);
   const [itemsPerPage, setItemsPerPage] = useState(20);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect mobile screen size for grid-4 list layout on mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1280); // xl breakpoint
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Listing type options
   const listingTypes: ListingTypeOption[] = [
@@ -675,7 +687,11 @@ export default function DataExplorerPage() {
                       }
                       property={property}
                       onClick={() => handlePropertyClick(property)}
-                      viewMode={viewMode === 'list' ? 'list' : 'grid'}
+                      viewMode={
+                        viewMode === 'list' ? 'list' :
+                        (viewMode === 'grid-4' && isMobile) ? 'list' :
+                        'grid'
+                      }
                     />
                   ))}
                 </div>
